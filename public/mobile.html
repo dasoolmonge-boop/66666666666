@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>ООО «Чалама» | Приложение</title>
+    <meta name="theme-color" content="#1a1d27">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0f1117;
+            --surface: #1a1d27;
+            --surface2: #22252f;
+            --border: #2a2d3a;
+            --text: #e4e4e7;
+            --muted: #71717a;
+            --gold: #b8860b;
+            --gold-light: #d4a017;
+            --radius: 16px;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
+        body { font-family:'Inter',sans-serif; background:var(--bg); color:var(--text); padding-bottom: 80px; }
+        
+        /* App Header */
+        .app-header {
+            position: sticky; top: 0; z-index: 50; background: rgba(26,29,39,0.85);
+            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            padding: env(safe-area-inset-top) 1.5rem 1rem; border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: flex-end; height: calc(60px + env(safe-area-inset-top));
+        }
+        .app-title { font-size: 1.1rem; font-weight: 800; letter-spacing: 2px; }
+        .app-title em { color: var(--gold); font-style: normal; }
+        .app-phone { font-size: .8rem; color: var(--gold); text-decoration: none; font-weight: 600; }
+
+        /* Views */
+        .view { display: none; padding: 1.5rem 1rem; animation: viewFade .3s ease; }
+        .view.active { display: block; }
+        @keyframes viewFade { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+        
+        .view-title { font-size: 1.5rem; font-weight: 800; margin-bottom: 1.5rem; }
+
+        /* Cards */
+        .room-card {
+            background: var(--surface); border-radius: var(--radius); border: 1px solid var(--border);
+            margin-bottom: 1.2rem; overflow: hidden; position: relative; display: flex; flex-direction: column;
+        }
+        .room-gallery {
+            position: relative; width: 100%; height: 200px; overflow-x: auto;
+            scroll-snap-type: x mandatory; display: flex; scrollbar-width: none;
+        }
+        .room-gallery::-webkit-scrollbar { display: none; }
+        .room-img-wrap { flex: 0 0 100%; height: 100%; scroll-snap-align: start; }
+        .room-gallery img { width: 100%; height: 100%; object-fit: cover; }
+        
+        .room-info { padding: 1.2rem; display: flex; flex-direction: column; gap: .5rem; }
+        .room-name { font-size: 1.1rem; font-weight: 700; }
+        .room-desc { font-size: .8rem; color: var(--muted); }
+        .room-price-row { display: flex; justify-content: space-between; align-items: center; margin-top: .5rem; }
+        .room-price { font-size: 1.3rem; font-weight: 800; color: var(--gold); }
+        .btn-select {
+            background: var(--surface2); color: #fff; border: none; padding: .6rem 1.2rem;
+            border-radius: 10px; font-weight: 600; font-size: .85rem; font-family: inherit;
+        }
+
+        .g-arrow {
+            position: absolute; top: 50%; transform: translateY(-50%); width: 34px; height: 34px;
+            background: rgba(26,29,39,.7); color: #fff; border: none; border-radius: 50%; display: flex;
+            align-items: center; justify-content: center; font-size: 1.2rem; z-index: 10;
+        }
+        .g-arrow.left { left: 8px; }
+        .g-arrow.right { right: 8px; }
+
+        /* Bottom Nav */
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 0; right: 0; height: calc(65px + env(safe-area-inset-bottom));
+            background: rgba(26,29,39,0.95); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            border-top: 1px solid var(--border); display: flex; justify-content: space-around;
+            padding-bottom: env(safe-area-inset-bottom); z-index: 100;
+        }
+        .nav-item {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            flex: 1; color: var(--muted); gap: .2rem; font-size: .65rem; font-weight: 600;
+            transition: .2s; border: none; background: transparent; font-family: inherit; cursor: pointer;
+        }
+        .nav-item.active { color: var(--gold); }
+        .nav-icon { font-size: 1.4rem; }
+
+        /* Inline Booking Container */
+        .book-modal {
+            display: none; background: var(--surface);
+            border-top: 1px dashed var(--border);
+            margin: 1.2rem -1.2rem -1.2rem -1.2rem;
+            border-radius: 0 0 16px 16px; overflow: hidden;
+            border-bottom: 2px solid var(--gold);
+        }
+        .book-modal.open {
+            display: block;
+            animation: slideDown 0.3s ease-out forwards;
+        }
+        @keyframes slideDown { 
+            0% { opacity: 0; transform: translateY(-10px); } 
+            100% { opacity: 1; transform: translateY(0); } 
+        }
+        .bm-content { padding: 1.5rem 1.2rem; background: rgba(0,0,0,.2); }
+        /* Custom Calendar */
+        .cal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+        .cal-header button { background: var(--surface2); border: none; color: #fff; width: 32px; height: 32px; border-radius: 8px; font-size: 1.2rem; }
+        .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; text-align: center; margin-bottom: 1.5rem; }
+        .cal-day-name { font-size: .7rem; color: var(--muted); font-weight: 600; margin-bottom: .5rem; text-transform: uppercase; }
+        .cal-day {
+            aspect-ratio: 1; display: flex; align-items: center; justify-content: center;
+            border-radius: 8px; font-size: .9rem; font-weight: 600; background: var(--surface);
+            transition: .2s; cursor: pointer; border: 1px solid transparent; color: #fff;
+        }
+        .cal-day.disabled { opacity: 0.2; pointer-events: none; }
+        .cal-day.booked-full { background: rgba(255,50,50,.15); color: #ff6b6b; text-decoration: line-through; pointer-events: none; }
+        .cal-day.booked-in { background: linear-gradient(135deg, transparent 50%, rgba(255,50,50,.2) 50%); color: #ff6b6b; }
+        .cal-day.booked-out { background: linear-gradient(135deg, rgba(255,50,50,.2) 50%, transparent 50%); color: #ff6b6b; }
+        .cal-day.today { border-color: var(--muted); }
+        .cal-day.range { background: rgba(184,134,11,.15); color: var(--gold); border-radius: 0; }
+        .cal-day.range-start { background: var(--gold); color: #fff; border-radius: 8px 0 0 8px; }
+        .cal-day.range-end { background: var(--gold); color: #fff; border-radius: 0 8px 8px 0; }
+        .cal-day.range-start.range-end { border-radius: 8px; }
+        .cal-day.range-start.booked-out { background: linear-gradient(135deg, rgba(255,50,50,.2) 50%, var(--gold) 50%); color: #fff; }
+        .cal-day.range-end.booked-in { background: linear-gradient(135deg, var(--gold) 50%, rgba(255,50,50,.2) 50%); color: #fff; }
+
+        .date-display { display: flex; justify-content: space-between; background: var(--surface2); padding: 1rem; border-radius: 12px; margin-bottom: 1rem; }
+        .date-display div { display: flex; flex-direction: column; }
+        .date-display label { font-size: .7rem; color: var(--muted); text-transform: uppercase; margin-bottom: .2rem; }
+        .date-display span { font-size: .95rem; font-weight: 700; color: var(--gold); }
+
+        .addon-card {
+            background: var(--surface); border: 1.5px solid var(--border); padding: 1rem; border-radius: 12px;
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: .8rem;
+        }
+        .addon-card.selected { border-color: var(--gold); background: rgba(184,134,11,.05); }
+        .addon-info h4 { font-size: .95rem; margin-bottom: .2rem; }
+        .addon-info p { font-size: .75rem; color: var(--muted); }
+        .addon-price { font-weight: 700; color: var(--gold); }
+
+        .form-group { margin-bottom: 1.2rem; }
+        .form-group label { display: block; font-size: .8rem; color: var(--muted); margin-bottom: .5rem; }
+        .form-group input { width: 100%; background: var(--surface); border: 1px solid var(--border); color: #fff; padding: 1rem; border-radius: 12px; font-size: 1rem; outline: none; font-family: inherit; }
+        .form-group input:focus { border-color: var(--gold); }
+        .consent-box { margin: 1rem 0; font-size: 0.75rem; color: var(--muted); display: flex; gap: 0.8rem; align-items: flex-start; }
+        .consent-box input { width: auto; margin-top: 0.2rem; }
+        .consent-box a { color: var(--gold); text-decoration: underline; }
+
+        .checkout-box { background: var(--surface2); padding: 1.5rem; border-radius: 16px; margin-top: 2rem; }
+        .checkout-row { display: flex; justify-content: space-between; font-size: .9rem; margin-bottom: .5rem; color: var(--muted); }
+        .checkout-total { display: flex; justify-content: space-between; font-size: 1.2rem; font-weight: 800; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border); color: #fff; }
+        
+        .btn-master {
+            width: 100%; background: var(--gold); color: #fff; padding: 1.2rem; border: none;
+            border-radius: 12px; font-size: 1.05rem; font-weight: 800; margin-top: 1.5rem; box-shadow: 0 4px 20px rgba(184,134,11,.2);
+        }
+
+        /* Loading / Skeleton */
+        .skeleton { background: var(--surface2); animation: pulse 1.5s infinite; border-radius: 12px; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: .5; } 100% { opacity: 1; } }
+
+        /* Details */
+        ::-webkit-scrollbar { display: none; }
+        
+        /* Time slots for sauna */
+        .time-slot {
+            background: var(--surface2); border: 1px solid var(--border); border-radius: 8px;
+            padding: .6rem 0; text-align: center; font-size: .8rem; font-weight: 600;
+            color: var(--text); transition: .2s; cursor: pointer;
+        }
+        .time-slot.booked { background: rgba(255,50,50,.15); color: #ff6b6b; pointer-events: none; opacity: 0.5; }
+        .time-slot.selected { background: var(--gold); color: #fff; border-color: var(--gold); }
+
+        /* KHAAN-DYT CARDS */
+        .kd-card { background: #2f3627; border: 1px solid rgba(225,211,165,0.2); border-radius: 16px; margin-bottom: 1.5rem; overflow: hidden; }
+        .kd-img { width: 100%; height: 200px; object-fit: cover; }
+        .kd-body { padding: 1.5rem; }
+        .kd-title { color: #e1d3a5; font-family: 'Playfair Display', serif; font-size: 1.25rem; margin-bottom: 1rem; font-weight: 700; letter-spacing: 1px; }
+        .kd-list { list-style: none; padding: 0; margin: 0; }
+        .kd-list li { position: relative; padding-left: 1.2rem; margin-bottom: 0.6rem; font-size: 0.85rem; color: rgba(255,255,255,0.85); line-height: 1.4; }
+        .kd-list li::before { content: '•'; position: absolute; left: 0; color: #e1d3a5; font-size: 1.2rem; line-height: 1; }
+
+        .btn-tg-float {
+            position: fixed; bottom: 85px; right: 20px; width: 52px; height: 52px;
+            background: #24A1DE; color: #fff; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem; box-shadow: 0 8px 25px rgba(36,161,222,0.4);
+            z-index: 99; transition: .3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            animation: tgPulse 2s infinite;
+        }
+        @keyframes tgPulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="app-header">
+        <div class="app-title">ООО <em>ЧАЛАМА</em></div>
+        <a href="tel:+73942221082" class="app-phone">+7 394 222-10-82</a>
+    </header>
+
+    <!-- Views -->
+    <div id="view-hotel" class="view active">
+        <h1 class="view-title">Отель «Чалама»</h1>
+        <div id="hotel-list">
+            <div class="skeleton" style="height:250px; margin-bottom:1rem"></div>
+            <div class="skeleton" style="height:250px"></div>
+        </div>
+
+        <div style="margin-top: 3rem; border-top: 1px solid var(--border); padding-top: 2rem;">
+            <h2 style="font-size: 1.3rem; margin-bottom: 0.5rem;">Сауна при отеле</h2>
+            <p style="color:var(--muted);font-size:.85rem;margin-bottom:1.5rem">Почасовая аренда (от 2х часов). 2000₽ в час.</p>
+            <div id="sauna-list"></div>
+        </div>
+    </div>
+
+    <div id="view-yurt" class="view">
+        <div style="text-align:center; margin-bottom: 1.5rem;">
+            <img src="uploads/kd_logo.png" style="width: 100px; margin: 0 auto 1rem;" alt="Хаан-Дыт Лого">
+            <p style="font-size: .75rem; letter-spacing: 3px; color: var(--gold); text-transform: uppercase;">Загородный отель-ресторан</p>
+            <h1 class="view-title" style="margin-bottom: .5rem; font-family: 'Playfair Display', serif; color: #fff;">ХААН-ДЫТ</h1>
+            <p style="color:var(--muted);font-size:.85rem; max-width: 280px; margin: 0 auto;">Погрузитесь в атмосферу традиционного гостеприимства и комфорта.</p>
+        </div>
+
+        <h3 style="margin-top:2.5rem; margin-bottom:1rem; font-size:1.1rem; color:var(--gold);">Доступные варианты размещения</h3>
+
+        <div id="yurt-list"></div>
+    </div>
+
+    <!-- Relocated Sauna to Hotel View -->
+    <div id="view-info" class="view">
+        <h1 class="view-title">О нас</h1>
+        <div style="background:var(--surface);padding:1.5rem;border-radius:16px">
+            <h3>Ресторан и Банкеты</h3>
+            <p style="font-size:.85rem;color:var(--muted);margin-top:.5rem">Паназиатская кухня, аренда на мероприятия. Банкет от 3500₽ с человека.</p>
+            <br>
+            <h3>Бар Скала</h3>
+            <p style="font-size:.85rem;color:var(--muted);margin-top:.5rem">Авторские коктейли, терраса и панорамный вид на горы.</p>
+            <br>
+            <h3>Контакты</h3>
+            <p style="font-size:.85rem;color:var(--muted);margin-top:.5rem">Кызыл, ул. Интернациональная, 12<br>+7 394 222-10-82</p>
+        </div>
+    </div>
+
+    <!-- Bottom Nav -->
+    <nav class="bottom-nav">
+        <button class="nav-item active" onclick="nav('hotel')">
+            <span class="nav-icon">🏨</span><span>Отель</span>
+        </button>
+        <button class="nav-item" onclick="nav('yurt')">
+            <span class="nav-icon">⛺</span><span>Хаан-Дыт</span>
+        </button>
+        <button class="nav-item" onclick="nav('info')">
+            <span class="nav-icon">📄</span><span>Инфо</span>
+        </button>
+    </nav>
+
+    <!-- Booking Container (moved dynamically) -->
+    <div id="bookModal" class="book-modal">
+        <div class="bm-content">
+            <p style="font-size:.8rem; color:var(--muted); margin-bottom: 1rem;">Свободные даты показаны белым. Занятые перечеркнуты. Выберите дату заезда и выезда.</p>
+            
+            <div class="cal-header">
+                <button onclick="calNav(-1)">‹</button>
+                <div id="cal-month-name" style="font-weight:700">Апрель 2026</div>
+                <button onclick="calNav(1)">›</button>
+            </div>
+            <div class="cal-grid" id="cal-grid"></div>
+
+            <div id="sauna-time-wrap" style="display:none; margin-top: 1rem; border-top: 1px dashed var(--border); padding-top: 1rem;">
+                <h3 style="font-size: .9rem; margin-bottom: .8rem; color: var(--gold-l);">Выберите время (минимум 2 часа):</h3>
+                <div class="time-grid" id="time-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: .4rem;"></div>
+            </div>
+
+            <div class="date-display" style="margin-top:1rem">
+                <div><label id="lbl-in">Заезд</label><span id="disp-in">—</span></div>
+                <div><label id="lbl-out">Выезд</label><span id="disp-out">—</span></div>
+            </div>
+
+            <div id="checkoutArea" style="display:none; margin-top: 1.5rem; border-top: 1px solid var(--border); padding-top: 1.5rem;">
+                <div id="addonsArea" style="display:none; margin-bottom:1.5rem">
+                    <h3 style="font-size:.9rem; margin-bottom:1rem">Дополнительно:</h3>
+                    <div class="addon-card" id="addonBath" onclick="toggleAddon('bath')">
+                        <div class="addon-info">
+                            <h4>Баня (2 часа)</h4>
+                            <p>До 10 чел, каждый доп. час 2000₽</p>
+                        </div>
+                        <div class="addon-price"><span id="bathPriceTag">6000</span> ₽</div>
+                    </div>
+                    <div class="addon-card" id="addonTub" onclick="toggleAddon('tub')">
+                        <div class="addon-info">
+                            <h4>Банный чан</h4>
+                            <p>Вместе с баней</p>
+                        </div>
+                        <div class="addon-price">5000 ₽</div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Ваше Имя</label>
+                    <input type="text" id="guestName" placeholder="Иван Иванов">
+                </div>
+                <div class="form-group">
+                    <label>Телефон</label>
+                    <input type="tel" id="guestPhone" placeholder="+7 (___) ___-__-__">
+                </div>
+
+                <div class="consent-box">
+                    <input type="checkbox" id="mobile-consent" checked>
+                    <label for="mobile-consent">Я согласен на <a href="policy.html" target="_blank">обработку персональных данных</a></label>
+                </div>
+
+                <div class="checkout-box">
+                    <div class="checkout-row"><span>Номер / Юрта</span><span id="coRoom">0 ₽</span></div>
+                    <div class="checkout-row" id="coBathRow" style="display:none"><span>Баня</span><span id="coBath">0 ₽</span></div>
+                    <div class="checkout-row" id="coTubRow" style="display:none"><span>Чан</span><span id="coTub">5000 ₽</span></div>
+                    <div class="checkout-total"><span>Итого:</span><span id="coTotal">0 ₽</span></div>
+                </div>
+
+                <button class="btn-master" onclick="submitBooking()" id="btnSubmit">Оформить • <span id="btnPrice">0</span> ₽</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script -->
+    <script>
+        const dayNames = ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
+        const months = ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
+        
+        let allRooms = [];
+        let bookedDates = []; // { room, checkIn, checkOut }
+        let state = {
+            room: null,
+            in: null, out: null,
+            addons: { bath: false, tub: false },
+            nights: 0, total: 0,
+            calMonth: new Date().getMonth(),
+            calYear: new Date().getFullYear(),
+            date: null, saunaHours: []
+        };
+
+        // Fetch Data
+        Promise.all([
+            fetch('/api/rooms').then(r=>r.json()),
+            fetch('/api/availability').then(r=>r.json())
+        ]).then(([rData, aData]) => {
+            allRooms = rData;
+            bookedDates = aData || [];
+            if(bookedDates.error) bookedDates = [];
+            renderList('hotel', 'hotel-list');
+            renderList('yurt', 'yurt-list');
+            renderList('sauna', 'sauna-list');
+        }).catch(console.error);
+
+        function pollAvailability() {
+            fetch('/api/availability')
+                .then(r => r.json())
+                .then(data => {
+                    if(data.error) return;
+                    const newStr = JSON.stringify(data);
+                    if (JSON.stringify(bookedDates) !== newStr) {
+                        bookedDates = data;
+                        if(document.getElementById('bookModal').classList.contains('open')) {
+                            renderCal(); // refresh cal if currently looking at it
+                        }
+                    }
+                }).catch(()=>{});
+        }
+        setInterval(pollAvailability, 5000);
+
+        function renderList(type, containerId) {
+            const list = allRooms.filter(r => r.type === type);
+            const html = list.map(r => {
+                const priceLabel = r.priceWeekend ? `от ${fmtPrice(r.price)}` : fmtPrice(r.price);
+                const imgs = (r.imgs||[]).map(src => `<div class="room-img-wrap"><img src="${src}"></div>`).join('');
+                return `
+                <div class="room-card">
+                    <div style="position: relative;">
+                        <div class="room-gallery" id="gal-${r.id}">
+                            ${imgs||'<div class="room-img-wrap" style="background:var(--surface2)"></div>'}
+                        </div>
+                        ${r.imgs && r.imgs.length > 1 ? `
+                        <button class="g-arrow left" onclick="scrollGal(event, ${r.id}, -1)">‹</button>
+                        <button class="g-arrow right" onclick="scrollGal(event, ${r.id}, 1)">›</button>
+                        ` : ''}
+                    </div>
+                    <div class="room-info" style="position:relative">
+                        <div class="room-name">${r.name}</div>
+                        <div class="room-desc">${r.desc.split('·')[0]}</div>
+                        <div class="room-price-row">
+                            <div class="room-price">${priceLabel}</div>
+                            <button class="btn-select" id="btn-toggle-${r.id}" onclick="openBook(${r.id}, event)">Свободные даты</button>
+                        </div>
+                        <div id="card-inject-${r.id}"></div>
+                    </div>
+                </div>`;
+            }).join('');
+            document.getElementById(containerId).innerHTML = html || '<p>Нет доступных номеров</p>';
+        }
+
+        function scrollGal(e, id, dir) {
+            e.stopPropagation();
+            const gal = document.getElementById('gal-' + id);
+            gal.scrollBy({ left: gal.clientWidth * dir, behavior: 'smooth' });
+        }
+
+        // Navigation
+        function nav(viewId) {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.getElementById('view-' + viewId).classList.add('active');
+            
+            document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            window.scrollTo(0, 0);
+        }
+
+        function fmtPrice(n) { return n.toLocaleString('ru') + ' ₽'; }
+
+        // Booking Logic
+        function openBook(id, event) {
+            if (event) event.stopPropagation();
+            const modal = document.getElementById('bookModal');
+
+            // If clicking the same one that is already open -> close it
+            if (state.room && state.room.id === id && modal.classList.contains('open')) {
+                closeBook();
+                return;
+            }
+
+            // Close previously open one
+            if (state.room) {
+                const oldBtn = document.getElementById('btn-toggle-' + state.room.id);
+                if(oldBtn) oldBtn.innerHTML = 'Свободные даты';
+            }
+
+            state.room = allRooms.find(r => r.id === id);
+            
+            // Move container
+            document.getElementById('card-inject-' + id).appendChild(modal);
+
+            document.getElementById('btn-toggle-' + id).innerHTML = 'Скрыть ✕';
+            
+            modal.classList.add('open');
+            document.getElementById('addonsArea').style.display = state.room.type === 'yurt' ? 'block' : 'none';
+            
+            // Reset fields & hidden checkout area
+            document.getElementById('guestName').value = '';
+            document.getElementById('guestPhone').value = '';
+            document.getElementById('btnSubmit').disabled = false;
+            document.getElementById('btnSubmit').textContent = 'Оформить';
+            document.getElementById('checkoutArea').style.display = 'none';
+
+            // Reset dates
+            state.in = null; state.out = null;
+            state.date = null; state.saunaHours = [];
+            state.calMonth = new Date().getMonth();
+            state.calYear = new Date().getFullYear();
+            document.getElementById('sauna-time-wrap').style.display = 'none';
+
+            if(state.room.type === 'sauna') {
+                document.getElementById('lbl-in').textContent = 'Дата';
+                document.getElementById('lbl-out').textContent = 'Время';
+            } else {
+                document.getElementById('lbl-in').textContent = 'Заезд';
+                document.getElementById('lbl-out').textContent = 'Выезд';
+            }
+
+            renderCal();
+            calcTotal();
+
+            // Scroll so the card is fully in view
+            setTimeout(() => {
+                document.getElementById('btn-toggle-' + id).scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 50);
+        }
+
+        function closeBook() {
+            const modal = document.getElementById('bookModal');
+            modal.classList.remove('open');
+            if (state.room) {
+                const oldBtn = document.getElementById('btn-toggle-' + state.room.id);
+                if(oldBtn) oldBtn.innerHTML = 'Свободные даты';
+            }
+        }
+
+        function toggleAddon(id) {
+            state.addons[id] = !state.addons[id];
+            if(id === 'tub' && state.addons.tub) state.addons.bath = true;
+            if(id === 'bath' && !state.addons.bath) state.addons.tub = false;
+            
+            document.getElementById('addonBath').classList.toggle('selected', state.addons.bath);
+            document.getElementById('addonTub').classList.toggle('selected', state.addons.tub);
+            calcTotal();
+        }
+
+        // Custom Calendar
+        function norm(ts) {
+            const d = new Date(ts); d.setHours(0,0,0,0); return d.getTime();
+        }
+        function getDateStatus(d) {
+            if(!state.room) return 'free';
+            if(state.room.type === 'sauna') return 'free';
+            const t = norm(d);
+            let isIn = false, isOut = false, isMid = false;
+            bookedDates.forEach(b => {
+                if(b.room !== state.room.name) return;
+                const bin = norm(b.checkIn);
+                const bout = norm(b.checkOut);
+                if (t === bin) isIn = true;
+                if (t === bout) isOut = true;
+                if (t > bin && t < bout) isMid = true;
+            });
+            if (isMid || (isIn && isOut)) return 'full';
+            if (isIn) return 'in';
+            if (isOut) return 'out';
+            return 'free';
+        }
+        function isDateBooked(d) {
+            if(state.room && state.room.type === 'sauna') return false;
+            const st = getDateStatus(d);
+            return st === 'full' || st === 'in';
+        }
+
+        function renderCal() {
+            document.getElementById('cal-month-name').textContent = months[state.calMonth] + ' ' + state.calYear;
+            let html = dayNames.map(d => `<div class="cal-day-name">${d}</div>`).join('');
+            
+            const firstDay = new Date(state.calYear, state.calMonth, 1).getDay();
+            const shift = firstDay === 0 ? 6 : firstDay - 1;
+            const totalDays = new Date(state.calYear, state.calMonth + 1, 0).getDate();
+            const today = new Date(); today.setHours(0,0,0,0);
+            
+            for (let i = 0; i < shift; i++) html += '<div></div>';
+            
+            for (let d = 1; d <= totalDays; d++) {
+                const dt = new Date(state.calYear, state.calMonth, d); dt.setHours(0,0,0,0);
+                const isPast = dt < today;
+                const isToday = dt.getTime() === today.getTime();
+                const st = getDateStatus(dt);
+                
+                let isStart = false, isEnd = false, inRange = false;
+                if (state.room.type === 'sauna') {
+                    isStart = state.date && dt.getTime() === state.date.getTime();
+                } else {
+                    isStart = state.in && dt.getTime() === state.in.getTime();
+                    isEnd = state.out && dt.getTime() === state.out.getTime();
+                    inRange = state.in && state.out && dt > state.in && dt < state.out;
+                }
+                
+                const cls = ['cal-day'];
+                if(isPast) cls.push('disabled');
+                else if(st === 'full' && state.room.type !== 'sauna') cls.push('booked-full');
+                else if(st === 'in' && state.room.type !== 'sauna') cls.push('booked-in');
+                else if(st === 'out' && state.room.type !== 'sauna') cls.push('booked-out');
+                
+                if(isToday) cls.push('today');
+                if(isStart) cls.push('range-start');
+                if(isEnd) cls.push('range-end');
+                if(inRange) cls.push('range');
+                if(isStart && isEnd) cls.push('range-start','range-end');
+
+                const interact = (isPast || (st === 'full' && state.room.type !== 'sauna')) ? '' : `onclick="selDate(${dt.getTime()})"`;
+                html += `<div class="${cls.join(' ')}" ${interact}>${d}</div>`;
+            }
+            document.getElementById('cal-grid').innerHTML = html;
+
+            if (state.room.type === 'sauna') {
+                document.getElementById('disp-in').textContent = state.date ? state.date.toLocaleDateString() : '—';
+                document.getElementById('disp-out').textContent = (state.saunaHours.length >= 2) ? 
+                    `${state.saunaHours[0]}:00 - ${state.saunaHours[state.saunaHours.length-1]+1}:00` : '—';
+                
+                if (state.date) {
+                    document.getElementById('sauna-time-wrap').style.display = 'block';
+                    renderSaunaSlots();
+                } else {
+                    document.getElementById('sauna-time-wrap').style.display = 'none';
+                }
+            } else {
+                document.getElementById('disp-in').textContent = state.in ? state.in.toLocaleDateString() : '—';
+                document.getElementById('disp-out').textContent = state.out ? state.out.toLocaleDateString() : '—';
+                document.getElementById('sauna-time-wrap').style.display = 'none';
+            }
+            
+            // Show checkout area
+            const coArea = document.getElementById('checkoutArea');
+            if (state.room.type === 'sauna') {
+                coArea.style.display = (state.date && state.saunaHours.length >= 2) ? 'block' : 'none';
+            } else {
+                coArea.style.display = (state.in && state.out) ? 'block' : 'none';
+            }
+        }
+
+        function selDate(ts) {
+            const clicked = new Date(ts);
+            if (state.room.type === 'sauna') {
+                state.date = clicked;
+                state.saunaHours = []; // Reset hours on new date
+            } else {
+                if(!state.in || (state.in && state.out)) {
+                    if(isDateBooked(clicked)) return;
+                    state.in = clicked; state.out = null;
+                } else {
+                    if(clicked <= state.in) {
+                        if(isDateBooked(clicked)) return;
+                        state.in = clicked;
+                    } else {
+                        let hasBooked = false;
+                        let testDate = new Date(state.in);
+                        while(testDate < clicked) {
+                            if(isDateBooked(testDate)) hasBooked = true;
+                            testDate.setDate(testDate.getDate() + 1);
+                        }
+                        if(hasBooked) { alert('В этом промежутке есть занятые даты!'); return; }
+                        state.out = clicked;
+                    }
+                }
+            }
+            renderCal(); updateBathPriceState(); calcTotal();
+        }
+
+        function renderSaunaSlots() {
+            if (!state.date) return;
+            const grid = document.getElementById('time-grid');
+            let html = '';
+            
+            // Generate hours from 10 to 22
+            for (let h = 10; h < 22; h++) {
+                const startTime = new Date(state.date); startTime.setHours(h, 0, 0, 0);
+                const endTime = new Date(state.date); endTime.setHours(h + 1, 0, 0, 0);
+                
+                // Check if this specific hour is booked
+                const isBooked = bookedDates.some(b => {
+                    if (b.room !== state.room.name) return false;
+                    const bIn = new Date(b.checkIn);
+                    const bOut = new Date(b.checkOut);
+                    return (startTime < bOut && endTime > bIn);
+                });
+                
+                const isSelected = state.saunaHours.includes(h);
+                const cls = ['time-slot'];
+                if (isBooked) cls.push('booked');
+                if (isSelected) cls.push('selected');
+                
+                html += `<div class="${cls.join(' ')}" onclick="toggleSaunaTime(${h})">${h}:00</div>`;
+            }
+            grid.innerHTML = html;
+        }
+
+        function toggleSaunaTime(h) {
+            if (state.saunaHours.includes(h)) {
+                state.saunaHours = state.saunaHours.filter(x => x !== h);
+            } else {
+                state.saunaHours.push(h);
+                state.saunaHours.sort((a, b) => a - b);
+                
+                // Ensure continuity
+                if (state.saunaHours.length > 1) {
+                    const first = state.saunaHours[0];
+                    const last = state.saunaHours[state.saunaHours.length - 1];
+                    const range = [];
+                    for (let i = first; i <= last; i++) {
+                        // Check if any hour in between is booked
+                        const startTime = new Date(state.date); startTime.setHours(i, 0, 0, 0);
+                        const endTime = new Date(state.date); endTime.setHours(i + 1, 0, 0, 0);
+                        const isBooked = bookedDates.some(b => {
+                            if (b.room !== state.room.name) return false;
+                            return (startTime < new Date(b.checkOut) && endTime > new Date(b.checkIn));
+                        });
+                        if (isBooked) {
+                            alert('Это время уже занято!');
+                            state.saunaHours = [h];
+                            renderCal();
+                            return;
+                        }
+                        range.push(i);
+                    }
+                    state.saunaHours = range;
+                }
+            }
+            renderCal(); calcTotal();
+        }
+
+        function calNav(dir) {
+            state.calMonth += dir;
+            if(state.calMonth > 11) { state.calMonth = 0; state.calYear++; }
+            if(state.calMonth < 0) { state.calMonth = 11; state.calYear--; }
+            renderCal();
+        }
+
+        function updateBathPriceState() {
+            // Dummy logic placeholder - update Bath price depending on selection
+        }
+
+        function calcTotal() {
+            let n = 0;
+            let total = 0;
+            let displayDetails = '';
+
+            if (state.room.type === 'sauna') {
+                n = state.saunaHours.length;
+                total = n * 2000;
+                displayDetails = n > 0 ? `${fmtPrice(total)} (${n} ч.)` : 'Выберите время';
+            } else {
+                if(state.in && state.out) {
+                    n = Math.round((state.out - state.in) / 86400000);
+                    if (n < 0) n = 0;
+                }
+                state.nights = n;
+                let roomTotal = (n > 0) ? state.room.price * n : 0;
+                total = roomTotal;
+                
+                let bathPrice = (state.room.type === 'yurt' && n > 0) ? 6000 : 7000;
+                document.getElementById('bathPriceTag').textContent = bathPrice;
+                
+                if(state.addons.bath) total += bathPrice;
+                if(state.addons.tub) total += 5000;
+                displayDetails = n > 0 ? (fmtPrice(roomTotal) + ` (${n} ноч.)`) : 'Выберите даты';
+            }
+
+            state.total = total;
+            document.getElementById('coRoom').textContent = displayDetails;
+            document.getElementById('coBathRow').style.display = (state.room.type !== 'sauna' && state.addons.bath) ? 'flex' : 'none';
+            document.getElementById('coTubRow').style.display = (state.room.type !== 'sauna' && state.addons.tub) ? 'flex' : 'none';
+            document.getElementById('coTotal').textContent = total > 0 ? fmtPrice(total) : '0 ₽';
+            document.getElementById('btnPrice').textContent = total.toLocaleString('ru');
+        }
+
+        function submitBooking() {
+            let checkIn, checkOut, nightsOrHours;
+            
+            if (state.room.type === 'sauna') {
+                if (!state.date || state.saunaHours.length < 2) 
+                    return alert('Выберите дату и минимум 2 часа сауны!');
+                
+                const startH = state.saunaHours[0];
+                const endH = state.saunaHours[state.saunaHours.length - 1] + 1;
+                
+                const dIn = new Date(state.date); dIn.setHours(startH, 0, 0, 0);
+                const dOut = new Date(state.date); dOut.setHours(endH, 0, 0, 0);
+                
+                checkIn = dIn.toISOString();
+                checkOut = dOut.toISOString();
+                nightsOrHours = state.saunaHours.length;
+            } else {
+                if(!state.in || !state.out) return alert('Выберите даты заезда и выезда в календаре!');
+                checkIn = state.in.toISOString();
+                checkOut = state.out.toISOString();
+                nightsOrHours = state.nights;
+            }
+
+            const name = document.getElementById('guestName').value;
+            const phone = document.getElementById('guestPhone').value;
+            const consent = document.getElementById('mobile-consent').checked;
+            if(!name || !phone) return alert('Введите имя и телефон!');
+            if(!consent) return alert('Пожалуйста, подтвердите согласие на обработку персональных данных!');
+
+            const addonsStr = [];
+            if(state.room.type !== 'sauna') {
+                if(state.addons.bath) addonsStr.push('Баня');
+                if(state.addons.tub) addonsStr.push('Банный чан');
+            }
+
+            const pkt = {
+                type: state.room.type,
+                room: state.room.name,
+                checkIn: checkIn,
+                checkOut: checkOut,
+                nights: nightsOrHours,
+                guest: name,
+                phone: phone,
+                addons: addonsStr,
+                total: state.total,
+                clientChatId: window.Telegram?.WebApp?.initDataUnsafe?.user?.id || null
+            };
+
+            const btn = document.getElementById('btnSubmit');
+            btn.innerHTML = 'Отправка...';
+            btn.disabled = true;
+
+            fetch('/api/bookings', {
+                method: 'POST',
+                headers:{ 'Content-Type':'application/json' },
+                body: JSON.stringify(pkt)
+            }).then(r=>r.json()).then(res => {
+                if(res.success) {
+                    alert('Заявка отправлена! Менеджер скоро свяжется с вами.');
+                    closeBook();
+                    btn.innerHTML = 'Подтвердить • <span id="btnPrice">0</span> ₽';
+                    btn.disabled = false;
+                    state.in = null; state.out = null; calcTotal();
+                    pollAvailability(); // force instant refresh
+                } else {
+                    alert('Ошибка сервера: ' + res.error);
+                    btn.disabled = false;
+                    btn.innerHTML = 'Подтвердить • <span id="btnPrice">' + btnPrice.textContent + '</span> ₽';
+                    pollAvailability(); // probably busy, force calendar to update to show it
+                }
+            }).catch(e => { alert('Ошибка сети'); btn.disabled=false; });
+        }
+    </script>
+    <a href="https://t.me/Khaan_dyt_bot" target="_blank" class="btn-tg-float">
+        <i class="fab fa-telegram-plane"></i>
+    </a>
+</body>
+</html>

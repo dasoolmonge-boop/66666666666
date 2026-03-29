@@ -1,0 +1,1732 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ООО «Чалама» — Отдых, Гастрономия и Впечатления в Туве</title>
+    <meta name="description" content="Группа компаний ООО Чалама: Отель Чалама, Загородный юрточный отель Хаан-Дыт, Ресторан Чалама, Бар Скала. Бронируйте онлайн.">
+    <meta property="og:title" content="ООО «Чалама» — Отдых, Гастрономия и Впечатления в Туве">
+    <meta property="og:description" content="Отель Чалама, Юрточный отель Хаан-Дыт, Ресторан и Бар Скала в Кызыле. Бронируйте онлайн.">
+    <meta property="og:image" content="https://www.chalamahotel.ru/upload/resize_cache/iblock/8ca/900_600_2/867g21cm3hqw7a1b49alaa3f01og2er8.jpg">
+    <meta property="og:type" content="website">
+    <meta name="theme-color" content="#b8860b">
+    <link rel="icon" type="image/x-icon" href="https://www.chalamahotel.ru/favicon.ico">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script>
+        // Детекция Telegram Mini App
+        (function() {
+            try {
+                const isTelegram = window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initData && window.Telegram.WebApp.initData.length > 0;
+                // Дополнительная проверка на платформу, если initData пуст (бывает в некоторых версиях при первом запуске)
+                const isTGPlatform = window.Telegram && window.Telegram.WebApp && (window.Telegram.WebApp.platform !== 'unknown');
+                
+                if (isTelegram || isTGPlatform) {
+                    // Если открыто в Телеграм — перенаправляем на мобильную версию приложения
+                    window.location.replace('mobile.html');
+                }
+            } catch (e) {
+                console.error('Environment check error:', e);
+            }
+        })();
+    </script>
+    <style>
+        /* ===== RESET & BASE ===== */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; font-size: 16px; }
+        body {
+            font-family: 'Inter', sans-serif;
+            color: #2d2d2d;
+            line-height: 1.7;
+            overflow-x: hidden;
+            background: #fff;
+            -webkit-font-smoothing: antialiased;
+        }
+        img { max-width: 100%; display: block; }
+        a { text-decoration: none; color: inherit; }
+        button { cursor: pointer; font-family: inherit; }
+        .serif { font-family: 'Playfair Display', serif; }
+        .container { max-width: 1240px; margin: 0 auto; padding: 0 2rem; }
+
+        /* ===== COLORS ===== */
+        :root {
+            --gold: #b8860b;
+            --gold-light: #d4a843;
+            --dark: #111;
+            --dark2: #1c1c1c;
+            --gray: #888;
+            --light: #f7f5f0;
+            --white: #fff;
+            --radius: 16px;
+            --shadow: 0 20px 60px rgba(0,0,0,.08);
+            --shadow-lg: 0 30px 80px rgba(0,0,0,.12);
+            --tg-blue: #24A1DE;
+        }
+
+        .btn-tg-float {
+            position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px;
+            background: var(--tg-blue); color: #fff; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.8rem; box-shadow: 0 10px 30px rgba(36,161,222,0.4);
+            z-index: 999; transition: .3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            animation: tgPulse 2s infinite;
+        }
+        .btn-tg-float:hover { transform: scale(1.1) translateY(-5px); background: #2293c9; }
+        @keyframes tgPulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+        @media (max-width: 768px) { .btn-tg-float { bottom: 20px; right: 20px; width: 52px; height: 52px; font-size: 1.5rem; } }
+
+        /* ===== HEADER ===== */
+        .header {
+            position: fixed; top: 0; left: 0; width: 100%; z-index: 100;
+            padding: 1.5rem 0; transition: all .4s ease;
+        }
+        .header.scrolled {
+            background: rgba(255,255,255,.97); backdrop-filter: blur(20px);
+            box-shadow: 0 1px 30px rgba(0,0,0,.06); padding: 1rem 0;
+        }
+        .header-inner { display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 1.1rem; font-weight: 800; letter-spacing: 3px; text-transform: uppercase; color: #fff; transition: .3s; }
+        .logo em { font-style: normal; color: var(--gold-light); font-weight: 300; }
+        .header.scrolled .logo { color: var(--dark); }
+        .nav { display: flex; gap: 2.5rem; align-items: center; }
+        .nav a {
+            font-size: .82rem; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase;
+            color: rgba(255,255,255,.85); transition: .3s; position: relative;
+        }
+        .nav a::after {
+            content:''; position: absolute; bottom: -4px; left: 0; width: 0; height: 2px;
+            background: var(--gold); transition: .3s;
+        }
+        .nav a:hover { color: #fff; }
+        .nav a:hover::after { width: 100%; }
+        .header.scrolled .nav a { color: var(--dark); }
+        .header.scrolled .nav a:hover { color: var(--gold); }
+        .nav-phone {
+            background: var(--gold); color: #fff; padding: .65rem 1.6rem; border-radius: 50px;
+            font-size: .82rem; font-weight: 700; letter-spacing: 1px; transition: .3s;
+        }
+        .nav-phone:hover { background: var(--gold-light); transform: translateY(-2px); box-shadow: 0 8px 25px rgba(184,134,11,.3); }
+
+        /* ===== HERO ===== */
+        .hero {
+            height: 100vh; position: relative; display: flex; align-items: center; justify-content: center;
+            overflow: hidden; background: #000;
+        }
+        .hero-bg {
+            position: absolute; inset: 0; background-image: url('https://www.chalamahotel.ru/upload/iblock/e5b/niub7dn3irklicps1kyxhyj06gull6fp.jpeg');
+            background-size: cover; background-position: center; transform: scale(1.1);
+            animation: heroZoom 20s ease infinite alternate; filter: brightness(.45);
+        }
+        @keyframes heroZoom { 0% { transform: scale(1.1); } 100% { transform: scale(1.2); } }
+        .hero-content { position: relative; z-index: 2; text-align: center; color: #fff; }
+        .hero-sub {
+            font-size: .85rem; letter-spacing: 6px; text-transform: uppercase; color: var(--gold-light);
+            margin-bottom: 1.5rem; animation: fadeUp .8s ease both;
+        }
+        .hero-title {
+            font-size: clamp(3rem, 7vw, 6rem); font-weight: 800; line-height: 1.05;
+            margin-bottom: 1.5rem; animation: fadeUp 1s ease both .2s;
+        }
+        .hero-desc {
+            font-size: 1.15rem; color: rgba(255,255,255,.7); max-width: 550px; margin: 0 auto 3rem;
+            font-weight: 300; animation: fadeUp 1s ease both .4s;
+        }
+        .hero-btns { display: flex; gap: 1rem; justify-content: center; animation: fadeUp 1s ease both .6s; }
+        .btn {
+            display: inline-flex; align-items: center; gap: .5rem; padding: 1rem 2.5rem;
+            border-radius: 50px; font-weight: 700; font-size: .85rem; letter-spacing: 1px;
+            text-transform: uppercase; transition: all .35s ease; border: none;
+        }
+        .btn-gold { background: var(--gold); color: #fff; }
+        .btn-gold:hover { background: var(--gold-light); transform: translateY(-3px); box-shadow: 0 15px 40px rgba(184,134,11,.35); }
+        .btn-outline-w { background: transparent; border: 2px solid rgba(255,255,255,.4); color: #fff; }
+        .btn-outline-w:hover { border-color: #fff; background: rgba(255,255,255,.1); }
+        .hero-scroll {
+            position: absolute; bottom: 3rem; left: 50%; transform: translateX(-50%); z-index: 2;
+            color: rgba(255,255,255,.5); font-size: .75rem; letter-spacing: 3px; text-align: center;
+            animation: bounce 2s infinite;
+        }
+        .hero-scroll span { display: block; width: 1px; height: 40px; background: rgba(255,255,255,.3); margin: .8rem auto 0; }
+        @keyframes bounce { 0%,100% { transform: translateX(-50%) translateY(0); } 50% { transform: translateX(-50%) translateY(10px); } }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* ===== SECTIONS ===== */
+        section { padding: 7rem 0; }
+        .section-label {
+            font-size: .75rem; letter-spacing: 4px; text-transform: uppercase;
+            color: var(--gold); font-weight: 700; margin-bottom: .8rem;
+        }
+        .section-title {
+            font-size: clamp(2rem, 4vw, 3.2rem); font-weight: 800; line-height: 1.15;
+            margin-bottom: 1.5rem;
+        }
+        .section-desc { color: var(--gray); max-width: 550px; font-size: 1.05rem; }
+
+        /* ===== REVEAL ===== */
+        [data-r] { opacity: 0; transform: translateY(40px); transition: all .9s cubic-bezier(.22,.68,0,1.1); }
+        [data-r].show { opacity: 1; transform: translateY(0); }
+
+        /* ===== ENTITIES GRID ===== */
+        .yurts-theme { background: #38402f; color: #fff; }
+        .yurts-theme .section-title { color: #e1d3a5; }
+        .yurts-theme .section-desc { color: rgba(255,255,255,.7); }
+        .yurts-theme .room-card { background: rgba(255,255,255,.05); border-color: rgba(255,255,255,.1); }
+        .yurts-theme .room-card.active { background: rgba(255,255,255,.12); border-color: #e1d3a5; }
+        .yurts-theme .room-name { color: #fff; }
+        .yurts-theme .room-desc { color: rgba(255,255,255,.5); }
+        .yurts-theme .room-price { color: #e1d3a5; }
+        .yurts-theme .room-per { color: rgba(255,255,255,.4); }
+        .yurts-theme .room-amenity { background: rgba(255,255,255,.1); color: #fff; }
+        .yurts-theme .cal-wrap { background: #2a3023; color: #fff; border: 1px solid rgba(225,211,165,.2); box-shadow: 0 20px 50px rgba(0,0,0,.3); }
+        .yurts-theme .cal-wrap .cal-header h4 { color: #fff; }
+        .yurts-theme .cal-wrap .cal-day:not(.disabled):not(.booked) { color: #fff; }
+        .yurts-theme .cal-wrap .cal-day-name { color: rgba(255,255,255,.5); }
+        .yurts-theme .cal-wrap .cal-btn { border-color: rgba(255,255,255,.1); color: #fff; }
+        .yurts-theme .cal-wrap .cal-btn:hover { background: rgba(255,255,255,.1); }
+        .yurts-theme .cal-wrap hr { border-top: 1px solid rgba(255,255,255,.1) !important; }
+        .yurts-theme .cal-wrap .cal-selected-info { background: rgba(255,255,255,.05); border-color: rgba(225,211,165,.2); }
+        .yurts-theme .cal-wrap .cal-selected-info p { color: rgba(255,255,255,.7); }
+        .yurts-theme .cal-wrap .cal-selected-info strong { color: #fff; }
+        .yurts-theme .addon-item { background: rgba(255,255,255,.05); border-color: rgba(255,255,255,.1); color: #fff; }
+        .yurts-theme .addon-item.on { background: rgba(255,255,255,.12); border-color: #e1d3a5; }
+        .yurts-theme .addon-label span { color: rgba(255,255,255,.5); }
+        .yurts-theme .cart { background: rgba(255,255,255,.08); border-color: rgba(225,211,165,.2); }
+        .yurts-theme .cart-title { color: rgba(255,255,255,.5); }
+        .yurts-theme .cart-row { color: #fff; }
+        .yurts-theme .form-group label { color: rgba(255,255,255,.6); }
+        .yurts-theme .form-group input { background: rgba(255,255,255,0.95); border-color: transparent; color: var(--dark); }
+        .e-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; margin-top: 4rem; }
+        .e-card {
+            position: relative; height: 520px; border-radius: 24px; overflow: hidden;
+            cursor: pointer; transition: all .5s cubic-bezier(.25,.8,.25,1);
+        }
+        .e-card:hover { transform: translateY(-12px); box-shadow: var(--shadow-lg); }
+        .e-card img { width: 100%; height: 100%; object-fit: cover; transition: transform 1.2s ease; }
+        .e-card:hover img { transform: scale(1.08); }
+        .e-card-overlay {
+            position: absolute; inset: 0; background: linear-gradient(0deg, rgba(0,0,0,.85) 0%, transparent 60%);
+            padding: 2rem; display: flex; flex-direction: column; justify-content: flex-end;
+        }
+        .e-badge {
+            align-self: flex-start; background: var(--gold); color: #fff; padding: .35rem 1rem;
+            border-radius: 50px; font-size: .7rem; font-weight: 700; letter-spacing: 1.5px;
+            text-transform: uppercase; margin-bottom: auto;
+        }
+        .e-card h3 { color: #fff; font-size: 1.6rem; margin-bottom: .4rem; }
+        .e-card p { color: rgba(255,255,255,.65); font-size: .9rem; }
+        .e-card .e-arrow {
+            position: absolute; top: 1.5rem; right: 1.5rem; width: 44px; height: 44px;
+            background: rgba(255,255,255,.15); backdrop-filter: blur(10px); border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; color: #fff;
+            transition: .3s; font-size: 1.2rem;
+        }
+        .e-card:hover .e-arrow { background: var(--gold); }
+
+        /* ===== ABOUT ===== */
+        .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center; }
+        .about-img { position: relative; border-radius: 24px; overflow: hidden; height: 550px; }
+        .about-img img { height: 100%; width: 100%; object-fit: cover; }
+        .about-img::after {
+            content: ''; position: absolute; bottom: -20px; right: -20px; width: 180px; height: 180px;
+            border: 3px solid var(--gold); border-radius: 24px; z-index: -1;
+        }
+        .about-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 3rem; }
+        .stat { text-align: center; padding: 1.5rem; background: var(--light); border-radius: 16px; }
+        .stat-num { font-size: 2.5rem; font-weight: 800; color: var(--gold); }
+        .stat-label { font-size: .78rem; color: var(--gray); margin-top: .3rem; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* ===== ROOMS / YURTS BOOKING ===== */
+        .booking-section { background: var(--light); }
+        .booking-layout { display: grid; grid-template-columns: 1.3fr .7fr; gap: 4rem; margin-top: 3rem; }
+        .room-list { display: grid; gap: 1rem; }
+        .room-card {
+            background: #fff; border-radius: var(--radius); border: 2px solid transparent;
+            cursor: pointer; transition: .3s; overflow: hidden;
+        }
+        .room-card:hover, .room-card.active { border-color: var(--gold); box-shadow: 0 8px 30px rgba(184,134,11,.08); }
+        .room-card.active { background: #fefcf6 !important; }
+        .yurts-theme .room-card.active { background: rgba(255,255,255,.12) !important; }
+        .room-card-top {
+            display: flex; justify-content: space-between; align-items: center; padding: 1.5rem 1.5rem;
+        }
+        .room-name { font-weight: 700; font-size: 1.05rem; }
+        .room-desc { font-size: .82rem; color: var(--gray); margin-top: .2rem; }
+        .room-price { font-size: 1.35rem; font-weight: 800; color: var(--gold); white-space: nowrap; }
+        .room-per { font-size: .72rem; color: var(--gray); }
+        .room-gallery {
+            max-height: 0; overflow: hidden; transition: max-height .5s cubic-bezier(.4,0,.2,1); position: relative;
+        }
+        .room-card.active .room-gallery { max-height: 600px; }
+        .room-gallery-wrap { position: relative; }
+        .room-gallery-inner {
+            display: flex; gap: .6rem; padding: 0 .6rem 1rem;
+            overflow-x: auto; scroll-behavior: smooth; scrollbar-width: none;
+            scroll-snap-type: x mandatory;
+        }
+        .room-gallery-inner::-webkit-scrollbar { display: none; }
+        .room-gallery-inner img {
+            width: 240px; height: 170px; object-fit: cover; border-radius: 12px;
+            flex-shrink: 0; scroll-snap-align: start;
+            cursor: pointer; opacity: 0; transform: scale(.95);
+            animation: imgReveal .4s ease forwards;
+        }
+        .room-card.active .room-gallery-inner img:nth-child(1) { animation-delay: .05s; }
+        .room-card.active .room-gallery-inner img:nth-child(2) { animation-delay: .1s; }
+        .room-card.active .room-gallery-inner img:nth-child(3) { animation-delay: .15s; }
+        .room-card.active .room-gallery-inner img:nth-child(4) { animation-delay: .2s; }
+        .room-card.active .room-gallery-inner img:nth-child(5) { animation-delay: .25s; }
+        .room-card.active .room-gallery-inner img:nth-child(6) { animation-delay: .3s; }
+        @keyframes imgReveal {
+            to { opacity: 1; transform: scale(1); }
+        }
+        .room-gallery-inner img:hover { transform: scale(1.04); box-shadow: 0 6px 20px rgba(0,0,0,.15); transition: .3s; }
+        .gallery-arrow {
+            position: absolute; top: 50%; transform: translateY(-50%);
+            width: 38px; height: 38px; border-radius: 50%; border: none;
+            background: rgba(255,255,255,.92); box-shadow: 0 2px 12px rgba(0,0,0,.15);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.1rem; color: var(--dark); cursor: pointer;
+            z-index: 5; transition: .25s; backdrop-filter: blur(6px);
+        }
+        .gallery-arrow:hover { background: var(--gold); color: #fff; transform: translateY(-50%) scale(1.1); }
+        .gallery-arrow.left { left: .3rem; }
+        .gallery-arrow.right { right: .3rem; }
+        .room-amenities {
+            display: flex; flex-wrap: wrap; gap: .4rem; padding: .6rem 1.2rem .8rem;
+        }
+        .room-amenity {
+            font-size: .68rem; padding: .3rem .7rem; background: var(--light); border-radius: 50px;
+            color: var(--gray); font-weight: 500;
+        }
+        /* Lightbox */
+        .lightbox {
+            position: fixed; inset: 0; background: rgba(0,0,0,.92); z-index: 300;
+            display: none; align-items: center; justify-content: center; cursor: zoom-out;
+        }
+        .lightbox.open { display: flex; }
+        .lightbox img {
+            max-width: 90vw; max-height: 85vh; border-radius: 12px;
+            animation: modalIn .3s ease;
+        }
+        .lightbox-close {
+            position: absolute; top: 2rem; right: 2rem; width: 50px; height: 50px;
+            background: rgba(255,255,255,.15); border: none; border-radius: 50%;
+            color: #fff; font-size: 1.5rem; cursor: pointer; backdrop-filter: blur(10px);
+        }
+
+        /* ===== CALENDAR ===== */
+        .cal-wrap {
+            background: #fff; border-radius: 20px; padding: 2rem; box-shadow: var(--shadow);
+            position: sticky; top: 100px;
+        }
+        .cal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+        .cal-header h4 { font-size: 1rem; }
+        .cal-btn { background: none; border: 1px solid #eee; width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; transition: .2s; }
+        .cal-btn:hover { background: var(--light); }
+        .cal-days { display: grid; grid-template-columns: repeat(7,1fr); gap: 4px; text-align: center; }
+        .cal-day-name { font-size: .7rem; color: var(--gray); font-weight: 600; padding: .5rem 0; }
+        .cal-day {
+            aspect-ratio: 1; display: flex; align-items: center; justify-content: center;
+            border-radius: 10px; font-size: .85rem; cursor: pointer; transition: .2s; font-weight: 500;
+        }
+        .cal-day:hover:not(.disabled):not(.booked-full):not(.booked-in):not(.booked-out) { background: var(--light); color: var(--gold); }
+        .cal-day.selected { background: var(--gold); color: #fff; font-weight: 700; }
+        .cal-day.disabled { color: #ddd; cursor: default; pointer-events: none; }
+        .cal-day.booked-full { background: rgba(255,50,50,.12); color: #ff6b6b; text-decoration: line-through; pointer-events: none; }
+        .cal-day.booked-in { background: linear-gradient(135deg, transparent 50%, rgba(255,50,50,.18) 50%); }
+        .cal-day.booked-out { background: linear-gradient(135deg, rgba(255,50,50,.18) 50%, transparent 50%); }
+        .cal-day.booked:hover { background: rgba(255,50,50,.15); }
+        .cal-day.today { border: 2px solid var(--gold); }
+        .cal-selected-info {
+            margin-top: 1.5rem; padding: 1rem; background: #fefcf6; border-radius: 12px;
+            border: 1px solid rgba(184,134,11,.15);
+        }
+        .cal-selected-info p { font-size: .85rem; color: var(--gray); }
+        .cal-selected-info strong { color: var(--dark); }
+
+        /* ===== FORM ===== */
+        .form-group { margin-top: 1.5rem; }
+        .form-group label { display: block; font-size: .78rem; font-weight: 600; color: var(--gray); margin-bottom: .5rem; text-transform: uppercase; letter-spacing: 1px; }
+        .form-group input, .form-group select {
+            width: 100%; padding: .9rem 1.2rem; border: 1.5px solid #e8e8e8;
+            border-radius: 12px; font-size: .95rem; outline: none; transition: .3s; background: #fff;
+        }
+        .form-group input:focus, .form-group select:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(184,134,11,.1); }
+        .btn-book {
+            width: 100%; margin-top: 2rem; padding: 1.1rem; border: none; border-radius: 14px;
+            background: var(--gold); color: #fff; font-weight: 700; font-size: .95rem;
+            letter-spacing: 1px; text-transform: uppercase; transition: .3s;
+        }
+        .btn-book:hover { background: var(--gold-light); box-shadow: 0 10px 30px rgba(184,134,11,.25); transform: translateY(-2px); }
+        .btn-book:disabled { background: #ccc; cursor: default; transform: none; box-shadow: none; }
+        .cal-day.range { background: rgba(184,134,11,.12); color: var(--gold); }
+        .cal-day.range-start { background: var(--gold); color: #fff; border-radius: 10px 0 0 10px; }
+        .cal-day.range-end { background: var(--gold); color: #fff; border-radius: 0 10px 10px 0; }
+        .cal-day.range-start.range-end { border-radius: 10px; }
+        .cal-day.range-start.booked-out { background: linear-gradient(135deg, rgba(255,50,50,.18) 50%, var(--gold) 50%); color: #fff; }
+        .cal-day.range-end.booked-in { background: linear-gradient(135deg, var(--gold) 50%, rgba(255,50,50,.18) 50%); color: #fff; }
+
+        /* Time slots for sauna */
+        .time-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 1rem; }
+        .time-slot {
+            padding: .6rem 0; border: 1.5px solid #eee; border-radius: 10px;
+            text-align: center; font-size: .85rem; font-weight: 600; cursor: pointer; transition: .2s;
+        }
+        .time-slot:hover:not(.booked) { border-color: var(--gold-light); background: var(--light); }
+        .time-slot.selected { background: var(--gold); border-color: var(--gold); color: #fff; }
+        .time-slot.booked { background: #fee; color: #f88; pointer-events: none; opacity: 0.6; }
+
+        /* Fix Sauna Card */
+        #sauna .booking-layout { display: grid; grid-template-columns: 1.3fr .7fr; gap: 4rem; margin-top: 3rem; align-items: flex-start; }
+        #sauna .cal-wrap { position: sticky; top: 120px; }
+        #sauna .room-card { width: 100%; border-color: var(--gold); background: #fefcf6; }
+        #sauna .room-gallery { max-height: 250px; display: block; overflow: hidden; }
+        #sauna .room-card.active .room-gallery { max-height: 600px; }
+        #sauna .room-gallery-inner { display: flex; padding: 1.2rem; gap: 1rem; overflow-x: auto; }
+        #sauna .room-gallery-inner img { width: 280px; height: 180px; object-fit: cover; border-radius: 12px; flex-shrink: 0; }
+
+        /* Cart */
+        .cart { margin-top: 1.5rem; padding: 1.2rem; background: #fefcf6; border-radius: 14px; border: 1px solid rgba(184,134,11,.15); }
+        .cart-title { font-size: .72rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--gray); margin-bottom: .8rem; }
+        .cart-row { display: flex; justify-content: space-between; align-items: center; padding: .45rem 0; font-size: .88rem; }
+        .cart-row.total { border-top: 1.5px solid rgba(184,134,11,.2); margin-top: .6rem; padding-top: .8rem; font-weight: 800; font-size: 1.1rem; color: var(--gold); }
+        .cart-remove { background: none; border: none; color: #ccc; font-size: .75rem; cursor: pointer; transition: .2s; padding: 0 .3rem; }
+        .cart-remove:hover { color: #e44; }
+
+        /* Addon toggles */
+        .addon-list { margin-top: 1.5rem; }
+        .addon-item {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: .9rem 1rem; background: #fff; border: 1.5px solid #eee; border-radius: 12px;
+            cursor: pointer; transition: .25s; margin-bottom: .6rem; user-select: none;
+        }
+        .addon-item:hover { border-color: var(--gold-light); }
+        .addon-item.on { border-color: var(--gold); background: #fefcf6; }
+        .addon-check {
+            width: 22px; height: 22px; border-radius: 6px; border: 2px solid #ddd;
+            display: flex; align-items: center; justify-content: center; transition: .2s;
+            font-size: .75rem; color: transparent; flex-shrink: 0;
+        }
+        .addon-item.on .addon-check { background: var(--gold); border-color: var(--gold); color: #fff; }
+        .addon-label { flex: 1; margin: 0 .8rem; }
+        .addon-label strong { display: block; font-size: .9rem; }
+        .addon-label span { font-size: .75rem; color: var(--gray); }
+        .addon-price { font-weight: 700; color: var(--gold); white-space: nowrap; font-size: .95rem; }
+        .addon-discount { font-size: .68rem; color: #4a4; font-weight: 600; }
+
+        /* ===== RESTAURANT ===== */
+        .rest-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; margin-top: 3rem; }
+        .rest-card {
+            background: #fff; border-radius: 20px; padding: 2.5rem; box-shadow: var(--shadow);
+            transition: .4s; position: relative; overflow: hidden;
+        }
+        .rest-card:hover { transform: translateY(-8px); box-shadow: var(--shadow-lg); }
+        .rest-card::before {
+            content:''; position: absolute; top: 0; left: 0; width: 100%; height: 4px;
+            background: linear-gradient(90deg, var(--gold), var(--gold-light));
+        }
+        .rest-icon { font-size: 2.5rem; margin-bottom: 1.5rem; }
+        .rest-card h3 { font-size: 1.3rem; margin-bottom: .8rem; }
+        .rest-card .price-tag { font-size: 1.8rem; font-weight: 800; color: var(--gold); margin-top: 1rem; }
+        .rest-card .price-note { font-size: .78rem; color: var(--gray); }
+
+        /* ===== BAR ===== */
+        .bar-section {
+            background: var(--dark); color: #fff; position: relative; overflow: hidden;
+        }
+        .bar-section .section-title { color: #fff; }
+        .bar-bg-text {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+            font-size: 15vw; font-weight: 900; color: rgba(255,255,255,.03); white-space: nowrap;
+            pointer-events: none;
+        }
+        .bar-features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; margin-top: 4rem; position: relative; }
+        .bar-feat {
+            text-align: center; padding: 3rem 2rem; border: 1px solid rgba(255,255,255,.08);
+            border-radius: 20px; transition: .4s;
+        }
+        .bar-feat:hover { border-color: var(--gold); background: rgba(255,255,255,.03); transform: translateY(-5px); }
+        .bar-feat .icon { font-size: 2.5rem; margin-bottom: 1.5rem; }
+        .bar-feat h4 { font-size: 1.1rem; margin-bottom: .6rem; }
+        .bar-feat p { color: rgba(255,255,255,.5); font-size: .9rem; }
+
+        /* ===== CONTACTS ===== */
+        .contacts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; margin-top: 3rem; }
+        .contact-card {
+            padding: 2.5rem; background: #fff; border-radius: 20px; box-shadow: var(--shadow);
+        }
+        .contact-card h3 { font-size: 1.2rem; margin-bottom: 1.5rem; color: var(--gold); }
+        .contact-item { display: flex; gap: 1rem; margin-bottom: 1.2rem; font-size: .95rem; }
+        .contact-item strong { min-width: 100px; color: var(--dark); }
+        .map-placeholder {
+            height: 350px; border-radius: 20px; overflow: hidden; background: #e8e8e8;
+        }
+        .map-placeholder iframe { width: 100%; height: 100%; border: none; }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            background: var(--dark); color: rgba(255,255,255,.5); padding: 5rem 0 2rem;
+        }
+        .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 3rem; margin-bottom: 4rem; }
+        .footer-logo { font-size: 1.1rem; font-weight: 800; color: #fff; letter-spacing: 3px; margin-bottom: 1rem; }
+        .footer h4 { color: #fff; font-size: .82rem; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 1.2rem; }
+        .footer a { display: block; margin-bottom: .6rem; transition: .2s; font-size: .9rem; }
+        .footer a:hover { color: var(--gold); }
+        .footer-bottom {
+            border-top: 1px solid rgba(255,255,255,.08); padding-top: 2rem;
+            display: flex; justify-content: space-between; font-size: .8rem;
+        }
+
+        /* ===== MODAL ===== */
+        .modal-bg {
+            position: fixed; inset: 0; background: rgba(0,0,0,.7); backdrop-filter: blur(8px);
+            z-index: 200; display: none; align-items: center; justify-content: center;
+        }
+        .modal-bg.open { display: flex; }
+        .modal {
+            background: #fff; border-radius: 24px; padding: 3rem; width: 90%; max-width: 480px;
+            position: relative; animation: modalIn .4s ease;
+        }
+        @keyframes modalIn { from { transform: scale(.92); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .modal-close {
+            position: absolute; top: 1.2rem; right: 1.2rem; width: 40px; height: 40px;
+            background: var(--light); border: none; border-radius: 50%; font-size: 1.2rem;
+            display: flex; align-items: center; justify-content: center; transition: .2s;
+        }
+        .modal-close:hover { background: #eee; }
+        .modal-success { text-align: center; }
+        .modal-success .checkmark {
+            width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, var(--gold), var(--gold-light));
+            display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem;
+            font-size: 2rem; color: #fff;
+        }
+
+        /* ===== RESPONSIVE ===== */
+
+        /* Hamburger menu */
+        .hamburger {
+            display: none; background: none; border: none; color: #fff;
+            font-size: 1.6rem; cursor: pointer; padding: .5rem; transition: .3s;
+        }
+        .header.scrolled .hamburger { color: var(--dark); }
+        .mobile-nav {
+            display: none; position: fixed; inset: 0; background: rgba(0,0,0,.95);
+            z-index: 150; flex-direction: column; align-items: center; justify-content: center; gap: 2rem;
+        }
+        .mobile-nav.open { display: flex; }
+        .mobile-nav a {
+            color: #fff; font-size: 1.3rem; font-weight: 600; letter-spacing: 2px;
+            text-transform: uppercase; transition: .3s;
+        }
+        .mobile-nav a:hover { color: var(--gold); }
+        .mobile-nav-close {
+            position: absolute; top: 1.5rem; right: 1.5rem; background: none; border: none;
+            color: #fff; font-size: 2rem; cursor: pointer;
+        }
+
+        /* Large tablets / small desktops */
+        @media (max-width: 1280px) {
+            .container { max-width: 1080px; }
+            .e-card { height: 450px; }
+        }
+
+        /* Tablets */
+        @media (max-width: 1024px) {
+            .e-grid { grid-template-columns: repeat(2, 1fr); }
+            .e-card { height: 400px; }
+            .booking-layout { grid-template-columns: 1fr; }
+            .cal-wrap { position: static; }
+            .rest-grid { grid-template-columns: repeat(2, 1fr); }
+            .bar-features { grid-template-columns: 1fr; }
+            .about-grid { gap: 3rem; }
+            .about-img { height: 400px; }
+            section { padding: 5rem 0; }
+        }
+
+        /* Mobile landscape / small tablets */
+        @media (max-width: 768px) {
+            .nav { display: none; }
+            .hamburger { display: block; }
+            .container { padding: 0 1.2rem; }
+            section { padding: 4rem 0; }
+            .e-grid { grid-template-columns: 1fr; }
+            .e-card { height: 350px; }
+            .e-card h3 { font-size: 1.3rem; }
+            .about-grid { grid-template-columns: 1fr; gap: 2rem; }
+            .about-img { height: 300px; }
+            .about-img::after { display: none; }
+            .about-stats { grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+            .stat-num { font-size: 2rem; }
+            .contacts-grid { grid-template-columns: 1fr; }
+            .footer-grid { grid-template-columns: 1fr 1fr; gap: 2rem; }
+            .footer-bottom { flex-direction: column; gap: .5rem; text-align: center; }
+            .hero-title { font-size: 2.5rem; }
+            .hero-desc { font-size: 1rem; padding: 0 1rem; }
+            .hero-btns { flex-direction: column; align-items: center; }
+            .hero-scroll { display: none; }
+            .section-title { font-size: 1.8rem; }
+            .rest-grid { grid-template-columns: 1fr; }
+            .rest-card { padding: 2rem; }
+            .rest-card .price-tag { font-size: 1.5rem; }
+            .bar-bg-text { font-size: 25vw; }
+            .bar-feat { padding: 2rem 1.5rem; }
+            .room-card-top { padding: 1.2rem 1.5rem; }
+            .room-gallery-inner img { width: 200px; height: 140px; }
+            .gallery-arrow { width: 34px; height: 34px; font-size: 1rem; }
+            .booking-layout { grid-template-columns: 1fr !important; gap: 2rem; }
+            .cal-wrap { position: static !important; }
+            .map-placeholder { height: 280px; }
+            .modal { padding: 2rem; }
+            .lightbox img { max-width: 95vw; max-height: 80vh; }
+        }
+
+        /* Mobile portrait */
+        @media (max-width: 480px) {
+            html { font-size: 14px; }
+            .container { padding: 0 1rem; }
+            section { padding: 3rem 0; }
+            .hero { height: 100svh; }
+            .hero-title { font-size: 2rem; line-height: 1.15; }
+            .hero-sub { font-size: .72rem; letter-spacing: 4px; }
+            .hero-desc { font-size: .9rem; }
+            .btn { padding: .85rem 2rem; font-size: .78rem; width: 100%; justify-content: center; }
+            .e-grid { gap: 1rem; }
+            .e-card { height: 280px; border-radius: 16px; }
+            .e-card h3 { font-size: 1.15rem; }
+            .e-card p { font-size: .8rem; }
+            .e-badge { font-size: .6rem; padding: .25rem .7rem; }
+            .e-card .e-arrow { width: 36px; height: 36px; font-size: 1rem; top: 1rem; right: 1rem; }
+            .section-label { font-size: .68rem; letter-spacing: 3px; }
+            .section-title { font-size: 1.5rem; }
+            .section-desc { font-size: .92rem; }
+            .about-img { height: 240px; border-radius: 16px; }
+            .about-stats { grid-template-columns: repeat(3, 1fr); gap: .6rem; }
+            .stat { padding: 1rem .5rem; border-radius: 12px; }
+            .stat-num { font-size: 1.5rem; }
+            .stat-label { font-size: .65rem; }
+            .room-card { border-radius: 12px; }
+            .room-card-top { padding: 1.25rem; flex-direction: column; align-items: flex-start; gap: .8rem; }
+            .room-name { font-size: 1rem; }
+            .room-desc { font-size: .85rem; }
+            .room-price { font-size: 1.25rem; }
+            .room-gallery-inner { padding: 0 .8rem 1rem; gap: .5rem; }
+            .room-gallery-inner img { width: 180px; height: 120px; border-radius: 10px; }
+            .gallery-arrow { width: 34px; height: 34px; font-size: 1rem; }
+            .room-amenities { padding: .4rem .8rem .8rem; }
+            .room-amenity { font-size: .65rem; padding: .3rem .6rem; }
+            .yurts-theme .room-card { border: 1px solid rgba(255,255,255,.12); }
+            .yurts-theme .room-card.active { border-color: #e1d3a5; }
+            .room-amenity { font-size: .62rem; padding: .25rem .5rem; }
+            .cal-wrap { padding: 1.5rem; border-radius: 16px; }
+            .cal-day { font-size: .75rem; }
+            .cal-day-name { font-size: .6rem; }
+            .form-group input, .form-group select { padding: .8rem 1rem; font-size: .88rem; border-radius: 10px; }
+            .form-group label { font-size: .7rem; }
+            .btn-book { padding: 1rem; font-size: .85rem; border-radius: 12px; }
+            .addon-item { padding: .7rem .8rem; border-radius: 10px; }
+            .addon-label strong { font-size: .82rem; }
+            .addon-label span { font-size: .68rem; }
+            .addon-price { font-size: .85rem; }
+            .addon-check { width: 20px; height: 20px; border-radius: 5px; }
+            .cart { padding: 1rem; border-radius: 12px; }
+            .cart-row { font-size: .82rem; }
+            .cart-row.total { font-size: 1rem; }
+            .rest-grid { grid-template-columns: 1fr !important; gap: 1.5rem; }
+            .rest-card { padding: 1.5rem; border-radius: 14px; }
+            .rest-icon { font-size: 2rem; margin-bottom: 1rem; }
+            .rest-card h3 { font-size: 1.1rem; }
+            .yurts-theme .yurt-info-card { padding: 1.5rem !important; }
+            .yurts-theme .yurt-info-title { font-size: 1.1rem !important; }
+            .yurts-theme .yurt-info-card p { font-size: 0.82rem !important; }
+            .rest-card .price-tag { font-size: 1.4rem; }
+            .bar-feat { padding: 1.5rem 1rem; border-radius: 14px; }
+            .bar-feat .icon { font-size: 2rem; margin-bottom: 1rem; }
+            .bar-feat h4 { font-size: 1rem; }
+            .bar-feat p { font-size: .82rem; }
+            .contact-card { padding: 1.5rem; border-radius: 14px; }
+            .contact-card h3 { font-size: 1rem; }
+            .contact-item { font-size: .85rem; flex-direction: column; gap: .2rem; }
+            .contact-item strong { min-width: auto; }
+            .map-placeholder { height: 220px; border-radius: 14px; }
+            .footer { padding: 3rem 0 1.5rem; }
+            .footer-grid { grid-template-columns: 1fr; gap: 2rem; margin-bottom: 2.5rem; }
+            .footer-logo { font-size: .95rem; }
+            .footer h4 { font-size: .75rem; margin-bottom: .8rem; }
+            .footer a { font-size: .82rem; margin-bottom: .4rem; }
+            .header { padding: 1rem 0; }
+            .header.scrolled { padding: .8rem 0; }
+            .logo { font-size: .95rem; letter-spacing: 2px; }
+            .modal { padding: 1.5rem; border-radius: 18px; }
+            .modal-success .checkmark { width: 65px; height: 65px; font-size: 1.6rem; }
+            .lightbox-close { top: 1rem; right: 1rem; width: 40px; height: 40px; font-size: 1.2rem; }
+        }
+
+        /* ===== KHAAN-DYT THEME ===== */
+        .yurts-theme { background-color: #38402f; color: #fff; padding-bottom: 7rem; border-top: 5px solid #e1d3a5; border-bottom: 5px solid #e1d3a5; }
+        .yurts-theme .section-title { color: #e1d3a5; font-family: 'Playfair Display', serif; padding-bottom: 1rem; }
+        .yurts-theme .section-label { color: #e1d3a5; }
+        .yurts-theme .section-desc { color: rgba(255,255,255,0.7); }
+        .yurts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin: 3rem 0; }
+        .yurt-info-card { background: rgba(0,0,0,0.25); border-radius: 20px; border: 1px solid rgba(225,211,165,0.15); overflow: hidden; display: flex; flex-direction: column; transition: .3s; }
+        .yurt-info-card:hover { transform: translateY(-5px); border-color: #e1d3a5; box-shadow: 0 10px 40px rgba(0,0,0,0.4); }
+        .yurt-info-img { height: 250px; width: 100%; object-fit: cover; }
+        .yurt-info-body { padding: 2.5rem; }
+        .yurt-info-title { font-size: 1.4rem; color: #e1d3a5; margin-bottom: 1.5rem; font-family: 'Playfair Display', serif; font-weight: 700; letter-spacing: 2px; }
+        .yurt-info-list { list-style: none; padding: 0; margin: 0; }
+        .yurt-info-list li { position: relative; padding-left: 1.5rem; margin-bottom: 0.8rem; font-size: 0.95rem; color: rgba(255,255,255,0.85); line-height: 1.5; }
+        .yurt-info-list li::before { content: '•'; position: absolute; left: 0; color: #e1d3a5; font-size: 1.2rem; line-height: 1; }
+        @media (max-width: 1024px) { .yurts-grid { grid-template-columns: 1fr; } }
+        
+        /* Adjusting booking cards inside dark theme */
+        .yurts-theme .booking-layout { margin-top: 0; }
+        .yurts-theme .room-card { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1); }
+        .yurts-theme .room-card.active { background: rgba(255,255,255,0.1); border-color: #e1d3a5; box-shadow: 0 8px 30px rgba(0,0,0,0.3); }
+        .yurts-theme .room-name { color: #fff; }
+        .yurts-theme .room-desc { color: rgba(255,255,255,0.6); }
+        .yurts-theme .room-price { color: #e1d3a5; }
+        .yurts-theme .room-amenity { background: rgba(255,255,255,0.1); color: #eee; }
+        .yurts-theme .cal-wrap { background: #2a3123; border: 1px solid rgba(255,255,255,0.1); color: #fff; box-shadow: 0 10px 40px rgba(0,0,0,0.4); }
+        .yurts-theme .form-group input, .yurts-theme .form-group select { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.2); color: #fff; }
+        .yurts-theme .form-group label { color: rgba(255,255,255,0.7); }
+        .yurts-theme .addon-item { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1); color: #fff; }
+        .yurts-theme .addon-item.on { background: rgba(255,255,255,0.15); border-color: #e1d3a5; }
+        .yurts-theme .addon-price { color: #e1d3a5; }
+        .yurts-theme .addon-label span { color: rgba(255,255,255,0.6); }
+        .yurts-theme .addon-check { border-color: rgba(255,255,255,0.3); }
+        .yurts-theme .addon-item.on .addon-check { background: #e1d3a5; border-color: #e1d3a5; color: #2a3123; }
+        .yurts-theme .cart { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1); color: #fff; }
+        .yurts-theme .cart-title, .yurts-theme .cal-selected-info p { color: rgba(255,255,255,0.7); }
+        .yurts-theme .cart-row { color: rgba(255,255,255,0.9); }
+        .yurts-theme .cart-row span strong, .yurts-theme .cal-selected-info strong { color: #fff !important; }
+        .yurts-theme .cart-row.total { color: #e1d3a5; border-color: rgba(255,255,255,0.1); }
+        .yurts-theme .btn-book { background: #e1d3a5; color: #2a3123; }
+        .yurts-theme .btn-book:hover { background: #fff; box-shadow: 0 10px 30px rgba(225,211,165,0.4); }
+        .yurts-theme .cal-btn { border-color: rgba(255,255,255,0.2); color: #fff; }
+        .yurts-theme .cal-btn:hover { background: rgba(255,255,255,0.1); }
+        .yurts-theme .cal-day { color: #fff; }
+        .yurts-theme .cal-day:hover:not(.disabled):not(.booked-full):not(.booked-in):not(.booked-out) { background: rgba(255,255,255,0.1); color: #e1d3a5; }
+        .yurts-theme .cal-day.selected { background: #e1d3a5; color: #2a3123; font-weight: 700; }
+        .yurts-theme .cal-day.today { border-color: #e1d3a5; }
+        .yurts-theme .cal-day.range { background: rgba(225,211,165,0.15); color: #e1d3a5; }
+        .yurts-theme .cal-day.range-start, .yurts-theme .cal-day.range-end { background: #e1d3a5; color: #2a3123; }
+        .yurts-theme hr { border-top-color: rgba(255,255,255,0.1) !important; }
+        .yurts-theme .cal-day.disabled { color: rgba(255,255,255,0.2); }
+        .yurts-theme .cal-day-name { color: #e1d3a5; }
+        .yurts-theme .gallery-arrow { background: rgba(0,0,0,0.6); color: #fff; box-shadow: none; border: 1px solid rgba(255,255,255,0.2); }
+        .yurts-theme .gallery-arrow:hover { background: #e1d3a5; color: #2a3123; }
+        .yurts-theme p[style*="color:var(--gray)"] { color: rgba(255,255,255,0.7) !important; }
+    </style>
+</head>
+<body>
+
+<!-- ========== HEADER ========== -->
+<header class="header" id="header">
+    <div class="container header-inner">
+        <a href="#" class="logo">ООО <em>ЧАЛАМА</em></a>
+        <nav class="nav">
+            <a href="#hotel">Отель</a>
+            <a href="#yurts">Хаан-Дыт</a>
+            <a href="#restaurant">Ресторан</a>
+            <a href="#bar">Бар</a>
+            <a href="#contacts">Контакты</a>
+            <a href="tel:+73942221082" class="nav-phone">+7 394 222-10-82</a>
+        </nav>
+        <button class="hamburger" onclick="openMobileNav()">☰</button>
+    </div>
+</header>
+
+<!-- Mobile Nav Overlay -->
+<div class="mobile-nav" id="mobileNav">
+    <button class="mobile-nav-close" onclick="closeMobileNav()">×</button>
+    <a href="#hotel" onclick="closeMobileNav()">Отель</a>
+    <a href="#yurts" onclick="closeMobileNav()">Хаан-Дыт</a>
+    <a href="#restaurant" onclick="closeMobileNav()">Ресторан</a>
+    <a href="#bar" onclick="closeMobileNav()">Бар «Скала»</a>
+    <a href="#contacts" onclick="closeMobileNav()">Контакты</a>
+    <a href="tel:+73942221082" style="color:var(--gold)">+7 394 222-10-82</a>
+</div>
+
+<!-- ========== HERO ========== -->
+<section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-content">
+        <p class="hero-sub">Республика Тыва, г. Кызыл</p>
+        <h1 class="hero-title serif">Искусство<br>Тувинского<br>Гостеприимства</h1>
+        <p class="hero-desc">Уникальный комплекс отдыха и гастрономии в самом сердце Сибири. Откройте для себя Туву.</p>
+        <div class="hero-btns">
+            <a href="#hotel" class="btn btn-gold">Забронировать</a>
+            <a href="#about" class="btn btn-outline-w">О нас</a>
+        </div>
+    </div>
+    <div class="hero-scroll">SCROLL<span></span></div>
+</section>
+
+<!-- ========== ENTITIES ========== -->
+<section class="entities" id="entities">
+    <div class="container">
+        <div style="text-align:center" data-r>
+            <p class="section-label">Наши направления</p>
+            <h2 class="section-title">Четыре грани<br>безупречного отдыха</h2>
+        </div>
+        <div class="e-grid">
+            <a href="#hotel" class="e-card" data-r>
+                <img src="https://www.chalamahotel.ru/upload/resize_cache/iblock/8ca/900_600_2/867g21cm3hqw7a1b49alaa3f01og2er8.jpg" alt="Отель Чалама">
+                <div class="e-card-overlay">
+                    <span class="e-badge">Отель</span>
+                    <div class="e-arrow">→</div>
+                    <h3>Отель «Чалама»</h3>
+                    <p>9 категорий номеров в центре Кызыла</p>
+                </div>
+            </a>
+            <a href="#yurts" class="e-card" data-r>
+                <img src="https://www.chalamahotel.ru/upload/iblock/82a/m6f9m7idqo7lzpnxoutwojulvgyi5yym.jpeg" alt="Хаан-Дыт">
+                <div class="e-card-overlay">
+                    <span class="e-badge">Юрточный отель</span>
+                    <div class="e-arrow">→</div>
+                    <h3>Хаан-Дыт</h3>
+                    <p>Загородный отель с банным комплексом</p>
+                </div>
+            </a>
+            <a href="#restaurant" class="e-card" data-r>
+                <img src="https://www.chalamahotel.ru/upload/iblock/337/e756awru5rx0436xhfsmecl7r6e2bxm0.jpeg" alt="Ресторан">
+                <div class="e-card-overlay">
+                    <span class="e-badge">Ресторан</span>
+                    <div class="e-arrow">→</div>
+                    <h3>Ресторан «Чалама»</h3>
+                    <p>Национальная и паназиатская кухня</p>
+                </div>
+            </a>
+            <a href="#bar" class="e-card" data-r>
+                <img src="https://www.chalamahotel.ru/upload/iblock/0b7/2zu3y71w0svt7sxcycrs5fplz23orgz9.jpeg" alt="Бар Скала">
+                <div class="e-card-overlay">
+                    <span class="e-badge">Бар</span>
+                    <div class="e-arrow">→</div>
+                    <h3>Бар «Скала»</h3>
+                    <p>Авторские коктейли и атмосфера</p>
+                </div>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- ========== ABOUT ========== -->
+<section id="about">
+    <div class="container">
+        <div class="about-grid">
+            <div class="about-img" data-r>
+                <img src="https://www.chalamahotel.ru/upload/iblock/e5b/niub7dn3irklicps1kyxhyj06gull6fp.jpeg" alt="Об отеле">
+            </div>
+            <div data-r>
+                <p class="section-label">О компании</p>
+                <h2 class="section-title serif">Добро пожаловать<br>в мир «Чалама»</h2>
+                <p class="section-desc" style="margin-bottom:1.5rem">
+                    ООО «Чалама» — это группа компаний, объединяющая лучшие места для отдыха, гастрономии и незабываемых впечатлений в Республике Тыва.
+                </p>
+                <p class="section-desc">
+                    Мы предлагаем уникальное сочетание традиционного тувинского колорита и современного комфорта. От премиальных номеров в центре Кызыла до загородных юрт на природе — каждый найдёт свой идеальный формат отдыха.
+                </p>
+                <div class="about-stats">
+                    <div class="stat" data-r><div class="stat-num">10+</div><div class="stat-label">Лет опыта</div></div>
+                    <div class="stat" data-r><div class="stat-num">4</div><div class="stat-label">Направления</div></div>
+                    <div class="stat" data-r><div class="stat-num">1000+</div><div class="stat-label">Гостей в год</div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ========== HOTEL BOOKING ========== -->
+<section class="booking-section" id="hotel">
+    <div class="container">
+        <div data-r>
+            <p class="section-label">Бронирование</p>
+            <h2 class="section-title">Номера в отеле «Чалама»</h2>
+            <p class="section-desc">Выберите категорию номера и дату заезда. Мы свяжемся с вами для подтверждения.</p>
+        </div>
+        <div class="booking-layout">
+            <div class="room-list" id="hotel-rooms">
+                <!-- JS Generated -->
+            </div>
+            <div>
+                <div class="cal-wrap" id="hotel-calendar">
+                    <div style="margin-bottom:1rem">
+                        <p style="font-weight:700;font-size:.78rem;letter-spacing:2px;text-transform:uppercase;color:var(--gray)">Выбранный номер</p>
+                        <p id="hotel-selected-name" style="font-weight:800;font-size:1.1rem;margin-top:.3rem">Джуниор Сюит</p>
+                        <p id="hotel-selected-price" style="color:var(--gold);font-weight:700;font-size:1.3rem;margin-top:.2rem">10 450 ₽ / сутки</p>
+                    </div>
+                    <hr style="border:none;border-top:1px solid #eee;margin:1.5rem 0">
+                    <p style="font-size:.8rem;color:var(--gray);margin-bottom:.5rem">Выберите даты заезда и выезда:</p>
+                    <div class="cal-header">
+                        <button class="cal-btn" onclick="calNav('hotel',-1)">‹</button>
+                        <h4 id="hotel-cal-title">Апрель 2026</h4>
+                        <button class="cal-btn" onclick="calNav('hotel',1)">›</button>
+                    </div>
+                    <div class="cal-days" id="hotel-cal-grid"></div>
+                    <div id="hotel-cart"></div>
+                    <div class="form-group">
+                        <label>Ваше имя</label>
+                        <input type="text" placeholder="Иван Иванов" id="hotel-name">
+                    </div>
+                    <div class="form-group">
+                        <label>Телефон</label>
+                        <input type="tel" placeholder="+7 (___) ___-__-__" id="hotel-phone">
+                    </div>
+                    <div style="margin: 1rem 0; font-size: 0.75rem; color: var(--gray); display: flex; gap: 0.8rem; align-items: flex-start;">
+                        <input type="checkbox" id="hotel-consent" checked style="margin-top: 0.2rem;">
+                        <label for="hotel-consent">Я согласен на <a href="policy.html" target="_blank" style="color: var(--gold); text-decoration: underline;">обработку персональных данных</a></label>
+                    </div>
+                    <button class="btn-book" onclick="submitBooking('hotel')">Забронировать</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ========== SAUNA BOOKING (Hotel Chalama) ========== -->
+<section id="sauna" class="booking-section">
+    <div class="container">
+            <div class="booking-layout">
+                <div>
+                    <div data-r style="margin-bottom: 3rem;">
+                        <p class="section-label">Дополнительные услуги</p>
+                        <h2 class="section-title">Забронировать Сауну</h2>
+                        <p class="section-desc">Сауна при отеле «Чалама». Выберите удобную дату и время. Сауна работает с 10:00 до 22:00.</p>
+                    </div>
+                    <div class="room-list" id="sauna-rooms"></div>
+                </div>
+                <div>
+                    <div class="cal-wrap" id="sauna-calendar">
+                        <div style="margin-bottom:1rem">
+                            <p style="font-weight:700;font-size:.78rem;letter-spacing:2px;text-transform:uppercase;color:var(--gray)">Выбранный объект</p>
+                            <p id="sauna-selected-name" style="font-weight:800;font-size:1.1rem;margin-top:.3rem">Сауна</p>
+                        </div>
+                        <hr style="border:none;border-top:1px solid #eee;margin:1.5rem 0">
+                        <p style="font-size:.8rem;color:var(--gray);margin-bottom:.5rem">1. Выберите дату:</p>
+                        <div class="cal-header">
+                            <button class="cal-btn" onclick="calNav('sauna',-1)">‹</button>
+                            <h4 id="sauna-cal-title">Апрель 2026</h4>
+                            <button class="cal-btn" onclick="calNav('sauna',1)">›</button>
+                        </div>
+                        <div class="cal-days" id="sauna-cal-grid"></div>
+                        <div id="sauna-time-select" style="display:none; margin-top: 1.5rem;">
+                            <p style="font-size:.8rem;color:var(--gray);margin-bottom:.5rem">2. Выберите время (мин. 2 часа):</p>
+                            <div class="time-grid" id="sauna-time-grid"></div>
+                        </div>
+                        <div id="sauna-cart"></div>
+                        <div class="form-group">
+                            <label>Ваше имя</label>
+                            <input type="text" placeholder="Иван Иванов" id="sauna-name">
+                        </div>
+                        <div class="form-group">
+                            <label>Телефон</label>
+                            <input type="tel" placeholder="+7 (___) ___-__-__" id="sauna-phone">
+                        </div>
+                        <div style="margin: 1rem 0; font-size: 0.75rem; color: var(--gray); display: flex; gap: 0.8rem; align-items: flex-start;">
+                            <input type="checkbox" id="sauna-consent" checked style="margin-top: 0.2rem;">
+                            <label for="sauna-consent">Я согласен на <a href="policy.html" target="_blank" style="color: var(--gold); text-decoration: underline;">обработку персональных данных</a></label>
+                        </div>
+                        <button class="btn-book" onclick="submitBooking('sauna')">Забронировать</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- ========== YURTS BOOKING ========== -->
+<section id="yurts" class="yurts-theme">
+    <div class="container">
+        <div data-r style="text-align: center; margin-bottom: 2rem;">
+            <img src="uploads/kd_logo.png" style="width: 120px; margin: 0 auto 1.5rem;" alt="Хаан-Дыт Лого">
+            <p class="section-label" style="text-align: center; letter-spacing: 5px;">Загородный отель-ресторан</p>
+            <h2 class="section-title">ХААН-ДЫТ</h2>
+            <p class="section-desc" style="margin: 0 auto; max-width: 600px; font-size: 1.1rem;">
+                Погрузитесь в атмосферу традиционного тувинского гостеприимства и современного комфорта на лоне природы в селе Сесерлиг.
+            </p>
+        </div>
+
+
+
+        <div style="margin-top: 5rem; margin-bottom: 2rem;" data-r>
+            <h3 style="font-size: 1.8rem; font-family: 'Playfair Display', serif; color: #e1d3a5; text-align: left;">Онлайн-бронирование размещения</h3>
+            <p style="color: rgba(255,255,255,0.7); font-size: 0.95rem;">Выберите вариант размещения и удобные даты. Для бронирования Ресторана свяжитесь с нами по телефону.</p>
+        </div>
+
+        <div class="booking-layout">
+            <div class="room-list" id="yurt-rooms"></div>
+            <div>
+                <div class="cal-wrap" id="yurt-calendar">
+                    <div style="margin-bottom:1rem">
+                        <p style="font-weight:700;font-size:.78rem;letter-spacing:2px;text-transform:uppercase;color:var(--gray)">Выбранная юрта</p>
+                        <p id="yurt-selected-name" style="font-weight:800;font-size:1.1rem;margin-top:.3rem">Малые юрты №1-3</p>
+                        <p id="yurt-selected-price" style="color:#e1d3a5;font-weight:700;font-size:1.3rem;margin-top:.2rem">от 10 000 ₽ / сутки</p>
+                    </div>
+                    <hr style="border:none;border-top:1px solid #eee;margin:1.5rem 0">
+                    <p style="font-size:.8rem;color:var(--gray);margin-bottom:.5rem">Выберите даты заезда и выезда:</p>
+                    <div class="cal-header">
+                        <button class="cal-btn" onclick="calNav('yurt',-1)">‹</button>
+                        <h4 id="yurt-cal-title">Апрель 2026</h4>
+                        <button class="cal-btn" onclick="calNav('yurt',1)">›</button>
+                    </div>
+                    <div class="cal-days" id="yurt-cal-grid"></div>
+                    <div class="addon-list">
+                        <p style="font-size:.72rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gray);margin-bottom:.6rem">Дополнительные услуги</p>
+                        <div class="addon-item" id="addon-bath" onclick="toggleAddon('bath')">
+                            <div class="addon-check">✓</div>
+                            <div class="addon-label"><strong>Баня (2 часа)</strong><span>До 10 чел. · Доп. час 2000₽</span></div>
+                            <div><div class="addon-price" id="bath-price-display">7 000 ₽</div><div class="addon-discount" id="bath-discount" style="display:none">−1000₽ с юртой</div></div>
+                        </div>
+                        <div class="addon-item" id="addon-tub" onclick="toggleAddon('tub')">
+                            <div class="addon-check">✓</div>
+                            <div class="addon-label"><strong>Банный чан</strong><span>Продаётся вместе с баней</span></div>
+                            <div class="addon-price">5 000 ₽</div>
+                        </div>
+                    </div>
+                    <div id="yurt-cart"></div>
+                    <div class="form-group">
+                        <label>Ваше имя</label>
+                        <input type="text" placeholder="Иван Иванов" id="yurt-name">
+                    </div>
+                    <div class="form-group">
+                        <label>Телефон</label>
+                        <input type="tel" placeholder="+7 (___) ___-__-__" id="yurt-phone">
+                    </div>
+                    <div style="margin: 1rem 0; font-size: 0.75rem; color: rgba(255,255,255,0.6); display: flex; gap: 0.8rem; align-items: flex-start;">
+                        <input type="checkbox" id="yurt-consent" checked style="margin-top: 0.2rem;">
+                        <label for="yurt-consent">Я согласен на <a href="policy.html" target="_blank" style="color: #e1d3a5; text-decoration: underline;">обработку персональных данных</a></label>
+                    </div>
+                    <button class="btn-book" onclick="submitBooking('yurt')">Забронировать</button>
+                </div>
+            </div>
+        </div>
+
+        <div style="margin-top:5rem">
+            <h3 data-r style="font-size:1.8rem;margin-bottom:2rem;font-family: 'Playfair Display', serif; color: #e1d3a5;">Баня и Банный чан</h3>
+            <div class="rest-grid" style="grid-template-columns: repeat(3,1fr)">
+                <div class="yurt-info-card" data-r style="padding: 2.5rem;">
+                    <div style="font-size: 2.5rem; margin-bottom: 1.5rem;">🧖</div>
+                    <div class="yurt-info-title" style="margin-bottom: 0.8rem;">Баня при бронировании с юртой</div>
+                    <p style="color:rgba(255,255,255,0.7);font-size:.9rem">2 часа, до 10 человек</p>
+                    <div style="font-size: 1.8rem; font-weight: 800; color: #e1d3a5; margin-top: 1rem;">6 000 ₽</div>
+                </div>
+                <div class="yurt-info-card" data-r style="padding: 2.5rem;">
+                    <div style="font-size: 2.5rem; margin-bottom: 1.5rem;">♨️</div>
+                    <div class="yurt-info-title" style="margin-bottom: 0.8rem;">Банный чан</div>
+                    <p style="color:rgba(255,255,255,0.7);font-size:.9rem">Вместе с баней</p>
+                    <div style="font-size: 1.8rem; font-weight: 800; color: #e1d3a5; margin-top: 1rem;">5 000 ₽</div>
+                </div>
+                <div class="yurt-info-card" data-r style="padding: 2.5rem;">
+                    <div style="font-size: 2.5rem; margin-bottom: 1.5rem;">📅</div>
+                    <div class="yurt-info-title" style="margin-bottom: 0.8rem;">Почасовая аренда (без юрты)</div>
+                    <p style="color:rgba(255,255,255,0.7);font-size:.9rem">Минимум 2 часа, до 10 человек</p>
+                    <div style="font-size: 1.8rem; font-weight: 800; color: #e1d3a5; margin-top: 1rem;">2 000 ₽ / час</div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<!-- ========== RESTAURANT ========== -->
+<section class="booking-section" id="restaurant">
+    <div class="container">
+        <div style="text-align:center" data-r>
+            <p class="section-label">Гастрономия</p>
+            <h2 class="section-title">Ресторан «Чалама»</h2>
+            <p class="section-desc" style="margin:0 auto">Паназиатская и национальная тувинская кухня. Банкеты, фуршеты и торжественные мероприятия.</p>
+        </div>
+        <div class="rest-grid">
+            <div class="rest-card" data-r>
+                <div class="rest-icon">🍽</div>
+                <h3>Фуршет</h3>
+                <p style="color:var(--gray);font-size:.9rem">На 10 человек, полное меню и сервировка</p>
+                <div class="price-tag">12 500 ₽</div>
+            </div>
+            <div class="rest-card" data-r>
+                <div class="rest-icon">🥂</div>
+                <h3>Коктейльный бар</h3>
+                <p style="color:var(--gray);font-size:.9rem">На 10 человек, профессиональный бармен</p>
+                <div class="price-tag">12 000 ₽</div>
+            </div>
+            <div class="rest-card" data-r>
+                <div class="rest-icon">🎉</div>
+                <h3>Банкет</h3>
+                <p style="color:var(--gray);font-size:.9rem">Стоимость с каждого человека, аппаратура входит</p>
+                <div class="price-tag">3 500 ₽<span class="price-note"> / чел</span></div>
+                <p style="color:var(--gold);font-size:.82rem;margin-top:.5rem;font-weight:600">Акция 2 500 ₽ до 30 марта 2026</p>
+            </div>
+        </div>
+        <div class="rest-grid" style="margin-top:2rem">
+            <div class="rest-card" data-r>
+                <div class="rest-icon">🏠</div>
+                <h3>Аренда ресторана + терраса</h3>
+                <p style="color:var(--gray);font-size:.9rem">Минимум 3 часа (не банкеты), до 30 апреля</p>
+                <div class="price-tag">10 000 ₽<span class="price-note"> / час</span></div>
+            </div>
+            <div class="rest-card" data-r>
+                <div class="rest-icon">💍</div>
+                <h3>Выездные регистрации (Хаан-Дыт)</h3>
+                <p style="color:var(--gray);font-size:.9rem">До 4 часов, полное оформление и регистратор (муж/жен)</p>
+                <div class="price-tag">40 000 ₽</div>
+                <p style="color:var(--gold);font-size:.82rem;margin-top:.5rem;font-weight:600">Брони после 1 апреля 2026</p>
+            </div>
+            <div class="rest-card" data-r>
+                <div class="rest-icon">📞</div>
+                <h3>Забронировать мероприятие</h3>
+                <p style="color:var(--gray);font-size:.9rem;margin-bottom:1.5rem">Свяжитесь с нами для обсуждения деталей вашего торжества</p>
+                <a href="tel:+73942221082" class="btn btn-gold" style="width:100%;justify-content:center">Позвонить</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ========== BAR ========== -->
+<section class="bar-section" id="bar">
+    <div class="bar-bg-text">СКАЛА</div>
+    <div class="container" style="position:relative">
+        <div style="text-align:center" data-r>
+            <p class="section-label">Вечерний отдых</p>
+            <h2 class="section-title serif">Бар «Скала»</h2>
+            <p class="section-desc" style="margin:0 auto;color:rgba(255,255,255,.5)">Премиальные напитки, живая музыка и неповторимая атмосфера вечернего Кызыла.</p>
+        </div>
+        <div class="bar-features">
+            <div class="bar-feat" data-r>
+                <div class="icon">🍸</div>
+                <h4>Авторские коктейли</h4>
+                <p>Уникальные рецепты от нашего бармена с использованием локальных ингредиентов</p>
+            </div>
+            <div class="bar-feat" data-r>
+                <div class="icon">🎵</div>
+                <h4>Живая музыка</h4>
+                <p>Вечерние выступления, DJ-сеты и тувинское горловое пение по пятницам</p>
+            </div>
+            <div class="bar-feat" data-r>
+                <div class="icon">🏔</div>
+                <h4>Панорамный вид</h4>
+                <p>Терраса с потрясающим видом на горы — идеальное место для заката</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ========== CONTACTS ========== -->
+<section id="contacts">
+    <div class="container">
+        <div style="text-align:center" data-r>
+            <p class="section-label">Связаться с нами</p>
+            <h2 class="section-title">Контакты</h2>
+        </div>
+        <div class="contacts-grid">
+            <div>
+                <div class="contact-card" data-r>
+                    <h3>Отель «Чалама»</h3>
+                    <div class="contact-item"><strong>Адрес:</strong> г. Кызыл, ул. Интернациональная, 12</div>
+                    <div class="contact-item"><strong>Телефон:</strong> <a href="tel:+73942221082" style="color:var(--gold)">+7 (394) 222-10-82</a></div>
+                    <div class="contact-item"><strong>Режим:</strong> Круглосуточно</div>
+                </div>
+                <div class="contact-card" style="margin-top:1.5rem" data-r>
+                    <h3>Юрт. отель «Хаан-Дыт»</h3>
+                    <div class="contact-item"><strong>Телефон:</strong> <a href="tel:+73942221082" style="color:var(--gold)">+7 (394) 222-10-82</a></div>
+                    <div class="contact-item"><strong>Заезд:</strong> с 14:00, выезд до 12:00</div>
+                    <div class="contact-item"><strong>Гости:</strong> до 22:00</div>
+                </div>
+            </div>
+            <div class="map-placeholder" data-r>
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2429.1!2d94.437!3d51.714!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNTHCsDQyJzUwLjQiTiA5NMKwMjYnMTMuMiJF!5e0!3m2!1sru!2sru!4v1" loading="lazy"></iframe>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ========== FOOTER ========== -->
+<footer class="footer">
+    <div class="container">
+        <div class="footer-grid">
+            <div>
+                <div class="footer-logo">ООО «ЧАЛАМА»</div>
+                <p style="max-width:280px">Группа компаний, объединяющая лучшие места для отдыха и впечатлений в Республике Тыва.</p>
+            </div>
+            <div>
+                <h4>Навигация</h4>
+                <a href="#hotel">Отель</a>
+                <a href="#yurts">Хаан-Дыт</a>
+                <a href="#restaurant">Ресторан</a>
+                <a href="#bar">Бар «Скала»</a>
+            </div>
+            <div>
+                <h4>Бронирование</h4>
+                <a href="#hotel">Номера</a>
+                <a href="#yurts">Юрты</a>
+                <a href="#restaurant">Банкеты</a>
+            </div>
+            <div>
+                <h4>Контакты</h4>
+                <a href="tel:+73942221082">+7 (394) 222-10-82</a>
+                <a href="#">info@chalamahotel.ru</a>
+                <a href="#">г. Кызыл, Интернациональная, 12</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <span><a href="admin.html" style="color:inherit; text-decoration:none; cursor:default;">©</a> 2026 ООО «Чалама». Все права защищены.</span>
+            <span>Сделано с ❤️ в Туве</span>
+        </div>
+    </div>
+</footer>
+
+<!-- ========== LIGHTBOX ========== -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+    <button class="lightbox-close" onclick="closeLightbox()">×</button>
+    <img id="lightbox-img" src="" alt="">
+</div>
+
+<!-- ========== SUCCESS MODAL ========== -->
+<div class="modal-bg" id="successModal">
+    <div class="modal">
+        <button class="modal-close" onclick="closeModal()">×</button>
+        <div class="modal-success">
+            <div class="checkmark">✓</div>
+            <h2 style="margin-bottom:.8rem">Заявка принята!</h2>
+            <p style="color:var(--gray)">Наш менеджер свяжется с вами в течение 15 минут для подтверждения бронирования.</p>
+            <button class="btn btn-gold" style="margin-top:2rem" onclick="closeModal()">Отлично</button>
+        </div>
+    </div>
+</div>
+
+<!-- ===== JAVASCRIPT ===== -->
+<script>
+// === DATA ===
+const H = 'https://www.chalamahotel.ru/upload/';
+const W = 'https://i.wfolio.ru/x/Sjpgrm2v20FR6Cth5viRk6Iir5aoqG4h/ZXWGJmu7EQlhnv6D9ELHSMzGOBuFicXp/OGcM34slpvmXTMkbuJagSV1xA4akZdWt/iGTrK_jx2PJdzPpMyVlbGIyR5mAu9UqG/rL-5DUxboiaoOuXyk54XGbdV1Xb7MEI2/ONRIXXa54Vt46BKNn1BJUcaMzipScfya/MYHMyet1FRTNI7VBxU0Ye4gpBdSbPZh2/9J16Eo8jZdkTx5cd1Yw-SYcOyPF7TARa/';
+
+let bookedDates = [];
+let hotelRooms = [];
+let yurtRooms = [];
+let saunaRooms = [];
+
+const months = ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
+const dayNames = ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
+
+const state = {
+    hotel: { selected:0, month:3, year:2026, checkIn:null, checkOut:null },
+    yurt:  { selected:0, month:3, year:2026, checkIn:null, checkOut:null },
+    sauna: { selected:0, month:3, year:2026, checkIn:null, checkOut:null, hours:[] },
+    addons: { bath:false, tub:false }
+};
+
+// Yurt Names Mapping
+const YURT_NAMES = {
+    0: 'Малая юрта — Земля',
+    1: 'Малая юрта — Вода',
+    2: 'Малая юрта — Воздух',
+    3: 'Большая юрта — Огонь'
+};
+
+// === HELPERS ===
+function nightsBetween(a, b) {
+    if (!a || !b) return 0;
+    return Math.round((b - a) / 86400000);
+}
+function fmtDate(d) {
+    if (!d) return '—';
+    return d.getDate() + ' ' + months[d.getMonth()].substring(0,3).toLowerCase();
+}
+function fmtPrice(n) { return n.toLocaleString('ru') + ' ₽'; }
+
+// === RENDER ROOMS ===
+function renderRooms(type, data) {
+    const el = document.getElementById(type + '-rooms');
+    el.innerHTML = data.map((r, i) => {
+        const isActive = i === state[type].selected;
+        const imgHtml = (r.imgs || []).map(src => `<img src="${src}" alt="${r.name}" onclick="event.stopPropagation();openLightbox('${src}')">`).join('');
+        const amenHtml = (r.amenities || []).map(a => `<span class="room-amenity">${a}</span>`).join('');
+        const priceLabel = r.priceWeekend
+            ? `<div class="room-price">от ${fmtPrice(r.price)}</div><div class="room-per">Пт-Сб: ${fmtPrice(r.priceWeekend)}</div>`
+            : `<div class="room-price">${fmtPrice(r.price)}</div><div class="room-per">за сутки</div>`;
+        const descText = r.priceWeekend
+            ? r.desc.split('·').slice(0,1).join('·').trim()
+            : r.desc;
+        const rName = (type === 'yurt' && i < 4) ? YURT_NAMES[i] : r.name;
+        return `
+        <div class="room-card ${isActive ? 'active' : ''}" onclick="selectRoom('${type}',${i})">
+            <div class="room-card-top">
+                <div style="flex:1;min-width:0">
+                    <div class="room-name">${rName}</div>
+                    <div class="room-desc">${descText}</div>
+                </div>
+                <div style="text-align:right;flex-shrink:0;margin-left:1rem">
+                    ${priceLabel}
+                </div>
+            </div>
+            <div class="room-gallery">
+                <div class="room-gallery-wrap">
+                    <button class="gallery-arrow left" onclick="event.stopPropagation();scrollGallery(this,-1)">‹</button>
+                    <div class="room-gallery-inner">${imgHtml}</div>
+                    <button class="gallery-arrow right" onclick="event.stopPropagation();scrollGallery(this,1)">›</button>
+                </div>
+                <div class="room-amenities">${amenHtml}</div>
+            </div>
+        </div>`;
+    }).join('');
+}
+
+function selectRoom(type, idx) {
+    const data = type === 'hotel' ? hotelRooms : yurtRooms;
+    state[type].selected = idx;
+    state[type].checkIn = null;
+    state[type].checkOut = null;
+    renderRooms(type, data);
+    const rName = (type === 'yurt' && idx < 4) ? YURT_NAMES[idx] : data[idx].name;
+    document.getElementById(type + '-selected-name').textContent = rName;
+    document.getElementById(type + '-selected-price').textContent = fmtPrice(data[idx].price) + ' / сутки';
+    renderCalendar(type);
+    renderCart(type);
+}
+
+// === CALENDAR (RANGE) ===
+function norm(ts) {
+    const d = new Date(ts); d.setHours(0,0,0,0); return d.getTime();
+}
+function getDateStatus(type, d) {
+    const s = state[type];
+    const roomArr = type === 'hotel' ? hotelRooms : yurtRooms;
+    if(!roomArr || roomArr.length === 0) return 'free';
+    const room = roomArr[s.selected];
+    if(!room) return 'free';
+
+    const t = norm(d);
+    let isIn = false, isOut = false, isMid = false;
+    bookedDates.forEach(b => {
+        if(b.room !== room.name) return;
+        const bin = norm(b.checkIn);
+        const bout = norm(b.checkOut);
+        if (t === bin) isIn = true;
+        if (t === bout) isOut = true;
+        if (t > bin && t < bout) isMid = true;
+    });
+    
+    if (isMid || (isIn && isOut)) return 'full';
+    if (isIn) return 'in';
+    if (isOut) return 'out';
+    return 'free';
+}
+
+function isDateBooked(type, d) {
+    const st = getDateStatus(type, d);
+    return st === 'full' || st === 'in'; // The night is occupied
+}
+
+function renderCalendar(type) {
+    const s = state[type];
+    const grid = document.getElementById(type + '-cal-grid');
+    document.getElementById(type + '-cal-title').textContent = months[s.month] + ' ' + s.year;
+
+    let html = dayNames.map(d => `<div class="cal-day-name">${d}</div>`).join('');
+    const firstDay = new Date(s.year, s.month, 1).getDay();
+    const shift = firstDay === 0 ? 6 : firstDay - 1;
+    const totalDays = new Date(s.year, s.month + 1, 0).getDate();
+    const today = new Date(); today.setHours(0,0,0,0);
+
+    for (let i = 0; i < shift; i++) html += '<div class="cal-day"></div>';
+    for (let d = 1; d <= totalDays; d++) {
+        const dt = new Date(s.year, s.month, d); dt.setHours(0,0,0,0);
+        const isPast = dt < today;
+        const isToday = dt.getTime() === today.getTime();
+        const st = getDateStatus(type, dt);
+        
+        let isStart = false, isEnd = false, inRange = false;
+        if (type === 'sauna') {
+            isStart = s.checkIn && dt.getTime() === s.checkIn.getTime();
+        } else {
+            isStart = s.checkIn && dt.getTime() === s.checkIn.getTime();
+            isEnd = s.checkOut && dt.getTime() === s.checkOut.getTime();
+            inRange = s.checkIn && s.checkOut && dt > s.checkIn && dt < s.checkOut;
+        }
+        
+        const cls = ['cal-day'];
+        if (isPast) cls.push('disabled');
+        else if(st === 'full' && type !== 'sauna') cls.push('booked-full');
+        else if(st === 'in' && type !== 'sauna') cls.push('booked-in');
+        else if(st === 'out' && type !== 'sauna') cls.push('booked-out');
+        
+        if (isToday) cls.push('today');
+        if (isStart) cls.push('range-start');
+        if (isEnd) cls.push('range-end');
+        if (inRange) cls.push('range');
+        if (isStart && isEnd) { cls.push('range-start','range-end'); }
+        
+        const interact = (isPast || (st === 'full' && type !== 'sauna')) ? '' : `selectDate('${type}',${d})`;
+        html += `<div class="${cls.join(' ')}" onclick="${interact}">${d}</div>`;
+    }
+    grid.innerHTML = html;
+
+    // Sauna slots
+    if (type === 'sauna') {
+        const wrap = document.getElementById('sauna-time-select');
+        if (s.checkIn) {
+            wrap.style.display = 'block';
+            renderSaunaSlots();
+        } else {
+            wrap.style.display = 'none';
+        }
+    }
+}
+
+function renderSaunaSlots() {
+    const s = state.sauna;
+    const room = saunaRooms[s.selected];
+    const grid = document.getElementById('sauna-time-grid');
+    let html = '';
+    for (let h = 10; h < 22; h++) {
+        const start = new Date(s.checkIn); start.setHours(h, 0, 0, 0);
+        const end = new Date(s.checkIn); end.setHours(h + 1, 0, 0, 0);
+        const isBooked = bookedDates.some(b => {
+             if (b.room !== room.name) return false;
+             return (start < new Date(b.checkOut) && end > new Date(b.checkIn));
+        });
+        const isSelected = s.hours.includes(h);
+        const cls = ['time-slot'];
+        if (isBooked) cls.push('booked');
+        if (isSelected) cls.push('selected');
+        html += `<div class="${cls.join(' ')}" onclick="selectHour(${h})">${h}:00</div>`;
+    }
+    grid.innerHTML = html;
+}
+
+function selectHour(h) {
+    const s = state.sauna;
+    if (s.hours.includes(h)) {
+        s.hours = s.hours.filter(x => x !== h);
+    } else {
+        s.hours.push(h);
+        s.hours.sort((a, b) => a - b);
+        if (s.hours.length > 1) {
+            // check continuity and overlaps
+            const range = [];
+            for (let i = s.hours[0]; i <= s.hours[s.hours.length-1]; i++) {
+                 // Check if i is booked
+                 const start = new Date(s.checkIn); start.setHours(i, 0, 0, 0);
+                 const end = new Date(s.checkIn); end.setHours(i + 1, 0, 0, 0);
+                 if (bookedDates.some(b => b.room === saunaRooms[s.selected].name && start < new Date(b.checkOut) && end > new Date(b.checkIn))) {
+                     alert('Это время уже занято!');
+                     s.hours = [h];
+                     renderSaunaSlots();
+                     return;
+                 }
+                 range.push(i);
+            }
+            s.hours = range;
+        }
+    }
+    renderSaunaSlots();
+    renderCart('sauna');
+}
+
+function selectDate(type, day) {
+    const s = state[type];
+    const clicked = new Date(s.year, s.month, day); clicked.setHours(0,0,0,0);
+    
+    if (type === 'sauna') {
+        s.checkIn = clicked;
+        s.hours = [];
+    } else {
+        if (!s.checkIn || (s.checkIn && s.checkOut)) {
+            if (isDateBooked(type, clicked)) return;
+            s.checkIn = clicked;
+            s.checkOut = null;
+        } else {
+            if (clicked <= s.checkIn) {
+                if (isDateBooked(type, clicked)) return;
+                s.checkIn = clicked;
+            } else {
+                let hasBooked = false;
+                let testDate = new Date(s.checkIn);
+                while(testDate < clicked) {
+                    if(isDateBooked(type, testDate)) hasBooked = true;
+                    testDate.setDate(testDate.getDate() + 1);
+                }
+                if(hasBooked) { alert('В этом промежутке есть занятые даты! Пожалуйста, выберите другие даты.'); return; }
+                s.checkOut = clicked;
+            }
+        }
+    }
+    renderCalendar(type);
+    if (type === 'yurt') updateBathPrice();
+    renderCart(type);
+}
+
+function calNav(type, dir) {
+    state[type].month += dir;
+    if (state[type].month > 11) { state[type].month = 0; state[type].year++; }
+    if (state[type].month < 0) { state[type].month = 11; state[type].year--; }
+    renderCalendar(type);
+}
+
+// === ADDONS (YURT ONLY) ===
+function toggleAddon(id) {
+    state.addons[id] = !state.addons[id];
+    // tub requires bath
+    if (id === 'tub' && state.addons.tub && !state.addons.bath) state.addons.bath = true;
+    if (id === 'bath' && !state.addons.bath) state.addons.tub = false;
+    document.getElementById('addon-bath').classList.toggle('on', state.addons.bath);
+    document.getElementById('addon-tub').classList.toggle('on', state.addons.tub);
+    updateBathPrice();
+    renderCart('yurt');
+}
+function updateBathPrice() {
+    // bath is 6000 with yurt, 7000 without
+    const hasYurt = state.yurt.checkIn && state.yurt.checkOut;
+    const price = hasYurt ? 6000 : 7000;
+    document.getElementById('bath-price-display').textContent = fmtPrice(price);
+    const disc = document.getElementById('bath-discount');
+    disc.style.display = hasYurt ? 'block' : 'none';
+}
+
+// === CART ===
+function renderCart(type) {
+    const s = state[type];
+    const data = type === 'hotel' ? hotelRooms : type === 'yurt' ? yurtRooms : saunaRooms;
+    const room = data[s.selected];
+    const nights = type === 'sauna' ? s.hours.length : nightsBetween(s.checkIn, s.checkOut);
+    const el = document.getElementById(type + '-cart');
+    if (!el) return;
+
+    if (!s.checkIn) { el.innerHTML=''; return; }
+    let rows = '';
+    let total = 0;
+
+    // Dates display
+    if (type === 'sauna') {
+        rows += `<div class="cart-row" style="font-size:.8rem;color:var(--gray)">
+            <span>Дата: <strong style="color:var(--dark)">${fmtDate(s.checkIn)}</strong></span>
+            <span>Время: <strong style="color:var(--dark)">${s.hours.length >= 2 ? s.hours[0]+':00 - '+(s.hours[s.hours.length-1]+1)+':00' : '—'}</strong></span>
+        </div>`;
+    } else {
+        rows += `<div class="cart-row" style="font-size:.8rem;color:var(--gray)">
+            <span>Заезд: <strong style="color:var(--dark)">${fmtDate(s.checkIn)}</strong></span>
+            <span>Выезд: <strong style="color:var(--dark)">${s.checkOut ? fmtDate(s.checkOut) : '—'}</strong></span>
+        </div>`;
+    }
+
+    if (nights > 0) {
+        const itemTotal = room.price * nights;
+        total += itemTotal;
+        const labeling = type === 'sauna' ? (nights < 5 ? 'часа' : 'часов') : (nights === 1 ? 'ночь' : nights < 5 ? 'ночи' : 'ночеек');
+        rows += `<div class="cart-row"><span>${room.name} × ${nights} ${labeling}</span><span>${fmtPrice(itemTotal)}</span></div>`;
+    }
+
+    // Addons (yurt only)
+    if (type === 'yurt') {
+        if (state.addons.bath) {
+            const bathP = nights > 0 ? 6000 : 7000;
+            total += bathP;
+            rows += `<div class="cart-row"><span>🧖 Баня (2ч)${nights>0?' <span style="color:#4a4;font-size:.72rem">скидка</span>':''}</span><span>${fmtPrice(bathP)}</span></div>`;
+        }
+        if (state.addons.tub) {
+            total += 5000;
+            rows += `<div class="cart-row"><span>♨️ Банный чан</span><span>${fmtPrice(5000)}</span></div>`;
+        }
+    }
+
+    if (total > 0) {
+        rows += `<div class="cart-row total"><span>Итого</span><span>${fmtPrice(total)}</span></div>`;
+    } else if (s.checkIn && ((type !== 'sauna' && !s.checkOut) || (type === 'sauna' && s.hours.length < 2))) {
+        rows += `<div style="text-align:center;padding:.8rem 0;color:var(--gray);font-size:.82rem">${type==='sauna'?'Выберите минимум 2 часа':'Выберите дату выезда'}</div>`;
+    }
+
+    el.innerHTML = `<div class="cart"><div class="cart-title">🛒 Ваш заказ</div>${rows}</div>`;
+}
+
+// === TELEGRAM ===
+const TG_TOKEN = '8772760363:AAEJzb-RqoMeQHkaEjoaSP61-Wqv5vPeby0';
+function sendTGNotification(booking) {
+    const admins = JSON.parse(localStorage.getItem('chalama_admins') || '[]');
+    if (!admins.length) return;
+    const typeLabel = booking.type === 'hotel' ? '🏨 Отель «Чалама»' : booking.type === 'yurt' ? '⛺ Юрты «Хаан-Дыт»' : '🧖‍♂️ Сауна';
+    const checkIn = new Date(booking.checkIn);
+    const checkOut = new Date(booking.checkOut);
+    const fD = d => d.getDate() + '.' + String(d.getMonth()+1).padStart(2,'0') + '.' + d.getFullYear();
+    let text = `📌 *Новая бронь!*\n\n`;
+    text += `${typeLabel}\n`;
+    text += `🛏 *${booking.room}*\n`;
+    if (booking.type === 'sauna') {
+        const fH = d => String(d.getHours()).padStart(2, '0') + ':00';
+        text += `📅 ${fD(checkIn)}\n⏰ ${fH(checkIn)} — ${fH(checkOut)} (${booking.nights} ч.)\n`;
+    } else {
+        text += `📅 ${fD(checkIn)} — ${fD(checkOut)} (${booking.nights} ноч.)\n`;
+    }
+    text += `👤 ${booking.guest}\n`;
+    text += `📞 ${booking.phone}\n`;
+    if (booking.addons && booking.addons.length) text += `➕ ${booking.addons.join(', ')}\n`;
+    text += `\n💰 *Итого: ${booking.total.toLocaleString('ru')} ₽*`;
+    text += `\n\n🔖 ID: \`${booking.id}\``;
+
+    admins.forEach(admin => {
+        fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ chat_id: admin.chatId, text: text, parse_mode: 'Markdown' })
+        }).catch(() => {});
+    });
+}
+
+// === BOOKING ===
+function submitBooking(type) {
+    const name = document.getElementById(type + '-name').value;
+    const phone = document.getElementById(type + '-phone').value;
+    const consent = document.getElementById(type + '-consent').checked;
+    const s = state[type];
+
+    if (!name || !phone) { alert('Пожалуйста, заполните имя и телефон.'); return; }
+    if (!consent) { alert('Пожалуйста, подтвердите согласие на обработку персональных данных.'); return; }
+    
+    let checkIn, checkOut, nightsOrHours;
+    if (type === 'sauna') {
+        if (!s.checkIn || s.hours.length < 2) { alert('Пожалуйста, выберите дату и минимум 2 часа сауны.'); return; }
+        const dIn = new Date(s.checkIn); dIn.setHours(s.hours[0], 0, 0, 0);
+        const dOut = new Date(s.checkIn); dOut.setHours(s.hours[s.hours.length-1] + 1, 0, 0, 0);
+        checkIn = dIn.toISOString();
+        checkOut = dOut.toISOString();
+        nightsOrHours = s.hours.length;
+    } else {
+        if (!s.checkIn || !s.checkOut) { alert('Пожалуйста, выберите даты заезда и выезда на календаре.'); return; }
+        checkIn = s.checkIn.toISOString();
+        checkOut = s.checkOut.toISOString();
+        nightsOrHours = nightsBetween(s.checkIn, s.checkOut);
+    }
+
+    const data = type === 'hotel' ? hotelRooms : type === 'yurt' ? yurtRooms : saunaRooms;
+    const room = data[s.selected];
+    let total = room.price * nightsOrHours;
+    const addons = [];
+    if (type === 'yurt') {
+        if (state.addons.bath) { const bp = nightsOrHours > 0 ? 6000 : 7000; total += bp; addons.push('Баня (' + fmtPrice(bp) + ')'); }
+        if (state.addons.tub) { total += 5000; addons.push('Банный чан (5 000 ₽)'); }
+    }
+
+    const booking = {
+        type: type,
+        room: room.name,
+        checkIn: checkIn,
+        checkOut: checkOut,
+        nights: nightsOrHours,
+        guest: name,
+        phone: phone,
+        addons: addons,
+        total: total
+    };
+
+    fetch('/api/bookings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(booking)
+    }).then(res => res.json()).then(data => {
+        if (data.success) {
+            // Reset state
+            s.checkIn = null; s.checkOut = null;
+            if (type === 'sauna') s.hours = [];
+            pollAvailability(); // Update instantly for self
+            renderCart(type);
+            
+            // Also save locally for tg notification script
+            booking.id = data.id;
+            sendTGNotification(booking);
+            document.getElementById('successModal').classList.add('open');
+        } else alert('Ошибка сервера: ' + data.error);
+    }).catch(err => alert('Ошибка при отправке: ' + err.message));
+}
+function closeModal() { document.getElementById('successModal').classList.remove('open'); }
+
+// === GALLERY SCROLL ===
+function scrollGallery(btn, dir) {
+    const wrap = btn.closest('.room-gallery-wrap');
+    const inner = wrap.querySelector('.room-gallery-inner');
+    inner.scrollBy({ left: dir * 260, behavior: 'smooth' });
+}
+
+// === LIGHTBOX ===
+function openLightbox(src) {
+    document.getElementById('lightbox-img').src = src;
+    document.getElementById('lightbox').classList.add('open');
+}
+function closeLightbox() {
+    document.getElementById('lightbox').classList.remove('open');
+}
+
+// === HEADER SCROLL ===
+window.addEventListener('scroll', () => {
+    document.getElementById('header').classList.toggle('scrolled', window.scrollY > 80);
+});
+
+// === MOBILE NAV ===
+function openMobileNav() { document.getElementById('mobileNav').classList.add('open'); }
+function closeMobileNav() { document.getElementById('mobileNav').classList.remove('open'); }
+
+// === REVEAL ON SCROLL ===
+const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('show'); obs.unobserve(e.target); } });
+}, { threshold: 0.1 });
+document.querySelectorAll('[data-r]').forEach(el => obs.observe(el));
+
+// === POLLING AVAILABILITY ===
+function pollAvailability() {
+    fetch('/api/availability')
+        .then(r => r.json())
+        .then(data => {
+            if (data.error) return;
+            const newDatesStr = JSON.stringify(data);
+            if (JSON.stringify(bookedDates) !== newDatesStr) {
+                bookedDates = data;
+                renderCalendar('hotel');
+                renderCalendar('yurt');
+                renderCalendar('sauna');
+            }
+        }).catch(() => {});
+}
+setInterval(pollAvailability, 5000);
+
+// === INIT ===
+Promise.all([
+    fetch('/api/rooms').then(r => r.json()),
+    fetch('/api/availability').then(r => r.json())
+]).then(([roomsData, aData]) => {
+    hotelRooms = roomsData.filter(r => r.type === 'hotel');
+    yurtRooms = roomsData.filter(r => r.type === 'yurt');
+    saunaRooms = roomsData.filter(r => r.type === 'sauna');
+    bookedDates = aData || [];
+    if(bookedDates.error) bookedDates = [];
+        
+    if(hotelRooms.length > 0) {
+        renderRooms('hotel', hotelRooms);
+        document.getElementById('hotel-selected-name').textContent = hotelRooms[0].name;
+        document.getElementById('hotel-selected-price').textContent = fmtPrice(hotelRooms[0].price) + ' / сутки';
+    }
+    if(yurtRooms.length > 0) {
+        renderRooms('yurt', yurtRooms);
+        document.getElementById('yurt-selected-name').textContent = yurtRooms[0].name;
+        document.getElementById('yurt-selected-price').textContent = 'от ' + fmtPrice(yurtRooms[0].price) + ' / сутки';
+    }
+    if(saunaRooms.length > 0) {
+        renderRooms('sauna', saunaRooms);
+        document.getElementById('sauna-selected-name').textContent = saunaRooms[0].name;
+    }
+    
+    renderCalendar('hotel');
+    renderCalendar('yurt');
+    renderCalendar('sauna');
+
+    // Rename Yurt names in local data if they match defaults
+    const yurtNames = ['Земля', 'Вода', 'Воздух', 'Огонь'];
+    yurtRooms.forEach((r, i) => { if(i < 4) r.name = yurtNames[i]; });
+    if(yurtRooms.length > 0) {
+        document.getElementById('yurt-selected-name').textContent = yurtRooms[state.yurt.selected].name;
+    }
+})
+.catch(err => console.error('Error fetching data:', err));
+
+</script>
+
+<a href="https://t.me/Khaan_dyt_bot" target="_blank" class="btn-tg-float" title="Написать в Telegram">
+    <i class="fab fa-telegram-plane"></i>
+</a>
+
+</body>
+</html>
