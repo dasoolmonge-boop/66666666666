@@ -33,7 +33,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.get('/', (req, res) => {
     const ua = req.headers['user-agent'] || '';
     const isMobile = /mobile/i.test(ua) || /android/i.test(ua) || /iphone|ipad|ipod/i.test(ua);
-    
+
     if (isMobile) {
         res.sendFile(path.join(__dirname, 'public', 'mobile.html'));
     } else {
@@ -47,7 +47,7 @@ const db = new sqlite3.Database(dbPath, (err) => {
     if (err) console.error("Error connecting to database:", err);
     else {
         console.log("Connected to SQLite database.");
-        
+
         // Ensure Tables
         db.serialize(() => {
             // Updated bookings with clientChatId
@@ -73,7 +73,7 @@ const db = new sqlite3.Database(dbPath, (err) => {
                 username TEXT,
                 createdAt TEXT
             )`);
-            
+
             // Ensure Sauna room exists
             db.run(`INSERT INTO rooms (type, name, desc, price, priceWeekend, amenities, imgs) 
                     SELECT 'sauna', 'Сауна Отеля', 'Почасовая аренда · Вместимость до 6 человек · 2000₽/час', 2000, 2000, '[]', '[]' 
@@ -106,7 +106,7 @@ const upload = multer({ storage: storage });
 app.get('/api/rooms', (req, res) => {
     db.all("SELECT * FROM rooms", [], (err, rows) => {
         if (err) return res.status(500).json({ error: err.message });
-        
+
         const rooms = rows.map(r => ({
             id: r.id,
             type: r.type,
@@ -127,7 +127,7 @@ app.post('/api/rooms', (req, res) => {
     db.run(
         `INSERT INTO rooms (type, name, desc, price, priceWeekend, amenities, imgs) VALUES (?, ?, ?, ?, ?, ?, ?)`,
         [type, name, desc, price, priceWeekend || null, JSON.stringify(amenities || []), '[]'],
-        function(err) {
+        function (err) {
             if (err) return res.status(500).json({ error: err.message });
             res.json({ success: true, id: this.lastID });
         }
@@ -140,7 +140,7 @@ app.put('/api/rooms/:id', (req, res) => {
     db.run(
         `UPDATE rooms SET type=?, name=?, desc=?, price=?, priceWeekend=?, amenities=? WHERE id=?`,
         [type, name, desc, price, priceWeekend || null, JSON.stringify(amenities || []), req.params.id],
-        function(err) {
+        function (err) {
             if (err) return res.status(500).json({ error: err.message });
             res.json({ success: true });
         }
@@ -149,7 +149,7 @@ app.put('/api/rooms/:id', (req, res) => {
 
 // Delete a room
 app.delete('/api/rooms/:id', (req, res) => {
-    db.run(`DELETE FROM rooms WHERE id=?`, [req.params.id], function(err) {
+    db.run(`DELETE FROM rooms WHERE id=?`, [req.params.id], function (err) {
         if (err) return res.status(500).json({ error: err.message });
         res.json({ success: true });
     });
@@ -165,11 +165,11 @@ app.post('/api/rooms/:id/photo', upload.single('photo'), (req, res) => {
 
     db.get("SELECT imgs FROM rooms WHERE id = ?", [roomId], (err, row) => {
         if (err || !row) return res.status(500).json({ error: "Room not found" });
-        
+
         let imgs = JSON.parse(row.imgs || '[]');
         imgs.push(imgUrl);
 
-        db.run("UPDATE rooms SET imgs = ? WHERE id = ?", [JSON.stringify(imgs), roomId], function(err) {
+        db.run("UPDATE rooms SET imgs = ? WHERE id = ?", [JSON.stringify(imgs), roomId], function (err) {
             if (err) return res.status(500).json({ error: err.message });
             res.json({ success: true, imgUrl: imgUrl });
         });
@@ -183,13 +183,13 @@ app.post('/api/rooms/:id/photo/delete', (req, res) => {
 
     db.get("SELECT imgs FROM rooms WHERE id = ?", [roomId], (err, row) => {
         if (err || !row) return res.status(500).json({ error: "Room not found" });
-        
+
         let imgs = JSON.parse(row.imgs || '[]');
         const updatedImgs = imgs.filter(url => url !== imgUrl);
 
-        db.run("UPDATE rooms SET imgs = ? WHERE id = ?", [JSON.stringify(updatedImgs), roomId], function(err) {
+        db.run("UPDATE rooms SET imgs = ? WHERE id = ?", [JSON.stringify(updatedImgs), roomId], function (err) {
             if (err) return res.status(500).json({ error: err.message });
-            
+
             // Optionally, delete the physical file if it starts with /uploads/
             if (imgUrl.startsWith('/uploads/')) {
                 const filePath = path.join(__dirname, imgUrl);
@@ -209,7 +209,7 @@ app.post('/api/rooms/:id/photo/delete', (req, res) => {
 // Create booking
 app.post('/api/bookings', (req, res) => {
     const b = req.body;
-    
+
     // Validate overlapping bookings
     db.get(
         `SELECT id FROM bookings WHERE room = ? AND status != 'cancelled' AND (checkIn < ? AND checkOut > ?)`,
@@ -220,15 +220,15 @@ app.post('/api/bookings', (req, res) => {
 
             const id = Date.now().toString(36) + Math.random().toString(36).substr(2);
             const createdAt = new Date().toISOString();
-            
+
             const guestName = sanitize(b.guest || '—');
             const guestPhone = sanitize(b.phone || '—');
-            
+
             db.run(
                 `INSERT INTO bookings (id, type, room, checkIn, checkOut, nights, guest, phone, addons, total, status, clientChatId, createdAt)
                  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
                 [id, b.type, b.room, b.checkIn, b.checkOut, b.nights, guestName, guestPhone, JSON.stringify(b.addons || []), b.total, 'new', b.clientChatId || null, createdAt],
-                function(err) {
+                function (err) {
                     if (err) return res.status(500).json({ error: err.message });
                     res.json({ success: true, id: id });
                 }
@@ -249,7 +249,7 @@ app.get('/api/availability', (req, res) => {
 app.get('/api/admin/bookings', (req, res) => {
     db.all("SELECT * FROM bookings ORDER BY createdAt DESC", [], (err, rows) => {
         if (err) return res.status(500).json({ error: err.message });
-        
+
         const bookings = rows.map(b => ({
             ...b,
             addons: JSON.parse(b.addons || '[]')
@@ -262,10 +262,10 @@ app.get('/api/admin/bookings', (req, res) => {
 app.patch('/api/admin/bookings/:id/status', (req, res) => {
     const { status } = req.body;
     const bookingId = req.params.id;
-    
-    db.run("UPDATE bookings SET status = ? WHERE id = ?", [status, bookingId], function(err) {
+
+    db.run("UPDATE bookings SET status = ? WHERE id = ?", [status, bookingId], function (err) {
         if (err) return res.status(500).json({ error: err.message });
-        
+
         // Notify client if status is confirmed or cancelled
         if (status === 'confirmed' || status === 'cancelled') {
             db.get("SELECT * FROM bookings WHERE id = ?", [bookingId], (err, b) => {
