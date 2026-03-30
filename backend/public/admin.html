@@ -142,6 +142,7 @@
         .tag-cancelled { background:var(--red-bg); color:var(--red); }
         .tag-hotel { background:var(--blue-bg); color:var(--blue); }
         .tag-yurt { background:rgba(184,134,11,.15); color:var(--gold-l); }
+        .tag-sauna { background:rgba(168,85,247,.15); color:#a855f7; }
         .btn-action {
             padding:.4rem .9rem; border-radius:8px; font-size:.72rem; font-weight:600;
             cursor:pointer; font-family:inherit; border:1.5px solid; transition:.2s;
@@ -642,7 +643,7 @@ function renderRows(arr) {
     return arr.map(b => {
         const typeTag = b.type === 'hotel' ? '<span class="tag tag-hotel">Отель</span>' :
                       b.type === 'yurt' ? '<span class="tag tag-yurt">Юрты</span>' :
-                      '<span class="tag" style="background:var(--blue-bg);color:var(--text)">Сауна</span>';
+                      '<span class="tag tag-sauna">Сауна</span>';
         
         const addonsHtml = (b.addons && b.addons.length)
             ? `<div class="addons-list">+ ${b.addons.join(', ')}</div>` : '';
