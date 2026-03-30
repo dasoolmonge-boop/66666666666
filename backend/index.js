@@ -5,7 +5,8 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 const https = require('https');
-require('dotenv').config();
+require('dotenv').config({ path: path.join(__dirname, '..', '.env') });
+require('dotenv').config(); // Fallback to local
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -35,7 +36,10 @@ const BOT_TOKEN = process.env.BOT_TOKEN;
 const ADMIN_ID = process.env.ADMIN_ID;
 
 async function sendTelegramMessage(chatId, text) {
-    if (!BOT_TOKEN || !chatId) return;
+    if (!BOT_TOKEN || !chatId) {
+        console.log(`[Telegram] Skipping - Token: ${BOT_TOKEN ? 'OK' : 'MISSING'}, ChatID: ${chatId || 'MISSING'}`);
+        return;
+    }
     const data = JSON.stringify({
         chat_id: chatId,
         text: text,
@@ -54,11 +58,16 @@ async function sendTelegramMessage(chatId, text) {
     };
 
     const req = https.request(options, (res) => {
+        if (res.statusCode !== 200) {
+            console.error(`[Telegram] API Error: ${res.statusCode}`);
+        } else {
+            console.log(`[Telegram] Message sent to ${chatId}`);
+        }
         res.on('data', () => {});
     });
 
     req.on('error', (error) => {
-        console.error('Telegram notification error:', error);
+        console.error('[Telegram] Connection error:', error.message);
     });
 
     req.write(data);
@@ -289,6 +298,12 @@ app.post('/api/bookings', (req, res) => {
                     const typeLabel = b.type === 'hotel' ? '🏨 Отель' : (b.type === 'sauna' ? '🧖 Сауна' : '⛺ Юрты');
                     const adminText = `📌 <b>Новая заявка!</b>\n\n📍 ${typeLabel}\n🛏 <b>${b.room}</b>\n📅 <b>${b.checkIn} — ${b.checkOut}</b>\n👤 <b>${guestName}</b>\n📞 ${guestPhone}\n💰 Итого: <b>${b.total} ₽</b>`;
                     sendTelegramMessage(ADMIN_ID, adminText);
+
+                    // Immediate Notify Client
+                    if (b.clientChatId) {
+                        const clientText = `✅ <b>Ваша заявка принята!</b>\n\n📍 ${typeLabel}: <b>${b.room}</b>\n📅 Даты: <b>${b.checkIn} — ${b.checkOut}</b>\n💰 Итого: <b>${b.total} ₽</b>\n\nМенеджер свяжется с вами в ближайшее время для подтверждения. 🙏`;
+                        sendTelegramMessage(b.clientChatId, clientText);
+                    }
 
                     res.json({ success: true, id: id });
                 }
