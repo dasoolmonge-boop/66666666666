@@ -52,6 +52,13 @@ const db = new sqlite3.Database(dbPath, (err) => {
 
         // Ensure Tables
         db.serialize(() => {
+            // Migration: Add clientChatId if missing
+            db.run("ALTER TABLE bookings ADD COLUMN clientChatId TEXT", (err) => {
+                if (err && !err.message.includes("duplicate column name")) {
+                    console.error("Migration error:", err.message);
+                }
+            });
+
             // Updated bookings with clientChatId
             db.run(`CREATE TABLE IF NOT EXISTS bookings (
                 id TEXT PRIMARY KEY,
