@@ -612,9 +612,9 @@ async function renderAll(soft = false) {
     const bookings = globalBookings;
     const active = bookings.filter(b => b.status === 'confirmed' || b.status === 'new');
     const cancelled = bookings.filter(b => b.status === 'cancelled');
-    const hotel = bookings.filter(b => b.type === 'hotel');
-    const yurt = bookings.filter(b => b.type === 'yurt');
-    const sauna = bookings.filter(b => b.type === 'sauna');
+    const hotel = bookings.filter(b => b.type === 'hotel' && b.status === 'new');
+    const yurt = bookings.filter(b => b.type === 'yurt' && b.status === 'new');
+    const sauna = bookings.filter(b => b.type === 'sauna' && b.status === 'new');
     const revenue = active.reduce((s, b) => s + (b.total || 0), 0);
 
     document.getElementById('stat-total').textContent = bookings.length;
@@ -622,7 +622,7 @@ async function renderAll(soft = false) {
     document.getElementById('stat-cancelled').textContent = cancelled.length;
     document.getElementById('stat-revenue').textContent = fmtP(revenue);
 
-    document.getElementById('cnt-all').textContent = bookings.length;
+    document.getElementById('cnt-all').textContent = bookings.filter(b => b.status === 'new').length;
     document.getElementById('cnt-hotel').textContent = hotel.length;
     document.getElementById('cnt-yurt').textContent = yurt.length;
     document.getElementById('cnt-sauna').textContent = sauna.length;
