@@ -98,6 +98,7 @@
         }
         .tab:hover { border-color:var(--gold); color:var(--text); }
         .tab.active { background:var(--gold); border-color:var(--gold); color:#fff; }
+        .tab-scroll-hint { position: sticky; right: 0; top: 0; bottom: 0; width: 30px; background: linear-gradient(to right, transparent, var(--bg)); pointer-events: none; display: none; }
         .tab-count {
             background:rgba(255,255,255,.15); padding:.1rem .5rem; border-radius:50px;
             font-size:.68rem; margin-left:.5rem;
@@ -225,32 +226,54 @@
         }
         @media (max-width:768px) {
             .main { padding:1rem; }
-            .stats { grid-template-columns: 1fr 1fr; gap:.8rem; }
-            .stat-card { padding:1.2rem; }
-            .stat-value { font-size:1.5rem; }
-            .tabs { overflow-x:auto; scrollbar-width:none; }
+            .stats { grid-template-columns: 1fr 1fr; gap:.8rem; margin-bottom: 2rem; }
+            .stat-card { padding:1rem; min-height: 100px; display: flex; flex-direction: column; justify-content: center; }
+            .stat-icon { font-size: 1.4rem; margin-bottom: .4rem; }
+            .stat-value { font-size:1.3rem; }
+            .stat-label { font-size: .6rem; }
+            .tabs { 
+                overflow-x:auto; scrollbar-width:none; padding-bottom: .5rem;
+                mask-image: linear-gradient(to right, black 85%, transparent 100%);
+            }
             .tabs::-webkit-scrollbar { display:none; }
-            .tab { white-space:nowrap; }
-            .table-header { flex-direction:column; gap:.8rem; align-items:stretch; }
-            .search-input { width:100%; }
+            .tab { white-space:nowrap; padding: .6rem 1rem; font-size: .75rem; }
+            .table-header { flex-direction:column; gap:.8rem; align-items:stretch; padding: 1rem; }
+            .search-input { width:100%; font-size: .9rem; }
             .topbar { padding:.8rem 1rem; }
+            .topbar-logo { font-size: .85rem; }
             .topbar-user { display:none; }
             /* Mobile table: card layout */
             table, thead, tbody, th, td, tr { display:block; }
             thead { display:none; }
             tbody tr {
                 background:var(--surface2); border:1px solid var(--border); border-radius:12px;
-                margin-bottom:.8rem; padding:1rem; position:relative;
+                margin-bottom:.8rem; padding:1.2rem; position:relative;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.1);
             }
-            tbody td { border:none; padding:.3rem 0; font-size:.85rem; }
+            tbody td { 
+                border:none; padding:.4rem 0; font-size:.88rem; 
+                display: flex; justify-content: space-between; align-items: center;
+                text-align: right;
+            }
             tbody td::before {
                 content:attr(data-label); display:block; font-size:.65rem; color:var(--muted);
-                text-transform:uppercase; letter-spacing:1px; font-weight:700; margin-bottom:.15rem;
+                text-transform:uppercase; letter-spacing:1px; font-weight:700; 
+                text-align: left;
             }
-            tbody td:last-child { display:flex; gap:.4rem; margin-top:.5rem; }
+            tbody td:last-child { 
+                display:flex; gap:.6rem; margin-top:1rem; padding-top: 1rem;
+                border-top: 1px solid var(--border); justify-content: stretch;
+            }
+            .btn-action { flex: 1; text-align: center; padding: .6rem; font-size: .8rem; }
+            .guest-name { font-size: .9rem; }
+            .guest-phone { font-size: .8rem; }
+            .room-modal { padding: 1.2rem; }
+            .room-modal h2 { font-size: 1.2rem; }
+            .form-group input, .form-group select, .form-group textarea { padding: .7rem; font-size: 1rem; }
+            .btn-submit { padding: .8rem; }
         }
         @media (max-width:480px) {
-            .stats { grid-template-columns: 1fr; }
+            .stats { grid-template-columns: 1fr 1fr; } /* Keep 2 columns on small but optimize content */
             .login-card { padding:2rem 1.5rem; }
         }
 

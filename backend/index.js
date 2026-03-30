@@ -21,6 +21,14 @@ const sanitize = (str) => {
     })[m]);
 };
 
+const safeJsonParse = (str, fallback = []) => {
+    try {
+        return JSON.parse(str || '[]');
+    } catch (e) {
+        return fallback;
+    }
+};
+
 // Middleware
 app.use(cors());
 app.use(express.json());
@@ -108,8 +116,8 @@ app.get('/api/rooms', (req, res) => {
             desc: r.desc,
             price: r.price,
             priceWeekend: r.priceWeekend,
-            amenities: JSON.parse(r.amenities || '[]'),
-            imgs: JSON.parse(r.imgs || '[]')
+            amenities: safeJsonParse(r.amenities),
+            imgs: safeJsonParse(r.imgs)
         }));
         res.json(rooms);
     });
@@ -204,6 +212,11 @@ app.post('/api/rooms/:id/photo/delete', (req, res) => {
 app.post('/api/bookings', (req, res) => {
     const b = req.body;
 
+    // Basic date validation
+    if (!b.checkIn || !b.checkOut || new Date(b.checkIn) >= new Date(b.checkOut)) {
+        return res.status(400).json({ success: false, error: 'Некорректные даты проживания' });
+    }
+
     // Validate overlapping bookings
     db.get(
         `SELECT id FROM bookings WHERE room = ? AND status != 'cancelled' AND (checkIn < ? AND checkOut > ?)`,
@@ -215,8 +228,12 @@ app.post('/api/bookings', (req, res) => {
             const id = Date.now().toString(36) + Math.random().toString(36).substr(2);
             const createdAt = new Date().toISOString();
 
-            const guestName = sanitize(b.guest || '—');
-            const guestPhone = sanitize(b.phone || '—');
+            const guestName = sanitize(b.guest || '').trim();
+            const guestPhone = sanitize(b.phone || '').trim();
+
+            if (!guestName || !guestPhone) {
+                return res.status(400).json({ success: false, error: 'Имя и телефон обязательны' });
+            }
 
             db.run(
                 `INSERT INTO bookings (id, type, room, checkIn, checkOut, nights, guest, phone, addons, total, status, clientChatId, createdAt)
