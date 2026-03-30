@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /admin.html
+Disallow: /api/
+
+Sitemap: https://chalama-group.ru/sitemap.xml

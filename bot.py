@@ -15,8 +15,8 @@ from aiogram.enums import ParseMode
 # ===== CONFIG =====
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 ADMIN_ID = int(os.getenv("ADMIN_ID", "0"))
-WEBAPP_URL = os.getenv("WEBAPP_URL", "https://khaan-dyt.bothost.tech")
-API_BASE_URL = os.getenv("API_BASE_URL", "http://localhost:5000")
+WEBAPP_URL = os.getenv("WEBAPP_URL", "https://chalama-group.ru/mobile.html")
+API_BASE_URL = os.getenv("API_BASE_URL", "http://localhost:3000")
 ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "chalama2026")
 
 # ===== LOGGING =====

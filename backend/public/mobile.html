@@ -47,10 +47,11 @@
         .room-gallery {
             position: relative; width: 100%; height: 200px; overflow-x: auto;
             scroll-snap-type: x mandatory; display: flex; scrollbar-width: none;
+            -webkit-overflow-scrolling: touch; touch-action: pan-y;
         }
         .room-gallery::-webkit-scrollbar { display: none; }
         .room-img-wrap { flex: 0 0 100%; height: 100%; scroll-snap-align: start; }
-        .room-gallery img { width: 100%; height: 100%; object-fit: cover; }
+        .room-gallery img { width: 100%; height: 100%; object-fit: cover; -webkit-user-drag: none; user-select: none; }
         
         .room-info { padding: 1.2rem; display: flex; flex-direction: column; gap: .5rem; }
         .room-name { font-size: 1.1rem; font-weight: 700; }
