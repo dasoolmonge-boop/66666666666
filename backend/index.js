@@ -291,6 +291,14 @@ app.patch('/api/admin/bookings/:id/status', (req, res) => {
     });
 });
 
+// Archive management
+app.delete('/api/admin/bookings/archive', (req, res) => {
+    db.run("DELETE FROM bookings WHERE status = 'completed' OR status = 'cancelled'", [], function (err) {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json({ success: true, count: this.changes });
+    });
+});
+
 // Admin management
 app.post('/api/internal/admins', (req, res) => {
     const { chatId, username } = req.body;

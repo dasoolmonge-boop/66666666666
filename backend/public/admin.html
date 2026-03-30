@@ -424,7 +424,10 @@
                 </table>
             </div>
 
-            <h3 style="margin-bottom: 1rem; color: var(--muted); display: flex; align-items: center; gap: .5rem; font-size: 1.1rem;">🗄 Архив (Завершенные и Отмененные) <span class="tab-count" id="countArchive" style="background:var(--surface2)">0</span></h3>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <h3 style="color: var(--muted); display: flex; align-items: center; gap: .5rem; font-size: 1.1rem; margin: 0;">🗄 Архив (Завершенные и Отмененные) <span class="tab-count" id="countArchive" style="background:var(--surface2)">0</span></h3>
+                <button class="btn-remove" onclick="clearArchive()" style="font-size: .75rem; padding: .5rem 1rem;">🗑 Очистить архив</button>
+            </div>
             <div class="table-wrap" style="margin-bottom: 2.5rem; opacity: 0.85;">
                 <table>
                     <thead><tr><th>ID</th><th>Тип</th><th>Номер</th><th>Гость</th><th>Даты</th><th>Ночи</th><th>Сумма</th><th>Статус</th></tr></thead>
@@ -725,6 +728,24 @@ function cancelBooking(id) {
 
 function restoreBooking(id) {
     updateStatus(id, 'confirmed');
+}
+
+async function clearArchive() {
+    const count = parseInt(document.getElementById('countArchive').textContent);
+    if (count === 0) return alert('Архив уже пуст');
+
+    if (!confirm(`Вы уверены, что хотите навсегда удалить все записи из архива (${count} шт.)? Это действие нельзя отменить.`)) return;
+    
+    try {
+        const res = await fetch('/api/admin/bookings/archive', { method: 'DELETE' });
+        if (res.ok) {
+            const data = await res.json();
+            alert(`Архив очищен. Удалено записей: ${data.count}`);
+            renderAll();
+        } else {
+            alert('Ошибка при очистке архива');
+        }
+    } catch(err) { console.error(err); }
 }
 
 // ===== PHOTOS MANAGEMENT =====
