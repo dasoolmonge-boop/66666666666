@@ -4,6 +4,7 @@ const cors = require('cors');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const https = require('https');
 require('dotenv').config();
 
 const app = express();
@@ -28,6 +29,41 @@ const safeJsonParse = (str, fallback = []) => {
         return fallback;
     }
 };
+
+// HELPER: Send Telegram Message
+const BOT_TOKEN = process.env.BOT_TOKEN;
+const ADMIN_ID = process.env.ADMIN_ID;
+
+async function sendTelegramMessage(chatId, text) {
+    if (!BOT_TOKEN || !chatId) return;
+    const data = JSON.stringify({
+        chat_id: chatId,
+        text: text,
+        parse_mode: 'HTML'
+    });
+
+    const options = {
+        hostname: 'api.telegram.org',
+        port: 443,
+        path: `/bot${BOT_TOKEN}/sendMessage`,
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Content-Length': data.length
+        }
+    };
+
+    const req = https.request(options, (res) => {
+        res.on('data', () => {});
+    });
+
+    req.on('error', (error) => {
+        console.error('Telegram notification error:', error);
+    });
+
+    req.write(data);
+    req.end();
+}
 
 // Middleware
 app.use(cors());
@@ -248,6 +284,12 @@ app.post('/api/bookings', (req, res) => {
                 [id, b.type, b.room, b.checkIn, b.checkOut, b.nights, guestName, guestPhone, JSON.stringify(b.addons || []), b.total, 'new', b.clientChatId || null, createdAt],
                 function (err) {
                     if (err) return res.status(500).json({ error: err.message });
+                    
+                    // Notify Admin
+                    const typeLabel = b.type === 'hotel' ? '🏨 Отель' : (b.type === 'sauna' ? '🧖 Сауна' : '⛺ Юрты');
+                    const adminText = `📌 <b>Новая заявка!</b>\n\n📍 ${typeLabel}\n🛏 <b>${b.room}</b>\n📅 <b>${b.checkIn} — ${b.checkOut}</b>\n👤 <b>${guestName}</b>\n📞 ${guestPhone}\n💰 Итого: <b>${b.total} ₽</b>`;
+                    sendTelegramMessage(ADMIN_ID, adminText);
+
                     res.json({ success: true, id: id });
                 }
             );
@@ -288,9 +330,16 @@ app.patch('/api/admin/bookings/:id/status', (req, res) => {
         if (status === 'confirmed' || status === 'cancelled') {
             db.get("SELECT * FROM bookings WHERE id = ?", [bookingId], (err, b) => {
                 if (b && b.clientChatId) {
-                    // This will be handled by the Python bot by polling or we could add a simple hook
-                    // For now, let's assume we want to trigger a bot action
-                    console.log(`[Status Update] Notify client ${b.clientChatId} that booking ${bookingId} is ${status}`);
+                    let clientText = "";
+                    if (status === 'confirmed') {
+                        clientText = `✅ <b>Ваше бронирование подтверждено!</b>\n\n📅 Даты: <b>${b.checkIn} — ${b.checkOut}</b>\n🏨 Объект: <b>${b.room}</b>\n\nЖдем вас в гости! 👋`;
+                    } else if (status === 'cancelled') {
+                        clientText = `❌ <b>К сожалению, ожидаемое бронирование (${b.checkIn}) было отменено.</b>\nЕсли у вас есть вопросы, пожалуйста, свяжитесь с нами по телефону.`;
+                    }
+                    
+                    if (clientText) {
+                        sendTelegramMessage(b.clientChatId, clientText);
+                    }
                 }
             });
         }
