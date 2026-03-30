@@ -4,25 +4,12 @@ const cors = require('cors');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
-const https = require('https');
-require('dotenv').config({ path: path.join(__dirname, '..', '.env') });
-require('dotenv').config(); // Fallback to local
+require('dotenv').config();
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 5000;
 
 // Simple XSS Sanitizer helper (if xss lib is not yet loaded)
-const sanitize = (str) => {
-    if (typeof str !== 'string') return str;
-    return str.replace(/[&<>"']/g, (m) => ({
-        '&': '&amp;',
-        '<': '&lt;',
-        '>': '&gt;',
-        '"': '&quot;',
-        "'": '&#39;'
-    })[m]);
-};
-
 const safeJsonParse = (str, fallback = []) => {
     try {
         return JSON.parse(str || '[]');
@@ -30,50 +17,6 @@ const safeJsonParse = (str, fallback = []) => {
         return fallback;
     }
 };
-
-// HELPER: Send Telegram Message
-const BOT_TOKEN = process.env.BOT_TOKEN;
-const ADMIN_ID = process.env.ADMIN_ID;
-
-async function sendTelegramMessage(chatId, text) {
-    if (!BOT_TOKEN || !chatId) {
-        console.log(`[Telegram] Skipping - Token: ${BOT_TOKEN ? 'OK' : 'MISSING'}, ChatID: ${chatId || 'MISSING'}`);
-        return;
-    }
-    const data = JSON.stringify({
-        chat_id: chatId,
-        text: text,
-        parse_mode: 'HTML'
-    });
-
-    const options = {
-        hostname: 'api.telegram.org',
-        port: 443,
-        path: `/bot${BOT_TOKEN}/sendMessage`,
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Content-Length': data.length,
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36'
-        }
-    };
-
-    const req = https.request(options, (res) => {
-        if (res.statusCode !== 200) {
-            console.error(`[Telegram] API Error: ${res.statusCode}`);
-        } else {
-            console.log(`[Telegram] Message sent to ${chatId}`);
-        }
-        res.on('data', () => {});
-    });
-
-    req.on('error', (error) => {
-        console.error('[Telegram] Connection error:', error.message);
-    });
-
-    req.write(data);
-    req.end();
-}
 
 // Middleware
 app.use(cors());
@@ -300,12 +243,6 @@ app.post('/api/bookings', (req, res) => {
                     const adminText = `📌 <b>Новая заявка!</b>\n\n📍 ${typeLabel}\n🛏 <b>${b.room}</b>\n📅 <b>${b.checkIn} — ${b.checkOut}</b>\n👤 <b>${guestName}</b>\n📞 ${guestPhone}\n💰 Итого: <b>${b.total} ₽</b>`;
                     sendTelegramMessage(ADMIN_ID, adminText);
 
-                    // Immediate Notify Client
-                    if (b.clientChatId) {
-                        const clientText = `✅ <b>Ваша заявка принята!</b>\n\n📍 ${typeLabel}: <b>${b.room}</b>\n📅 Даты: <b>${b.checkIn} — ${b.checkOut}</b>\n💰 Итого: <b>${b.total} ₽</b>\n\nМенеджер свяжется с вами в ближайшее время для подтверждения. 🙏`;
-                        sendTelegramMessage(b.clientChatId, clientText);
-                    }
-
                     res.json({ success: true, id: id });
                 }
             );
@@ -346,16 +283,9 @@ app.patch('/api/admin/bookings/:id/status', (req, res) => {
         if (status === 'confirmed' || status === 'cancelled') {
             db.get("SELECT * FROM bookings WHERE id = ?", [bookingId], (err, b) => {
                 if (b && b.clientChatId) {
-                    let clientText = "";
-                    if (status === 'confirmed') {
-                        clientText = `✅ <b>Ваше бронирование подтверждено!</b>\n\n📅 Даты: <b>${b.checkIn} — ${b.checkOut}</b>\n🏨 Объект: <b>${b.room}</b>\n\nЖдем вас в гости! 👋`;
-                    } else if (status === 'cancelled') {
-                        clientText = `❌ <b>К сожалению, ожидаемое бронирование (${b.checkIn}) было отменено.</b>\nЕсли у вас есть вопросы, пожалуйста, свяжитесь с нами по телефону.`;
-                    }
-                    
-                    if (clientText) {
-                        sendTelegramMessage(b.clientChatId, clientText);
-                    }
+                    // This will be handled by the Python bot by polling or we could add a simple hook
+                    // For now, let's assume we want to trigger a bot action
+                    console.log(`[Status Update] Notify client ${b.clientChatId} that booking ${bookingId} is ${status}`);
                 }
             });
         }
