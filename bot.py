@@ -73,18 +73,19 @@ class MaxBot:
                     # По умолчанию получаем новые события
                     async with session.get(f"{BASE_URL}/updates", headers=self.headers, timeout=30) as resp:
                         if resp.status == 200:
-                            updates = await resp.json()
-                            logger.info(f"Received updates: {updates}")
-                            if isinstance(updates, list):
-                                for update in updates:
-                                    # Обработка только если обновление - это словарь
+                            data = await resp.json()
+                            updates_list = data.get("updates", [])
+                            if isinstance(updates_list, list):
+                                for update in updates_list:
                                     if isinstance(update, dict):
-                                        if update.get("update_type") in ["message_created", "bot_started"]:
-                                            chat_id = update.get("chat_id")
-                                            if chat_id:
-                                                await self.send_welcome(chat_id)
-                            else:
-                                logger.warning(f"Expected list of updates, got: {type(updates)}")
+                                        # Use chat_id from the top level of the update
+                                        chat_id = update.get("chat_id")
+                                        # Or if it's missing there, try nested message sender
+                                        if not chat_id and "message" in update:
+                                            chat_id = update["message"].get("sender", {}).get("user_id")
+                                        
+                                        if chat_id and (update.get("update_type") in ["message_created", "bot_started"]):
+                                            await self.send_welcome(chat_id)
                         elif resp.status == 401:
                             logger.error("Invalid Token!")
                             await asyncio.sleep(10)
