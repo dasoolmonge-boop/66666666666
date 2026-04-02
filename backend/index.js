@@ -378,10 +378,14 @@ app.patch('/api/admin/bookings/:id/status', (req, res) => {
         // Notify client if status is confirmed or cancelled
         if (status === 'confirmed' || status === 'cancelled') {
             db.get("SELECT * FROM bookings WHERE id = ?", [bookingId], (err, b) => {
-                if (b && b.clientChatId) {
-                    // This will be handled by the Python bot by polling or we could add a simple hook
-                    // For now, let's assume we want to trigger a bot action
-                    console.log(`[Status Update] Notify client ${b.clientChatId} that booking ${bookingId} is ${status}`);
+                if (!err && b && b.clientChatId) {
+                    const statusText = status === 'confirmed' ? '✅ <b>Ваше бронирование подтверждено!</b>' : '❌ <b>Бронирование отменено.</b>';
+                    const icon = status === 'confirmed' ? '🏨' : 'ℹ️';
+                    const detail = status === 'confirmed' ? '\n\nМы подготовим всё к вашему приезду. До встречи!' : '\n\nЕсли у вас есть вопросы, свяжитесь с нами по телефону: +7 (394) 222-10-82.';
+                    
+                    const clientMsg = `${icon} <b>ООО «ЧАЛАМА»</b>\n\n${statusText}\n\n📦 Номер заказа: <b>#${b.id.toUpperCase()}</b>\n📍 Объект: <b>${b.room}</b>\n📅 Дата: <b>${b.checkIn}</b>${detail}`;
+                    
+                    sendMaxMessage(b.clientChatId, clientMsg);
                 }
             });
         }
