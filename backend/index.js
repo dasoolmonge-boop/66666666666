@@ -25,7 +25,7 @@ async function sendMaxMessage(chatId, text) {
         return;
     }
     
-    // According to dev.max.ru, chat_id or user_id goes into query string
+    // For private chats/admin notifications, MAX documentation suggests using user_id
     const data = JSON.stringify({
         text: text,
         format: 'html'
@@ -34,12 +34,12 @@ async function sendMaxMessage(chatId, text) {
     const options = {
         hostname: 'platform-api.max.ru',
         port: 443,
-        path: `/messages?chat_id=${chatId}`,
+        path: `/messages?user_id=${chatId}`,
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
             'Content-Length': Buffer.byteLength(data),
-            'Authorization': MAX_TOKEN // No Bearer prefix for MAX API
+            'Authorization': MAX_TOKEN
         }
     };
 
