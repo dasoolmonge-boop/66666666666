@@ -1128,19 +1128,6 @@
                         <button class="cal-btn" onclick="calNav('yurt',1)">›</button>
                     </div>
                     <div class="cal-days" id="yurt-cal-grid"></div>
-                    <div class="addon-list">
-                        <p style="font-size:.72rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gray);margin-bottom:.6rem">Дополнительные услуги</p>
-                        <div class="addon-item" id="addon-bath" onclick="toggleAddon('bath')">
-                            <div class="addon-check">✓</div>
-                            <div class="addon-label"><strong>Баня (2 часа)</strong><span>До 10 чел. · Доп. час 2000₽</span></div>
-                            <div><div class="addon-price" id="bath-price-display">7 000 ₽</div><div class="addon-discount" id="bath-discount" style="display:none">−1000₽ с юртой</div></div>
-                        </div>
-                        <div class="addon-item" id="addon-tub" onclick="toggleAddon('tub')">
-                            <div class="addon-check">✓</div>
-                            <div class="addon-label"><strong>Банный чан</strong><span>Продаётся вместе с баней</span></div>
-                            <div class="addon-price">5 000 ₽</div>
-                        </div>
-                    </div>
                     <div id="yurt-cart"></div>
                     <div class="form-group">
                         <label>Ваше имя</label>
@@ -1448,6 +1435,7 @@ let bookedDates = [];
 let hotelRooms = [];
 let yurtRooms = [];
 let saunaRooms = [];
+let bathRooms = [];
 
 const months = ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
 const dayNames = ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
@@ -1456,7 +1444,8 @@ const state = {
     hotel: { selected:0, month:3, year:2026, checkIn:null, checkOut:null },
     yurt:  { selected:0, month:3, year:2026, checkIn:null, checkOut:null },
     sauna: { selected:0, month:3, year:2026, checkIn:null, checkOut:null, hours:[] },
-    addons: { bath:false, tub:false }
+    bath:  { selected:0, month:3, year:2026, checkIn:null, checkOut:null, hours:[] },
+    addons: { tub:false }
 };
 
 // Yurt Names Mapping
@@ -1580,7 +1569,7 @@ function renderCalendar(type) {
         const st = getDateStatus(type, dt);
         
         let isStart = false, isEnd = false, inRange = false;
-        if (type === 'sauna') {
+        if (type === 'sauna' || type === 'bath') {
             isStart = s.checkIn && dt.getTime() === s.checkIn.getTime();
         } else {
             isStart = s.checkIn && dt.getTime() === s.checkIn.getTime();
@@ -1605,24 +1594,24 @@ function renderCalendar(type) {
     }
     grid.innerHTML = html;
 
-    // Sauna slots
-    if (type === 'sauna') {
-        const wrap = document.getElementById('sauna-time-select');
+    // Sauna/Bath slots
+    if (type === 'sauna' || type === 'bath') {
+        const wrap = document.getElementById(type + '-time-select');
         if (s.checkIn) {
             wrap.style.display = 'block';
-            renderSaunaSlots();
+            renderTimeSlots(type);
         } else {
             wrap.style.display = 'none';
         }
     }
 }
-
-function renderSaunaSlots() {
-    const s = state.sauna;
-    const room = saunaRooms[s.selected];
-    const grid = document.getElementById('sauna-time-grid');
+function renderTimeSlots(type) {
+    const s = state[type];
+    const roomArr = type === 'sauna' ? saunaRooms : bathRooms;
+    const room = roomArr[s.selected];
+    const grid = document.getElementById(type + '-time-grid');
     let html = '';
-    for (let h = 10; h < 22; h++) {
+    for (let h = 10; h < 23; h++) {
         const start = new Date(s.checkIn); start.setHours(h, 0, 0, 0);
         const end = new Date(s.checkIn); end.setHours(h + 1, 0, 0, 0);
         const isBooked = bookedDates.some(b => {
@@ -1633,29 +1622,27 @@ function renderSaunaSlots() {
         const cls = ['time-slot'];
         if (isBooked) cls.push('booked');
         if (isSelected) cls.push('selected');
-        html += `<div class="${cls.join(' ')}" onclick="selectHour(${h})">${h}:00</div>`;
+        html += `<div class="${cls.join(' ')}" onclick="selectHour('${type}', ${h})">${h}:00</div>`;
     }
     grid.innerHTML = html;
 }
-
-function selectHour(h) {
-    const s = state.sauna;
+function selectHour(type, h) {
+    const s = state[type];
+    const roomArr = type === 'sauna' ? saunaRooms : bathRooms;
     if (s.hours.includes(h)) {
         s.hours = s.hours.filter(x => x !== h);
     } else {
         s.hours.push(h);
         s.hours.sort((a, b) => a - b);
         if (s.hours.length > 1) {
-            // check continuity and overlaps
             const range = [];
             for (let i = s.hours[0]; i <= s.hours[s.hours.length-1]; i++) {
-                 // Check if i is booked
                  const start = new Date(s.checkIn); start.setHours(i, 0, 0, 0);
                  const end = new Date(s.checkIn); end.setHours(i + 1, 0, 0, 0);
-                 if (bookedDates.some(b => b.room === saunaRooms[s.selected].name && start < new Date(b.checkOut) && end > new Date(b.checkIn))) {
+                 if (bookedDates.some(b => b.room === roomArr[s.selected].name && start < new Date(b.checkOut) && end > new Date(b.checkIn))) {
                      alert('Это время уже занято!');
                      s.hours = [h];
-                     renderSaunaSlots();
+                     renderTimeSlots(type);
                      return;
                  }
                  range.push(i);
@@ -1663,15 +1650,15 @@ function selectHour(h) {
             s.hours = range;
         }
     }
-    renderSaunaSlots();
-    renderCart('sauna');
+    renderTimeSlots(type);
+    renderCart(type);
 }
 
 function selectDate(type, day) {
     const s = state[type];
     const clicked = new Date(s.year, s.month, day); clicked.setHours(0,0,0,0);
     
-    if (type === 'sauna') {
+    if (type === 'sauna' || type === 'bath') {
         s.checkIn = clicked;
         s.hours = [];
     } else {
@@ -1696,7 +1683,6 @@ function selectDate(type, day) {
         }
     }
     renderCalendar(type);
-    if (type === 'yurt') updateBathPrice();
     renderCart(type);
 }
 
@@ -1710,29 +1696,16 @@ function calNav(type, dir) {
 // === ADDONS (YURT ONLY) ===
 function toggleAddon(id) {
     state.addons[id] = !state.addons[id];
-    // tub requires bath
-    if (id === 'tub' && state.addons.tub && !state.addons.bath) state.addons.bath = true;
-    if (id === 'bath' && !state.addons.bath) state.addons.tub = false;
-    document.getElementById('addon-bath').classList.toggle('on', state.addons.bath);
-    document.getElementById('addon-tub').classList.toggle('on', state.addons.tub);
-    updateBathPrice();
+    document.getElementById('addon-' + id).classList.toggle('on', state.addons[id]);
     renderCart('yurt');
-}
-function updateBathPrice() {
-    // bath is 6000 with yurt, 7000 without
-    const hasYurt = state.yurt.checkIn && state.yurt.checkOut;
-    const price = hasYurt ? 6000 : 7000;
-    document.getElementById('bath-price-display').textContent = fmtPrice(price);
-    const disc = document.getElementById('bath-discount');
-    disc.style.display = hasYurt ? 'block' : 'none';
 }
 
 // === CART ===
 function renderCart(type) {
     const s = state[type];
-    const data = type === 'hotel' ? hotelRooms : type === 'yurt' ? yurtRooms : saunaRooms;
+    const data = type === 'hotel' ? hotelRooms : type === 'yurt' ? yurtRooms : type === 'sauna' ? saunaRooms : bathRooms;
     const room = data[s.selected];
-    const nights = type === 'sauna' ? s.hours.length : nightsBetween(s.checkIn, s.checkOut);
+    const nights = (type === 'sauna' || type === 'bath') ? s.hours.length : nightsBetween(s.checkIn, s.checkOut);
     const el = document.getElementById(type + '-cart');
     if (!el) return;
 
@@ -1741,7 +1714,7 @@ function renderCart(type) {
     let total = 0;
 
     // Dates display
-    if (type === 'sauna') {
+    if (type === 'sauna' || type === 'bath') {
         rows += `<div class="cart-row" style="font-size:.8rem;color:var(--gray)">
             <span>Дата: <strong style="color:var(--dark)">${fmtDate(s.checkIn)}</strong></span>
             <span>Время: <strong style="color:var(--dark)">${s.hours.length >= 2 ? s.hours[0]+':00 - '+(s.hours[s.hours.length-1]+1)+':00' : '—'}</strong></span>
@@ -1762,11 +1735,6 @@ function renderCart(type) {
 
     // Addons (yurt only)
     if (type === 'yurt') {
-        if (state.addons.bath) {
-            const bathP = nights > 0 ? 6000 : 7000;
-            total += bathP;
-            rows += `<div class="cart-row"><span>🧖 Баня (2ч)${nights>0?' <span style="color:#4a4;font-size:.72rem">скидка</span>':''}</span><span>${fmtPrice(bathP)}</span></div>`;
-        }
         if (state.addons.tub) {
             total += 5000;
             rows += `<div class="cart-row"><span>♨️ Банный чан</span><span>${fmtPrice(5000)}</span></div>`;
@@ -1775,8 +1743,8 @@ function renderCart(type) {
 
     if (total > 0) {
         rows += `<div class="cart-row total"><span>Итого</span><span>${fmtPrice(total)}</span></div>`;
-    } else if (s.checkIn && ((type !== 'sauna' && !s.checkOut) || (type === 'sauna' && s.hours.length < 2))) {
-        rows += `<div style="text-align:center;padding:.8rem 0;color:var(--gray);font-size:.82rem">${type==='sauna'?'Выберите минимум 2 часа':'Выберите дату выезда'}</div>`;
+    } else if (s.checkIn && (((type !== 'sauna' && type !== 'bath') && !s.checkOut) || ((type === 'sauna' || type === 'bath') && s.hours.length < 2))) {
+        rows += `<div style="text-align:center;padding:.8rem 0;color:var(--gray);font-size:.82rem">${(type==='sauna' || type==='bath')?'Выберите минимум 2 часа':'Выберите дату выезда'}</div>`;
     }
 
     el.innerHTML = `<div class="cart"><div class="cart-title">🛒 Ваш заказ</div>${rows}</div>`;
@@ -1794,7 +1762,7 @@ function sendTGNotification(booking) {
     let text = `📌 *Новая бронь!*\n\n`;
     text += `${typeLabel}\n`;
     text += `🛏 *${booking.room}*\n`;
-    if (booking.type === 'sauna') {
+    if (booking.type === 'sauna' || booking.type === 'bath') {
         const fH = d => String(d.getHours()).padStart(2, '0') + ':00';
         text += `📅 ${fD(checkIn)}\n⏰ ${fH(checkIn)} — ${fH(checkOut)} (${booking.nights} ч.)\n`;
     } else {
@@ -1826,8 +1794,8 @@ function submitBooking(type) {
     if (!consent) { alert('Пожалуйста, подтвердите согласие на обработку персональных данных.'); return; }
     
     let checkIn, checkOut, nightsOrHours;
-    if (type === 'sauna') {
-        if (!s.checkIn || s.hours.length < 2) { alert('Пожалуйста, выберите дату и минимум 2 часа сауны.'); return; }
+    if (type === 'sauna' || type === 'bath') {
+        if (!s.checkIn || s.hours.length < 2) { alert('Пожалуйста, выберите дату и минимум 2 часа бани/сауны.'); return; }
         const dIn = new Date(s.checkIn); dIn.setHours(s.hours[0], 0, 0, 0);
         const dOut = new Date(s.checkIn); dOut.setHours(s.hours[s.hours.length-1] + 1, 0, 0, 0);
         checkIn = dIn.toISOString();
@@ -1840,12 +1808,11 @@ function submitBooking(type) {
         nightsOrHours = nightsBetween(s.checkIn, s.checkOut);
     }
 
-    const data = type === 'hotel' ? hotelRooms : type === 'yurt' ? yurtRooms : saunaRooms;
+    const data = type === 'hotel' ? hotelRooms : type === 'yurt' ? yurtRooms : type === 'sauna' ? saunaRooms : bathRooms;
     const room = data[s.selected];
     let total = room.price * nightsOrHours;
     const addons = [];
     if (type === 'yurt') {
-        if (state.addons.bath) { const bp = nightsOrHours > 0 ? 6000 : 7000; total += bp; addons.push('Баня (' + fmtPrice(bp) + ')'); }
         if (state.addons.tub) { total += 5000; addons.push('Банный чан (5 000 ₽)'); }
     }
 
@@ -1869,7 +1836,7 @@ function submitBooking(type) {
         if (data.success) {
             // Reset state
             s.checkIn = null; s.checkOut = null;
-            if (type === 'sauna') s.hours = [];
+            if (type === 'sauna' || type === 'bath') s.hours = [];
             pollAvailability(); // Update instantly for self
             renderCart(type);
             
@@ -1925,6 +1892,7 @@ function pollAvailability() {
                 renderCalendar('hotel');
                 renderCalendar('yurt');
                 renderCalendar('sauna');
+                renderCalendar('bath');
             }
         }).catch(() => {});
 }
@@ -1938,6 +1906,7 @@ Promise.all([
     hotelRooms = roomsData.filter(r => r.type === 'hotel');
     yurtRooms = roomsData.filter(r => r.type === 'yurt');
     saunaRooms = roomsData.filter(r => r.type === 'sauna');
+    bathRooms = roomsData.filter(r => r.type === 'bath');
     bookedDates = aData || [];
     if(bookedDates.error) bookedDates = [];
         
@@ -1955,10 +1924,15 @@ Promise.all([
         renderRooms('sauna', saunaRooms);
         document.getElementById('sauna-selected-name').textContent = saunaRooms[0].name;
     }
+    if(bathRooms.length > 0) {
+        renderRooms('bath', bathRooms);
+        document.getElementById('bath-selected-name').textContent = bathRooms[0].name;
+    }
     
     renderCalendar('hotel');
     renderCalendar('yurt');
     renderCalendar('sauna');
+    renderCalendar('bath');
 
     // Rename Yurt names in local data if they match defaults
     const yurtNames = ['Земля', 'Вода', 'Воздух', 'Огонь'];
@@ -1998,7 +1972,7 @@ Promise.all([
     }
 
     // Apply masks to all phone inputs
-    ['hotel-phone', 'sauna-phone', 'yurt-phone'].forEach(applyPhoneMask);
+    ['hotel-phone', 'sauna-phone', 'yurt-phone', 'bath-phone'].forEach(applyPhoneMask);
 });
 </script>
 

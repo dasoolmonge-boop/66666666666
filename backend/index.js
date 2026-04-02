@@ -147,6 +147,11 @@ const db = new sqlite3.Database(dbPath, (err) => {
             db.run(`INSERT INTO rooms (type, name, desc, price, priceWeekend, amenities, imgs) 
                     SELECT 'sauna', 'Сауна Отеля', 'Почасовая аренда · Вместимость до 6 человек · 2000₽/час', 2000, 2000, '[]', '[]' 
                     WHERE NOT EXISTS (SELECT 1 FROM rooms WHERE type='sauna')`);
+
+            // Ensure Bath room exists
+            db.run(`INSERT INTO rooms (type, name, desc, price, priceWeekend, amenities, imgs) 
+                    SELECT 'bath', 'Баня Хаан-Дыт', 'Настоящая баня на дровах · Вместимость до 10 человек · 3500₽/час', 3500, 3500, '[]', '[]' 
+                    WHERE NOT EXISTS (SELECT 1 FROM rooms WHERE type='bath')`);
         });
     }
 });
@@ -311,7 +316,7 @@ app.post('/api/bookings', (req, res) => {
                     
                     // Notify Admin (wrapped in try/catch to ensure booking is saved even if notify fails)
                     try {
-                        const typeLabel = b.type === 'hotel' ? 'Отель "Чалама"' : (b.type === 'sauna' ? 'Сауна "Чалама"' : 'Юрт-комплекс');
+                        const typeLabel = b.type === 'hotel' ? 'Отель "Чалама"' : (b.type === 'sauna' ? 'Сауна "Чалама"' : (b.type === 'bath' ? 'Баня ХААН-ДЫТ' : 'Юрт-комплекс'));
                         
                         const adminText = `✨ <b>НОВЫЙ ЗАКАЗ: #${id.toUpperCase()}</b>\n\n` +
                                         `🏨 <b>${typeLabel}</b>\n` +

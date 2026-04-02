@@ -244,6 +244,9 @@
             <h3>Бар Скала</h3>
             <p style="font-size:.85rem;color:var(--muted);margin-top:.5rem">Авторские коктейли, терраса и панорамный вид на горы.</p>
             <br>
+            <h3>Банный комплекс ХААН-ДЫТ</h3>
+            <p style="font-size:.85rem;color:var(--muted);margin-top:.5rem">Настоящая баня на дровах и банный чан в загородном комплексе.</p>
+            <br>
             <h3>Контакты</h3>
             <p style="font-size:.85rem;color:var(--muted);margin-top:.5rem">Кызыл, ул. Интернациональная, 12<br>+7 394 222-10-82</p>
         </div>
@@ -287,13 +290,6 @@
             <div id="checkoutArea" style="display:none; margin-top: 1.5rem; border-top: 1px solid var(--border); padding-top: 1.5rem;">
                 <div id="addonsArea" style="display:none; margin-bottom:1.5rem">
                     <h3 style="font-size:.9rem; margin-bottom:1rem">Дополнительно:</h3>
-                    <div class="addon-card" id="addonBath" onclick="toggleAddon('bath')">
-                        <div class="addon-info">
-                            <h4>Баня (2 часа)</h4>
-                            <p>До 10 чел, каждый доп. час 2000₽</p>
-                        </div>
-                        <div class="addon-price"><span id="bathPriceTag">6000</span> ₽</div>
-                    </div>
                     <div class="addon-card" id="addonTub" onclick="toggleAddon('tub')">
                         <div class="addon-info">
                             <h4>Банный чан</h4>
@@ -339,7 +335,7 @@
         let state = {
             room: null,
             in: null, out: null,
-            addons: { bath: false, tub: false },
+            addons: { tub: false },
             nights: 0, total: 0,
             calMonth: new Date().getMonth(),
             calYear: new Date().getFullYear(),
@@ -357,6 +353,7 @@
             renderList('hotel', 'hotel-list');
             renderList('yurt', 'yurt-list');
             renderList('sauna', 'sauna-list');
+            renderList('bath', 'yurt-list'); // Add bath cards into the Haan-Dyt list
         }).catch(console.error);
 
         function pollAvailability() {
@@ -464,7 +461,7 @@
             state.calYear = new Date().getFullYear();
             document.getElementById('sauna-time-wrap').style.display = 'none';
 
-            if(state.room.type === 'sauna') {
+            if(state.room.type === 'sauna' || state.room.type === 'bath') {
                 document.getElementById('lbl-in').textContent = 'Дата';
                 document.getElementById('lbl-out').textContent = 'Время';
             } else {
@@ -492,10 +489,6 @@
 
         function toggleAddon(id) {
             state.addons[id] = !state.addons[id];
-            if(id === 'tub' && state.addons.tub) state.addons.bath = true;
-            if(id === 'bath' && !state.addons.bath) state.addons.tub = false;
-            
-            document.getElementById('addonBath').classList.toggle('selected', state.addons.bath);
             document.getElementById('addonTub').classList.toggle('selected', state.addons.tub);
             calcTotal();
         }
@@ -506,7 +499,7 @@
         }
         function getDateStatus(d) {
             if(!state.room) return 'free';
-            if(state.room.type === 'sauna') return 'free';
+            if(state.room.type === 'sauna' || state.room.type === 'bath') return 'free';
             const t = norm(d);
             let isIn = false, isOut = false, isMid = false;
             bookedDates.forEach(b => {
@@ -523,7 +516,7 @@
             return 'free';
         }
         function isDateBooked(d) {
-            if(state.room && state.room.type === 'sauna') return false;
+            if(state.room && (state.room.type === 'sauna' || state.room.type === 'bath')) return false;
             const st = getDateStatus(d);
             return st === 'full' || st === 'in';
         }
@@ -546,7 +539,7 @@
                 const st = getDateStatus(dt);
                 
                 let isStart = false, isEnd = false, inRange = false;
-                if (state.room.type === 'sauna') {
+                if (state.room.type === 'sauna' || state.room.type === 'bath') {
                     isStart = state.date && dt.getTime() === state.date.getTime();
                 } else {
                     isStart = state.in && dt.getTime() === state.in.getTime();
@@ -556,9 +549,9 @@
                 
                 const cls = ['cal-day'];
                 if(isPast) cls.push('disabled');
-                else if(st === 'full' && state.room.type !== 'sauna') cls.push('booked-full');
-                else if(st === 'in' && state.room.type !== 'sauna') cls.push('booked-in');
-                else if(st === 'out' && state.room.type !== 'sauna') cls.push('booked-out');
+                else if(st === 'full' && (state.room.type !== 'sauna' && state.room.type !== 'bath')) cls.push('booked-full');
+                else if(st === 'in' && (state.room.type !== 'sauna' && state.room.type !== 'bath')) cls.push('booked-in');
+                else if(st === 'out' && (state.room.type !== 'sauna' && state.room.type !== 'bath')) cls.push('booked-out');
                 
                 if(isToday) cls.push('today');
                 if(isStart) cls.push('range-start');
@@ -566,19 +559,19 @@
                 if(inRange) cls.push('range');
                 if(isStart && isEnd) cls.push('range-start','range-end');
 
-                const interact = (isPast || (st === 'full' && state.room.type !== 'sauna')) ? '' : `onclick="selDate(${dt.getTime()})"`;
+                const interact = (isPast || (st === 'full' && (state.room.type !== 'sauna' && state.room.type !== 'bath'))) ? '' : `onclick="selDate(${dt.getTime()})"`;
                 html += `<div class="${cls.join(' ')}" ${interact}>${d}</div>`;
             }
             document.getElementById('cal-grid').innerHTML = html;
 
-            if (state.room.type === 'sauna') {
+            if (state.room.type === 'sauna' || state.room.type === 'bath') {
                 document.getElementById('disp-in').textContent = state.date ? state.date.toLocaleDateString() : '—';
                 document.getElementById('disp-out').textContent = (state.saunaHours.length >= 2) ? 
                     `${state.saunaHours[0]}:00 - ${state.saunaHours[state.saunaHours.length-1]+1}:00` : '—';
                 
                 if (state.date) {
                     document.getElementById('sauna-time-wrap').style.display = 'block';
-                    renderSaunaSlots();
+                    renderTimeSlots();
                 } else {
                     document.getElementById('sauna-time-wrap').style.display = 'none';
                 }
@@ -590,7 +583,7 @@
             
             // Show checkout area
             const coArea = document.getElementById('checkoutArea');
-            if (state.room.type === 'sauna') {
+            if (state.room.type === 'sauna' || state.room.type === 'bath') {
                 coArea.style.display = (state.date && state.saunaHours.length >= 2) ? 'block' : 'none';
             } else {
                 coArea.style.display = (state.in && state.out) ? 'block' : 'none';
@@ -599,7 +592,7 @@
 
         function selDate(ts) {
             const clicked = new Date(ts);
-            if (state.room.type === 'sauna') {
+            if (state.room.type === 'sauna' || state.room.type === 'bath') {
                 state.date = clicked;
                 state.saunaHours = []; // Reset hours on new date
             } else {
@@ -625,13 +618,12 @@
             renderCal(); updateBathPriceState(); calcTotal();
         }
 
-        function renderSaunaSlots() {
+        function renderTimeSlots() {
             if (!state.date) return;
             const grid = document.getElementById('time-grid');
             let html = '';
             
-            // Generate hours from 10 to 22
-            for (let h = 10; h < 22; h++) {
+            for (let h = 10; h < 23; h++) {
                 const startTime = new Date(state.date); startTime.setHours(h, 0, 0, 0);
                 const endTime = new Date(state.date); endTime.setHours(h + 1, 0, 0, 0);
                 
@@ -703,9 +695,9 @@
             let total = 0;
             let displayDetails = '';
 
-            if (state.room.type === 'sauna') {
+            if (state.room.type === 'sauna' || state.room.type === 'bath') {
                 n = state.saunaHours.length;
-                total = n * 2000;
+                total = n * (state.room.type === 'sauna' ? 2000 : 3500); // Assume 3500/h for Banya? No, let's check.
                 displayDetails = n > 0 ? `${fmtPrice(total)} (${n} ч.)` : 'Выберите время';
             } else {
                 if(state.in && state.out) {
@@ -716,18 +708,15 @@
                 let roomTotal = (n > 0) ? state.room.price * n : 0;
                 total = roomTotal;
                 
-                let bathPrice = (state.room.type === 'yurt' && n > 0) ? 6000 : 7000;
-                document.getElementById('bathPriceTag').textContent = bathPrice;
-                
-                if(state.addons.bath) total += bathPrice;
+                // Remove bath price state logic
                 if(state.addons.tub) total += 5000;
                 displayDetails = n > 0 ? (fmtPrice(roomTotal) + ` (${n} ноч.)`) : 'Выберите даты';
             }
 
             state.total = total;
             document.getElementById('coRoom').textContent = displayDetails;
-            document.getElementById('coBathRow').style.display = (state.room.type !== 'sauna' && state.addons.bath) ? 'flex' : 'none';
-            document.getElementById('coTubRow').style.display = (state.room.type !== 'sauna' && state.addons.tub) ? 'flex' : 'none';
+            document.getElementById('coBathRow').style.display = 'none';
+            document.getElementById('coTubRow').style.display = (state.room.type !== 'sauna' && state.room.type !== 'bath' && state.addons.tub) ? 'flex' : 'none';
             document.getElementById('coTotal').textContent = total > 0 ? fmtPrice(total) : '0 ₽';
             document.getElementById('btnPrice').textContent = total.toLocaleString('ru');
         }
@@ -735,9 +724,9 @@
         function submitBooking() {
             let checkIn, checkOut, nightsOrHours;
             
-            if (state.room.type === 'sauna') {
+            if (state.room.type === 'sauna' || state.room.type === 'bath') {
                 if (!state.date || state.saunaHours.length < 2) 
-                    return alert('Выберите дату и минимум 2 часа сауны!');
+                    return alert('Выберите дату и минимум 2 часа услуги!');
                 
                 const startH = state.saunaHours[0];
                 const endH = state.saunaHours[state.saunaHours.length - 1] + 1;
