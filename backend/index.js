@@ -10,9 +10,14 @@ require('dotenv').config();
 const app = express();
 const port = process.env.PORT || 5000;
 
-// HELPER: Send MAX Messenger Message
 const MAX_TOKEN = process.env.MAX_TOKEN || 'f9LHodD0cOJ4UEc28YWOtykBGGCNW3w2HfwNzuoyVvfuvpb7YIXZSd4_AZFsaL7E8MCgtYl9J3w1KJSSp_IR';
 const ADMIN_ID = process.env.ADMIN_ID;
+
+// Simple sanitizer to prevent basics
+function sanitize(str) {
+    if (typeof str !== 'string') return '';
+    return str.replace(/[<>]/g, '');
+}
 
 async function sendMaxMessage(chatId, text) {
     if (!MAX_TOKEN || !chatId) {
@@ -26,7 +31,7 @@ async function sendMaxMessage(chatId, text) {
     });
 
     const options = {
-        hostname: 'api.maxonline.ru',
+        hostname: 'api.max.ru',
         port: 443,
         path: '/v1/messages/send',
         method: 'POST',
