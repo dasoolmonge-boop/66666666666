@@ -499,59 +499,69 @@
         .bar-feat h4 { font-size: 1.15rem; margin-bottom: .6rem; color: #fff; }
         .bar-feat p { color: rgba(255,255,255,.45); font-size: .9rem; line-height: 1.6; }
 
-        /* Photo gallery - Running Mosaic */
-        .bar-gallery { padding: 5rem 0; overflow: hidden; background: #0f0f0f; position: relative; }
+        /* Adaptive Running Mosaic - Bar Skala */
+        .bar-gallery { 
+            padding: 4rem 0; overflow: hidden; background: #0f0f0f; position: relative; 
+            user-select: none;
+        }
         .bar-scroll-container {
             width: 100%; overflow: hidden; position: relative;
-            mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
-            -webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+            mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+            -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
         }
         .bar-scroll-track {
-            display: flex; gap: 1.5rem; width: max-content;
-            animation: barMarquee 45s linear infinite;
-            padding: 2rem 0;
+            display: flex; gap: 1rem; width: max-content;
+            animation: barMarquee 50s linear infinite;
+            padding: 1.5rem 0;
+            will-change: transform;
         }
         .bar-scroll-track:hover { animation-play-state: paused; }
         
         .bar-mosaic-item {
-            flex-shrink: 0; border-radius: 20px; overflow: hidden; 
-            position: relative; cursor: pointer; transition: all .5s ease;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
-            border: 1px solid rgba(255,255,255,0.05);
-        }
-        .bar-mosaic-item:hover {
-            transform: scale(1.03) translateY(-10px);
-            border-color: var(--gold);
-            z-index: 10;
+            flex-shrink: 0; border-radius: 14px; overflow: hidden; 
+            position: relative; cursor: pointer; transition: all .4s ease;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            background: #1a1a1a;
+            
+            /* Адаптивная высота */
+            height: 380px; 
+            width: auto;
         }
         
-        /* Разные размеры для эффекта мозаики */
-        .bar-mosaic-item.wide { width: 450px; height: 320px; }
-        .bar-mosaic-item.tall { width: 300px; height: 420px; }
-        .bar-mosaic-item.square { width: 350px; height: 350px; }
-        .bar-mosaic-item.small { width: 280px; height: 320px; }
+        /* Mobile & Tablet heights */
+        @media (max-width: 1024px) { .bar-mosaic-item { height: 300px; } }
+        @media (max-width: 768px) { 
+            .bar-mosaic-item { height: 240px; border-radius: 10px; } 
+            .bar-scroll-track { animation-duration: 35s; gap: 0.8rem; }
+        }
 
         .bar-mosaic-item img {
-            width: 100%; height: 100%; object-fit: cover;
-            transition: transform .8s ease;
+            height: 100%; width: auto; min-width: 100%;
+            object-fit: cover; transition: transform .8s ease;
         }
-        .bar-mosaic-item:hover img { transform: scale(1.1); }
+        .bar-mosaic-item:hover { transform: scale(1.02) translateY(-5px); border: 1px solid var(--gold); }
+        .bar-mosaic-item:hover img { transform: scale(1.08); }
         
         @keyframes barMarquee {
             0% { transform: translateX(0); }
-            100% { transform: translateX(calc(-50% - 0.75rem)); } /* -50% because we duplicate items */
+            100% { transform: translateX(calc(-50% - 0.5rem)); }
         }
 
         .bar-badge {
-            position: absolute; bottom: 1.5rem; left: 1.5rem; z-index: 2;
-            background: rgba(0,0,0,0.6); backdrop-filter: blur(10px);
-            padding: .6rem 1.2rem; border-radius: 50px; border: 1px solid rgba(255,255,255,0.15);
-            font-size: .75rem; font-weight: 700; color: var(--gold-light); letter-spacing: 2px;
-            opacity: 0; transform: translateY(15px);
-            transition: all .4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            text-transform: uppercase;
+            position: absolute; bottom: 1rem; left: 1rem; z-index: 2;
+            background: rgba(0,0,0,0.7); backdrop-filter: blur(8px);
+            padding: .5rem 1rem; border-radius: 50px; 
+            font-size: .7rem; font-weight: 700; color: #fff; letter-spacing: 1.5px;
+            opacity: 0; transform: translateY(10px);
+            transition: all .3s ease; text-transform: uppercase;
         }
         .bar-mosaic-item:hover .bar-badge { opacity: 1; transform: translateY(0); }
+        
+        /* Smooth touch for mobile */
+        @media (pointer: coarse) {
+            .bar-scroll-container { overflow-x: auto; scroll-behavior: smooth; -webkit-overflow-scrolling: touch; }
+            .bar-scroll-track { animation: none; } /* Disable auto-scroll for better manual control on small screens if desired, or keep it */
+        }
 
         /* Info block */
         .bar-info {
@@ -1251,53 +1261,53 @@
             <div class="bar-scroll-container">
                 <div class="bar-scroll-track">
                     <!-- Original Set (6 photos) -->
-                    <div class="bar-mosaic-item wide" onclick="openLightbox('https://i4.photo.2gis.com/photo-gallery/9b086357-76fa-4b41-aea4-83d80ef20438.jpg')">
+                    <div class="bar-mosaic-item" onclick="openLightbox('https://i4.photo.2gis.com/photo-gallery/9b086357-76fa-4b41-aea4-83d80ef20438.jpg')">
                         <img src="https://i4.photo.2gis.com/photo-gallery/9b086357-76fa-4b41-aea4-83d80ef20438.jpg" alt="Интерьер">
                         <div class="bar-badge">ИНТЕРЬЕР</div>
                     </div>
-                    <div class="bar-mosaic-item tall" onclick="openLightbox('https://i2.photo.2gis.com/photo-gallery/210e67b4-7d42-42bb-b3a1-8b5ace7199c5.jpg')">
+                    <div class="bar-mosaic-item" onclick="openLightbox('https://i2.photo.2gis.com/photo-gallery/210e67b4-7d42-42bb-b3a1-8b5ace7199c5.jpg')">
                         <img src="https://i2.photo.2gis.com/photo-gallery/210e67b4-7d42-42bb-b3a1-8b5ace7199c5.jpg" alt="Барная стойка">
                         <div class="bar-badge">БАРНАЯ СТОЙКА</div>
                     </div>
-                    <div class="bar-mosaic-item square" onclick="openLightbox('https://i7.photo.2gis.com/photo-gallery/71a7702e-c05d-4b48-b537-ad9be1fbfb52.jpg')">
+                    <div class="bar-mosaic-item" onclick="openLightbox('https://i7.photo.2gis.com/photo-gallery/71a7702e-c05d-4b48-b537-ad9be1fbfb52.jpg')">
                         <img src="https://i7.photo.2gis.com/photo-gallery/71a7702e-c05d-4b48-b537-ad9be1fbfb52.jpg" alt="Основной зал">
                         <div class="bar-badge">ОСНОВНОЙ ЗАЛ</div>
                     </div>
-                    <div class="bar-mosaic-item small" onclick="openLightbox('https://i2.photo.2gis.com/photo-gallery/33b53970-573c-43a4-a306-92e0fb7864a7.jpg')">
+                    <div class="bar-mosaic-item" onclick="openLightbox('https://i2.photo.2gis.com/photo-gallery/33b53970-573c-43a4-a306-92e0fb7864a7.jpg')">
                         <img src="https://i2.photo.2gis.com/photo-gallery/33b53970-573c-43a4-a306-92e0fb7864a7.jpg" alt="Атмосфера">
                         <div class="bar-badge">АТМОСФЕРА</div>
                     </div>
-                    <div class="bar-mosaic-item wide" onclick="openLightbox('https://i2.photo.2gis.com/photo-gallery/9a4b55c2-155b-4c55-b17d-cf5f85241cfa.jpg')">
+                    <div class="bar-mosaic-item" onclick="openLightbox('https://i2.photo.2gis.com/photo-gallery/9a4b55c2-155b-4c55-b17d-cf5f85241cfa.jpg')">
                         <img src="https://i2.photo.2gis.com/photo-gallery/9a4b55c2-155b-4c55-b17d-cf5f85241cfa.jpg" alt="Вечерний бар">
                         <div class="bar-badge">ВЕЧЕРНИЙ БАР</div>
                     </div>
-                    <div class="bar-mosaic-item tall" onclick="openLightbox('https://i6.photo.2gis.com/photo-gallery/8d7be2a8-0dce-4b56-b5a7-d7323fcb6983.jpg')">
+                    <div class="bar-mosaic-item" onclick="openLightbox('https://i6.photo.2gis.com/photo-gallery/8d7be2a8-0dce-4b56-b5a7-d7323fcb6983.jpg')">
                         <img src="https://i6.photo.2gis.com/photo-gallery/8d7be2a8-0dce-4b56-b5a7-d7323fcb6983.jpg" alt="Коктейли">
                         <div class="bar-badge">КОКТЕЙЛИ</div>
                     </div>
 
                     <!-- Duplicate Set for Seamless Loop -->
-                    <div class="bar-mosaic-item wide" onclick="openLightbox('https://i4.photo.2gis.com/photo-gallery/9b086357-76fa-4b41-aea4-83d80ef20438.jpg')">
+                    <div class="bar-mosaic-item" onclick="openLightbox('https://i4.photo.2gis.com/photo-gallery/9b086357-76fa-4b41-aea4-83d80ef20438.jpg')">
                         <img src="https://i4.photo.2gis.com/photo-gallery/9b086357-76fa-4b41-aea4-83d80ef20438.jpg" alt="Интерьер">
                         <div class="bar-badge">ИНТЕРЬЕР</div>
                     </div>
-                    <div class="bar-mosaic-item tall" onclick="openLightbox('https://i2.photo.2gis.com/photo-gallery/210e67b4-7d42-42bb-b3a1-8b5ace7199c5.jpg')">
+                    <div class="bar-mosaic-item" onclick="openLightbox('https://i2.photo.2gis.com/photo-gallery/210e67b4-7d42-42bb-b3a1-8b5ace7199c5.jpg')">
                         <img src="https://i2.photo.2gis.com/photo-gallery/210e67b4-7d42-42bb-b3a1-8b5ace7199c5.jpg" alt="Барная стойка">
                         <div class="bar-badge">БАРНАЯ СТОЙКА</div>
                     </div>
-                    <div class="bar-mosaic-item square" onclick="openLightbox('https://i7.photo.2gis.com/photo-gallery/71a7702e-c05d-4b48-b537-ad9be1fbfb52.jpg')">
+                    <div class="bar-mosaic-item" onclick="openLightbox('https://i7.photo.2gis.com/photo-gallery/71a7702e-c05d-4b48-b537-ad9be1fbfb52.jpg')">
                         <img src="https://i7.photo.2gis.com/photo-gallery/71a7702e-c05d-4b48-b537-ad9be1fbfb52.jpg" alt="Основной зал">
                         <div class="bar-badge">ОСНОВНОЙ ЗАЛ</div>
                     </div>
-                    <div class="bar-mosaic-item small" onclick="openLightbox('https://i2.photo.2gis.com/photo-gallery/33b53970-573c-43a4-a306-92e0fb7864a7.jpg')">
+                    <div class="bar-mosaic-item" onclick="openLightbox('https://i2.photo.2gis.com/photo-gallery/33b53970-573c-43a4-a306-92e0fb7864a7.jpg')">
                         <img src="https://i2.photo.2gis.com/photo-gallery/33b53970-573c-43a4-a306-92e0fb7864a7.jpg" alt="Атмосфера">
                         <div class="bar-badge">АТМОСФЕРА</div>
                     </div>
-                    <div class="bar-mosaic-item wide" onclick="openLightbox('https://i2.photo.2gis.com/photo-gallery/9a4b55c2-155b-4c55-b17d-cf5f85241cfa.jpg')">
+                    <div class="bar-mosaic-item" onclick="openLightbox('https://i2.photo.2gis.com/photo-gallery/9a4b55c2-155b-4c55-b17d-cf5f85241cfa.jpg')">
                         <img src="https://i2.photo.2gis.com/photo-gallery/9a4b55c2-155b-4c55-b17d-cf5f85241cfa.jpg" alt="Вечерний бар">
                         <div class="bar-badge">ВЕЧЕРНИЙ БАР</div>
                     </div>
-                    <div class="bar-mosaic-item tall" onclick="openLightbox('https://i6.photo.2gis.com/photo-gallery/8d7be2a8-0dce-4b56-b5a7-d7323fcb6983.jpg')">
+                    <div class="bar-mosaic-item" onclick="openLightbox('https://i6.photo.2gis.com/photo-gallery/8d7be2a8-0dce-4b56-b5a7-d7323fcb6983.jpg')">
                         <img src="https://i6.photo.2gis.com/photo-gallery/8d7be2a8-0dce-4b56-b5a7-d7323fcb6983.jpg" alt="Коктейли">
                         <div class="bar-badge">КОКТЕЙЛИ</div>
                     </div>
