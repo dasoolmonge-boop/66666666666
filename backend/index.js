@@ -21,24 +21,25 @@ function sanitize(str) {
 
 async function sendMaxMessage(chatId, text) {
     if (!MAX_TOKEN || !chatId) {
-        console.log(`[MAX] Skipping - Token: ${MAX_TOKEN ? 'OK' : 'MISSING'}, ChatID: ${chatId || 'MISSING'}`);
+        console.log(`[MAX] Skipping notify - Token: ${MAX_TOKEN ? 'OK' : 'MISSING'}, ChatID: ${chatId || 'MISSING'}`);
         return;
     }
     
+    // According to dev.max.ru, chat_id or user_id goes into query string
     const data = JSON.stringify({
-        chatId: chatId,
-        text: text
+        text: text,
+        format: 'html'
     });
 
     const options = {
-        hostname: 'api.max.ru',
+        hostname: 'platform-api.max.ru',
         port: 443,
-        path: '/v1/messages/send',
+        path: `/messages?chat_id=${chatId}`,
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
             'Content-Length': Buffer.byteLength(data),
-            'Authorization': `Bearer ${MAX_TOKEN}`
+            'Authorization': MAX_TOKEN // No Bearer prefix for MAX API
         }
     };
 
@@ -46,10 +47,10 @@ async function sendMaxMessage(chatId, text) {
         let responseBody = '';
         res.on('data', (chunk) => { responseBody += chunk; });
         res.on('end', () => {
-            if (res.statusCode !== 200) {
-                console.error(`[MAX] API Error ${res.statusCode}: ${responseBody}`);
+            if (res.statusCode !== 200 && res.statusCode !== 201) {
+                console.error(`[MAX Notify] API Error ${res.statusCode}: ${responseBody}`);
             } else {
-                console.log(`[MAX] Message successfully sent to ${chatId}`);
+                console.log(`[MAX Notify] Success - Sent to ${chatId}`);
             }
         });
     });
