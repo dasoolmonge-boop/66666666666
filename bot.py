@@ -46,7 +46,7 @@ class MaxBot:
                                 {
                                     "type": "link",
                                     "text": "🏨 Забронировать номер",
-                                    "url": WEBAPP_URL
+                                    "url": f"{WEBAPP_URL}?chat_id={chat_id}"
                                 }
                             ]
                         ]

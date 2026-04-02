@@ -297,6 +297,12 @@ app.post('/api/bookings', (req, res) => {
                         const typeLabel = b.type === 'hotel' ? '🏨 Отель' : (b.type === 'sauna' ? '🧖 Сауна' : '⛺ Юрты');
                         const adminText = `📌 <b>Новая заявка!</b>\n\n📍 ${typeLabel}\n🛏 <b>${b.room}</b>\n📅 <b>${b.checkIn} — ${b.checkOut}</b>\n👤 <b>${guestName}</b>\n📞 ${guestPhone}\n💰 Итого: <b>${b.total} ₽</b>`;
                         sendMaxMessage(ADMIN_ID, adminText);
+
+                        // NEW: Notify client if chatId is provided
+                        if (b.clientChatId) {
+                            const clientText = `✅ <b>Ваше бронирование принято!</b>\n\n🏨 Номер заказа: <b>#${id}</b>\n🛏 Объект: <b>${b.room}</b>\n📅 Даты: <b>${b.checkIn} — ${b.checkOut}</b>\n\nОжидайте звонка администратора для окончательного подтверждения. Спасибо, что выбрали нас!`;
+                            sendMaxMessage(b.clientChatId, clientText);
+                        }
                     } catch (notifyErr) {
                         console.error("[Notify Error] Failed to send message to MAX:", notifyErr.message);
                     }

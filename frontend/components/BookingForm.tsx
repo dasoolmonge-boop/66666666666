@@ -1,23 +1,68 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import Calendar from './Calendar';
 import { Calendar as CalendarIcon, User, Phone, Check } from 'lucide-react';
 
 interface BookingFormProps {
   roomName: string;
   price?: number;
+  type?: 'hotel' | 'sauna' | 'yurts';
 }
 
-export default function BookingForm({ roomName, price }: BookingFormProps) {
+function BookingFormInner({ roomName, price, type = 'hotel' }: BookingFormProps) {
+  const searchParams = useSearchParams();
+  const chatId = searchParams.get('chat_id');
+  
   const [step, setStep] = useState(1);
   const [date, setDate] = useState('');
   const [formData, setFormData] = useState({ name: '', phone: '' });
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitted(true);
+    setLoading(true);
+    setError('');
+
+    try {
+      // Mock duration 1 day for simplicity, can be expanded
+      const checkIn = date;
+      const nextDay = new Date(date);
+      nextDay.setDate(nextDay.getDate() + 1);
+      const checkOut = nextDay.toISOString().split('T')[0];
+
+      const payload = {
+        type: type,
+        room: roomName,
+        checkIn: checkIn,
+        checkOut: checkOut,
+        nights: 1,
+        guest: formData.name,
+        phone: formData.phone,
+        total: price || 0,
+        clientChatId: chatId
+      };
+
+      const res = await fetch('/api/bookings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      const result = await res.json();
+      if (result.success) {
+        setIsSubmitted(true);
+      } else {
+        setError(result.error || 'Ошибка при бронировании');
+      }
+    } catch (err) {
+      setError('Не удалось связаться с сервером');
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (isSubmitted) {
@@ -129,21 +174,32 @@ export default function BookingForm({ roomName, price }: BookingFormProps) {
           <div style={{ display: 'flex', gap: '1rem' }}>
             <button 
               type="button" 
+              disabled={loading}
               onClick={() => setStep(1)}
-              style={{ flex: 1, padding: '1rem', borderRadius: '10px', border: '1px solid #ddd', background: 'none', cursor: 'pointer' }}
+              style={{ flex: 1, padding: '1rem', borderRadius: '10px', border: '1px solid #ddd', background: 'none', cursor: loading ? '#f5f5f5' : 'pointer', opacity: loading ? 0.5 : 1 }}
             >
               Назад
             </button>
             <button 
               type="submit" 
+              disabled={loading}
               className="btn btn-gold"
-              style={{ flex: 2, border: 'none' }}
+              style={{ flex: 2, border: 'none', position: 'relative', opacity: loading ? 0.8 : 1 }}
             >
-              Забронировать
+              {loading ? 'Отправка...' : 'Забронировать'}
             </button>
           </div>
+          {error && <p style={{ color: 'red', marginTop: '1rem', fontSize: '0.9rem', textAlign: 'center' }}>{error}</p>}
         </form>
       )}
     </div>
+  );
+}
+
+export default function BookingForm(props: BookingFormProps) {
+  return (
+    <Suspense fallback={<div style={{ padding: '2rem', textAlign: 'center' }}>Загрузка формы...</div>}>
+      <BookingFormInner {...props} />
+    </Suspense>
   );
 }
