@@ -2,7 +2,7 @@ import asyncio
 import os
 import logging
 from maxapi import Bot, Dispatcher
-from maxapi.types import MessageCreated, InlineKeyboardMarkup, InlineKeyboardButton
+from maxapi.types import MessageCreated
 from dotenv import load_dotenv
 
 # Загружаем переменные окружения
@@ -22,38 +22,30 @@ dp = Dispatcher()
 
 @dp.message_created()
 async def handle_start(event: MessageCreated):
-    """Обработчик всех входящих сообщений (имитация /start)"""
+    """Обработчик всех входящих сообщений"""
     text = event.message.body.text.lower()
     
-    if text in ["/start", "привет", "начать"]:
-        welcome_text = (
-            "🏨 <b>Добро пожаловать в ООО «ЧАЛАМА»!</b>\n\n"
-            "Мы рады приветствовать вас в нашем официальном боте.\n"
-            "Здесь вы можете быстро забронировать номер в отеле, "
-            "выбрать уютную юрту в «Хаан-Дыт» или заказать сауну.\n\n"
-            "Нажмите кнопку ниже, чтобы открыть приложение для бронирования — "
-            "это удобно и займет всего пару минут! 👇"
+    # Отвечаем на любое сообщение
+    welcome_text = (
+        "🏨 Добро пожаловать в ООО «ЧАЛАМА»!\n\n"
+        "Мы рады приветствовать вас в нашем боте.\n"
+        "Для бронирования перейдите по ссылке:\n"
+        f"{WEBAPP_URL}"
+    )
+    
+    try:
+        await bot.send_message(
+            chat_id=event.chat_id,
+            text=welcome_text
         )
-        
-        # Создаем клавиатуру с кнопкой-ссылкой
-        kb = InlineKeyboardMarkup(inline_keyboard=[
-            [InlineKeyboardButton(text="🏨 Забронировать номер", url=WEBAPP_URL)]
-        ])
-        
-        try:
-            await bot.send_message(
-                chat_id=event.chat_id,
-                text=welcome_text,
-                reply_markup=kb,
-                parse_mode="HTML"
-            )
-            logger.info(f"Sent welcome to {event.chat_id}")
-        except Exception as e:
-            logger.error(f"Error sending message: {e}")
+        # Логируем ID чата — он нам ОЧЕНЬ нужен
+        print(f"!!! ВАШ CHAT_ID: {event.chat_id} !!!")
+        logger.info(f"Sent welcome to {event.chat_id}")
+    except Exception as e:
+        logger.error(f"Error sending message: {e}")
 
 async def main():
-    logger.info("Bot is starting on MAX platform...")
-    # Запуск Polling
+    logger.info("Bot is starting on MAX platform (Minimal Mode)...")
     await dp.start_polling(bot)
 
 if __name__ == "__main__":
