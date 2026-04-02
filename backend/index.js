@@ -72,12 +72,6 @@ const safeJsonParse = (str, fallback = []) => {
     }
 };
 
-// Simple sanitizer to prevent basics
-function sanitize(str) {
-    if (typeof str !== 'string') return '';
-    return str.replace(/[<>]/g, '');
-}
-
 // Middleware
 app.use(cors());
 app.use(express.json());

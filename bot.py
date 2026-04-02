@@ -74,12 +74,13 @@ class MaxBot:
                     async with session.get(f"{BASE_URL}/updates", headers=self.headers, timeout=30) as resp:
                         if resp.status == 200:
                             updates = await resp.json()
-                            for update in updates:
-                                # Обработка новых сообщений или запуска бота
-                                if update.get("update_type") in ["message_created", "bot_started"]:
-                                    chat_id = update.get("chat_id")
-                                    if chat_id:
-                                        await self.send_welcome(chat_id)
+                            if isinstance(updates, list):
+                                for update in updates:
+                                    # Обработка новых сообщений или запуска бота
+                                    if update.get("update_type") in ["message_created", "bot_started"]:
+                                        chat_id = update.get("chat_id")
+                                        if chat_id:
+                                            await self.send_welcome(chat_id)
                         elif resp.status == 401:
                             logger.error("Invalid Token!")
                             await asyncio.sleep(10)
