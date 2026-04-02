@@ -19,6 +19,23 @@ function sanitize(str) {
     return str.replace(/[<>]/g, '');
 }
 
+async function notifyAllAdmins(text) {
+    // Collect all admin IDs (from .env and Database)
+    const adminIds = new Set();
+    if (ADMIN_ID) adminIds.add(ADMIN_ID);
+
+    db.all("SELECT chatId FROM admins", [], (err, rows) => {
+        if (!err && rows) {
+            rows.forEach(r => adminIds.add(r.chatId));
+        }
+
+        // Send to everyone
+        adminIds.forEach(id => {
+            sendMaxMessage(id, text);
+        });
+    });
+}
+
 async function sendMaxMessage(chatId, text) {
     if (!MAX_TOKEN || !chatId) {
         console.log(`[MAX] Skipping notify - Token: ${MAX_TOKEN ? 'OK' : 'MISSING'}, ChatID: ${chatId || 'MISSING'}`);
@@ -296,7 +313,7 @@ app.post('/api/bookings', (req, res) => {
                     try {
                         const typeLabel = b.type === 'hotel' ? '🏨 Отель' : (b.type === 'sauna' ? '🧖 Сауна' : '⛺ Юрты');
                         const adminText = `📌 <b>Новая заявка!</b>\n\n📍 ${typeLabel}\n🛏 <b>${b.room}</b>\n📅 <b>${b.checkIn} — ${b.checkOut}</b>\n👤 <b>${guestName}</b>\n📞 ${guestPhone}\n💰 Итого: <b>${b.total} ₽</b>`;
-                        sendMaxMessage(ADMIN_ID, adminText);
+                        notifyAllAdmins(adminText);
 
                         // NEW: Notify client if chatId is provided
                         if (b.clientChatId) {

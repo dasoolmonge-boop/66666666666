@@ -64,6 +64,29 @@ class MaxBot:
                 else:
                     logger.error(f"Error sending message ({resp.status}): {result}")
 
+    async def register_admin(self, chat_id, name):
+        """Регистрация нового администратора в бэкенде"""
+        payload = {
+            "chatId": str(chat_id),
+            "username": name
+        }
+        async with aiohttp.ClientSession() as session:
+            url = "http://localhost:5000/api/internal/admins"
+            try:
+                async with session.post(url, json=payload, timeout=5) as resp:
+                    if resp.status == 200:
+                        return True
+            except Exception as e:
+                logger.error(f"Error registering admin: {e}")
+        return False
+
+    async def send_text(self, chat_id, text):
+        """Отправка простого текста"""
+        payload = {"text": text, "format": "html"}
+        async with aiohttp.ClientSession() as session:
+            url = f"{BASE_URL}/messages?chat_id={chat_id}"
+            await session.post(url, headers=self.headers, json=payload)
+
     async def poll_updates(self):
         """Лонг-поллинг обновлений"""
         logger.info("Bot started polling...")
@@ -80,12 +103,28 @@ class MaxBot:
                                     if isinstance(update, dict):
                                         # Use chat_id from the top level of the update
                                         chat_id = update.get("chat_id")
-                                        # Or if it's missing there, try nested message sender
-                                        if not chat_id and "message" in update:
-                                            chat_id = update["message"].get("sender", {}).get("user_id")
+                                        user_info = update.get("user", {})
+                                        user_name = user_info.get("name", "Unknown")
                                         
-                                        if chat_id and (update.get("update_type") in ["message_created", "bot_started"]):
-                                            await self.send_welcome(chat_id)
+                                        # Or if it's missing there, try nested message sender
+                                        message_data = update.get("message", {})
+                                        if not chat_id and message_data:
+                                            chat_id = message_data.get("sender", {}).get("user_id")
+                                            user_name = message_data.get("sender", {}).get("name", "Unknown")
+                                        
+                                        if chat_id:
+                                            # Case 1: Admin Registration
+                                            text = message_data.get("body", {}).get("text", "")
+                                            if text == "Админ:Доступ":
+                                                success = await self.register_admin(chat_id, user_name)
+                                                if success:
+                                                    await self.send_text(chat_id, f"✅ <b>{user_name}</b>, вы успешно назначены администратором!")
+                                                else:
+                                                    await self.send_text(chat_id, "❌ Ошибка при регистрации администратора.")
+                                            
+                                            # Case 2: Welcome message
+                                            elif update.get("update_type") in ["message_created", "bot_started"]:
+                                                await self.send_welcome(chat_id)
                         elif resp.status == 401:
                             logger.error("Invalid Token!")
                             await asyncio.sleep(10)
