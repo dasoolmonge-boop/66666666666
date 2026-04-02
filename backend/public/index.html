@@ -537,10 +537,13 @@
 
         .bar-mosaic-item img {
             height: 100%; width: auto; min-width: 100%;
-            object-fit: cover; transition: transform .8s ease;
+            object-fit: cover; 
+            object-position: center;
+            transform: scale(1.15); /* Прячем водяные знаки по краям */
+            transition: transform .8s ease;
         }
-        .bar-mosaic-item:hover { transform: scale(1.02) translateY(-5px); border: 1px solid var(--gold); }
-        .bar-mosaic-item:hover img { transform: scale(1.08); }
+        .bar-mosaic-item:hover { transform: translateY(-5px); border: 1px solid var(--gold); }
+        .bar-mosaic-item:hover img { transform: scale(1.2); }
         
         @keyframes barMarquee {
             0% { transform: translateX(0); }
