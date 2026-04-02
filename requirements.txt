@@ -1,4 +1,4 @@
-aiogram
+maxapi
 python-dotenv
-fastapi
-uvicorn
+asyncio
+logging

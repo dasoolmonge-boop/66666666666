@@ -4,10 +4,57 @@ const cors = require('cors');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const https = require('https');
 require('dotenv').config();
 
 const app = express();
 const port = process.env.PORT || 5000;
+
+// HELPER: Send MAX Messenger Message
+const MAX_TOKEN = process.env.MAX_TOKEN || 'f9LHodD0cOJ4UEc28YWOtykBGGCNW3w2HfwNzuoyVvfuvpb7YIXZSd4_AZFsaL7E8MCgtYl9J3w1KJSSp_IR';
+const ADMIN_ID = process.env.ADMIN_ID;
+
+async function sendMaxMessage(chatId, text) {
+    if (!MAX_TOKEN || !chatId) {
+        console.log(`[MAX] Skipping - Token: ${MAX_TOKEN ? 'OK' : 'MISSING'}, ChatID: ${chatId || 'MISSING'}`);
+        return;
+    }
+    
+    const data = JSON.stringify({
+        chat_id: chatId,
+        text: text,
+        parse_mode: 'HTML'
+    });
+
+    const options = {
+        hostname: 'api.maxmessenger.ru',
+        port: 443,
+        path: '/v1/messages/send',
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Content-Length': data.length,
+            'Authorization': `Bearer ${MAX_TOKEN}`,
+            'User-Agent': 'ChalamaBot/1.0'
+        }
+    };
+
+    const req = https.request(options, (res) => {
+        if (res.statusCode !== 200) {
+            console.error(`[MAX] API Error: ${res.statusCode}`);
+        } else {
+            console.log(`[MAX] Message sent to ${chatId}`);
+        }
+        res.on('data', () => {});
+    });
+
+    req.on('error', (err) => {
+        console.error('[MAX] Connection error:', err.message);
+    });
+
+    req.write(data);
+    req.end();
+}
 
 // Simple XSS Sanitizer helper (if xss lib is not yet loaded)
 const safeJsonParse = (str, fallback = []) => {
@@ -241,7 +288,7 @@ app.post('/api/bookings', (req, res) => {
                     // Notify Admin
                     const typeLabel = b.type === 'hotel' ? '🏨 Отель' : (b.type === 'sauna' ? '🧖 Сауна' : '⛺ Юрты');
                     const adminText = `📌 <b>Новая заявка!</b>\n\n📍 ${typeLabel}\n🛏 <b>${b.room}</b>\n📅 <b>${b.checkIn} — ${b.checkOut}</b>\n👤 <b>${guestName}</b>\n📞 ${guestPhone}\n💰 Итого: <b>${b.total} ₽</b>`;
-                    sendTelegramMessage(ADMIN_ID, adminText);
+                    sendMaxMessage(ADMIN_ID, adminText);
 
                     res.json({ success: true, id: id });
                 }
