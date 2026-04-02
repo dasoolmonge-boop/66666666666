@@ -311,13 +311,28 @@ app.post('/api/bookings', (req, res) => {
                     
                     // Notify Admin (wrapped in try/catch to ensure booking is saved even if notify fails)
                     try {
-                        const typeLabel = b.type === 'hotel' ? '🏨 Отель' : (b.type === 'sauna' ? '🧖 Сауна' : '⛺ Юрты');
-                        const adminText = `📌 <b>Новая заявка!</b>\n\n📍 ${typeLabel}\n🛏 <b>${b.room}</b>\n📅 <b>${b.checkIn} — ${b.checkOut}</b>\n👤 <b>${guestName}</b>\n📞 ${guestPhone}\n💰 Итого: <b>${b.total} ₽</b>`;
+                        const typeLabel = b.type === 'hotel' ? 'Отель "Чалама"' : (b.type === 'sauna' ? 'Сауна "Чалама"' : 'Юрт-комплекс');
+                        
+                        const adminText = `✨ <b>НОВЫЙ ЗАКАЗ: #${id.toUpperCase()}</b>\n\n` +
+                                        `🏨 <b>${typeLabel}</b>\n` +
+                                        `🛋 Объект: <b>${b.room}</b>\n` +
+                                        `📅 Даты: <b>${b.checkIn} — ${b.checkOut}</b>\n\n` +
+                                        `👤 Клиент: <b>${guestName}</b>\n` +
+                                        `📞 Тел: <code>${guestPhone}</code>\n` +
+                                        `💰 Сумма: <b>${b.total} ₽</b>\n\n` +
+                                        `⚡️ <i>Система "Чалама"</i>`;
+                        
                         notifyAllAdmins(adminText);
 
                         // NEW: Notify client if chatId is provided
                         if (b.clientChatId) {
-                            const clientText = `✅ <b>Ваше бронирование принято!</b>\n\n🏨 Номер заказа: <b>#${id}</b>\n🛏 Объект: <b>${b.room}</b>\n📅 Даты: <b>${b.checkIn} — ${b.checkOut}</b>\n\nОжидайте звонка администратора для окончательного подтверждения. Спасибо, что выбрали нас!`;
+                            const clientText = `🏨 <b>ООО «ЧАЛАМА»</b>\n\n` +
+                                             `Здравствуйте, <b>${guestName}</b>!\n` +
+                                             `Ваша заявка <b>#${id.toUpperCase()}</b> успешно принята.\n\n` +
+                                             `📍 Объект: <b>${b.room}</b>\n` +
+                                             `📅 Период: <b>${b.checkIn} — ${b.checkOut}</b>\n\n` +
+                                             `📞 Наш администратор свяжется с вами в ближайшее время для подтверждения.\n\n` +
+                                             `✨ <i>Спасибо, что выбрали нас!</i>`;
                             sendMaxMessage(b.clientChatId, clientText);
                         }
                     } catch (notifyErr) {
