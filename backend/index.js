@@ -27,7 +27,7 @@ async function sendMaxMessage(chatId, text) {
     });
 
     const options = {
-        hostname: 'api.maxmessenger.ru',
+        hostname: 'api.maxonline.ru',
         port: 443,
         path: '/v1/messages/send',
         method: 'POST',
@@ -64,6 +64,12 @@ const safeJsonParse = (str, fallback = []) => {
         return fallback;
     }
 };
+
+// Simple sanitizer to prevent basics
+function sanitize(str) {
+    if (typeof str !== 'string') return '';
+    return str.replace(/[<>]/g, '');
+}
 
 // Middleware
 app.use(cors());
@@ -285,10 +291,14 @@ app.post('/api/bookings', (req, res) => {
                 function (err) {
                     if (err) return res.status(500).json({ error: err.message });
                     
-                    // Notify Admin
-                    const typeLabel = b.type === 'hotel' ? '🏨 Отель' : (b.type === 'sauna' ? '🧖 Сауна' : '⛺ Юрты');
-                    const adminText = `📌 <b>Новая заявка!</b>\n\n📍 ${typeLabel}\n🛏 <b>${b.room}</b>\n📅 <b>${b.checkIn} — ${b.checkOut}</b>\n👤 <b>${guestName}</b>\n📞 ${guestPhone}\n💰 Итого: <b>${b.total} ₽</b>`;
-                    sendMaxMessage(ADMIN_ID, adminText);
+                    // Notify Admin (wrapped in try/catch to ensure booking is saved even if notify fails)
+                    try {
+                        const typeLabel = b.type === 'hotel' ? '🏨 Отель' : (b.type === 'sauna' ? '🧖 Сауна' : '⛺ Юрты');
+                        const adminText = `📌 <b>Новая заявка!</b>\n\n📍 ${typeLabel}\n🛏 <b>${b.room}</b>\n📅 <b>${b.checkIn} — ${b.checkOut}</b>\n👤 <b>${guestName}</b>\n📞 ${guestPhone}\n💰 Итого: <b>${b.total} ₽</b>`;
+                        sendMaxMessage(ADMIN_ID, adminText);
+                    } catch (notifyErr) {
+                        console.error("[Notify Error] Failed to send message to MAX:", notifyErr.message);
+                    }
 
                     res.json({ success: true, id: id });
                 }
