@@ -21,9 +21,8 @@ async function sendMaxMessage(chatId, text) {
     }
     
     const data = JSON.stringify({
-        chat_id: chatId,
-        text: text,
-        parse_mode: 'HTML'
+        chatId: chatId,
+        text: text
     });
 
     const options = {
@@ -33,19 +32,21 @@ async function sendMaxMessage(chatId, text) {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'Content-Length': data.length,
-            'Authorization': `Bearer ${MAX_TOKEN}`,
-            'User-Agent': 'ChalamaBot/1.0'
+            'Content-Length': Buffer.byteLength(data),
+            'Authorization': `Bearer ${MAX_TOKEN}`
         }
     };
 
     const req = https.request(options, (res) => {
-        if (res.statusCode !== 200) {
-            console.error(`[MAX] API Error: ${res.statusCode}`);
-        } else {
-            console.log(`[MAX] Message sent to ${chatId}`);
-        }
-        res.on('data', () => {});
+        let responseBody = '';
+        res.on('data', (chunk) => { responseBody += chunk; });
+        res.on('end', () => {
+            if (res.statusCode !== 200) {
+                console.error(`[MAX] API Error ${res.statusCode}: ${responseBody}`);
+            } else {
+                console.log(`[MAX] Message successfully sent to ${chatId}`);
+            }
+        });
     });
 
     req.on('error', (err) => {
