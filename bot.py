@@ -35,13 +35,12 @@ async def handle_start(event: MessageCreated):
     
     try:
         await bot.send_message(
-            chat_id=event.chat_id,
+            chat_id=event.message.chat_id,
             text=welcome_text
         )
-        # Логируем ID чата — он нам ОЧЕНЬ нужен
-        print(f"!!! ВАШ CHAT_ID: {event.chat_id} !!!")
-        logger.info(f"Sent welcome to {event.chat_id}")
+        print(f"✅ Успешно отправлено в чат: {event.message.chat_id}")
     except Exception as e:
+        logger.error(f"Error sending message: {e}")
         logger.error(f"Error sending message: {e}")
 
 async def main():
