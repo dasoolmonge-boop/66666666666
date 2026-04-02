@@ -399,6 +399,14 @@ app.get('/api/internal/admins', (req, res) => {
     });
 });
 
+app.delete('/api/internal/admins/:chatId', (req, res) => {
+    const { chatId } = req.params;
+    db.run("DELETE FROM admins WHERE chatId = ?", [chatId], function(err) {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json({ success: true, changes: this.changes });
+    });
+});
+
 app.listen(port, () => {
     console.log(`Server is running at http://localhost:${port}`);
 });

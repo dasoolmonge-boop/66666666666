@@ -80,6 +80,18 @@ class MaxBot:
                 logger.error(f"Error registering admin: {e}")
         return False
 
+    async def unregister_admin(self, chat_id):
+        """Удаление администратора из бэкенда"""
+        async with aiohttp.ClientSession() as session:
+            url = f"http://localhost:5000/api/internal/admins/{chat_id}"
+            try:
+                async with session.delete(url, timeout=5) as resp:
+                    if resp.status == 200:
+                        return True
+            except Exception as e:
+                logger.error(f"Error unregistering admin: {e}")
+        return False
+
     async def send_text(self, chat_id, text):
         """Отправка простого текста"""
         payload = {"text": text, "format": "html"}
@@ -122,6 +134,13 @@ class MaxBot:
                                                 else:
                                                     await self.send_text(chat_id, "❌ Ошибка при регистрации администратора.")
                                             
+                                            elif text == "Админ:Стоп":
+                                                success = await self.unregister_admin(chat_id)
+                                                if success:
+                                                    await self.send_text(chat_id, "❌ Доступ администратора аннулирован. Вы больше не будете получать уведомления.")
+                                                else:
+                                                    await self.send_text(chat_id, "❌ Ошибка при удалении администратора.")
+
                                             # Case 2: Welcome message
                                             elif update.get("update_type") in ["message_created", "bot_started"]:
                                                 await self.send_welcome(chat_id)
