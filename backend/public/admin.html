@@ -445,20 +445,25 @@
             <div id="roomsPhotoList"></div>
         </div>
 
-        <!-- Admin Management -->
         <div class="admin-section">
-            <div class="admin-section-title">📬 Telegram-уведомления <span class="tag tag-confirmed" id="tg-status-badge">Активно</span></div>
+            <div class="admin-section-title">📬 MAX-уведомления <span class="tag tag-confirmed" id="tg-status-badge">Активно</span></div>
             <div id="tgStatusMsg" class="tg-status"></div>
-            <div class="admin-list" id="adminList"></div>
+            
+            <div class="admin-add-row" style="margin-top: 1rem;">
+                <input type="text" id="newAdminName" placeholder="Имя (напр. Иван)">
+                <input type="text" id="newAdminId" placeholder="ID в MAX (напр. 12345)">
+                <button class="btn-add" onclick="addAdmin()">Добавить админа</button>
+            </div>
+
+            <div class="admin-list" id="adminList" style="margin-top: 1.5rem;"></div>
             <div class="admin-hint">
                 <p>💡 <strong>Как добавить администратора:</strong></p>
                 <ol style="margin-left: 1.5rem; margin-top: 0.5rem;">
-                    <li>Откройте нашего бота в Telegram: <a href="https://t.me/Khaan_dyt_bot" target="_blank" style="color:var(--gold-l)">@Khaan_dyt_bot</a></li>
-                    <li>Отправьте команду: <code>/admin_auth Ваше_Пароль</code></li>
-                    <li>После этого ваш аккаунт появится в списке выше и вы начнете получать уведомления.</li>
+                    <li>Узнайте свой ID в мессенджере MAX (с помощью бота <b>«Узнай ID»</b>).</li>
+                    <li>Введите имя и ID в форму выше и нажмите «Добавить».</li>
+                    <li>Или используйте нашего бота: <a href="https://t.me/Khaan_dyt_bot" target="_blank" style="color:var(--gold-l)">@Khaan_dyt_bot</a> (отправьте команду <code>/admin_auth Ваше_Пароль</code>).</li>
                 </ol>
-                <p style="margin-top: 1rem;">📤 При каждом новом бронировании все активные администраторы получают детальное уведомление.</p>
-                <p>📱 Клиенты получают автоматическое подтверждение в Telegram при смене статуса на <b>«Подтверждено»</b>.</p>
+                <p style="margin-top: 1rem;">📤 При каждом бронировании все активные администраторы получают уведомление.</p>
             </div>
         </div>
     </div>
@@ -887,7 +892,7 @@ async function deletePhoto(roomId, imgUrl) {
     } catch(err) { console.error(err); }
 }
 
-// ===== TELEGRAM ADMIN MANAGEMENT =====
+// ===== TELEGRAM / MAX ADMIN MANAGEMENT =====
 async function renderAdmins() {
     try {
         const res = await fetch('/api/internal/admins');
@@ -895,7 +900,7 @@ async function renderAdmins() {
         const el = document.getElementById('adminList');
         
         if (!adminIds.length) {
-            el.innerHTML = '<div style="text-align:center;padding:1.5rem;color:var(--muted);font-size:.85rem">Нет зарегистрированных администраторов. Используйте /admin_auth в боте.</div>';
+            el.innerHTML = '<div style="text-align:center;padding:1.5rem;color:var(--muted);font-size:.85rem">Нет администраторов. Добавьте по ID выше.</div>';
             return;
         }
 
@@ -905,13 +910,48 @@ async function renderAdmins() {
                     <div class="admin-item-avatar">👤</div>
                     <div>
                         <div class="admin-item-name">Администратор</div>
-                        <div class="admin-item-id">Chat ID: ${id}</div>
+                        <div class="admin-item-id">MAX ID: ${id}</div>
                     </div>
                 </div>
-                <span class="tag tag-confirmed" style="font-size:0.6rem">В СЕТИ</span>
+                <button class="btn-remove" onclick="deleteAdmin('${id}')">Удалить</button>
             </div>
         `).join('');
     } catch (err) { console.error(err); }
+}
+
+async function addAdmin() {
+    const name = document.getElementById('newAdminName').value;
+    const id = document.getElementById('newAdminId').value;
+    if (!id) return alert('Введите ID!');
+
+    try {
+        const res = await fetch('/api/internal/admins', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ chatId: id, username: name || 'Администратор' })
+        });
+        if (res.ok) {
+            document.getElementById('newAdminName').value = '';
+            document.getElementById('newAdminId').value = '';
+            showTgStatus('success', 'Администратор успешно добавлен!');
+            renderAdmins();
+        } else {
+            showTgStatus('error', 'Ошибка при добавлении.');
+        }
+    } catch(err) { console.error(err); }
+}
+
+async function deleteAdmin(chatId) {
+    if (!confirm('Удалить этого администратора из списка рассылки?')) return;
+    try {
+        const res = await fetch('/api/internal/admins/' + chatId, { method: 'DELETE' });
+        if (res.ok) {
+            showTgStatus('success', 'Администратор удален.');
+            renderAdmins();
+        } else {
+            showTgStatus('error', 'Ошибка при удалении.');
+        }
+    } catch(err) { console.error(err); }
 }
 
 function showTgStatus(type, msg) {
