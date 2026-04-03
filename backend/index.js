@@ -104,6 +104,10 @@ app.get('/', (req, res) => {
 });
 
 // Database setup
+const dbDir = path.join(__dirname, 'db');
+if (!fs.existsSync(dbDir)) {
+    fs.mkdirSync(dbDir, { recursive: true });
+}
 const dbPath = path.resolve(__dirname, process.env.DATABASE_PATH || './db/database.sqlite');
 const db = new sqlite3.Database(dbPath, (err) => {
     if (err) console.error("Error connecting to database:", err);
