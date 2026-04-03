@@ -10,7 +10,7 @@ load_dotenv()
 
 # Конфигурация
 TOKEN = os.getenv("MAX_TOKEN", "f9LHodD0cOJ4UEc28YWOtykBGGCNW3w2HfwNzuoyVvfuvpb7YIXZSd4_AZFsaL7E8MCgtYl9J3w1KJSSp_IR")
-WEBAPP_URL = "https://chalama-group.ru/mobile.html"
+WEBAPP_URL = os.getenv("WEBAPP_URL", "https://chalama-group.ru/mobile.html")
 BASE_URL = "https://platform-api.max.ru"
 
 # Настройка логирования

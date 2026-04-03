@@ -67,9 +67,13 @@ def manage_bot():
 def backup_db():
     header("РЕЗЕРВНОЕ КОПИРОВАНИЕ БД")
     now = datetime.now().strftime("%Y%m%d_%H%M%S")
-    backup_file = f"bookings_backup_{now}.db"
-    if run(f"cp backend/bookings.db {backup_file}"):
+    backup_file = f"database_backup_{now}.sqlite"
+    # Путь к БД согласно техническому паспорту: backend/db/database.sqlite
+    db_path = "backend/db/database.sqlite"
+    if run(f"cp {db_path} {backup_file}"):
         print(f"{GREEN}✅ Копия создана: {backup_file}{NC}")
+    else:
+        print(f"{RED}❌ Файл БД не найден по пути {db_path}{NC}")
 
 def nginx_control():
     header("УПРАВЛЕНИЕ NGINX")

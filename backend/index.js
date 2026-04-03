@@ -36,12 +36,15 @@ async function notifyAllAdmins(text) {
 }
 
 async function sendMaxMessage(chatId, text) {
-    if (!MAX_TOKEN || !chatId) {
-        console.log(`[MAX] Skipping notify - Token: ${MAX_TOKEN ? 'OK' : 'MISSING'}, ChatID: ${chatId || 'MISSING'}`);
+    if (!MAX_TOKEN) {
+        console.error("[MAX] ERROR: MAX_TOKEN is not defined. Notifications disabled.");
+        return;
+    }
+    if (!chatId) {
+        console.log("[MAX] Skipping notify - ChatID is missing");
         return;
     }
     
-    // For private chats/admin notifications, MAX documentation suggests using user_id
     const data = JSON.stringify({
         text: text,
         format: 'html'
@@ -113,16 +116,9 @@ const db = new sqlite3.Database(dbPath, (err) => {
     else {
         console.log("Connected to SQLite database.");
 
-        // Ensure Tables
+        // Ensure Database Schema & Initial Data
         db.serialize(() => {
-            // Migration: Add clientChatId if missing
-            db.run("ALTER TABLE bookings ADD COLUMN clientChatId TEXT", (err) => {
-                if (err && !err.message.includes("duplicate column name")) {
-                    console.error("Migration error:", err.message);
-                }
-            });
-
-            // Updated bookings with clientChatId
+            // Updated bookings table
             db.run(`CREATE TABLE IF NOT EXISTS bookings (
                 id TEXT PRIMARY KEY,
                 type TEXT,
@@ -139,22 +135,32 @@ const db = new sqlite3.Database(dbPath, (err) => {
                 createdAt TEXT
             )`);
 
-            // New Admins table
+            // Migration: Add clientChatId if missing (for older databases)
+            db.run("ALTER TABLE bookings ADD COLUMN clientChatId TEXT", (err) => {
+                if (err && !err.message.includes("duplicate column name")) {
+                    console.error("[DB Migration] Error adding clientChatId:", err.message);
+                }
+            });
+
+            // Admins table
             db.run(`CREATE TABLE IF NOT EXISTS admins (
                 chatId TEXT PRIMARY KEY,
                 username TEXT,
                 createdAt TEXT
             )`);
 
-            // Ensure Sauna room exists
-            db.run(`INSERT INTO rooms (type, name, desc, price, priceWeekend, amenities, imgs) 
-                    SELECT 'sauna', 'Сауна Отеля', 'Почасовая аренда · Вместимость до 6 человек · 2000₽/час', 2000, 2000, '[]', '[]' 
-                    WHERE NOT EXISTS (SELECT 1 FROM rooms WHERE type='sauna')`);
+            // Initial Room Seeding (Sauna & Bath)
+            const seedRooms = [
+                ['sauna', 'Сауна Отеля', 'Почасовая аренда · Вместимость до 6 человек · 2000₽/час', 2000, 2000],
+                ['bath', 'Баня Хаан-Дыт', 'Настоящая баня на дровах · Вместимость до 10 человек · 3500₽/час', 3500, 3500]
+            ];
 
-            // Ensure Bath room exists
-            db.run(`INSERT INTO rooms (type, name, desc, price, priceWeekend, amenities, imgs) 
-                    SELECT 'bath', 'Баня Хаан-Дыт', 'Настоящая баня на дровах · Вместимость до 10 человек · 3500₽/час', 3500, 3500, '[]', '[]' 
-                    WHERE NOT EXISTS (SELECT 1 FROM rooms WHERE type='bath')`);
+            seedRooms.forEach(([type, name, desc, price, priceWeekend]) => {
+                db.run(`INSERT INTO rooms (type, name, desc, price, priceWeekend, amenities, imgs) 
+                        SELECT ?, ?, ?, ?, ?, '[]', '[]' 
+                        WHERE NOT EXISTS (SELECT 1 FROM rooms WHERE type=?)`,
+                        [type, name, desc, price, priceWeekend, type]);
+            });
         });
     }
 });
