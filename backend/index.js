@@ -413,9 +413,14 @@ app.delete('/api/admin/bookings/archive', (req, res) => {
 // Admin management
 app.post('/api/internal/admins', (req, res) => {
     const { chatId, username } = req.body;
+    console.log(`[Admin Add] Attempting to add: ${chatId} (${username})`);
     const createdAt = new Date().toISOString();
     db.run("INSERT OR REPLACE INTO admins (chatId, username, createdAt) VALUES (?, ?, ?)", [chatId, username, createdAt], (err) => {
-        if (err) return res.status(500).json({ error: err.message });
+        if (err) {
+            console.error(`[Admin Add Error] ${err.message}`);
+            return res.status(500).json({ error: err.message });
+        }
+        console.log(`[Admin Add Success] Done for ${chatId}`);
         res.json({ success: true });
     });
 });
