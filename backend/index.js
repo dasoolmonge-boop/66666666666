@@ -7,17 +7,16 @@ const fs = require('fs');
 const https = require('https');
 require('dotenv').config();
 
-const app = express();
-const port = process.env.PORT || 5000;
-
-const MAX_TOKEN = process.env.MAX_TOKEN || 'f9LHodD0cOJ4UEc28YWOtykBGGCNW3w2HfwNzuoyVvfuvpb7YIXZSd4_AZFsaL7E8MCgtYl9J3w1KJSSp_IR';
-const ADMIN_ID = process.env.ADMIN_ID;
-
 // Simple sanitizer to prevent basics
-function sanitize(str) {
+const sanitize = (str) => {
     if (typeof str !== 'string') return '';
     return str.replace(/[<>]/g, '');
-}
+};
+
+const app = express();
+const port = process.env.PORT || 5000;
+const MAX_TOKEN = process.env.MAX_TOKEN || 'f9LHodD0cOJ4UEc28YWOtykBGGCNW3w2HfwNzuoyVvfuvpb7YIXZSd4_AZFsaL7E8MCgtYl9J3w1KJSSp_IR';
+const ADMIN_ID = process.env.ADMIN_ID;
 
 async function notifyAllAdmins(text) {
     // Collect all admin IDs (from .env and Database)
