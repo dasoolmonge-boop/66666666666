@@ -936,7 +936,8 @@ async function addAdmin() {
             showTgStatus('success', 'Администратор успешно добавлен!');
             renderAdmins();
         } else {
-            showTgStatus('error', 'Ошибка при добавлении.');
+            const errData = await res.json();
+            showTgStatus('error', errData.error || 'Ошибка при добавлении.');
         }
     } catch(err) { console.error(err); }
 }

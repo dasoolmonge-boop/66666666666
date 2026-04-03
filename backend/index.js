@@ -118,6 +118,18 @@ const db = new sqlite3.Database(dbPath, (err) => {
 
         // Ensure Database Schema & Initial Data
         db.serialize(() => {
+            // Rooms table
+            db.run(`CREATE TABLE IF NOT EXISTS rooms (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                type TEXT,
+                name TEXT,
+                desc TEXT,
+                price INTEGER,
+                priceWeekend INTEGER,
+                amenities TEXT,
+                imgs TEXT
+            )`);
+
             // Updated bookings table
             db.run(`CREATE TABLE IF NOT EXISTS bookings (
                 id TEXT PRIMARY KEY,
@@ -418,14 +430,18 @@ app.delete('/api/admin/bookings/archive', (req, res) => {
 // Admin management
 app.post('/api/internal/admins', (req, res) => {
     const { chatId, username } = req.body;
-    console.log(`[Admin Add] Attempting to add: ${chatId} (${username})`);
+    if (!chatId) return res.status(400).json({ error: "Missing chatId" });
+
+    console.log(`[Admin Add] Attempting to add: ${chatId} (${username || 'Администратор'})`);
     const createdAt = new Date().toISOString();
-    db.run("INSERT OR REPLACE INTO admins (chatId, username, createdAt) VALUES (?, ?, ?)", [chatId, username, createdAt], (err) => {
+
+    db.run("INSERT OR REPLACE INTO admins (chatId, username, createdAt) VALUES (?, ?, ?)", 
+        [chatId, username || 'Администратор', createdAt], (err) => {
         if (err) {
-            console.error(`[Admin Add Error] ${err.message}`);
-            return res.status(500).json({ error: err.message });
+            console.error(`[Admin Add ERROR] DB Error: ${err.message}`);
+            return res.status(500).json({ error: "Ошибка базы данных: " + err.message });
         }
-        console.log(`[Admin Add Success] Done for ${chatId}`);
+        console.log(`[Admin Add SUCCESS] Done for ${chatId}`);
         res.json({ success: true });
     });
 });
