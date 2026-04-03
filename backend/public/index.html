@@ -152,14 +152,14 @@
         @keyframes fadeUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
 
         /* ===== SECTIONS ===== */
-        section { padding: 7rem 0; }
+        section { padding: 1.5rem 0; }
         .section-label {
             font-size: .75rem; letter-spacing: 4px; text-transform: uppercase;
             color: var(--gold); font-weight: 700; margin-bottom: .8rem;
         }
         .section-title {
             font-size: clamp(2rem, 4vw, 3.2rem); font-weight: 800; line-height: 1.15;
-            margin-bottom: 1.5rem;
+            margin-bottom: 0.8rem;
         }
         .section-desc { color: var(--gray); max-width: 550px; font-size: 1.05rem; }
 
@@ -196,7 +196,7 @@
         .yurts-theme .cart-row { color: #fff; }
         .yurts-theme .form-group label { color: rgba(255,255,255,.6); }
         .yurts-theme .form-group input { background: rgba(255,255,255,0.95); border-color: transparent; color: var(--dark); }
-        .e-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; margin-top: 4rem; }
+        .e-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-top: 1rem; }
         .e-card {
             position: relative; height: 520px; border-radius: 24px; overflow: hidden;
             cursor: pointer; transition: all .5s cubic-bezier(.25,.8,.25,1);
@@ -224,21 +224,21 @@
         .e-card:hover .e-arrow { background: var(--gold); }
 
         /* ===== ABOUT ===== */
-        .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center; }
+        .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; align-items: center; }
         .about-img { position: relative; border-radius: 24px; overflow: hidden; height: 550px; }
         .about-img img { height: 100%; width: 100%; object-fit: cover; }
         .about-img::after {
             content: ''; position: absolute; bottom: -20px; right: -20px; width: 180px; height: 180px;
             border: 3px solid var(--gold); border-radius: 24px; z-index: -1;
         }
-        .about-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 3rem; }
+        .about-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 1rem; }
         .stat { text-align: center; padding: 1.5rem; background: var(--light); border-radius: 16px; }
         .stat-num { font-size: 2.5rem; font-weight: 800; color: var(--gold); }
         .stat-label { font-size: .78rem; color: var(--gray); margin-top: .3rem; text-transform: uppercase; letter-spacing: 1px; }
 
         /* ===== ROOMS / YURTS BOOKING ===== */
         .booking-section { background: var(--light); }
-        .booking-layout { display: grid; grid-template-columns: 1.3fr .7fr; gap: 4rem; margin-top: 3rem; }
+        .booking-layout { display: grid; grid-template-columns: 1.3fr .7fr; gap: 1.5rem; margin-top: 1.5rem; }
         .room-list { display: grid; gap: 1rem; }
         .room-card {
             background: #fff; border-radius: var(--radius); border: 2px solid transparent;
@@ -318,7 +318,7 @@
 
         /* ===== CALENDAR ===== */
         .cal-wrap {
-            background: #fff; border-radius: 20px; padding: 2rem; box-shadow: var(--shadow);
+            background: #fff; border-radius: 20px; padding: 1.2rem; box-shadow: var(--shadow);
             position: sticky; top: 100px;
         }
         .cal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
@@ -417,7 +417,7 @@
         .addon-discount { font-size: .68rem; color: #4a4; font-weight: 600; }
 
         /* ===== RESTAURANT ===== */
-        .rest-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; margin-top: 3rem; }
+        .rest-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 2rem; }
         .rest-card {
             background: #fff; border-radius: 20px; padding: 2.5rem; box-shadow: var(--shadow);
             transition: .4s; position: relative; overflow: hidden;
@@ -477,8 +477,8 @@
 
         /* Features row */
         .bar-features {
-            display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem;
-            padding: 5rem 0; position: relative;
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;
+            padding: 1.5rem 0; position: relative;
         }
         .bar-feat {
             text-align: center; padding: 2.5rem 2rem;
@@ -501,7 +501,7 @@
 
         /* Adaptive Running Mosaic - Bar Skala */
         .bar-gallery { 
-            padding: 4rem 0; overflow: hidden; background: transparent; position: relative; 
+            padding: 1rem 0; overflow: hidden; background: transparent; position: relative; 
             user-select: none;
         }
         .bar-scroll-container {
@@ -568,8 +568,8 @@
 
         /* Info block */
         .bar-info {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 5rem;
-            align-items: center; padding: 5rem 0;
+            display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;
+            align-items: center; padding: 1.5rem 0;
         }
         .bar-info-text h3 {
             font-size: 2.2rem; font-weight: 800; line-height: 1.2; margin-bottom: 1.5rem;
@@ -954,7 +954,7 @@
                 </div>
             </a>
             <a href="#bar" class="e-card" data-r>
-                <img src="https://www.chalamahotel.ru/upload/iblock/0b7/2zu3y71w0svt7sxcycrs5fplz23orgz9.jpeg" alt="Бар Скала">
+                <img src="https://i4.photo.2gis.com/photo-gallery/9b086357-76fa-4b41-aea4-83d80ef20438.jpg" alt="Бар Скала">
                 <div class="e-card-overlay">
                     <span class="e-badge">Бар</span>
                     <div class="e-arrow">→</div>
