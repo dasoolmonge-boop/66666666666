@@ -1467,6 +1467,14 @@ function fmtDate(d) {
 }
 function fmtPrice(n) { return n.toLocaleString('ru') + ' ₽'; }
 
+function getRoomData(type) {
+    if (type === 'hotel') return hotelRooms;
+    if (type === 'yurt') return yurtRooms;
+    if (type === 'sauna') return saunaRooms;
+    if (type === 'bath') return bathRooms;
+    return [];
+}
+
 // === RENDER ROOMS ===
 function renderRooms(type, data) {
     const el = document.getElementById(type + '-rooms');
@@ -1505,14 +1513,17 @@ function renderRooms(type, data) {
 }
 
 function selectRoom(type, idx) {
-    const data = type === 'hotel' ? hotelRooms : yurtRooms;
+    const data = getRoomData(type);
     state[type].selected = idx;
     state[type].checkIn = null;
     state[type].checkOut = null;
+    if (type === 'sauna' || type === 'bath') state[type].hours = [];
     renderRooms(type, data);
     const rName = (type === 'yurt' && idx < 4) ? YURT_NAMES[idx] : data[idx].name;
     document.getElementById(type + '-selected-name').textContent = rName;
-    document.getElementById(type + '-selected-price').textContent = fmtPrice(data[idx].price) + ' / сутки';
+    if (document.getElementById(type + '-selected-price')) {
+        document.getElementById(type + '-selected-price').textContent = (type === 'yurt' ? 'от ' : '') + fmtPrice(data[idx].price) + ( (type==='sauna'||type==='bath') ? ' / час' : ' / сутки');
+    }
     renderCalendar(type);
     renderCart(type);
 }
@@ -1523,7 +1534,7 @@ function norm(ts) {
 }
 function getDateStatus(type, d) {
     const s = state[type];
-    const roomArr = type === 'hotel' ? hotelRooms : yurtRooms;
+    const roomArr = getRoomData(type);
     if(!roomArr || roomArr.length === 0) return 'free';
     const room = roomArr[s.selected];
     if(!room) return 'free';
@@ -1703,7 +1714,7 @@ function toggleAddon(id) {
 // === CART ===
 function renderCart(type) {
     const s = state[type];
-    const data = type === 'hotel' ? hotelRooms : type === 'yurt' ? yurtRooms : type === 'sauna' ? saunaRooms : bathRooms;
+    const data = getRoomData(type);
     const room = data[s.selected];
     const nights = (type === 'sauna' || type === 'bath') ? s.hours.length : nightsBetween(s.checkIn, s.checkOut);
     const el = document.getElementById(type + '-cart');
