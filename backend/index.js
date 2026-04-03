@@ -161,6 +161,20 @@ const db = new sqlite3.Database(dbPath, (err) => {
                 createdAt TEXT
             )`);
 
+            // Migration: Add username to admins if missing
+            db.run("ALTER TABLE admins ADD COLUMN username TEXT", (err) => {
+                if (err && !err.message.includes("duplicate column name")) {
+                    console.error("[DB Migration] Error adding username to admins:", err.message);
+                }
+            });
+
+            // Migration: Add createdAt to admins if missing
+            db.run("ALTER TABLE admins ADD COLUMN createdAt TEXT", (err) => {
+                if (err && !err.message.includes("duplicate column name")) {
+                    console.error("[DB Migration] Error adding createdAt to admins:", err.message);
+                }
+            });
+
             // Initial Room Seeding (Sauna & Bath)
             const seedRooms = [
                 ['sauna', 'Сауна Отеля', 'Почасовая аренда · Вместимость до 6 человек · 2000₽/час', 2000, 2000],
