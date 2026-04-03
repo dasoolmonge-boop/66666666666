@@ -21,6 +21,18 @@
         * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
         body { font-family:'Inter',sans-serif; background:var(--bg); color:var(--text); padding-bottom: 80px; }
         
+        /* Fix: Prevent images from sticking to finger during scroll */
+        img { 
+            -webkit-user-drag: none; 
+            -khtml-user-drag: none; 
+            -moz-user-drag: none; 
+            -o-user-drag: none; 
+            user-drag: none;
+            -webkit-touch-callout: none;
+            user-select: none;
+            pointer-events: none; /* Allows scroll to pass through the image to the container */
+        }
+        
         /* App Header */
         .app-header {
             position: sticky; top: 0; z-index: 50; background: rgba(26,29,39,0.85);
@@ -50,8 +62,8 @@
             -webkit-overflow-scrolling: touch; touch-action: pan-y;
         }
         .room-gallery::-webkit-scrollbar { display: none; }
-        .room-img-wrap { flex: 0 0 100%; height: 100%; scroll-snap-align: start; }
-        .room-gallery img { width: 100%; height: 100%; object-fit: cover; -webkit-user-drag: none; user-select: none; }
+        .room-img-wrap { flex: 0 0 100%; height: 100%; scroll-snap-align: start; pointer-events: none; }
+        .room-gallery img { width: 100%; height: 100%; object-fit: cover; }
         
         .room-info { padding: 1.2rem; display: flex; flex-direction: column; gap: .5rem; }
         .room-name { font-size: 1.1rem; font-weight: 700; }
@@ -173,7 +185,7 @@
         .time-slot.selected { background: var(--gold); color: #fff; border-color: var(--gold); }
 
         /* KHAAN-DYT CARDS */
-        .kd-card { background: #2f3627; border: 1px solid rgba(225,211,165,0.2); border-radius: 16px; margin-bottom: 1rem; overflow: hidden; }
+        .kd-card { background: #2f3627; border: 1px solid rgba(225,211,165,0.2); border-radius: 16px; margin-bottom: 1rem; overflow: hidden; pointer-events: none; }
         .kd-img { width: 100%; height: 200px; object-fit: cover; }
         .kd-body { padding: 1.5rem; }
         .kd-title { color: #e1d3a5; font-family: 'Playfair Display', serif; font-size: 1.25rem; margin-bottom: 1rem; font-weight: 700; letter-spacing: 1px; }
@@ -188,6 +200,7 @@
             font-size: 1.5rem; box-shadow: 0 8px 25px rgba(36,161,222,0.4);
             z-index: 99; transition: .3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             animation: tgPulse 2s infinite;
+            pointer-events: auto !important; /* Ensure buttons remain clickable */
         }
         @keyframes tgPulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
     </style>
