@@ -917,16 +917,17 @@
             filter: grayscale(.1);
         }
         .hotel-room-card .card-img {
-            position: relative; height: 100%; min-height: 260px; overflow: hidden; cursor: pointer;
-            padding: 1rem;
+            padding: 1rem; display: flex; flex-direction: column; cursor: pointer;
+            position: relative; min-height: 260px;
         }
         .hotel-room-card .slider-wrapper {
-            position: relative; width: 100%; height: 100%; min-height: 220px;
+            position: relative; width: 100%; flex: 1; min-height: 200px;
+            border-radius: 12px; overflow: hidden; display: flex;
         }
         .hotel-room-card .card-img-inner {
-            width: 100%; height: 100%; border-radius: 12px; overflow-x: auto;
+            width: 100%; height: 100%; overflow-x: auto;
             position: absolute; inset: 0; display: flex; scroll-snap-type: x mandatory;
-            scrollbar-width: none; -ms-overflow-style: none; scroll-behavior: smooth;
+            scrollbar-width: none; -ms-overflow-style: none; /* smooth scrolling handled by JS */
         }
         .hotel-room-card .card-img-inner::-webkit-scrollbar { display: none; }
         .hotel-room-card .card-img-inner img {
@@ -946,17 +947,17 @@
         }
         .hotel-room-card .slider-arrow {
             position: absolute; top: 50%; transform: translateY(-50%);
-            background: rgba(255,255,255,0.8); color: #333; border: none;
-            width: 34px; height: 34px; border-radius: 50%;
+            background: rgba(255,255,255,0.9); color: #333; border: none;
+            width: 36px; height: 36px; border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
             font-size: 1.2rem; cursor: pointer; z-index: 15;
             transition: .2s; opacity: 0; pointer-events: none;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
         }
         .hotel-room-card .slider-wrapper:hover .slider-arrow { opacity: 1; pointer-events: auto; }
         .hotel-room-card .slider-arrow:hover { background: #fff; transform: translateY(-50%) scale(1.1); }
-        .hotel-room-card .slider-arrow.prev { left: 8px; }
-        .hotel-room-card .slider-arrow.next { right: 8px; }
+        .hotel-room-card .slider-arrow.prev { left: 8px; padding-right: 2px; }
+        .hotel-room-card .slider-arrow.next { right: 8px; padding-left: 2px; }
         @media (max-width: 768px) {
             .hotel-room-card .slider-arrow { display: none; /* Hide on mobile, they can swipe */ }
         }
