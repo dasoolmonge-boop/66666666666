@@ -1146,25 +1146,41 @@
                 return;
             }
             el.innerHTML = rooms.map(r => {
+                const firstImg = r.imgs && r.imgs.length ? r.imgs[0] : '';
+                const isAvail = true; // results always available in search
+                const areaInfo = r.area ? `<span style="font-size:.72rem;color:rgba(255,255,255,0.6);padding:.2rem .5rem;background:rgba(255,255,255,0.05);border-radius:6px;border:1px solid rgba(255,255,255,0.1);">🏠 ${r.area}</span>` : '';
+                const capInfo = `<span style="font-size:.72rem;color:rgba(255,255,255,0.6);padding:.2rem .5rem;background:rgba(255,255,255,0.05);border-radius:6px;border:1px solid rgba(255,255,255,0.1);">👤 ${r.capacity}</span>`;
+                const tariffInfo = `<div style="font-size:.78rem;font-weight:600;color:#e1d3a5;margin-top:.8rem;">«${r.tariff || 'Стандартный тариф'}»</div>`;
+                const prepayInfo = r.prepayment ? `<div style="font-size:.72rem;color:rgba(255,255,255,0.5);margin-top:.2rem;">💰 Предоплата ${fmtPrice(r.prepayment)}</div>` : '';
                 const imgsHtml = (r.imgs||[]).map(src => `<div class="room-img-wrap"><img src="${src}"></div>`).join('');
+
                 return `
-                <div class="room-card" style="background:#2f3627; border-color:rgba(225,211,165,0.2);">
+                <div class="room-card" style="background:#2f3627; border-color:rgba(225,211,165,0.2); margin-bottom:1.5rem;">
                     <div style="position: relative;">
                         <div class="room-gallery" id="gal-yurt-res-${r.id}">
                             ${imgsHtml}
                         </div>
                         ${r.imgs && r.imgs.length > 1 ? `
-                        <div style="position:absolute;bottom:6px;right:6px;background:rgba(0,0,0,.6);color:#fff;padding:.2rem .5rem;border-radius:6px;font-size:.65rem;font-weight:600;z-index:20;">+${r.imgs.length-1}</div>
+                        <div style="position:absolute;bottom:8px;right:8px;background:rgba(0,0,0,.6);color:#fff;padding:.2rem .5rem;border-radius:6px;font-size:.65rem;font-weight:600;z-index:20;">+${r.imgs.length-1}</div>
                         <button class="g-arrow left" onclick="scrollGal(event, 'yurt-res-${r.id}', -1)">‹</button>
                         <button class="g-arrow right" onclick="scrollGal(event, 'yurt-res-${r.id}', 1)">›</button>
                         ` : ''}
                     </div>
-                    <div class="room-info">
-                        <div class="room-name" style="color:#e1d3a5;">${r.name}</div>
-                        <div class="room-desc" style="color:rgba(255,255,255,0.5)">${r.desc.split('·')[0]}</div>
-                        <div class="room-price-row">
+                    <div class="room-info" style="padding: 1.2rem;">
+                        <div class="room-name" style="color:#e1d3a5; font-size:1.15rem; font-weight:800; margin-bottom:0.6rem;">${r.name}</div>
+                        <div style="display:flex;gap:.5rem;margin-bottom:0.8rem;">
+                            ${areaInfo}
+                            ${capInfo}
+                        </div>
+                        
+                        <div style="font-size:.85rem; color:rgba(255,255,255,0.7); line-height:1.4; margin-bottom:1rem;">${r.desc.split('·')[0]}</div>
+                        
+                        ${tariffInfo}
+                        ${prepayInfo}
+
+                        <div class="room-price-row" style="margin-top:1.2rem; border-top:1px solid rgba(255,255,255,0.05); padding-top:1rem;">
                             <div class="room-price" style="color:#e1d3a5;">${fmtPrice(r.price)} <span style="font-size:.7rem;font-weight:400;color:rgba(255,255,255,0.4); margin-left: 4px;">/ ночь</span></div>
-                            <button class="btn-select" style="background:#e1d3a5; color:#38402f; flex-shrink: 0; width: auto; padding: 0.6rem 1.2rem; min-width: 100px;" onclick="mSelectYurt(${r.id})">Выбрать</button>
+                            <button class="btn-select" style="background:#e1d3a5; color:#38402f; flex-shrink: 0; width: auto; padding: 0.6rem 1.4rem; min-width: 100px; border-radius:10px; font-weight:800;" onclick="mSelectYurt(${r.id})">Выбрать</button>
                         </div>
                     </div>
                 </div>`;

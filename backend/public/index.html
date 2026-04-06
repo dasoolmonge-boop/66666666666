@@ -2640,7 +2640,7 @@ function buildYurtCard(r, nights, guests, isAvail, showPrice) {
         imgsHtml = '<div style="width:100%;height:100%;background:rgba(255,255,255,0.05);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.3);flex:0 0 100%;">Нет фото</div>';
     }
 
-    const amenHtml = (r.amenities || []).map(a => `<span style="font-size:.8rem; padding:.3rem .7rem; background:rgba(255,255,255,0.1); border-radius:8px; color:#fff; font-weight:500;">${a}</span>`).join('');
+    const hasStove = r.name.includes('юрта');
 
     return `
     <div class="hotel-room-card ${isAvail ? '' : 'unavailable'}" style="background:rgba(255,255,255,0.05); border:1px solid ${isAvail ? 'rgba(225,211,165,0.2)' : 'rgba(255,255,255,0.05)'}; margin-bottom: 2rem;">
@@ -2657,27 +2657,44 @@ function buildYurtCard(r, nights, guests, isAvail, showPrice) {
         </div>
         <div class="card-content" style="padding: 1.8rem;">
             <div>
-                <div class="card-name" style="font-size:1.5rem; margin-bottom:1rem; color:#fff;">${friendlyName}</div>
-                <div style="font-size:.9rem; color:rgba(255,255,255,0.7); margin-bottom:1.2rem; line-height:1.5;">${r.desc}</div>
-                <div style="display:flex; flex-wrap:wrap; gap:.5rem;">
-                    ${amenHtml}
+                <div class="card-name" style="font-size:1.5rem; margin-bottom:0.5rem; color:#fff;">${friendlyName}</div>
+                <div class="card-meta" style="margin-bottom: 1.2rem;">
+                    ${r.area ? `<span style="color:rgba(255,255,255,0.6);">${r.area}</span>` : ''}
+                    <span style="color:rgba(255,255,255,0.6);">${r.capacity} 👤</span>
+                    <span class="clickable" style="color:#e1d3a5; font-weight:600; cursor:pointer;" onclick="openLightbox('${firstImg}')">Подробнее ›</span>
+                </div>
+                
+                <div class="card-amenities-split" style="margin-bottom: 1.5rem;">
+                    <div class="am-col">
+                        <div style="color:rgba(255,255,255,0.9); margin-bottom:0.4rem;">🔥 Традиционная печь</div>
+                        <div style="color:rgba(255,255,255,0.9); margin-bottom:0.4rem;">📶 Wi-Fi</div>
+                        <div style="color:rgba(255,255,255,0.9); margin-bottom:0.4rem;">🛌 Постельное белье</div>
+                    </div>
+                    <div class="am-col">
+                        <div style="color:rgba(255,255,255,0.9); margin-bottom:0.4rem;">🚠 Вид на горы</div>
+                        <div style="color:rgba(255,255,255,0.9); margin-bottom:0.4rem;">🧊 Холодильник</div>
+                        <div style="color:rgba(255,255,255,0.5); cursor:pointer; font-size:0.85rem;">Все удобства ⌄</div>
+                    </div>
                 </div>
             </div>
             
-            <div class="card-footer" style="margin-top: 1.5rem; padding-top:1.5rem; border-top:1px solid rgba(255,255,255,0.1);">
-                <div class="card-price-col" style="padding:0; border:none; width:100%; flex-direction:row; justify-content:space-between; display:flex; align-items:center; flex-wrap: nowrap; gap: 1rem;">
+            <div class="card-footer" style="margin-top: 1.5rem; padding-top:1.5rem; border-top:1px solid rgba(255,255,255,0.1); background:rgba(0,0,0,0.15); margin: 0 -1.8rem -1.8rem -1.8rem; padding: 1.5rem 1.8rem; display:flex; justify-content:space-between; align-items:flex-end;">
+                <div class="card-tariff-col" style="flex:1;">
+                    <div class="card-tariff-name" style="color:#e1d3a5; font-weight:700; margin-bottom:0.4rem; font-size:0.9rem;">«${r.tariff || 'Стандартный тариф'}»</div>
+                    <div class="card-tariff-detail" style="font-size:0.8rem; color:rgba(255,255,255,0.5); line-height:1.4;">
+                        <div>✓ Завтрак включен</div>
+                        <div>✓ Бесплатная отмена</div>
+                    </div>
+                </div>
+                <div class="card-price-col" style="text-align:right;">
                     ${showPrice ? `
-                        <div style="flex-shrink: 0;">
-                            <div class="card-total" style="color:#e1d3a5; white-space: nowrap;">${fmtPrice(totalPrice)}</div>
-                            <div class="card-price-detail" style="color:rgba(255,255,255,0.5); font-size: .75rem; line-height: 1.2;">за ${nights} ${nightsLabel}<br>до ${r.capacity} 👤</div>
-                        </div>
-                        ${isAvail ? `<button class="card-select-btn" style="background:#e1d3a5; color:#38402f; flex-shrink: 0; margin-top: 0; min-width: 120px;" onclick="selectYurtRoomForBooking(${r.id}, '${escapedName}', ${totalPrice}, ${nights}, ${r.price})">Выбрать</button>` : ''}
+                        <div class="card-total" style="color:#e1d3a5; white-space: nowrap; font-size:1.6rem; font-weight:800;">${fmtPrice(totalPrice)}</div>
+                        <div class="card-price-detail" style="color:rgba(255,255,255,0.5); font-size: .75rem; margin-bottom:0.8rem;">за ${nights} ${nightsLabel}</div>
+                        ${isAvail ? `<button class="card-select-btn" style="background:#e1d3a5; color:#38402f; padding:0.8rem 1.5rem; border-radius:12px; border:none; font-weight:700; cursor:pointer;" onclick="selectYurtRoomForBooking(${r.id}, '${escapedName}', ${totalPrice}, ${nights}, ${r.price})">Выбрать</button>` : ''}
                     ` : `
-                        <div style="flex-shrink: 0;">
-                            <div class="card-total" style="color:#e1d3a5; white-space: nowrap;">${fmtPrice(r.price)}</div>
-                            <div class="card-price-detail" style="color:rgba(255,255,255,0.5); font-size: .75rem;">за сутки</div>
-                        </div>
-                        <a href="#yurt-date-search" class="card-check-btn" style="border-color:#e1d3a5; color:#e1d3a5; flex-shrink: 0; margin-top: 0; width: auto; min-width: 130px;">Проверить даты</a>
+                        <div class="card-total" style="color:#e1d3a5; white-space: nowrap; font-size:1.6rem; font-weight:800;">${fmtPrice(r.price)}</div>
+                        <div class="card-price-detail" style="color:rgba(255,255,255,0.5); font-size: .75rem; margin-bottom:0.8rem;">за сутки</div>
+                        <a href="#yurt-date-search" class="card-check-btn" style="display:inline-block; border:1px solid #e1d3a5; color:#e1d3a5; padding:0.8rem 1.5rem; border-radius:12px; text-decoration:none; font-weight:700;">Проверить даты</a>
                     `}
                 </div>
             </div>
