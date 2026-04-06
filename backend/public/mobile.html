@@ -221,10 +221,40 @@
             <h1 class="view-title" style="margin-bottom: .5rem; color: #fff;">ОТЕЛЬ «ЧАЛАМА»</h1>
             <p style="color:var(--muted);font-size:.85rem; max-width: 280px; margin: 0 auto;">Комфорт и гостеприимство в самом сердце Кызыла.</p>
         </div>
+
+        <!-- Date Search -->
+        <div id="m-date-search" style="background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:1.2rem; margin-bottom:1.5rem;">
+            <p style="font-weight:700; font-size:.9rem; margin-bottom:1rem; color:var(--gold);">📅 Найти свободные номера</p>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:.6rem; margin-bottom:.8rem;">
+                <div>
+                    <label style="display:block;font-size:.7rem;color:var(--muted);margin-bottom:.3rem;text-transform:uppercase;">Заезд</label>
+                    <input type="date" id="m-search-in" style="width:100%;padding:.7rem;background:var(--surface2);border:1px solid var(--border);border-radius:10px;color:#fff;font-size:.9rem;font-family:inherit;outline:none;">
+                </div>
+                <div>
+                    <label style="display:block;font-size:.7rem;color:var(--muted);margin-bottom:.3rem;text-transform:uppercase;">Выезд</label>
+                    <input type="date" id="m-search-out" style="width:100%;padding:.7rem;background:var(--surface2);border:1px solid var(--border);border-radius:10px;color:#fff;font-size:.9rem;font-family:inherit;outline:none;">
+                </div>
+            </div>
+            <button onclick="mSearchRooms()" style="width:100%;padding:.8rem;background:var(--gold);color:#fff;border:none;border-radius:10px;font-size:.9rem;font-weight:700;font-family:inherit;">Найти</button>
+            <div id="m-search-info" style="margin-top:.8rem;font-size:.8rem;color:var(--muted);display:none;"></div>
+        </div>
         
         <div id="hotel-list">
             <div class="skeleton" style="height:250px; margin-bottom:1rem"></div>
             <div class="skeleton" style="height:250px"></div>
+        </div>
+
+        <!-- Booking Form (appears after selecting room) -->
+        <div id="m-book-form" style="display:none; margin-top:1rem; background:var(--surface); border:1px solid var(--gold); border-radius:16px; padding:1.2rem;">
+            <h3 style="font-size:1rem; margin-bottom:1rem; color:var(--gold);">📝 Оформление</h3>
+            <div id="m-book-summary" style="background:var(--surface2); padding:1rem; border-radius:12px; margin-bottom:1rem;"></div>
+            <div class="form-group"><label>Ваше Имя</label><input type="text" id="m-guest-name" placeholder="Иван Иванов"></div>
+            <div class="form-group"><label>Телефон</label><input type="tel" id="m-guest-phone" placeholder="+7 (___) ___-__-__"></div>
+            <div class="consent-box">
+                <input type="checkbox" id="m-hotel-consent" checked>
+                <label for="m-hotel-consent">Я согласен на <a href="policy.html" target="_blank">обработку персональных данных</a></label>
+            </div>
+            <button class="btn-master" onclick="mSubmitHotelBooking()">Забронировать</button>
         </div>
 
         <div style="margin-top: 3rem; border-top: 1px solid var(--border); padding-top: 2rem;">
@@ -244,6 +274,7 @@
 
         <h3 style="margin-top:2.5rem; margin-bottom:1rem; font-size:1.1rem; color:var(--gold);">Доступные варианты размещения</h3>
 
+        <div id="yurt-list"></div>
         <div id="yurt-list"></div>
     </div>
 
@@ -366,7 +397,14 @@
             renderList('hotel', 'hotel-list');
             renderList('yurt', 'yurt-list');
             renderList('sauna', 'sauna-list');
-            renderList('bath', 'yurt-list'); // Add bath cards into the Haan-Dyt list
+
+            // Set min dates for mobile hotel search
+            const td = new Date().toISOString().split('T')[0];
+            document.getElementById('m-search-in').min = td;
+            document.getElementById('m-search-out').min = td;
+            document.getElementById('m-search-in').addEventListener('change', function() {
+                document.getElementById('m-search-out').min = this.value;
+            });
         }).catch(console.error);
 
         function pollAvailability() {
@@ -387,6 +425,10 @@
 
         function renderList(type, containerId) {
             const list = allRooms.filter(r => r.type === type);
+            if (type === 'hotel') {
+                renderMobileHotelInitial(list, containerId);
+                return;
+            }
             const html = list.map(r => {
                 const priceLabel = r.priceWeekend ? `от ${fmtPrice(r.price)}` : fmtPrice(r.price);
                 const imgs = (r.imgs||[]).map(src => `<div class="room-img-wrap"><img src="${src}"></div>`).join('');
@@ -414,6 +456,153 @@
             }).join('');
             document.getElementById(containerId).innerHTML = html || '<p>Нет доступных номеров</p>';
         }
+
+        // === MOBILE HOTEL: dates-first flow ===
+        let mHotelDates = { checkIn: null, checkOut: null };
+        let mSelectedRoom = null;
+
+        function renderMobileHotelInitial(rooms, containerId) {
+            const el = document.getElementById(containerId);
+            el.innerHTML = rooms.map(r => {
+                const firstImg = r.imgs && r.imgs.length ? r.imgs[0] : '';
+                const areaInfo = r.area ? `<span style="font-size:.72rem;color:var(--muted);padding:.2rem .5rem;background:var(--surface2);border-radius:6px;">🏠 ${r.area}</span>` : '';
+                const capInfo = r.capacity ? `<span style="font-size:.72rem;color:var(--muted);padding:.2rem .5rem;background:var(--surface2);border-radius:6px;">👤 ${r.capacity}</span>` : '';
+                const tariffInfo = r.tariff ? `<div style="font-size:.78rem;font-weight:600;color:#fff;margin-top:.5rem;">«${r.tariff}»</div>` : '';
+                const prepayInfo = r.prepayment ? `<div style="font-size:.72rem;color:var(--muted);margin-top:.2rem;">💰 Предоплата ${fmtPrice(r.prepayment)}</div>` : '';
+                return `
+                <div class="room-card">
+                    <div style="position:relative;height:200px;overflow:hidden;">
+                        ${firstImg ? `<img src="${firstImg}" style="width:100%;height:100%;object-fit:cover;pointer-events:none;">` : '<div style="width:100%;height:100%;background:var(--surface2)"></div>'}
+                        ${r.imgs && r.imgs.length > 1 ? `<div style="position:absolute;bottom:6px;right:6px;background:rgba(0,0,0,.6);color:#fff;padding:.2rem .5rem;border-radius:6px;font-size:.65rem;font-weight:600;">+${r.imgs.length-1}</div>` : ''}
+                    </div>
+                    <div class="room-info">
+                        <div class="room-name">${r.name}</div>
+                        <div style="display:flex;gap:.4rem;flex-wrap:wrap;margin:.3rem 0;">${areaInfo}${capInfo}</div>
+                        <div class="room-desc">${r.desc.split('·')[0]}</div>
+                        ${tariffInfo}${prepayInfo}
+                        <div class="room-price-row">
+                            <div class="room-price">от ${fmtPrice(r.price)}</div>
+                            <a href="#m-date-search" class="btn-select" style="text-decoration:none;text-align:center;">Проверить даты</a>
+                        </div>
+                    </div>
+                </div>`;
+            }).join('') || '<p style="color:var(--muted);">Нет номеров</p>';
+        }
+
+        function mSearchRooms() {
+            const inVal = document.getElementById('m-search-in').value;
+            const outVal = document.getElementById('m-search-out').value;
+            if (!inVal || !outVal) return alert('Выберите даты заезда и выезда');
+            const ci = new Date(inVal), co = new Date(outVal);
+            const today = new Date(); today.setHours(0,0,0,0);
+            if (ci < today) return alert('Дата заезда не может быть в прошлом');
+            if (co <= ci) return alert('Дата выезда должна быть позже даты заезда');
+
+            mHotelDates = { checkIn: inVal, checkOut: outVal };
+            mSelectedRoom = null;
+            document.getElementById('m-book-form').style.display = 'none';
+
+            fetch(`/api/rooms/available?checkIn=${inVal}&checkOut=${outVal}`)
+                .then(r => r.json())
+                .then(rooms => {
+                    const nights = Math.round((co - ci) / 86400000);
+                    const avail = rooms.filter(r => r.available);
+                    const info = document.getElementById('m-search-info');
+                    info.style.display = 'block';
+                    info.innerHTML = `<strong>${avail.length}</strong> свободных номеров на <strong>${nights}</strong> ${nights < 5 ? 'ночи' : 'ночей'}`;
+                    document.getElementById('m-date-search').style.borderColor = 'var(--gold)';
+                    mRenderHotelCards(rooms, nights);
+                })
+                .catch(err => alert('Ошибка: ' + err.message));
+        }
+
+        function mRenderHotelCards(rooms, nights) {
+            const el = document.getElementById('hotel-list');
+            el.innerHTML = rooms.map(r => {
+                const firstImg = r.imgs && r.imgs.length ? r.imgs[0] : '';
+                const totalPrice = r.price * nights;
+                const isAvail = r.available;
+                const areaInfo = r.area ? `<span style="font-size:.72rem;color:var(--muted);padding:.2rem .5rem;background:var(--surface2);border-radius:6px;">🏠 ${r.area}</span>` : '';
+                const capInfo = r.capacity ? `<span style="font-size:.72rem;color:var(--muted);padding:.2rem .5rem;background:var(--surface2);border-radius:6px;">👤 ${r.capacity}</span>` : '';
+                const tariffInfo = r.tariff ? `<div style="font-size:.78rem;font-weight:600;color:#fff;margin-top:.5rem;">«${r.tariff}»</div>` : '';
+                const prepayInfo = r.prepayment ? `<div style="font-size:.72rem;color:var(--muted);margin-top:.2rem;">💰 Предоплата ${fmtPrice(r.prepayment)}</div>` : '';
+                return `
+                <div class="room-card" style="opacity:${isAvail ? '1' : '.4'}; ${isAvail ? '' : 'pointer-events:none;'}">
+                    <div style="position:relative;height:200px;overflow:hidden;">
+                        ${firstImg ? `<img src="${firstImg}" style="width:100%;height:100%;object-fit:cover;pointer-events:none;">` : '<div style="width:100%;height:100%;background:var(--surface2)"></div>'}
+                        ${!isAvail ? '<div style="position:absolute;inset:0;background:rgba(255,50,50,.2);display:flex;align-items:center;justify-content:center;"><span style="background:rgba(255,50,50,.8);color:#fff;padding:.4rem 1.2rem;border-radius:50px;font-weight:700;font-size:.8rem;">Занято</span></div>' : ''}
+                    </div>
+                    <div class="room-info">
+                        <div class="room-name">${r.name}</div>
+                        <div style="display:flex;gap:.4rem;flex-wrap:wrap;margin:.3rem 0;">${areaInfo}${capInfo}</div>
+                        <div class="room-desc">${r.desc.split('·')[0]}</div>
+                        ${tariffInfo}${prepayInfo}
+                        <div class="room-price-row">
+                            <div>
+                                <div class="room-price">${fmtPrice(totalPrice)}</div>
+                                <div style="font-size:.7rem;color:var(--muted);">за ${nights} ${nights < 5 ? 'ночи' : 'ночей'}</div>
+                            </div>
+                            ${isAvail ? `<button class="btn-select" style="background:var(--gold);color:#fff;" onclick="mSelectRoom(${r.id}, '${r.name.replace(/'/g,"\\'")}', ${totalPrice}, ${nights}, ${r.price})">Выбрать</button>` : ''}
+                        </div>
+                    </div>
+                </div>`;
+            }).join('') || '<p style="color:var(--muted);">Нет номеров</p>';
+        }
+
+        function mSelectRoom(id, name, totalPrice, nights, ppn) {
+            mSelectedRoom = { id, name, totalPrice, nights, pricePerNight: ppn };
+            const form = document.getElementById('m-book-form');
+            document.getElementById('m-book-summary').innerHTML = `
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                    <div>
+                        <div style="font-weight:700;font-size:.95rem;">${name}</div>
+                        <div style="font-size:.78rem;color:var(--muted);margin-top:.3rem;">${nights} ${nights < 5 ? 'ночи' : 'ночей'}</div>
+                    </div>
+                    <div style="text-align:right;">
+                        <div style="font-size:1.2rem;font-weight:800;color:var(--gold);">${fmtPrice(totalPrice)}</div>
+                        <div style="font-size:.7rem;color:var(--muted);">${fmtPrice(ppn)} × ${nights}</div>
+                    </div>
+                </div>`;
+            form.style.display = 'block';
+            form.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        function mSubmitHotelBooking() {
+            if (!mSelectedRoom) return alert('Выберите номер');
+            const name = document.getElementById('m-guest-name').value;
+            const phone = document.getElementById('m-guest-phone').value;
+            const consent = document.getElementById('m-hotel-consent').checked;
+            if (!name || !phone) return alert('Введите имя и телефон');
+            if (!consent) return alert('Подтвердите согласие на обработку данных');
+
+            const booking = {
+                type: 'hotel',
+                room: mSelectedRoom.name,
+                checkIn: new Date(mHotelDates.checkIn).toISOString(),
+                checkOut: new Date(mHotelDates.checkOut).toISOString(),
+                nights: mSelectedRoom.nights,
+                guest: name, phone: phone,
+                addons: [],
+                total: mSelectedRoom.totalPrice,
+                clientChatId: window.Telegram?.WebApp?.initDataUnsafe?.user?.id || null
+            };
+
+            fetch('/api/bookings', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(booking)
+            }).then(r => r.json()).then(res => {
+                if (res.success) {
+                    alert('Заявка отправлена! Менеджер скоро свяжется с вами.');
+                    mSelectedRoom = null;
+                    document.getElementById('m-book-form').style.display = 'none';
+                    document.getElementById('m-guest-name').value = '';
+                    document.getElementById('m-guest-phone').value = '';
+                    mSearchRooms();
+                } else alert('Ошибка: ' + res.error);
+            }).catch(e => alert('Ошибка сети'));
+        }
+
 
         function scrollGal(e, id, dir) {
             e.stopPropagation();
@@ -467,6 +656,10 @@
             document.getElementById('btnSubmit').textContent = 'Оформить';
             document.getElementById('checkoutArea').style.display = 'none';
 
+            // Reset Addons visual
+            state.addons.tub = false;
+            document.getElementById('addonTub').classList.remove('selected');
+
             // Reset dates
             state.in = null; state.out = null;
             state.date = null; state.saunaHours = [];
@@ -474,7 +667,7 @@
             state.calYear = new Date().getFullYear();
             document.getElementById('sauna-time-wrap').style.display = 'none';
 
-            if(state.room.type === 'sauna' || state.room.type === 'bath') {
+            if(state.room.type === 'sauna') {
                 document.getElementById('lbl-in').textContent = 'Дата';
                 document.getElementById('lbl-out').textContent = 'Время';
             } else {
@@ -502,7 +695,7 @@
 
         function toggleAddon(id) {
             state.addons[id] = !state.addons[id];
-            document.getElementById('addonTub').classList.toggle('selected', state.addons.tub);
+            if(id === 'tub') document.getElementById('addonTub').classList.toggle('selected', state.addons.tub);
             calcTotal();
         }
 
@@ -529,7 +722,7 @@
             return 'free';
         }
         function isDateBooked(d) {
-            if(state.room && (state.room.type === 'sauna' || state.room.type === 'bath')) return false;
+            if(state.room && state.room.type === 'sauna') return false;
             const st = getDateStatus(d);
             return st === 'full' || st === 'in';
         }
@@ -596,7 +789,7 @@
             
             // Show checkout area
             const coArea = document.getElementById('checkoutArea');
-            if (state.room.type === 'sauna' || state.room.type === 'bath') {
+            if (state.room.type === 'sauna') {
                 coArea.style.display = (state.date && state.saunaHours.length >= 2) ? 'block' : 'none';
             } else {
                 coArea.style.display = (state.in && state.out) ? 'block' : 'none';
@@ -605,7 +798,7 @@
 
         function selDate(ts) {
             const clicked = new Date(ts);
-            if (state.room.type === 'sauna' || state.room.type === 'bath') {
+            if (state.room.type === 'sauna') {
                 state.date = clicked;
                 state.saunaHours = []; // Reset hours on new date
             } else {
@@ -708,9 +901,9 @@
             let total = 0;
             let displayDetails = '';
 
-            if (state.room.type === 'sauna' || state.room.type === 'bath') {
+            if (state.room.type === 'sauna') {
                 n = state.saunaHours.length;
-                total = n * (state.room.type === 'sauna' ? 2000 : 3500); // Assume 3500/h for Banya? No, let's check.
+                total = n * 2000;
                 displayDetails = n > 0 ? `${fmtPrice(total)} (${n} ч.)` : 'Выберите время';
             } else {
                 if(state.in && state.out) {
@@ -721,7 +914,6 @@
                 let roomTotal = (n > 0) ? state.room.price * n : 0;
                 total = roomTotal;
                 
-                // Remove bath price state logic
                 if(state.addons.tub) total += 5000;
                 displayDetails = n > 0 ? (fmtPrice(roomTotal) + ` (${n} ноч.)`) : 'Выберите даты';
             }
@@ -737,7 +929,7 @@
         function submitBooking() {
             let checkIn, checkOut, nightsOrHours;
             
-            if (state.room.type === 'sauna' || state.room.type === 'bath') {
+            if (state.room.type === 'sauna') {
                 if (!state.date || state.saunaHours.length < 2) 
                     return alert('Выберите дату и минимум 2 часа услуги!');
                 
@@ -765,8 +957,8 @@
 
             const addonsStr = [];
             if(state.room.type !== 'sauna') {
-                if(state.addons.bath) addonsStr.push('Баня');
                 if(state.addons.tub) addonsStr.push('Банный чан');
+                // Removed Bath from addons
             }
 
             const pkt = {
@@ -838,6 +1030,7 @@
             });
         }
         applyPhoneMask('guestPhone');
+        applyPhoneMask('m-guest-phone');
     </script>
     <a href="https://max.ru/" target="_blank" class="btn-tg-float" title="Написать в МАКС">
     <i class="fas fa-comments"></i>

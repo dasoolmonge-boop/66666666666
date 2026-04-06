@@ -512,6 +512,27 @@
                 <input type="text" id="r_amenities" placeholder="Кондиционер, ТВ, Фен" required>
             </div>
 
+            <div style="display:flex; gap:1rem">
+                <div class="form-group" style="flex:1">
+                    <label>Площадь</label>
+                    <input type="text" id="r_area" placeholder="19 м²">
+                </div>
+                <div class="form-group" style="flex:1">
+                    <label>Вместимость</label>
+                    <input type="number" id="r_capacity" placeholder="2">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Тариф</label>
+                <input type="text" id="r_tariff" placeholder="тариф без завтрака">
+            </div>
+
+            <div class="form-group">
+                <label>Предоплата (₽)</label>
+                <input type="number" id="r_prepayment" placeholder="6950">
+            </div>
+
             <button type="submit" class="btn-submit">Сохранить</button>
         </form>
     </div>
@@ -811,6 +832,10 @@ function openRoomModal(id = null) {
             document.getElementById('r_price').value = r.price;
             document.getElementById('r_priceweekend').value = r.priceWeekend || '';
             document.getElementById('r_amenities').value = r.amenities.join(', ');
+            document.getElementById('r_area').value = r.area || '';
+            document.getElementById('r_capacity').value = r.capacity || '';
+            document.getElementById('r_tariff').value = r.tariff || '';
+            document.getElementById('r_prepayment').value = r.prepayment || '';
         }
     }
     document.getElementById('roomModalBg').classList.add('open');
@@ -829,7 +854,11 @@ async function saveRoom(e) {
         desc: document.getElementById('r_desc').value,
         price: Number(document.getElementById('r_price').value),
         priceWeekend: document.getElementById('r_priceweekend').value ? Number(document.getElementById('r_priceweekend').value) : null,
-        amenities: document.getElementById('r_amenities').value.split(',').map(s => s.trim()).filter(Boolean)
+        amenities: document.getElementById('r_amenities').value.split(',').map(s => s.trim()).filter(Boolean),
+        area: document.getElementById('r_area').value || null,
+        capacity: document.getElementById('r_capacity').value ? Number(document.getElementById('r_capacity').value) : null,
+        tariff: document.getElementById('r_tariff').value || null,
+        prepayment: document.getElementById('r_prepayment').value ? Number(document.getElementById('r_prepayment').value) : null
     };
 
     const method = id ? 'PUT' : 'POST';

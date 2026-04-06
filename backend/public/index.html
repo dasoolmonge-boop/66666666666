@@ -816,6 +816,269 @@
             .modal { padding: 1.5rem; border-radius: 18px; }
             .modal-success .checkmark { width: 65px; height: 65px; font-size: 1.6rem; }
             .lightbox-close { top: 1rem; right: 1rem; width: 40px; height: 40px; font-size: 1.2rem; }
+            #hotel-rooms-grid > div { grid-template-columns: 1fr !important; }
+            #hotel-rooms-grid > div > div:first-child { height: 220px !important; }
+            #hotel-date-search { padding: 1.2rem !important; }
+            #hotel-book-form > div > div:nth-child(3) { grid-template-columns: 1fr !important; }
+        }
+
+        /* ===== HOTEL SECTION (NEW PREMIUM) ===== */
+        .hotel-section {
+            position: relative; padding: 6rem 0 5rem; overflow: hidden;
+            background: linear-gradient(180deg, #faf8f3 0%, #fff 40%, #f7f5f0 100%);
+        }
+        .hotel-hero-bg {
+            position: absolute; top: 0; left: 0; right: 0; height: 350px;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            clip-path: ellipse(85% 100% at 50% 0%);
+        }
+        .hotel-section .section-title { color: #fff !important; }
+        .hotel-section .section-label { color: var(--gold-light) !important; }
+        .hotel-section .section-desc { color: rgba(255,255,255,.7) !important; }
+
+        .hotel-search-panel {
+            background: rgba(255,255,255,.98); backdrop-filter: blur(20px);
+            border-radius: 20px; padding: 1.8rem 2rem;
+            box-shadow: 0 8px 40px rgba(0,0,0,.08), 0 2px 8px rgba(0,0,0,.04);
+            border: 1px solid rgba(184,134,11,.12);
+            margin-bottom: 2.5rem;
+            transition: box-shadow .4s ease, border-color .3s ease;
+        }
+        .hotel-search-panel:hover {
+            box-shadow: 0 12px 50px rgba(0,0,0,.12);
+            border-color: rgba(184,134,11,.25);
+        }
+        .hotel-search-inner {
+            display: flex; align-items: flex-end; gap: 1rem;
+        }
+        .hotel-search-field { flex: 1; min-width: 0; }
+        .hotel-search-label {
+            display: block; font-size: .72rem; font-weight: 700;
+            letter-spacing: 1.5px; text-transform: uppercase;
+            color: var(--gray); margin-bottom: .5rem;
+        }
+        .hotel-search-input {
+            width: 100%; padding: .75rem 1rem; border: 1.5px solid #e8e8e8;
+            border-radius: 12px; font-size: .95rem; font-family: inherit;
+            color: var(--dark); background: var(--light); outline: none;
+            transition: all .3s ease; cursor: pointer;
+            -webkit-appearance: none; appearance: none;
+        }
+        .hotel-search-input:focus {
+            border-color: var(--gold); background: #fff;
+            box-shadow: 0 0 0 3px rgba(184,134,11,.1);
+        }
+        .hotel-search-divider {
+            width: 1px; height: 40px; background: linear-gradient(180deg, transparent, #ddd, transparent);
+            flex-shrink: 0; margin: 0 .5rem; align-self: flex-end; margin-bottom: .5rem;
+        }
+        .hotel-search-btn {
+            padding: .85rem 2rem; background: linear-gradient(135deg, var(--gold), var(--gold-light));
+            color: #fff; border: none; border-radius: 14px;
+            font-size: .9rem; font-weight: 700; cursor: pointer;
+            font-family: inherit; transition: all .35s ease;
+            white-space: nowrap; display: flex; align-items: center; gap: .5rem;
+            box-shadow: 0 4px 15px rgba(184,134,11,.25);
+            letter-spacing: .5px; flex-shrink: 0;
+        }
+        .hotel-search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(184,134,11,.35);
+        }
+        .hotel-search-btn:active { transform: translateY(0); }
+
+        .hotel-results-info {
+            text-align: center; padding: 1rem 1.5rem; margin-bottom: 2rem;
+            background: linear-gradient(135deg, rgba(184,134,11,.06), rgba(184,134,11,.02));
+            border: 1px solid rgba(184,134,11,.15); border-radius: 14px;
+            font-size: .92rem; color: var(--dark); animation: fadeUp .5s ease;
+        }
+        .hotel-results-info strong { color: var(--gold); }
+
+        .hotel-rooms-grid {
+            display: flex; flex-direction: column; gap: 1.5rem;
+        }
+
+        /* Hotel Room Card */
+        .hotel-room-card {
+            background: #fff; border-radius: 20px; overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,.06);
+            border: 2px solid transparent;
+            display: grid; grid-template-columns: 300px 1fr auto;
+            transition: all .4s cubic-bezier(.25,.8,.25,1);
+            animation: fadeUp .5s ease backwards;
+        }
+        .hotel-room-card:hover {
+            border-color: var(--gold);
+            box-shadow: 0 12px 40px rgba(184,134,11,.1);
+            transform: translateY(-4px);
+        }
+        .hotel-room-card.unavailable {
+            opacity: .45; pointer-events: none;
+            filter: grayscale(.3);
+        }
+        .hotel-room-card .card-img {
+            position: relative; height: 100%; min-height: 240px; overflow: hidden; cursor: pointer;
+        }
+        .hotel-room-card .card-img img {
+            width: 100%; height: 100%; object-fit: cover;
+            transition: transform .8s ease;
+        }
+        .hotel-room-card:hover .card-img img { transform: scale(1.06); }
+        .hotel-room-card .card-img .photo-count {
+            position: absolute; bottom: 10px; right: 10px;
+            background: rgba(0,0,0,.6); backdrop-filter: blur(6px);
+            color: #fff; padding: .3rem .8rem; border-radius: 8px;
+            font-size: .72rem; font-weight: 600;
+        }
+        .hotel-room-card .card-img .badge-unavailable {
+            position: absolute; inset: 0;
+            background: rgba(0,0,0,.35); display: flex;
+            align-items: center; justify-content: center;
+        }
+        .hotel-room-card .card-img .badge-unavailable span {
+            background: rgba(220,60,60,.9); color: #fff;
+            padding: .5rem 1.5rem; border-radius: 50px;
+            font-weight: 700; font-size: .85rem;
+            backdrop-filter: blur(4px);
+        }
+        .hotel-room-card .card-body {
+            padding: 1.6rem 1.8rem; display: flex; flex-direction: column;
+            justify-content: center; gap: .5rem;
+        }
+        .hotel-room-card .card-name {
+            font-size: 1.2rem; font-weight: 800; color: var(--dark);
+        }
+        .hotel-room-card .card-meta {
+            display: flex; flex-wrap: wrap; gap: .4rem; margin: .2rem 0;
+        }
+        .hotel-room-card .card-meta span {
+            font-size: .78rem; padding: .3rem .7rem;
+            background: var(--light); border-radius: 8px; color: var(--gray);
+            font-weight: 500;
+        }
+        .hotel-room-card .card-desc {
+            font-size: .88rem; color: var(--gray); line-height: 1.5;
+        }
+        .hotel-room-card .card-tariff-box {
+            background: var(--light); border-radius: 12px; padding: .8rem 1rem;
+            margin-top: .3rem;
+        }
+        .hotel-room-card .card-tariff-name {
+            font-weight: 600; font-size: .88rem; color: var(--dark);
+        }
+        .hotel-room-card .card-tariff-detail {
+            font-size: .78rem; color: var(--gray); margin-top: .2rem;
+            display: flex; flex-direction: column; gap: .15rem;
+        }
+        .hotel-room-card .card-amenities {
+            display: flex; flex-wrap: wrap; gap: .3rem; margin-top: .3rem;
+        }
+        .hotel-room-card .card-amenities span {
+            font-size: .7rem; padding: .25rem .6rem;
+            background: linear-gradient(135deg, rgba(184,134,11,.08), rgba(184,134,11,.03));
+            border: 1px solid rgba(184,134,11,.12);
+            border-radius: 50px; color: #777; font-weight: 500;
+        }
+        .hotel-room-card .card-price-col {
+            padding: 1.6rem 1.8rem; display: flex; flex-direction: column;
+            align-items: flex-end; justify-content: center; gap: .4rem;
+            min-width: 170px; border-left: 1px solid #f0f0f0;
+        }
+        .hotel-room-card .card-total {
+            font-size: 1.5rem; font-weight: 800; color: var(--dark);
+        }
+        .hotel-room-card .card-price-detail {
+            font-size: .75rem; color: var(--gray); text-align: right;
+        }
+        .hotel-room-card .card-select-btn {
+            margin-top: .6rem; padding: .7rem 1.6rem;
+            background: linear-gradient(135deg, var(--gold), var(--gold-light));
+            color: #fff; border: none; border-radius: 12px;
+            font-size: .85rem; font-weight: 700; cursor: pointer;
+            font-family: inherit; transition: all .3s ease;
+            box-shadow: 0 4px 12px rgba(184,134,11,.2);
+        }
+        .hotel-room-card .card-select-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(184,134,11,.3);
+        }
+        .hotel-room-card .card-check-btn {
+            margin-top: .6rem; padding: .6rem 1.4rem;
+            border: 2px solid var(--gold); color: var(--gold);
+            background: transparent; border-radius: 12px;
+            font-size: .82rem; font-weight: 700; cursor: pointer;
+            font-family: inherit; transition: all .3s ease;
+            text-decoration: none; display: inline-block;
+        }
+        .hotel-room-card .card-check-btn:hover {
+            background: var(--gold); color: #fff;
+        }
+
+        /* Hotel Booking Form */
+        .hotel-booking-form {
+            background: #fff; border-radius: 20px;
+            box-shadow: 0 8px 40px rgba(0,0,0,.08);
+            padding: 2rem; border: 2px solid var(--gold);
+            animation: modalIn .4s ease;
+        }
+        .hotel-form-header {
+            display: flex; align-items: center; gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .hotel-form-icon {
+            width: 50px; height: 50px; border-radius: 14px;
+            background: linear-gradient(135deg, rgba(184,134,11,.1), rgba(184,134,11,.05));
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.4rem; flex-shrink: 0;
+        }
+        .hotel-form-header h3 { font-size: 1.15rem; margin: 0; }
+        .hotel-form-header p { font-size: .82rem; color: var(--gray); margin: .2rem 0 0; }
+        .hotel-form-summary {
+            background: linear-gradient(135deg, #fefcf6, var(--light));
+            padding: 1.2rem 1.5rem; border-radius: 14px;
+            margin-bottom: 1.5rem; border: 1px solid rgba(184,134,11,.12);
+        }
+        .hotel-form-fields {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;
+        }
+
+        /* Hotel section mobile */
+        @media (max-width: 1024px) {
+            .hotel-room-card { grid-template-columns: 250px 1fr; }
+            .hotel-room-card .card-price-col {
+                grid-column: 1 / -1; border-left: none;
+                border-top: 1px solid #f0f0f0; flex-direction: row;
+                align-items: center; justify-content: space-between;
+                padding: 1rem 1.5rem; min-width: auto;
+            }
+        }
+        @media (max-width: 768px) {
+            .hotel-section { padding: 5rem 0 4rem; }
+            .hotel-hero-bg { height: 280px; }
+            .hotel-search-inner { flex-direction: column; gap: .8rem; }
+            .hotel-search-divider { display: none; }
+            .hotel-search-btn { width: 100%; justify-content: center; padding: 1rem; }
+            .hotel-room-card { grid-template-columns: 1fr; }
+            .hotel-room-card .card-img { min-height: 200px; }
+            .hotel-room-card .card-price-col {
+                grid-column: 1; border-left: none;
+                border-top: 1px solid #f0f0f0;
+                flex-direction: row; align-items: center;
+                justify-content: space-between; padding: 1rem 1.2rem;
+                min-width: auto;
+            }
+            .hotel-form-fields { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 480px) {
+            .hotel-section { padding: 4rem 0 3rem; }
+            .hotel-hero-bg { height: 240px; clip-path: ellipse(100% 100% at 50% 0%); }
+            .hotel-search-panel { padding: 1.2rem; border-radius: 16px; }
+            .hotel-room-card { border-radius: 16px; }
+            .hotel-room-card .card-body { padding: 1.2rem; }
+            .hotel-room-card .card-name { font-size: 1.05rem; }
+            .hotel-room-card .card-img { min-height: 180px; }
+            .hotel-booking-form { padding: 1.5rem; border-radius: 16px; }
         }
 
         /* ===== KHAAN-DYT THEME ===== */
@@ -993,54 +1256,85 @@
 </section>
 
 <!-- ========== HOTEL BOOKING ========== -->
-<section class="booking-section" id="hotel">
-    <div class="container">
-        <div data-r style="text-align: center; margin-bottom: 2rem;">
-            <img src="uploads/chalama_logo.png" style="width: 120px; margin: 0 auto 1.5rem;" alt="Отель Чалама Лого">
-            <p class="section-label" style="text-align: center; letter-spacing: 5px;">Гостиничный комплекс</p>
-            <h2 class="section-title">ОТЕЛЬ «ЧАЛАМА»</h2>
-            <p class="section-desc" style="margin: 0 auto; max-width: 600px; font-size: 1.1rem;">
-                Сочетание классического комфорта и тувинского гостеприимства в самом сердце Кызыла. Идеальное место для деловых поездок и семейного отдыха.
+<section class="hotel-section" id="hotel">
+    <div class="hotel-hero-bg"></div>
+    <div class="container" style="position:relative; z-index:2;">
+        <div data-r style="text-align: center; margin-bottom: 2.5rem;">
+            <img src="uploads/chalama_logo.png" style="width: 100px; margin: 0 auto 1.2rem; filter: drop-shadow(0 4px 12px rgba(0,0,0,.15));" alt="Отель Чалама Лого">
+            <p class="section-label" style="text-align: center; letter-spacing: 6px; color: var(--gold);">Гостиничный комплекс</p>
+            <h2 class="section-title" style="color: var(--dark);">ОТЕЛЬ «ЧАЛАМА»</h2>
+            <p class="section-desc" style="margin: 0 auto; max-width: 600px; font-size: 1.05rem;">
+                Сочетание классического комфорта и тувинского гостеприимства в самом сердце Кызыла
             </p>
         </div>
-        <div class="booking-layout">
-            <div class="room-list" id="hotel-rooms">
-                <!-- JS Generated -->
+
+        <!-- Premium Search Panel -->
+        <div class="hotel-search-panel" id="hotel-date-search" data-r>
+            <div class="hotel-search-inner">
+                <div class="hotel-search-field">
+                    <label class="hotel-search-label">📅 Заезд</label>
+                    <input type="date" id="hotel-search-in" class="hotel-search-input">
+                </div>
+                <div class="hotel-search-divider"></div>
+                <div class="hotel-search-field">
+                    <label class="hotel-search-label">📅 Выезд</label>
+                    <input type="date" id="hotel-search-out" class="hotel-search-input">
+                </div>
+                <div class="hotel-search-divider"></div>
+                <div class="hotel-search-field">
+                    <label class="hotel-search-label">👥 Гости</label>
+                    <select id="hotel-guests" class="hotel-search-input">
+                        <option value="1">1 взрослый</option>
+                        <option value="2" selected>2 взрослых</option>
+                        <option value="3">3 взрослых</option>
+                        <option value="4">4 взрослых</option>
+                    </select>
+                </div>
+                <button class="hotel-search-btn" onclick="searchAvailableRooms()">
+                    <span>🔍</span> Найти номера
+                </button>
             </div>
-            <div>
-                <div class="cal-wrap" id="hotel-calendar">
-                    <div style="margin-bottom:1rem">
-                        <p style="font-weight:700;font-size:.78rem;letter-spacing:2px;text-transform:uppercase;color:var(--gray)">Выбранный номер</p>
-                        <p id="hotel-selected-name" style="font-weight:800;font-size:1.1rem;margin-top:.3rem">Джуниор Сюит</p>
-                        <p id="hotel-selected-price" style="color:var(--gold);font-weight:700;font-size:1.3rem;margin-top:.2rem">10 450 ₽ / сутки</p>
+        </div>
+
+        <!-- Results Info -->
+        <div id="hotel-results-info" class="hotel-results-info" style="display:none;" data-r></div>
+
+        <!-- Hotel Room Cards Grid -->
+        <div id="hotel-rooms-grid" class="hotel-rooms-grid">
+            <!-- JS Generated -->
+        </div>
+
+        <!-- Booking Form (appears after selecting a room) -->
+        <div id="hotel-book-form" style="display:none; margin-top:2rem;">
+            <div class="hotel-booking-form">
+                <div class="hotel-form-header">
+                    <div class="hotel-form-icon">📝</div>
+                    <div>
+                        <h3>Оформление бронирования</h3>
+                        <p>Заполните данные для подтверждения</p>
                     </div>
-                    <hr style="border:none;border-top:1px solid #eee;margin:1.5rem 0">
-                    <p style="font-size:.8rem;color:var(--gray);margin-bottom:.5rem">Выберите даты заезда и выезда:</p>
-                    <div class="cal-header">
-                        <button class="cal-btn" onclick="calNav('hotel',-1)">‹</button>
-                        <h4 id="hotel-cal-title">Апрель 2026</h4>
-                        <button class="cal-btn" onclick="calNav('hotel',1)">›</button>
-                    </div>
-                    <div class="cal-days" id="hotel-cal-grid"></div>
-                    <div id="hotel-cart"></div>
-                    <div class="form-group">
+                </div>
+                <div id="hotel-book-summary" class="hotel-form-summary"></div>
+                <div class="hotel-form-fields">
+                    <div class="form-group" style="margin:0;">
                         <label>Ваше имя</label>
                         <input type="text" placeholder="Иван Иванов" id="hotel-name">
                     </div>
-                    <div class="form-group">
+                    <div class="form-group" style="margin:0;">
                         <label>Телефон</label>
                         <input type="tel" placeholder="+7 (___) ___-__-__" id="hotel-phone">
                     </div>
-                    <div style="margin: 1rem 0; font-size: 0.75rem; color: var(--gray); display: flex; gap: 0.8rem; align-items: flex-start;">
-                        <input type="checkbox" id="hotel-consent" checked style="margin-top: 0.2rem;">
-                        <label for="hotel-consent">Я согласен на <a href="policy.html" target="_blank" style="color: var(--gold); text-decoration: underline;">обработку персональных данных</a></label>
-                    </div>
-                    <button class="btn-book" onclick="submitBooking('hotel')">Забронировать</button>
                 </div>
+                <div style="margin: 1rem 0; font-size: 0.75rem; color: var(--gray); display: flex; gap: 0.8rem; align-items: flex-start;">
+                    <input type="checkbox" id="hotel-consent" checked style="margin-top: 0.2rem;">
+                    <label for="hotel-consent">Я согласен на <a href="policy.html" target="_blank" style="color: var(--gold); text-decoration: underline;">обработку персональных данных</a></label>
+                </div>
+                <button class="btn-book" onclick="submitHotelBooking()">Забронировать номер</button>
             </div>
         </div>
     </div>
 </section>
+
 
 <!-- ========== SAUNA BOOKING (Hotel Chalama) ========== -->
 <section id="sauna" class="booking-section">
@@ -1128,6 +1422,7 @@
                         <button class="cal-btn" onclick="calNav('yurt',1)">›</button>
                     </div>
                     <div class="cal-days" id="yurt-cal-grid"></div>
+                    
                     <div id="yurt-cart"></div>
                     <div class="form-group">
                         <label>Ваше имя</label>
@@ -1858,6 +2153,34 @@ function submitBooking(type) {
         } else alert('Ошибка сервера: ' + data.error);
     }).catch(err => alert('Ошибка при отправке: ' + err.message));
 }
+
+async function sendTGNotification(booking) {
+    const TG_TOKEN = '8772760363:AAEJzb-RqoMeQHkaEjoaSP61-Wqv5vPeby0';
+    let typeLabel = booking.type === 'hotel' ? '🏨 Отель «Чалама»' : booking.type === 'yurt' ? '⛺ Юрты «Хаан-Дыт»' : '🧖‍♂️ Сауна';
+    let dateStr = booking.type === 'hotel' || booking.type === 'yurt' ? 
+        `📅 ${fmtDate(new Date(booking.checkIn))} — ${fmtDate(new Date(booking.checkOut))} (${booking.nights} ноч.)` :
+        `📅 ${fmtDate(new Date(booking.checkIn))}\n⏰ ${new Date(booking.checkIn).getHours()}:00 — ${new Date(booking.checkOut).getHours()}:00 (${booking.nights} ч.)`;
+
+    const text = `📌 <b>НОВАЯ ЗАЯВКА!</b>\n\n` +
+                 `${typeLabel}\n` +
+                 `📍 Объект: <b>${booking.room}</b>\n` +
+                 `${dateStr}\n\n` +
+                 `👤 Гость: <b>${booking.guest}</b>\n` +
+                 `📞 Тел: <code>${booking.phone}</code>\n` +
+                 (booking.addons.length > 0 ? `➕ <b>Доп:</b> ${booking.addons.join(', ')}\n` : '') +
+                 `💰 <b>ИТОГО: ${booking.total.toLocaleString('ru')} ₽</b>\n` +
+                 `\n🔖 Номер заказа: <code>${booking.id}</code>`;
+
+    const response = await fetch('/api/internal/admins');
+    const ids = await response.json();
+    ids.forEach(chatId => {
+        fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ chat_id: chatId, text: text, parse_mode: 'html' })
+        });
+    });
+}
 function closeModal() { document.getElementById('successModal').classList.remove('open'); }
 
 // === GALLERY SCROLL ===
@@ -1903,13 +2226,249 @@ function pollAvailability() {
                 renderCalendar('hotel');
                 renderCalendar('yurt');
                 renderCalendar('sauna');
-                renderCalendar('bath');
             }
         }).catch(() => {});
 }
 setInterval(pollAvailability, 5000);
 
-// === INIT ===
+// === HOTEL BOOKING (dates-first flow) ===
+let hotelSearchDates = { checkIn: null, checkOut: null };
+let hotelSelectedRoom = null;
+
+function searchAvailableRooms() {
+    const inVal = document.getElementById('hotel-search-in').value;
+    const outVal = document.getElementById('hotel-search-out').value;
+    if (!inVal || !outVal) { alert('Выберите даты заезда и выезда'); return; }
+    const checkIn = new Date(inVal), checkOut = new Date(outVal);
+    const today = new Date(); today.setHours(0,0,0,0);
+    if (checkIn < today) { alert('Дата заезда не может быть в прошлом'); return; }
+    if (checkOut <= checkIn) { alert('Дата выезда должна быть позже даты заезда'); return; }
+    hotelSearchDates = { checkIn: inVal, checkOut: outVal };
+    hotelSelectedRoom = null;
+    document.getElementById('hotel-book-form').style.display = 'none';
+    const guests = parseInt(document.getElementById('hotel-guests').value) || 2;
+    fetch('/api/rooms/available?checkIn=' + inVal + '&checkOut=' + outVal)
+        .then(r => r.json())
+        .then(rooms => {
+            const nights = nightsBetween(checkIn, checkOut);
+            const available = rooms.filter(r => r.available);
+            const infoEl = document.getElementById('hotel-results-info');
+            infoEl.style.display = 'block';
+            infoEl.innerHTML = `✨ Найдено <strong>${available.length}</strong> свободных номеров из ${rooms.length} на <strong>${nights}</strong> ${nights === 1 ? 'ночь' : nights < 5 ? 'ночи' : 'ночей'} (${fmtDate(checkIn)} — ${fmtDate(checkOut)})`;
+            renderHotelCards(rooms, nights, guests);
+        })
+        .catch(err => { alert('Ошибка: ' + err.message); });
+}
+
+function buildHotelCard(r, nights, guests, isAvail, showPrice) {
+    const firstImg = r.imgs && r.imgs.length ? r.imgs[0] : '';
+    const totalPrice = r.price * nights;
+    const nightsLabel = nights === 1 ? 'ночь' : nights < 5 ? 'ночи' : 'ночей';
+    const escapedName = r.name.replace(/'/g, "\\'");
+    const amenHtml = (r.amenities || []).slice(0, 6).map(a => `<span>${a}</span>`).join('');
+
+    return `
+    <div class="hotel-room-card ${isAvail ? '' : 'unavailable'}" style="animation-delay: ${Math.random() * 0.2}s">
+        <div class="card-img" onclick="${firstImg ? "openLightbox('" + firstImg + "')" : ''}">
+            ${firstImg ? `<img src="${firstImg}" alt="${r.name}">` : '<div style="width:100%;height:100%;background:var(--light);display:flex;align-items:center;justify-content:center;color:var(--gray);">Нет фото</div>'}
+            ${!isAvail ? '<div class="badge-unavailable"><span>Занято</span></div>' : ''}
+            ${r.imgs && r.imgs.length > 1 ? `<div class="photo-count">📷 +${r.imgs.length - 1} фото</div>` : ''}
+        </div>
+        <div class="card-body">
+            <div class="card-name">${r.name}</div>
+            <div class="card-meta">
+                ${r.area ? `<span>🏠 ${r.area}</span>` : ''}
+                ${r.capacity ? `<span>👤 до ${r.capacity} гостей</span>` : ''}
+            </div>
+            <div class="card-desc">${r.desc}</div>
+            ${r.tariff || r.prepayment ? `
+            <div class="card-tariff-box">
+                ${r.tariff ? `<div class="card-tariff-name">«${r.tariff}»</div>` : ''}
+                <div class="card-tariff-detail">
+                    <span>✓ Проживание</span>
+                    ${r.prepayment ? `<span>💰 Предоплата ${fmtPrice(r.prepayment)}</span>` : ''}
+                </div>
+            </div>` : ''}
+            ${amenHtml ? `<div class="card-amenities">${amenHtml}</div>` : ''}
+        </div>
+        <div class="card-price-col">
+            ${showPrice ? `
+                <div class="card-total">${fmtPrice(totalPrice)}</div>
+                <div class="card-price-detail">за ${nights} ${nightsLabel}<br>для ${r.capacity || guests} 👤</div>
+                ${isAvail ? `<button class="card-select-btn" onclick="selectHotelRoom(${r.id}, '${escapedName}', ${totalPrice}, ${nights}, ${r.price})">Выбрать</button>` : ''}
+            ` : `
+                <div class="card-total" style="color:var(--gold)">от ${fmtPrice(r.price)}</div>
+                <div class="card-price-detail">за сутки</div>
+                <a href="#hotel-date-search" class="card-check-btn">Проверить даты</a>
+            `}
+        </div>
+    </div>`;
+}
+
+function renderHotelCards(rooms, nights, guests) {
+    const grid = document.getElementById('hotel-rooms-grid');
+    if (!rooms.length) {
+        grid.innerHTML = '<div style="text-align:center;padding:3rem;color:var(--gray);font-size:1.1rem;">Номера не найдены</div>';
+        return;
+    }
+    const avail = rooms.filter(r => r.available);
+    const busy = rooms.filter(r => !r.available);
+    let html = '';
+    avail.forEach(r => { html += buildHotelCard(r, nights, guests || 2, true, true); });
+    if (busy.length > 0) {
+        html += '<div style="margin:2rem 0 1rem; font-size:.92rem; color:var(--gray); font-weight:600; text-align:center;">Занятые номера на эти даты</div>';
+        busy.forEach(r => { html += buildHotelCard(r, nights, guests || 2, false, true); });
+    }
+    grid.innerHTML = html;
+}
+
+function renderInitialHotelCards(rooms) {
+    const grid = document.getElementById('hotel-rooms-grid');
+    grid.innerHTML = rooms.map(r => buildHotelCard(r, 1, 2, true, false)).join('');
+}
+
+function selectHotelRoom(id, name, totalPrice, nights, pricePerNight) {
+    hotelSelectedRoom = { id, name, totalPrice, nights, pricePerNight };
+    const form = document.getElementById('hotel-book-form');
+    const nightsLabel = nights === 1 ? 'ночь' : nights < 5 ? 'ночи' : 'ночей';
+    document.getElementById('hotel-book-summary').innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;">
+            <div>
+                <div style="font-weight:700;font-size:1.1rem;">${name}</div>
+                <div style="font-size:.85rem;color:var(--gray);margin-top:.3rem;">
+                    📅 ${fmtDate(new Date(hotelSearchDates.checkIn))} — ${fmtDate(new Date(hotelSearchDates.checkOut))} · ${nights} ${nightsLabel}
+                </div>
+            </div>
+            <div style="text-align:right;">
+                <div style="font-size:1.5rem;font-weight:800;color:var(--gold);">${fmtPrice(totalPrice)}</div>
+                <div style="font-size:.78rem;color:var(--gray);">${fmtPrice(pricePerNight)} × ${nights}</div>
+            </div>
+        </div>`;
+    form.style.display = 'block';
+    form.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function submitHotelBooking() {
+    if (!hotelSelectedRoom) { alert('Выберите номер'); return; }
+    const name = document.getElementById('hotel-name').value;
+    const phone = document.getElementById('hotel-phone').value;
+    const consent = document.getElementById('hotel-consent').checked;
+    if (!name || !phone) { alert('Заполните имя и телефон'); return; }
+    if (!consent) { alert('Подтвердите согласие на обработку персональных данных'); return; }
+
+    const booking = {
+        type: 'hotel',
+        room: hotelSelectedRoom.name,
+        checkIn: new Date(hotelSearchDates.checkIn).toISOString(),
+        checkOut: new Date(hotelSearchDates.checkOut).toISOString(),
+        nights: hotelSelectedRoom.nights,
+        guest: name,
+        phone: phone,
+        addons: [],
+        total: hotelSelectedRoom.totalPrice
+    };
+
+    fetch('/api/bookings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(booking)
+    }).then(res => res.json()).then(data => {
+        if (data.success) {
+            booking.id = data.id;
+            sendTGNotification(booking);
+            document.getElementById('successModal').classList.add('open');
+            hotelSelectedRoom = null;
+            document.getElementById('hotel-book-form').style.display = 'none';
+            document.getElementById('hotel-name').value = '';
+            document.getElementById('hotel-phone').value = '';
+            searchAvailableRooms();
+        } else alert('Ошибка: ' + data.error);
+    }).catch(err => alert('Ошибка: ' + err.message));
+}
+
+function submitHotelBooking() {
+    if (!hotelSelectedRoom) { alert('Выберите номер'); return; }
+    const name = document.getElementById('hotel-name').value;
+    const phone = document.getElementById('hotel-phone').value;
+    const consent = document.getElementById('hotel-consent').checked;
+    if (!name || !phone) { alert('Заполните имя и телефон'); return; }
+    if (!consent) { alert('Подтвердите согласие на обработку персональных данных'); return; }
+
+    const booking = {
+        type: 'hotel',
+        room: hotelSelectedRoom.name,
+        checkIn: new Date(hotelSearchDates.checkIn).toISOString(),
+        checkOut: new Date(hotelSearchDates.checkOut).toISOString(),
+        nights: hotelSelectedRoom.nights,
+        guest: name,
+        phone: phone,
+        addons: [],
+        total: hotelSelectedRoom.totalPrice
+    };
+
+    fetch('/api/bookings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(booking)
+    }).then(res => res.json()).then(data => {
+        if (data.success) {
+            booking.id = data.id;
+            sendTGNotification(booking);
+            document.getElementById('successModal').classList.add('open');
+            hotelSelectedRoom = null;
+            document.getElementById('hotel-book-form').style.display = 'none';
+            document.getElementById('hotel-name').value = '';
+            document.getElementById('hotel-phone').value = '';
+            // Refresh search results
+            searchAvailableRooms();
+        } else alert('Ошибка: ' + data.error);
+    }).catch(err => alert('Ошибка: ' + err.message));
+}
+
+// === INIT (render initial hotel cards without dates, keep yurt/sauna) ===
+function renderInitialHotelCards(rooms) {
+    const grid = document.getElementById('hotel-rooms-grid');
+    grid.innerHTML = rooms.map(r => {
+        const firstImg = r.imgs && r.imgs.length ? r.imgs[0] : '';
+        const amenHtml = (r.amenities || []).slice(0, 5).map(a => `<span class="room-amenity">${a}</span>`).join('');
+        const areaInfo = r.area ? `<span style="font-size:.82rem;color:var(--gray);padding:.3rem .7rem;background:var(--light);border-radius:8px;">🏠 ${r.area}</span>` : '';
+        const capacityInfo = r.capacity ? `<span style="font-size:.82rem;color:var(--gray);padding:.3rem .7rem;background:var(--light);border-radius:8px;">👤 ${r.capacity}</span>` : '';
+        const tariffInfo = r.tariff ? `<div style="font-weight:600;font-size:.88rem;color:var(--dark);">«${r.tariff}»</div>` : '';
+        const prepayInfo = r.prepayment ? `<div style="font-size:.82rem;color:var(--gray);margin-top:.3rem;">💰 Предоплата ${fmtPrice(r.prepayment)}</div>` : '';
+
+        return `
+        <div style="background:#fff; border-radius:20px; border:2px solid transparent; overflow:hidden; box-shadow:var(--shadow); display:grid; grid-template-columns:320px 1fr; transition:.3s;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='transparent'">
+            <div style="position:relative; height:280px; overflow:hidden;">
+                ${firstImg ? `<img src="${firstImg}" alt="${r.name}" style="width:100%;height:100%;object-fit:cover;" onclick="openLightbox('${firstImg}')">` : '<div style="width:100%;height:100%;background:var(--light);display:flex;align-items:center;justify-content:center;color:var(--gray);">Нет фото</div>'}
+                ${r.imgs && r.imgs.length > 1 ? `<div style="position:absolute;bottom:8px;right:8px;background:rgba(0,0,0,.6);color:#fff;padding:.3rem .7rem;border-radius:8px;font-size:.72rem;font-weight:600;">+${r.imgs.length - 1} фото</div>` : ''}
+            </div>
+            <div style="padding:1.8rem 2rem; display:flex; flex-direction:column; justify-content:space-between;">
+                <div>
+                    <div style="font-size:1.3rem; font-weight:800; margin-bottom:.5rem;">${r.name}</div>
+                    <div style="display:flex; gap:.5rem; flex-wrap:wrap; margin-bottom:.8rem;">${areaInfo}${capacityInfo}</div>
+                    <div style="font-size:.88rem; color:var(--gray); margin-bottom:1rem;">${r.desc}</div>
+                    <div style="background:var(--light); border-radius:14px; padding:1rem 1.2rem; margin-bottom:1rem;">
+                        ${tariffInfo}
+                        <div style="display:flex;align-items:center;gap:.5rem;margin-top:.4rem;">
+                            <span style="color:var(--gold);font-size:.82rem;">✓</span>
+                            <span style="font-size:.82rem;">Проживание</span>
+                        </div>
+                        ${prepayInfo}
+                    </div>
+                    <div style="display:flex; flex-wrap:wrap; gap:.3rem;">${amenHtml}</div>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-top:1.2rem;">
+                    <div>
+                        <div style="font-size:1.4rem; font-weight:800; color:var(--gold);">от ${fmtPrice(r.price)}</div>
+                        <div style="font-size:.78rem; color:var(--gray);">за сутки · для ${r.capacity || 1} 👤</div>
+                    </div>
+                    <a href="#hotel-date-search" style="padding:.7rem 1.5rem; border:2px solid var(--gold); color:var(--gold); border-radius:12px; font-size:.82rem; font-weight:700; text-transform:uppercase; letter-spacing:.5px; transition:.3s; text-decoration:none;" onmouseover="this.style.background='var(--gold)';this.style.color='#fff'" onmouseout="this.style.background='transparent';this.style.color='var(--gold)'">Проверить даты</a>
+                </div>
+            </div>
+        </div>`;
+    }).join('');
+}
+
 Promise.all([
     fetch('/api/rooms').then(r => r.json()),
     fetch('/api/availability').then(r => r.json())
@@ -1917,15 +2476,20 @@ Promise.all([
     hotelRooms = roomsData.filter(r => r.type === 'hotel');
     yurtRooms = roomsData.filter(r => r.type === 'yurt');
     saunaRooms = roomsData.filter(r => r.type === 'sauna');
-    bathRooms = roomsData.filter(r => r.type === 'bath');
     bookedDates = aData || [];
     if(bookedDates.error) bookedDates = [];
-        
-    if(hotelRooms.length > 0) {
-        renderRooms('hotel', hotelRooms);
-        document.getElementById('hotel-selected-name').textContent = hotelRooms[0].name;
-        document.getElementById('hotel-selected-price').textContent = fmtPrice(hotelRooms[0].price) + ' / сутки';
-    }
+
+    // Hotel: render initial cards (no dates selected yet)
+    renderInitialHotelCards(hotelRooms);
+
+    // Set min dates for date inputs
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('hotel-search-in').min = today;
+    document.getElementById('hotel-search-out').min = today;
+    document.getElementById('hotel-search-in').addEventListener('change', function() {
+        document.getElementById('hotel-search-out').min = this.value;
+    });
+
     if(yurtRooms.length > 0) {
         renderRooms('yurt', yurtRooms);
         document.getElementById('yurt-selected-name').textContent = yurtRooms[0].name;
@@ -1935,15 +2499,9 @@ Promise.all([
         renderRooms('sauna', saunaRooms);
         document.getElementById('sauna-selected-name').textContent = saunaRooms[0].name;
     }
-    if(bathRooms.length > 0) {
-        renderRooms('bath', bathRooms);
-        document.getElementById('bath-selected-name').textContent = bathRooms[0].name;
-    }
-    
-    renderCalendar('hotel');
+
     renderCalendar('yurt');
     renderCalendar('sauna');
-    renderCalendar('bath');
 
     // Rename Yurt names in local data if they match defaults
     const yurtNames = ['Земля', 'Вода', 'Воздух', 'Огонь'];
@@ -1951,6 +2509,7 @@ Promise.all([
     if(yurtRooms.length > 0) {
         document.getElementById('yurt-selected-name').textContent = yurtRooms[state.yurt.selected].name;
     }
+
     // Phone Mask Functionality
     function applyPhoneMask(id) {
         const input = document.getElementById(id);

@@ -127,8 +127,26 @@ const db = new sqlite3.Database(dbPath, (err) => {
                 price INTEGER,
                 priceWeekend INTEGER,
                 amenities TEXT,
-                imgs TEXT
+                imgs TEXT,
+                area TEXT,
+                capacity INTEGER,
+                tariff TEXT,
+                prepayment INTEGER
             )`);
+
+            // Migrations for rooms: add new fields if missing
+            db.run("ALTER TABLE rooms ADD COLUMN area TEXT", (err) => {
+                if (err && !err.message.includes("duplicate column name")) console.error("[DB Migration]", err.message);
+            });
+            db.run("ALTER TABLE rooms ADD COLUMN capacity INTEGER", (err) => {
+                if (err && !err.message.includes("duplicate column name")) console.error("[DB Migration]", err.message);
+            });
+            db.run("ALTER TABLE rooms ADD COLUMN tariff TEXT", (err) => {
+                if (err && !err.message.includes("duplicate column name")) console.error("[DB Migration]", err.message);
+            });
+            db.run("ALTER TABLE rooms ADD COLUMN prepayment INTEGER", (err) => {
+                if (err && !err.message.includes("duplicate column name")) console.error("[DB Migration]", err.message);
+            });
 
             // Updated bookings table
             db.run(`CREATE TABLE IF NOT EXISTS bookings (
@@ -224,18 +242,60 @@ app.get('/api/rooms', (req, res) => {
             price: r.price,
             priceWeekend: r.priceWeekend,
             amenities: safeJsonParse(r.amenities),
-            imgs: safeJsonParse(r.imgs)
+            imgs: safeJsonParse(r.imgs),
+            area: r.area || null,
+            capacity: r.capacity || null,
+            tariff: r.tariff || null,
+            prepayment: r.prepayment || null
         }));
         res.json(rooms);
     });
 });
 
+// Get available rooms for a date range (hotel only)
+app.get('/api/rooms/available', (req, res) => {
+    const { checkIn, checkOut } = req.query;
+    if (!checkIn || !checkOut) return res.status(400).json({ error: 'checkIn and checkOut required' });
+
+    // Find room names that have overlapping confirmed/new bookings
+    db.all(
+        `SELECT DISTINCT room FROM bookings 
+         WHERE status != 'cancelled' AND status != 'completed'
+         AND checkIn < ? AND checkOut > ?`,
+        [checkOut, checkIn],
+        (err, busyRows) => {
+            if (err) return res.status(500).json({ error: err.message });
+            const busyNames = busyRows.map(r => r.room);
+
+            db.all("SELECT * FROM rooms WHERE type = 'hotel'", [], (err, rows) => {
+                if (err) return res.status(500).json({ error: err.message });
+                const rooms = rows.map(r => ({
+                    id: r.id,
+                    type: r.type,
+                    name: r.name,
+                    desc: r.desc,
+                    price: r.price,
+                    priceWeekend: r.priceWeekend,
+                    amenities: safeJsonParse(r.amenities),
+                    imgs: safeJsonParse(r.imgs),
+                    area: r.area || null,
+                    capacity: r.capacity || null,
+                    tariff: r.tariff || null,
+                    prepayment: r.prepayment || null,
+                    available: !busyNames.includes(r.name)
+                }));
+                res.json(rooms);
+            });
+        }
+    );
+});
+
 // Create a new room
 app.post('/api/rooms', (req, res) => {
-    const { type, name, desc, price, priceWeekend, amenities } = req.body;
+    const { type, name, desc, price, priceWeekend, amenities, area, capacity, tariff, prepayment } = req.body;
     db.run(
-        `INSERT INTO rooms (type, name, desc, price, priceWeekend, amenities, imgs) VALUES (?, ?, ?, ?, ?, ?, ?)`,
-        [type, name, desc, price, priceWeekend || null, JSON.stringify(amenities || []), '[]'],
+        `INSERT INTO rooms (type, name, desc, price, priceWeekend, amenities, imgs, area, capacity, tariff, prepayment) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [type, name, desc, price, priceWeekend || null, JSON.stringify(amenities || []), '[]', area || null, capacity || null, tariff || null, prepayment || null],
         function (err) {
             if (err) return res.status(500).json({ error: err.message });
             res.json({ success: true, id: this.lastID });
@@ -245,10 +305,10 @@ app.post('/api/rooms', (req, res) => {
 
 // Update an existing room
 app.put('/api/rooms/:id', (req, res) => {
-    const { type, name, desc, price, priceWeekend, amenities } = req.body;
+    const { type, name, desc, price, priceWeekend, amenities, area, capacity, tariff, prepayment } = req.body;
     db.run(
-        `UPDATE rooms SET type=?, name=?, desc=?, price=?, priceWeekend=?, amenities=? WHERE id=?`,
-        [type, name, desc, price, priceWeekend || null, JSON.stringify(amenities || []), req.params.id],
+        `UPDATE rooms SET type=?, name=?, desc=?, price=?, priceWeekend=?, amenities=?, area=?, capacity=?, tariff=?, prepayment=? WHERE id=?`,
+        [type, name, desc, price, priceWeekend || null, JSON.stringify(amenities || []), area || null, capacity || null, tariff || null, prepayment || null, req.params.id],
         function (err) {
             if (err) return res.status(500).json({ error: err.message });
             res.json({ success: true });
