@@ -1020,7 +1020,8 @@
 
         .hotel-room-card .card-footer {
             display: grid; grid-template-columns: 2fr 1.2fr;
-            background: #f4f4f4; border-radius: 12px; overflow: hidden;
+            background: #f4f4f4; border-radius: 12px;
+            /* overflow: hidden removed to allow tooltip to pop out */
         }
         .hotel-room-card .card-tariff-col {
             padding: 1.2rem;
@@ -1035,16 +1036,19 @@
             position: relative;
         }
         .tariff-tooltip {
-            position: absolute; bottom: calc(100% + 10px); left: 0; z-index: 1000;
-            background: #fff; width: 340px; padding: 1.2rem; border-radius: 12px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.15), 0 0 1px rgba(0,0,0,0.1);
-            display: none; color: #333; text-align: left;
-            animation: fadeIn .2s ease-out;
+            position: absolute; bottom: calc(100% + 15px); left: 0; z-index: 9999;
+            background: #fff; width: 340px; padding: 1.5rem; border-radius: 12px;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.2), 0 0 1px rgba(0,0,0,0.2);
+            display: none; color: #313131; text-align: left;
+            animation: fadeIn .25s ease-out;
+            border: 1px solid rgba(0,0,0,0.05);
+            pointer-events: none; /* prevent accidental hover issues */
         }
         .tariff-tooltip::after {
-            content: ''; position: absolute; top: 100%; left: 20px;
-            border: 8px solid transparent; border-top-color: #fff;
+            content: ''; position: absolute; top: 100%; left: 30px;
+            border: 10px solid transparent; border-top-color: #fff;
         }
+        .card-tariff-detail:hover { z-index: 10000; }
         .card-tariff-detail .info-trigger:hover + .tariff-tooltip { display: block; }
         .yurts-theme .tariff-tooltip { background: #fff; color: #333; }
         
