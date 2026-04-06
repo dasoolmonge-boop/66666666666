@@ -272,10 +272,44 @@
             <p style="color:var(--muted);font-size:.85rem; max-width: 280px; margin: 0 auto;">Погрузитесь в атмосферу традиционного гостеприимства и комфорта.</p>
         </div>
 
-        <h3 style="margin-top:2.5rem; margin-bottom:1rem; font-size:1.1rem; color:var(--gold);">Доступные варианты размещения</h3>
+        <!-- Yurt Search Block -->
+        <div id="m-yurt-search" style="background:rgba(255,255,255,0.05); border:1px solid rgba(225,211,165,0.2); border-radius:16px; padding:1.2rem; margin-bottom:1.5rem;">
+            <p style="font-weight:700; font-size:.9rem; margin-bottom:1rem; color:#e1d3a5;">⛺ Найти свободные юрты</p>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:.6rem; margin-bottom:.8rem;">
+                <div>
+                    <label style="display:block;font-size:.7rem;color:rgba(255,255,255,0.5);margin-bottom:.3rem;text-transform:uppercase;">Заезд</label>
+                    <input type="date" id="m-yurt-search-in" style="width:100%;padding:.7rem;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.1);border-radius:10px;color:#fff;font-size:.9rem;font-family:inherit;outline:none;">
+                </div>
+                <div>
+                    <label style="display:block;font-size:.7rem;color:rgba(255,255,255,0.5);margin-bottom:.3rem;text-transform:uppercase;">Выезд</label>
+                    <input type="date" id="m-yurt-search-out" style="width:100%;padding:.7rem;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.1);border-radius:10px;color:#fff;font-size:.9rem;font-family:inherit;outline:none;">
+                </div>
+            </div>
+            <button onclick="mSearchYurts()" style="width:100%;padding:.8rem;background:#e1d3a5;color:#38402f;border:none;border-radius:10px;font-size:.9rem;font-weight:700;font-family:inherit;">Показать наличие</button>
+            <div id="m-yurt-search-info" style="margin-top:.8rem;font-size:.8rem;color:rgba(255,255,255,0.5);display:none;"></div>
+        </div>
 
         <div id="yurt-list"></div>
-        <div id="yurt-list"></div>
+
+        <div id="m-yurt-book-form" style="display:none; margin-top:2rem; background:rgba(255,255,255,0.05); border:1px solid #e1d3a5; border-radius:16px; padding:1.2rem;">
+            <h3 style="font-size:1rem; margin-bottom:1rem; color:#e1d3a5;">📝 Оформление брони</h3>
+            <div id="m-yurt-book-summary" style="background:rgba(255,255,255,0.1); padding:1rem; border-radius:12px; margin-bottom:1.5rem;"></div>
+            <div class="form-group"><label style="color:rgba(255,255,255,0.6)">Ваше Имя</label><input type="text" id="m-yurt-guest-name" style="background:#fff; color:#333;" placeholder="Иван Иванов"></div>
+            <div class="form-group"><label style="color:rgba(255,255,255,0.6)">Телефон (WhatsApp)</label><input type="tel" id="m-yurt-guest-phone" style="background:#fff; color:#333;" placeholder="+7 (___) ___-__-__"></div>
+            <div class="consent-box" style="color:rgba(255,255,255,0.5)">
+                <input type="checkbox" id="m-yurt-consent" checked>
+                <label for="m-yurt-consent">Я согласен на обработку персональных данных</label>
+            </div>
+            <button class="btn-master" style="background:#e1d3a5; color:#38402f;" onclick="mSubmitYurtBooking()">Забронировать юрту</button>
+        </div>
+
+        <!-- Bath & Tub Block -->
+        <div style="margin-top: 4rem; border-top: 1px solid rgba(225,211,165,0.2); padding-top: 2rem; margin-bottom: 5rem;">
+            <p style="font-size: .65rem; letter-spacing: 3px; color: #e1d3a5; text-transform: uppercase;">Сибирское SPA</p>
+            <h2 style="font-size: 1.6rem; color: #fff; margin-bottom: 0.5rem; font-family: 'Playfair Display', serif;">БАНЯ И ЧАН</h2>
+            <p style="color:rgba(255,255,255,0.6);font-size:.85rem;margin-bottom:1.5rem">Аренда бани на дровах. Банный чан оплачивается отдельно (+5000₽).</p>
+            <div id="bath-list-mobile"></div>
+        </div>
     </div>
 
     <!-- Relocated Sauna to Hotel View -->
@@ -397,6 +431,7 @@
             renderList('hotel', 'hotel-list');
             renderList('yurt', 'yurt-list');
             renderList('sauna', 'sauna-list');
+            renderList('bath', 'bath-list-mobile');
 
             // Set min dates for mobile hotel search
             const td = new Date().toISOString().split('T')[0];
@@ -404,6 +439,13 @@
             document.getElementById('m-search-out').min = td;
             document.getElementById('m-search-in').addEventListener('change', function() {
                 document.getElementById('m-search-out').min = this.value;
+            });
+            
+            // Set min dates for mobile yurt search
+            document.getElementById('m-yurt-search-in').min = td;
+            document.getElementById('m-yurt-search-out').min = td;
+            document.getElementById('m-yurt-search-in').addEventListener('change', function() {
+                document.getElementById('m-yurt-search-out').min = this.value;
             });
         }).catch(console.error);
 
@@ -813,10 +855,12 @@
             
             // Show checkout area
             const coArea = document.getElementById('checkoutArea');
-            if (state.room.type === 'sauna') {
+            if (state.room.type === 'sauna' || state.room.type === 'bath') {
                 coArea.style.display = (state.date && state.saunaHours.length >= 2) ? 'block' : 'none';
+                document.getElementById('addonsArea').style.display = (state.room.type === 'bath') ? 'block' : 'none';
             } else {
                 coArea.style.display = (state.in && state.out) ? 'block' : 'none';
+                document.getElementById('addonsArea').style.display = 'none';
             }
         }
 
@@ -945,7 +989,7 @@
             state.total = total;
             document.getElementById('coRoom').textContent = displayDetails;
             document.getElementById('coBathRow').style.display = 'none';
-            document.getElementById('coTubRow').style.display = (state.room.type !== 'sauna' && state.room.type !== 'bath' && state.addons.tub) ? 'flex' : 'none';
+            document.getElementById('coTubRow').style.display = (state.room.type === 'bath' && state.addons.tub) ? 'flex' : 'none';
             document.getElementById('coTotal').textContent = total > 0 ? fmtPrice(total) : '0 ₽';
             document.getElementById('btnPrice').textContent = total.toLocaleString('ru');
         }
@@ -980,9 +1024,8 @@
             if(!consent) return alert('Пожалуйста, подтвердите согласие на обработку персональных данных!');
 
             const addonsStr = [];
-            if(state.room.type !== 'sauna') {
-                if(state.addons.tub) addonsStr.push('Банный чан');
-                // Removed Bath from addons
+            if(state.room.type === 'bath' && state.addons.tub) {
+                addonsStr.push('Банный чан');
             }
 
             const pkt = {
@@ -1055,6 +1098,126 @@
         }
         applyPhoneMask('guestPhone');
         applyPhoneMask('m-guest-phone');
+        applyPhoneMask('m-yurt-guest-phone');
+
+        // === MOBILE YURTS: dates-first flow ===
+        let mYurtDates = { checkIn: null, checkOut: null };
+        let mSelectedYurt = null;
+
+        function mSearchYurts() {
+            const inVal = document.getElementById('m-yurt-search-in').value;
+            const outVal = document.getElementById('m-yurt-search-out').value;
+            if(!inVal || !outVal) return alert('Выберите даты!');
+            
+            mYurtDates = { checkIn: inVal, checkOut: outVal };
+            mSelectedYurt = null;
+            document.getElementById('m-yurt-book-form').style.display = 'none';
+            
+            document.getElementById('yurt-list').innerHTML = '<div class="skeleton" style="height:200px"></div>';
+            
+            fetch('/api/rooms/available?checkIn=' + inVal + '&checkOut=' + outVal)
+                .then(r=>r.json()).then(available => {
+                    const yurts = available.filter(r => r.type === 'yurt');
+                    renderMobileYurtResults(yurts);
+                    
+                    const info = document.getElementById('m-yurt-search-info');
+                    if (info) {
+                        info.style.display = 'block';
+                        const nights = Math.round((new Date(outVal) - new Date(inVal)) / 86400000);
+                        info.innerHTML = `Найдено на период <strong>${fmtDate(new Date(inVal))} — ${fmtDate(new Date(outVal))}</strong> (${nights} ноч.)`;
+                    }
+                });
+        }
+
+        function renderMobileYurtResults(rooms) {
+            const el = document.getElementById('yurt-list');
+            if(!rooms.length) {
+                el.innerHTML = '<p style="text-align:center;padding:2rem;color:var(--muted)">Нет свободных юрт на эти даты.</p>';
+                return;
+            }
+            el.innerHTML = rooms.map(r => {
+                const imgsHtml = (r.imgs||[]).map(src => `<div class="room-img-wrap"><img src="${src}"></div>`).join('');
+                return `
+                <div class="room-card" style="background:#2f3627; border-color:rgba(225,211,165,0.2);">
+                    <div style="position: relative;">
+                        <div class="room-gallery" id="gal-yurt-res-${r.id}">
+                            ${imgsHtml}
+                        </div>
+                        ${r.imgs && r.imgs.length > 1 ? `
+                        <div style="position:absolute;bottom:6px;right:6px;background:rgba(0,0,0,.6);color:#fff;padding:.2rem .5rem;border-radius:6px;font-size:.65rem;font-weight:600;z-index:20;">+${r.imgs.length-1}</div>
+                        <button class="g-arrow left" onclick="scrollGal(event, 'yurt-res-${r.id}', -1)">‹</button>
+                        <button class="g-arrow right" onclick="scrollGal(event, 'yurt-res-${r.id}', 1)">›</button>
+                        ` : ''}
+                    </div>
+                    <div class="room-info">
+                        <div class="room-name" style="color:#e1d3a5;">${r.name}</div>
+                        <div class="room-desc" style="color:rgba(255,255,255,0.5)">${r.desc.split('·')[0]}</div>
+                        <div class="room-price-row">
+                            <div class="room-price" style="color:#e1d3a5;">${fmtPrice(r.price)} <span style="font-size:.7rem;font-weight:400;color:rgba(255,255,255,0.4)">/ ночь</span></div>
+                            <button class="btn-select" style="background:#e1d3a5; color:#38402f;" onclick="mSelectYurt(${r.id})">Выбрать</button>
+                        </div>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        function mSelectYurt(id) {
+            const room = allRooms.find(r => r.id === id);
+            mSelectedYurt = room;
+            
+            const nights = Math.round((new Date(mYurtDates.checkOut) - new Date(mYurtDates.checkIn)) / 86400000);
+            const total = room.price * nights;
+            
+            const summary = document.getElementById('m-yurt-book-summary');
+            if (summary) {
+                summary.innerHTML = `
+                    <div style="font-weight:700;color:#fff;margin-bottom:.5rem;">${room.name}</div>
+                    <div style="font-size:.85rem;color:rgba(255,255,255,0.6);display:flex;justify-content:space-between;">
+                        <span>${fmtDate(new Date(mYurtDates.checkIn))} — ${fmtDate(new Date(mYurtDates.checkOut))} (${nights} ноч.)</span>
+                        <strong style="color:#e1d3a5;">${fmtPrice(total)}</strong>
+                    </div>
+                `;
+            }
+            
+            document.getElementById('m-yurt-book-form').style.display = 'block';
+            document.getElementById('m-yurt-book-form').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function mSubmitYurtBooking() {
+            const name = document.getElementById('m-yurt-guest-name').value;
+            const phone = document.getElementById('m-yurt-guest-phone').value;
+            const consent = document.getElementById('m-yurt-consent').checked;
+            
+            if(!name || !phone) return alert('Введите имя и телефон!');
+            if(!consent) return alert('Требуется согласие на обработку данных');
+            
+            const nights = Math.round((new Date(mYurtDates.checkOut) - new Date(mYurtDates.checkIn)) / 86400000);
+            const total = mSelectedYurt.price * nights;
+            
+            const pkt = {
+                type: 'yurt',
+                room: mSelectedYurt.name,
+                checkIn: new Date(mYurtDates.checkIn).toISOString(),
+                checkOut: new Date(mYurtDates.checkOut).toISOString(),
+                nights: nights,
+                guest: name,
+                phone: phone,
+                addons: [],
+                total: total,
+                clientChatId: window.Telegram?.WebApp?.initDataUnsafe?.user?.id || null
+            };
+            
+            fetch('/api/bookings', {
+                method: 'POST',
+                headers:{ 'Content-Type':'application/json' },
+                body: JSON.stringify(pkt)
+            }).then(r=>r.json()).then(res => {
+                if(res.success) {
+                    alert('Заявка на юрту отправлена! Менеджер скоро свяжется с вами.');
+                    location.reload();
+                } else alert('Ошибка сервера: ' + res.error);
+            });
+        }
     </script>
     <a href="https://max.ru/" target="_blank" class="btn-tg-float" title="Написать в МАКС">
     <i class="fas fa-comments"></i>
