@@ -1859,13 +1859,73 @@ function renderRooms(type, data) {
     }).join('');
 }
 
+function renderSaunaCard(data) {
+    const el = document.getElementById('sauna-rooms');
+    el.innerHTML = data.map((r, i) => {
+        const isActive = i === state.sauna.selected;
+        let imgsHtml = '';
+        let sliderDots = '';
+        let sliderArrows = '';
+        if (r.imgs && r.imgs.length > 0) {
+            imgsHtml = r.imgs.map(img => `<img src="${img}" alt="${r.name}" onclick="openLightbox('${img}')">`).join('');
+            if (r.imgs.length > 1) {
+                sliderDots = '<div class="slider-dots">' + r.imgs.map((_, idx) => `<span class="slider-dot ${idx===0?'active':''}"></span>`).join('') + '</div>';
+                sliderArrows = `
+                    <button class="slider-arrow prev" onclick="event.stopPropagation(); scrollSlider(this, -1)">❮</button>
+                    <button class="slider-arrow next" onclick="event.stopPropagation(); scrollSlider(this, 1)">❯</button>
+                `;
+            }
+        } else {
+            imgsHtml = '<div style="width:100%;height:100%;background:#f5f5f5;display:flex;align-items:center;justify-content:center;color:#ccc;flex:0 0 100%;">Нет фото</div>';
+        }
+
+        const amenHtml = (r.amenities || []).map(a => `<span style="font-size:.8rem; padding:.3rem .7rem; background:#f4f4f4; border-radius:8px; color:#333; font-weight:500;">${a}</span>`).join('');
+
+        return `
+        <div class="hotel-room-card ${isActive ? 'active' : ''}" style="margin-bottom:2rem; cursor:pointer; border: ${isActive ? '2px solid var(--gold)' : '2px solid transparent'};" onclick="selectRoom('sauna',${i})">
+            <div class="card-img" style="min-height: 250px; padding:0;">
+                <div class="slider-wrapper" style="border-radius: 20px 0 0 20px;">
+                    <div class="card-img-inner" onscroll="updateSliderDots(this)">
+                        ${imgsHtml}
+                    </div>
+                    ${sliderDots}
+                    ${sliderArrows}
+                    ${r.imgs && r.imgs.length > 1 ? `<div class="photo-count">+${r.imgs.length - 1} фото</div>` : ''}
+                </div>
+            </div>
+            <div class="card-content" style="padding: 1.8rem;">
+                <div>
+                    <div class="card-name" style="font-size:1.5rem; margin-bottom:1rem;">${r.name}</div>
+                    <div style="font-size:.9rem; color:#555; margin-bottom:1.2rem; line-height:1.5;">${r.desc}</div>
+                    <div style="display:flex; flex-wrap:wrap; gap:.5rem;">
+                        ${amenHtml}
+                    </div>
+                </div>
+                <div class="card-footer" style="margin-top: 1.5rem; padding-top:1.5rem; border-top:1px solid #eee; display:flex; justify-content:space-between; align-items:center;">
+                    <div>
+                        <div style="font-size: 1.4rem; font-weight: 800; color: var(--gold);">${fmtPrice(r.price)}</div>
+                        <div style="font-size: .8rem; color: #777;">в час (мин. 2 часа)</div>
+                    </div>
+                    ${!isActive ? `<button style="background:var(--gold);color:#fff;border:none;padding:.6rem 1.2rem;border-radius:10px;font-weight:700;cursor:pointer;">Выбрать</button>` : `<div style="color:var(--gold);font-weight:700;">Выбрано ✓</div>`}
+                </div>
+            </div>
+        </div>`;
+    }).join('');
+}
+
 function selectRoom(type, idx) {
     const data = getRoomData(type);
     state[type].selected = idx;
     state[type].checkIn = null;
     state[type].checkOut = null;
     if (type === 'sauna' || type === 'bath') state[type].hours = [];
-    renderRooms(type, data);
+    
+    if (type === 'sauna') {
+        renderSaunaCard(data);
+    } else {
+        renderRooms(type, data);
+    }
+    
     const rName = (type === 'yurt' && idx < 4) ? YURT_NAMES[idx] : data[idx].name;
     document.getElementById(type + '-selected-name').textContent = rName;
     if (document.getElementById(type + '-selected-price')) {
@@ -2574,7 +2634,7 @@ Promise.all([
         document.getElementById('yurt-selected-price').textContent = 'от ' + fmtPrice(yurtRooms[0].price) + ' / сутки';
     }
     if(saunaRooms.length > 0) {
-        renderRooms('sauna', saunaRooms);
+        renderSaunaCard(saunaRooms);
         document.getElementById('sauna-selected-name').textContent = saunaRooms[0].name;
     }
 
