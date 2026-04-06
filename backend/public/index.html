@@ -1032,7 +1032,22 @@
         .hotel-room-card .card-tariff-detail {
             font-size: .85rem; color: #555;
             display: flex; flex-direction: column; gap: .4rem;
+            position: relative;
         }
+        .tariff-tooltip {
+            position: absolute; bottom: calc(100% + 10px); left: 0; z-index: 1000;
+            background: #fff; width: 340px; padding: 1.2rem; border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15), 0 0 1px rgba(0,0,0,0.1);
+            display: none; color: #333; text-align: left;
+            animation: fadeIn .2s ease-out;
+        }
+        .tariff-tooltip::after {
+            content: ''; position: absolute; top: 100%; left: 20px;
+            border: 8px solid transparent; border-top-color: #fff;
+        }
+        .card-tariff-detail .info-trigger:hover + .tariff-tooltip { display: block; }
+        .yurts-theme .tariff-tooltip { background: #fff; color: #333; }
+        
         .hotel-room-card .card-price-col {
             padding: 1.2rem; display: flex; flex-direction: column;
             align-items: flex-start; justify-content: center;
@@ -2673,7 +2688,6 @@ function buildYurtCard(r, nights, guests, isAvail, showPrice) {
                     <div class="am-col">
                         <div style="color:rgba(255,255,255,0.9); margin-bottom:0.4rem;">🚠 Вид на горы</div>
                         <div style="color:rgba(255,255,255,0.9); margin-bottom:0.4rem;">🧊 Холодильник</div>
-                        <div style="color:rgba(255,255,255,0.5); cursor:pointer; font-size:0.85rem;">Все удобства ⌄</div>
                     </div>
                 </div>
             </div>
@@ -2681,9 +2695,18 @@ function buildYurtCard(r, nights, guests, isAvail, showPrice) {
             <div class="card-footer" style="margin-top: 1.5rem; padding-top:1.5rem; border-top:1px solid rgba(255,255,255,0.1); background:rgba(0,0,0,0.15); margin: 0 -1.8rem -1.8rem -1.8rem; padding: 1.5rem 1.8rem; display:flex; justify-content:space-between; align-items:flex-end;">
                 <div class="card-tariff-col" style="flex:1;">
                     <div class="card-tariff-name" style="color:#e1d3a5; font-weight:700; margin-bottom:0.4rem; font-size:0.9rem;">«${r.tariff || 'Стандартный тариф'}»</div>
-                    <div class="card-tariff-detail" style="font-size:0.8rem; color:rgba(255,255,255,0.5); line-height:1.4;">
-                        <div>✓ Завтрак включен</div>
-                        <div>✓ Бесплатная отмена</div>
+                    <div class="card-tariff-detail">
+                        <div style="color:rgba(255,255,255,0.5); font-size:0.8rem; margin-bottom:4px;">✓ Завтрак включен</div>
+                        <span class="info-trigger" style="color:rgba(255,255,255,0.4); text-decoration:underline; cursor:pointer; font-size:0.75rem;">ⓘ Условия оплаты и отмены</span>
+                        <div class="tariff-tooltip">
+                            <div style="font-weight:700; margin-bottom:0.5rem; font-size:0.95rem;">Предоплата</div>
+                            <div style="font-size:0.85rem; margin-bottom:0.8rem; color:#555;">100% от стоимости первых суток проживания (${fmtPrice(r.price)})</div>
+                            <div style="font-weight:700; margin-bottom:0.5rem; font-size:0.95rem;">Условия отмены</div>
+                            <div style="font-size:0.85rem; color:#555; line-height:1.4;">
+                                Бесплатная отмена бронирования до 24 часов до заезда.<br>
+                                Позднее — штраф 50% от стоимости первых суток проживания (${fmtPrice(Math.round(r.price * 0.5))})
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="card-price-col" style="text-align:right;">
@@ -2808,7 +2831,6 @@ function buildHotelCard(r, nights, guests, isAvail, showPrice) {
                         <div>❄️ Кондиционер</div>
                         <div>📶 Wi-Fi</div>
                         <div>📺 Телевизор</div>
-                        <div style="color:#777;cursor:pointer;margin-top:4px;">Показать все удобства ⌄</div>
                     </div>
                     <div class="am-col">
                         <div>🚿 Душ или ванна в номере</div>
@@ -2825,7 +2847,17 @@ function buildHotelCard(r, nights, guests, isAvail, showPrice) {
                     <div class="card-tariff-detail">
                         <span style="color:#333;">✓ Проживание</span>
                         ${r.prepayment ? `<span>💳 Предоплата ${fmtPrice(r.prepayment)}</span>` : ''}
-                        <span style="color:#777;text-decoration:underline;cursor:pointer;margin-top:6px;">ⓘ Условия оплаты и отмены</span>
+                        <br>
+                        <span class="info-trigger" style="color:#777;text-decoration:underline;cursor:pointer;margin-top:6px;display:inline-block;">ⓘ Условия оплаты и отмены</span>
+                        <div class="tariff-tooltip">
+                            <div style="font-weight:700; margin-bottom:0.5rem; font-size:0.95rem;">Предоплата</div>
+                            <div style="font-size:0.85rem; margin-bottom:0.8rem; color:#555;">100% от стоимости первых суток проживания (${fmtPrice(r.price)})</div>
+                            <div style="font-weight:700; margin-bottom:0.5rem; font-size:0.95rem;">Условия отмены</div>
+                            <div style="font-size:0.85rem; color:#555; line-height:1.4;">
+                                Бесплатная отмена бронирования до 24 часов до заезда.<br>
+                                Позднее — штраф 50% от стоимости первых суток проживания (${fmtPrice(Math.round(r.price * 0.5))})
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="card-price-col">
