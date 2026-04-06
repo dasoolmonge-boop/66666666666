@@ -2545,49 +2545,7 @@ function submitHotelBooking() {
     }).catch(err => alert('Ошибка: ' + err.message));
 }
 
-// === INIT (render initial hotel cards without dates, keep yurt/sauna) ===
-function renderInitialHotelCards(rooms) {
-    const grid = document.getElementById('hotel-rooms-grid');
-    grid.innerHTML = rooms.map(r => {
-        const firstImg = r.imgs && r.imgs.length ? r.imgs[0] : '';
-        const amenHtml = (r.amenities || []).slice(0, 5).map(a => `<span class="room-amenity">${a}</span>`).join('');
-        const areaInfo = r.area ? `<span style="font-size:.82rem;color:var(--gray);padding:.3rem .7rem;background:var(--light);border-radius:8px;">🏠 ${r.area}</span>` : '';
-        const capacityInfo = r.capacity ? `<span style="font-size:.82rem;color:var(--gray);padding:.3rem .7rem;background:var(--light);border-radius:8px;">👤 ${r.capacity}</span>` : '';
-        const tariffInfo = r.tariff ? `<div style="font-weight:600;font-size:.88rem;color:var(--dark);">«${r.tariff}»</div>` : '';
-        const prepayInfo = r.prepayment ? `<div style="font-size:.82rem;color:var(--gray);margin-top:.3rem;">💰 Предоплата ${fmtPrice(r.prepayment)}</div>` : '';
 
-        return `
-        <div style="background:#fff; border-radius:20px; border:2px solid transparent; overflow:hidden; box-shadow:var(--shadow); display:grid; grid-template-columns:320px 1fr; transition:.3s;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='transparent'">
-            <div style="position:relative; height:280px; overflow:hidden;">
-                ${firstImg ? `<img src="${firstImg}" alt="${r.name}" style="width:100%;height:100%;object-fit:cover;" onclick="openLightbox('${firstImg}')">` : '<div style="width:100%;height:100%;background:var(--light);display:flex;align-items:center;justify-content:center;color:var(--gray);">Нет фото</div>'}
-                ${r.imgs && r.imgs.length > 1 ? `<div style="position:absolute;bottom:8px;right:8px;background:rgba(0,0,0,.6);color:#fff;padding:.3rem .7rem;border-radius:8px;font-size:.72rem;font-weight:600;">+${r.imgs.length - 1} фото</div>` : ''}
-            </div>
-            <div style="padding:1.8rem 2rem; display:flex; flex-direction:column; justify-content:space-between;">
-                <div>
-                    <div style="font-size:1.3rem; font-weight:800; margin-bottom:.5rem;">${r.name}</div>
-                    <div style="display:flex; gap:.5rem; flex-wrap:wrap; margin-bottom:.8rem;">${areaInfo}${capacityInfo}</div>
-                    <div style="font-size:.88rem; color:var(--gray); margin-bottom:1rem;">${r.desc}</div>
-                    <div style="background:var(--light); border-radius:14px; padding:1rem 1.2rem; margin-bottom:1rem;">
-                        ${tariffInfo}
-                        <div style="display:flex;align-items:center;gap:.5rem;margin-top:.4rem;">
-                            <span style="color:var(--gold);font-size:.82rem;">✓</span>
-                            <span style="font-size:.82rem;">Проживание</span>
-                        </div>
-                        ${prepayInfo}
-                    </div>
-                    <div style="display:flex; flex-wrap:wrap; gap:.3rem;">${amenHtml}</div>
-                </div>
-                <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-top:1.2rem;">
-                    <div>
-                        <div style="font-size:1.4rem; font-weight:800; color:var(--gold);">от ${fmtPrice(r.price)}</div>
-                        <div style="font-size:.78rem; color:var(--gray);">за сутки · для ${r.capacity || 1} 👤</div>
-                    </div>
-                    <a href="#hotel-date-search" style="padding:.7rem 1.5rem; border:2px solid var(--gold); color:var(--gold); border-radius:12px; font-size:.82rem; font-weight:700; text-transform:uppercase; letter-spacing:.5px; transition:.3s; text-decoration:none;" onmouseover="this.style.background='var(--gold)';this.style.color='#fff'" onmouseout="this.style.background='transparent';this.style.color='var(--gold)'">Проверить даты</a>
-                </div>
-            </div>
-        </div>`;
-    }).join('');
-}
 
 Promise.all([
     fetch('/api/rooms').then(r => r.json()),
