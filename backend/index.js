@@ -13,6 +13,20 @@ const sanitize = (str) => {
     return str.replace(/[<>]/g, '');
 };
 
+// Database setup (Must be before any function that uses 'db' like notifyAllAdmins)
+const dbDir = path.join(__dirname, 'db');
+if (!fs.existsSync(dbDir)) {
+    fs.mkdirSync(dbDir, { recursive: true });
+}
+const dbPath = path.resolve(__dirname, process.env.DATABASE_PATH || './db/database.sqlite');
+const db = new sqlite3.Database(dbPath, (err) => {
+    if (err) console.error("Error connecting to database:", err);
+    else {
+        console.log("Connected to SQLite database.");
+    }
+});
+
+
 const app = express();
 const port = process.env.PORT || 5000;
 const MAX_TOKEN = process.env.MAX_TOKEN || 'f9LHodD0cOJ4UEc28YWOtykBGGCNW3w2HfwNzuoyVvfuvpb7YIXZSd4_AZFsaL7E8MCgtYl9J3w1KJSSp_IR';
@@ -104,35 +118,23 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
-
-// Database setup
-const dbDir = path.join(__dirname, 'db');
-if (!fs.existsSync(dbDir)) {
-    fs.mkdirSync(dbDir, { recursive: true });
-}
-const dbPath = path.resolve(__dirname, process.env.DATABASE_PATH || './db/database.sqlite');
-const db = new sqlite3.Database(dbPath, (err) => {
-    if (err) console.error("Error connecting to database:", err);
-    else {
-        console.log("Connected to SQLite database.");
-
-        // Ensure Database Schema & Initial Data
-        db.serialize(() => {
-            // Rooms table
-            db.run(`CREATE TABLE IF NOT EXISTS rooms (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                type TEXT,
-                name TEXT,
-                desc TEXT,
-                price INTEGER,
-                priceWeekend INTEGER,
-                amenities TEXT,
-                imgs TEXT,
-                area TEXT,
-                capacity INTEGER,
-                tariff TEXT,
-                prepayment INTEGER
-            )`);
+// Ensure Database Schema & Initial Data
+db.serialize(() => {
+    // Rooms table
+    db.run(`CREATE TABLE IF NOT EXISTS rooms (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        type TEXT,
+        name TEXT,
+        desc TEXT,
+        price INTEGER,
+        priceWeekend INTEGER,
+        amenities TEXT,
+        imgs TEXT,
+        area TEXT,
+        capacity INTEGER,
+        tariff TEXT,
+        prepayment INTEGER
+    )`);
 
             // Migrations for rooms: add new fields if missing
             db.run("ALTER TABLE rooms ADD COLUMN area TEXT", (err) => {
@@ -206,8 +208,6 @@ const db = new sqlite3.Database(dbPath, (err) => {
                         [type, name, desc, price, priceWeekend, type]);
             });
         });
-    }
-});
 
 // Multer setup for file uploads
 const storage = multer.diskStorage({
