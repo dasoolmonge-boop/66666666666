@@ -899,95 +899,114 @@
             display: flex; flex-direction: column; gap: 1.5rem;
         }
 
-        /* Hotel Room Card */
+        /* Hotel Room Card (Screenshot Match) */
         .hotel-room-card {
             background: #fff; border-radius: 20px; overflow: hidden;
-            box-shadow: 0 4px 20px rgba(0,0,0,.06);
             border: 2px solid transparent;
-            display: grid; grid-template-columns: 300px 1fr auto;
-            transition: all .4s cubic-bezier(.25,.8,.25,1);
+            display: grid; grid-template-columns: 340px 1fr;
+            transition: all .3s ease;
             animation: fadeUp .5s ease backwards;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,.04);
         }
         .hotel-room-card:hover {
-            border-color: var(--gold);
-            box-shadow: 0 12px 40px rgba(184,134,11,.1);
-            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(0,0,0,.08);
         }
         .hotel-room-card.unavailable {
-            opacity: .45; pointer-events: none;
-            filter: grayscale(.3);
+            opacity: .6; pointer-events: none;
+            filter: grayscale(.1);
         }
         .hotel-room-card .card-img {
-            position: relative; height: 100%; min-height: 240px; overflow: hidden; cursor: pointer;
+            position: relative; height: 100%; min-height: 260px; overflow: hidden; cursor: pointer;
+            padding: 1rem;
+        }
+        .hotel-room-card .card-img-inner {
+            width: 100%; height: 100%; border-radius: 12px; overflow: hidden; position: relative;
         }
         .hotel-room-card .card-img img {
             width: 100%; height: 100%; object-fit: cover;
-            transition: transform .8s ease;
+            transition: transform .6s ease;
         }
-        .hotel-room-card:hover .card-img img { transform: scale(1.06); }
+        .hotel-room-card:hover .card-img img { transform: scale(1.04); }
         .hotel-room-card .card-img .photo-count {
-            position: absolute; bottom: 10px; right: 10px;
-            background: rgba(0,0,0,.6); backdrop-filter: blur(6px);
-            color: #fff; padding: .3rem .8rem; border-radius: 8px;
-            font-size: .72rem; font-weight: 600;
+            position: absolute; bottom: 8px; right: 8px;
+            background: rgba(255,255,255,.9); color: var(--dark);
+            padding: .3rem .6rem; border-radius: 6px;
+            font-size: .75rem; font-weight: 600;
+            box-shadow: 0 2px 8px rgba(0,0,0,.15);
         }
-        .hotel-room-card .card-img .badge-unavailable {
-            position: absolute; inset: 0;
-            background: rgba(0,0,0,.35); display: flex;
-            align-items: center; justify-content: center;
+        .hotel-room-card .fire-banner {
+            background: #ffebcc; border-radius: 8px;
+            padding: .5rem; text-align: center;
+            font-size: .8rem; font-weight: 500; color: #8a5a19;
+            margin-top: .5rem; display: flex; align-items: center; justify-content: center; gap: .4rem;
         }
-        .hotel-room-card .card-img .badge-unavailable span {
-            background: rgba(220,60,60,.9); color: #fff;
-            padding: .5rem 1.5rem; border-radius: 50px;
-            font-weight: 700; font-size: .85rem;
-            backdrop-filter: blur(4px);
-        }
-        .hotel-room-card .card-body {
-            padding: 1.6rem 1.8rem; display: flex; flex-direction: column;
-            justify-content: center; gap: .5rem;
+        
+        .hotel-room-card .card-content {
+            padding: 1.5rem 1.5rem 1.5rem 0;
+            display: flex; flex-direction: column; justify-content: space-between; gap: 1rem;
         }
         .hotel-room-card .card-name {
-            font-size: 1.2rem; font-weight: 800; color: var(--dark);
+            font-size: 1.4rem; font-weight: 800; color: #333; margin-bottom: .6rem;
         }
         .hotel-room-card .card-meta {
-            display: flex; flex-wrap: wrap; gap: .4rem; margin: .2rem 0;
+            display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: 1.2rem; align-items: center;
         }
         .hotel-room-card .card-meta span {
-            font-size: .78rem; padding: .3rem .7rem;
-            background: var(--light); border-radius: 8px; color: var(--gray);
-            font-weight: 500;
+            font-size: .8rem; padding: .35rem .7rem;
+            background: #f4f4f4; border-radius: 8px; color: #333;
+            font-weight: 500; display: inline-flex; align-items: center; gap: .3rem;
         }
-        .hotel-room-card .card-desc {
-            font-size: .88rem; color: var(--gray); line-height: 1.5;
+        .hotel-room-card .card-meta span.clickable { cursor: pointer; }
+        
+        .hotel-room-card .card-amenities-split {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;
+            font-size: .85rem; color: #333; margin-bottom: 1rem;
         }
-        .hotel-room-card .card-tariff-box {
-            background: var(--light); border-radius: 12px; padding: .8rem 1rem;
-            margin-top: .3rem;
+        .hotel-room-card .card-amenities-split .am-col {
+            display: flex; flex-direction: column; gap: .6rem;
+        }
+        .hotel-room-card .card-amenities-split i { font-size: 1rem; width: 22px; text-align: center; color: #666; margin-right: 6px; }
+
+        .hotel-room-card .card-footer {
+            display: grid; grid-template-columns: 2fr 1.2fr;
+            background: #f4f4f4; border-radius: 12px; overflow: hidden;
+        }
+        .hotel-room-card .card-tariff-col {
+            padding: 1.2rem;
+            border-right: 2px solid #fff;
         }
         .hotel-room-card .card-tariff-name {
-            font-weight: 600; font-size: .88rem; color: var(--dark);
+            font-weight: 700; font-size: 1rem; color: #333; margin-bottom: .8rem;
         }
         .hotel-room-card .card-tariff-detail {
-            font-size: .78rem; color: var(--gray); margin-top: .2rem;
-            display: flex; flex-direction: column; gap: .15rem;
-        }
-        .hotel-room-card .card-amenities {
-            display: flex; flex-wrap: wrap; gap: .3rem; margin-top: .3rem;
-        }
-        .hotel-room-card .card-amenities span {
-            font-size: .7rem; padding: .25rem .6rem;
-            background: linear-gradient(135deg, rgba(184,134,11,.08), rgba(184,134,11,.03));
-            border: 1px solid rgba(184,134,11,.12);
-            border-radius: 50px; color: #777; font-weight: 500;
+            font-size: .85rem; color: #555;
+            display: flex; flex-direction: column; gap: .4rem;
         }
         .hotel-room-card .card-price-col {
-            padding: 1.6rem 1.8rem; display: flex; flex-direction: column;
-            align-items: flex-end; justify-content: center; gap: .4rem;
-            min-width: 170px; border-left: 1px solid #f0f0f0;
+            padding: 1.2rem; display: flex; flex-direction: column;
+            align-items: flex-start; justify-content: center;
         }
         .hotel-room-card .card-total {
-            font-size: 1.5rem; font-weight: 800; color: var(--dark);
+            font-size: 1.5rem; font-weight: 800; color: #333; line-height: 1;
         }
+        .hotel-room-card .card-price-detail {
+            font-size: .8rem; color: #777; margin-top: .4rem; line-height: 1.4;
+        }
+        .hotel-room-card .card-select-btn {
+            margin-top: 1rem; padding: .65rem 1.8rem;
+            background: #fcb833; color: #333; border: none; border-radius: 8px;
+            font-size: .95rem; font-weight: 600; cursor: pointer;
+            transition: all .2s; width: 100%;
+        }
+        .hotel-room-card .card-select-btn:hover { background: #fab01e; transform: translateY(-1px); }
+        .hotel-room-card .card-check-btn {
+            margin-top: 1rem; padding: .6rem 1.4rem; width: 100%; text-align: center;
+            border: 2px solid #fcb833; color: #fcb833; background: transparent; border-radius: 8px;
+            font-size: .9rem; font-weight: 700; cursor: pointer;
+            text-decoration: none; display: inline-block; transition: .2s;
+        }
+        .hotel-room-card .card-check-btn:hover { background: #fcb833; color: #333; }
         .hotel-room-card .card-price-detail {
             font-size: .75rem; color: var(--gray); text-align: right;
         }
@@ -2265,42 +2284,72 @@ function buildHotelCard(r, nights, guests, isAvail, showPrice) {
     const totalPrice = r.price * nights;
     const nightsLabel = nights === 1 ? 'ночь' : nights < 5 ? 'ночи' : 'ночей';
     const escapedName = r.name.replace(/'/g, "\\'");
-    const amenHtml = (r.amenities || []).slice(0, 6).map(a => `<span>${a}</span>`).join('');
+    
+    // Determine specific meta based on room name matching screenshots
+    let isStudio = r.name.toLowerCase().includes('студия');
+    let metaCapacityHtml = r.capacity ? `${r.capacity} 👤${isStudio ? ' + 1 👤 🛏️+🛋️' : ''}` : '';
+    const hasKitchen = isStudio;
+    
+    // Mock the "last room" or "rooms left" banner randomly for visual demo based on screenshots
+    const leftText = isStudio ? "Осталось 2 номера" : "Остался последний номер";
+    const fireBannerHtml = isAvail ? `<div class="fire-banner">🔥 ${leftText}</div>` : '';
 
     return `
-    <div class="hotel-room-card ${isAvail ? '' : 'unavailable'}" style="animation-delay: ${Math.random() * 0.2}s">
+    <div class="hotel-room-card ${isAvail ? '' : 'unavailable'}">
         <div class="card-img" onclick="${firstImg ? "openLightbox('" + firstImg + "')" : ''}">
-            ${firstImg ? `<img src="${firstImg}" alt="${r.name}">` : '<div style="width:100%;height:100%;background:var(--light);display:flex;align-items:center;justify-content:center;color:var(--gray);">Нет фото</div>'}
-            ${!isAvail ? '<div class="badge-unavailable"><span>Занято</span></div>' : ''}
-            ${r.imgs && r.imgs.length > 1 ? `<div class="photo-count">📷 +${r.imgs.length - 1} фото</div>` : ''}
-        </div>
-        <div class="card-body">
-            <div class="card-name">${r.name}</div>
-            <div class="card-meta">
-                ${r.area ? `<span>🏠 ${r.area}</span>` : ''}
-                ${r.capacity ? `<span>👤 до ${r.capacity} гостей</span>` : ''}
+            <div class="card-img-inner">
+                ${firstImg ? `<img src="${firstImg}" alt="${r.name}">` : '<div style="width:100%;height:100%;background:#f5f5f5;display:flex;align-items:center;justify-content:center;color:#ccc;">Нет фото</div>'}
+                ${r.imgs && r.imgs.length > 1 ? `<div class="photo-count">+${r.imgs.length - 1} фото</div>` : ''}
+                ${!isAvail ? '<div style="position:absolute;inset:0;background:rgba(255,255,255,0.7);display:flex;align-items:center;justify-content:center;"><span style="background:#e53e3e;color:#fff;padding:.4rem 1.2rem;border-radius:20px;font-weight:700;">Занято</span></div>' : ''}
             </div>
-            <div class="card-desc">${r.desc}</div>
-            ${r.tariff || r.prepayment ? `
-            <div class="card-tariff-box">
-                ${r.tariff ? `<div class="card-tariff-name">«${r.tariff}»</div>` : ''}
-                <div class="card-tariff-detail">
-                    <span>✓ Проживание</span>
-                    ${r.prepayment ? `<span>💰 Предоплата ${fmtPrice(r.prepayment)}</span>` : ''}
-                </div>
-            </div>` : ''}
-            ${amenHtml ? `<div class="card-amenities">${amenHtml}</div>` : ''}
+            ${fireBannerHtml}
         </div>
-        <div class="card-price-col">
-            ${showPrice ? `
-                <div class="card-total">${fmtPrice(totalPrice)}</div>
-                <div class="card-price-detail">за ${nights} ${nightsLabel}<br>для ${r.capacity || guests} 👤</div>
-                ${isAvail ? `<button class="card-select-btn" onclick="selectHotelRoom(${r.id}, '${escapedName}', ${totalPrice}, ${nights}, ${r.price})">Выбрать</button>` : ''}
-            ` : `
-                <div class="card-total" style="color:var(--gold)">от ${fmtPrice(r.price)}</div>
-                <div class="card-price-detail">за сутки</div>
-                <a href="#hotel-date-search" class="card-check-btn">Проверить даты</a>
-            `}
+        <div class="card-content">
+            <div>
+                <div class="card-name">${r.name}</div>
+                <div class="card-meta">
+                    ${r.area ? `<span>${r.area}</span>` : ''}
+                    ${metaCapacityHtml ? `<span>${metaCapacityHtml}</span>` : ''}
+                    <span class="clickable" onclick="openLightbox('${firstImg}')">Подробнее ›</span>
+                </div>
+                
+                <div class="card-amenities-split">
+                    <div class="am-col">
+                        <div>❄️ Кондиционер</div>
+                        <div>📶 Wi-Fi</div>
+                        <div>📺 Телевизор</div>
+                        <div style="color:#777;cursor:pointer;margin-top:4px;">Показать все удобства ⌄</div>
+                    </div>
+                    <div class="am-col">
+                        <div>🚿 Душ или ванна в номере</div>
+                        ${hasKitchen ? '<div>🍳 Кухня в номере</div>' : ''}
+                        <div>👁️ Вид из окна</div>
+                        <div style="padding-left:22px;color:#777;">✓ На улицу</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card-footer">
+                <div class="card-tariff-col">
+                    <div class="card-tariff-name">«${r.tariff || 'тариф без завтрака'}»</div>
+                    <div class="card-tariff-detail">
+                        <span style="color:#333;">✓ Проживание</span>
+                        ${r.prepayment ? `<span>💳 Предоплата ${fmtPrice(r.prepayment)}</span>` : ''}
+                        <span style="color:#777;text-decoration:underline;cursor:pointer;margin-top:6px;">ⓘ Условия оплаты и отмены</span>
+                    </div>
+                </div>
+                <div class="card-price-col">
+                    ${showPrice ? `
+                        <div class="card-total">${fmtPrice(totalPrice)}</div>
+                        <div class="card-price-detail">за ${nights} ${nightsLabel}<br>для ${r.capacity || guests} 👤</div>
+                        ${isAvail ? `<button class="card-select-btn" onclick="selectHotelRoom(${r.id}, '${escapedName}', ${totalPrice}, ${nights}, ${r.price})">Выбрать</button>` : ''}
+                    ` : `
+                        <div class="card-total">${fmtPrice(r.price)}</div>
+                        <div class="card-price-detail">за сутки</div>
+                        <a href="#hotel-date-search" class="card-check-btn">Проверить даты</a>
+                    `}
+                </div>
+            </div>
         </div>
     </div>`;
 }
