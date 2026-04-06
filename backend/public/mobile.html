@@ -94,9 +94,19 @@
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             flex: 1; color: var(--muted); gap: .2rem; font-size: .65rem; font-weight: 600;
             transition: .2s; border: none; background: transparent; font-family: inherit; cursor: pointer;
+            height: 100%;
         }
         .nav-item.active { color: var(--gold); }
-        .nav-icon { font-size: 1.4rem; }
+        .nav-icon { font-size: 1.4rem; line-height: 1; }
+        
+        .room-price-row {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-top: 1rem; flex-wrap: nowrap; gap: 0.5rem;
+        }
+        .room-price {
+            font-size: 1.1rem; font-weight: 800; color: var(--gold); white-space: nowrap;
+            display: flex; align-items: baseline; gap: 4px;
+        }
 
         /* Inline Booking Container */
         .book-modal {
@@ -1153,8 +1163,8 @@
                         <div class="room-name" style="color:#e1d3a5;">${r.name}</div>
                         <div class="room-desc" style="color:rgba(255,255,255,0.5)">${r.desc.split('·')[0]}</div>
                         <div class="room-price-row">
-                            <div class="room-price" style="color:#e1d3a5;">${fmtPrice(r.price)} <span style="font-size:.7rem;font-weight:400;color:rgba(255,255,255,0.4)">/ ночь</span></div>
-                            <button class="btn-select" style="background:#e1d3a5; color:#38402f;" onclick="mSelectYurt(${r.id})">Выбрать</button>
+                            <div class="room-price" style="color:#e1d3a5;">${fmtPrice(r.price)} <span style="font-size:.7rem;font-weight:400;color:rgba(255,255,255,0.4); margin-left: 4px;">/ ночь</span></div>
+                            <button class="btn-select" style="background:#e1d3a5; color:#38402f; flex-shrink: 0; width: auto; padding: 0.6rem 1.2rem; min-width: 100px;" onclick="mSelectYurt(${r.id})">Выбрать</button>
                         </div>
                     </div>
                 </div>`;

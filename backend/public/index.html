@@ -2024,7 +2024,7 @@ function renderBathCard(data) {
                     </div>
                     ${sliderDots}
                     ${sliderArrows}
-                    ${r.imgs && r.imgs.length > 1 ? `<div class="photo-count" style="background:rgba(0,0,0,0.8);">+${r.imgs.length - 1} фото</div>` : ''}
+                    ${r.imgs && r.imgs.length > 1 ? `<div class="photo-count">+${r.imgs.length - 1} фото</div>` : ''}
                 </div>
             </div>
             <div class="card-content" style="padding: 1.8rem;">
@@ -2651,7 +2651,7 @@ function buildYurtCard(r, nights, guests, isAvail, showPrice) {
                 </div>
                 ${sliderDots}
                 ${sliderArrows}
-                ${r.imgs && r.imgs.length > 1 ? `<div class="photo-count" style="background:rgba(0,0,0,0.8);">+${r.imgs.length - 1} фото</div>` : ''}
+                ${r.imgs && r.imgs.length > 1 ? `<div class="photo-count">+${r.imgs.length - 1} фото</div>` : ''}
                 ${!isAvail ? '<div style="position:absolute;inset:0;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;z-index:20;"><span style="background:#e53e3e;color:#fff;padding:.4rem 1.2rem;border-radius:20px;font-weight:700;">Занято</span></div>' : ''}
             </div>
         </div>
@@ -2664,20 +2664,20 @@ function buildYurtCard(r, nights, guests, isAvail, showPrice) {
                 </div>
             </div>
             
-            <div class="card-footer" style="margin-top: 1.5rem; padding-top:1.5rem; border-top:1px solid rgba(255,255,255,0.1); display:flex; justify-content:space-between; align-items:center;">
-                <div class="card-price-col" style="padding:0; border:none; width:100%; flex-direction:row; justify-content:space-between; display:flex; align-items:center;">
+            <div class="card-footer" style="margin-top: 1.5rem; padding-top:1.5rem; border-top:1px solid rgba(255,255,255,0.1);">
+                <div class="card-price-col" style="padding:0; border:none; width:100%; flex-direction:row; justify-content:space-between; display:flex; align-items:center; flex-wrap: nowrap; gap: 1rem;">
                     ${showPrice ? `
-                        <div>
-                            <div class="card-total" style="color:#e1d3a5;">${fmtPrice(totalPrice)}</div>
-                            <div class="card-price-detail" style="color:rgba(255,255,255,0.5);">за ${nights} ${nightsLabel}<br>до ${r.capacity} 👤</div>
+                        <div style="flex-shrink: 0;">
+                            <div class="card-total" style="color:#e1d3a5; white-space: nowrap;">${fmtPrice(totalPrice)}</div>
+                            <div class="card-price-detail" style="color:rgba(255,255,255,0.5); font-size: .75rem; line-height: 1.2;">за ${nights} ${nightsLabel}<br>до ${r.capacity} 👤</div>
                         </div>
-                        ${isAvail ? `<button class="card-select-btn" style="background:#e1d3a5; color:#38402f;" onclick="selectYurtRoomForBooking(${r.id}, '${escapedName}', ${totalPrice}, ${nights}, ${r.price})">Выбрать</button>` : ''}
+                        ${isAvail ? `<button class="card-select-btn" style="background:#e1d3a5; color:#38402f; flex-shrink: 0; margin-top: 0; min-width: 120px;" onclick="selectYurtRoomForBooking(${r.id}, '${escapedName}', ${totalPrice}, ${nights}, ${r.price})">Выбрать</button>` : ''}
                     ` : `
-                        <div>
-                            <div class="card-total" style="color:#e1d3a5;">${fmtPrice(r.price)}</div>
-                            <div class="card-price-detail" style="color:rgba(255,255,255,0.5);">за сутки</div>
+                        <div style="flex-shrink: 0;">
+                            <div class="card-total" style="color:#e1d3a5; white-space: nowrap;">${fmtPrice(r.price)}</div>
+                            <div class="card-price-detail" style="color:rgba(255,255,255,0.5); font-size: .75rem;">за сутки</div>
                         </div>
-                        <a href="#yurt-date-search" class="card-check-btn" style="border-color:#e1d3a5; color:#e1d3a5;">Проверить даты</a>
+                        <a href="#yurt-date-search" class="card-check-btn" style="border-color:#e1d3a5; color:#e1d3a5; flex-shrink: 0; margin-top: 0; width: auto; min-width: 130px;">Проверить даты</a>
                     `}
                 </div>
             </div>
@@ -2956,6 +2956,7 @@ Promise.all([
     hotelRooms = roomsData.filter(r => r.type === 'hotel');
     yurtRooms = roomsData.filter(r => r.type === 'yurt');
     saunaRooms = roomsData.filter(r => r.type === 'sauna');
+    bathRooms = roomsData.filter(r => r.type === 'bath');
     bookedDates = aData || [];
     if(bookedDates.error) bookedDates = [];
 
