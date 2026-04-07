@@ -5,22 +5,53 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>ООО «Чалама» | Приложение</title>
     <meta name="theme-color" content="#1a1d27">
-    <script src="https://static.max.ru/sdk/max-web-app.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/all.min.css">
     <style>
         :root {
-            --bg: #0f1117;
-            --surface: #1a1d27;
-            --surface2: #22252f;
-            --border: #2a2d3a;
-            --text: #e4e4e7;
-            --muted: #71717a;
+            /* General Branding */
             --gold: #b8860b;
             --gold-light: #d4a017;
             --radius: 16px;
+            --light-bg: #f7f5f0;
+            --dark-text: #111;
+            
+            /* Hotel Theme (Current values for fallback) */
+            --bg: var(--light-bg);
+            --surface: #ffffff;
+            --surface2: #fefcf6;
+            --border: rgba(0,0,0,0.06);
+            --text: var(--dark-text);
+            --muted: #888;
+            
+            /* Yurt Theme (Haan-Dyt) */
+            --yurt-bg: #38402f;
+            --yurt-surface: rgba(255,255,255,0.05);
+            --yurt-border: rgba(255,255,255,0.1);
+            --yurt-gold: #e1d3a5;
         }
+        
         * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
-        body { font-family:'Inter',sans-serif; background:var(--bg); color:var(--text); padding-bottom: 80px; }
+        
+        body { 
+            font-family:'Inter',sans-serif; 
+            background:var(--bg); 
+            color:var(--text); 
+            padding-bottom: 80px; 
+            transition: background 0.8s cubic-bezier(0.4, 0, 0.2, 1), color 0.5s ease;
+        }
+        
+        body.yurt-theme {
+            --bg: var(--yurt-bg);
+            --surface: var(--yurt-surface);
+            --surface2: rgba(255,255,255,0.1);
+            --border: var(--yurt-border);
+            --text: #ffffff;
+            --muted: rgba(255,255,255,0.5);
+            --gold: var(--yurt-gold);
+        }
+
+        .serif { font-family: 'Playfair Display', serif; }
         
         /* Fix: Prevent images from sticking to finger during scroll */
         img { 
@@ -36,26 +67,37 @@
         
         /* App Header */
         .app-header {
-            position: sticky; top: 0; z-index: 50; background: rgba(26,29,39,0.85);
+            position: sticky; top: 0; z-index: 50; 
+            background: rgba(255,255,255,0.85);
             backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
             padding: env(safe-area-inset-top) 1.5rem 1rem; border-bottom: 1px solid var(--border);
             display: flex; justify-content: space-between; align-items: flex-end; height: calc(60px + env(safe-area-inset-top));
+            transition: background 0.5s ease, border 0.5s ease;
+        }
+        body.yurt-theme .app-header {
+            background: rgba(56,64,47,0.85);
+            border-bottom-color: var(--yurt-border);
         }
         .app-title { font-size: 1.1rem; font-weight: 800; letter-spacing: 2px; }
         .app-title em { color: var(--gold); font-style: normal; }
         .app-phone { font-size: .8rem; color: var(--gold); text-decoration: none; font-weight: 600; }
 
         /* Views */
-        .view { display: none; padding: 1rem .8rem; animation: viewFade .3s ease; }
+        .view { display: none; padding: 1rem .8rem; animation: viewFade .4s cubic-bezier(0.4, 0, 0.2, 1); }
         .view.active { display: block; }
         @keyframes viewFade { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
         
-        .view-title { font-size: 1.5rem; font-weight: 800; margin-bottom: 1.5rem; }
+        .view-title { font-size: 1.8rem; font-weight: 800; margin-bottom: 1.2rem; line-height: 1.1; }
 
         /* Cards */
         .room-card {
             background: var(--surface); border-radius: var(--radius); border: 1px solid var(--border);
-            margin-bottom: .8rem; overflow: hidden; position: relative; display: flex; flex-direction: column;
+            margin-bottom: 1.2rem; overflow: hidden; position: relative; display: flex; flex-direction: column;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+            transition: transform 0.3s ease, background 0.5s ease, border 0.5s ease;
+        }
+        body.yurt-theme .room-card {
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
         }
         .room-gallery {
             position: relative; width: 100%; height: 200px; overflow-x: auto;
@@ -72,8 +114,24 @@
         .room-price-row { display: flex; justify-content: space-between; align-items: center; margin-top: .5rem; }
         .room-price { font-size: 1.3rem; font-weight: 800; color: var(--gold); }
         .btn-select {
-            background: var(--surface2); color: #fff; border: none; padding: .6rem 1.2rem;
-            border-radius: 10px; font-weight: 600; font-size: .85rem; font-family: inherit;
+            background: var(--gold); color: #fff; border: none; padding: .7rem 1.4rem;
+            border-radius: 50px; font-weight: 700; font-size: .85rem; font-family: inherit;
+            transition: .3s; box-shadow: 0 4px 15px rgba(184,134,11,0.2);
+        }
+        body.yurt-theme .btn-select {
+            background: var(--yurt-gold); color: var(--yurt-bg);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .amenity-pills { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 0.5rem 0; }
+        .amenity-pill { 
+            font-size: 0.65rem; padding: 0.25rem 0.6rem; 
+            background: var(--surface2); color: var(--muted); 
+            border-radius: 50px; border: 1px solid var(--border);
+            text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600;
+        }
+        body.yurt-theme .amenity-pill {
+            background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.7);
         }
 
         .g-arrow {
@@ -87,9 +145,14 @@
         /* Bottom Nav */
         .bottom-nav {
             position: fixed; bottom: 0; left: 0; right: 0; height: calc(65px + env(safe-area-inset-bottom));
-            background: rgba(26,29,39,0.95); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            background: rgba(255,255,255,0.95); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
             border-top: 1px solid var(--border); display: flex; justify-content: space-around;
             padding-bottom: env(safe-area-inset-bottom); z-index: 100;
+            transition: background 0.5s ease, border 0.5s ease;
+        }
+        body.yurt-theme .bottom-nav {
+            background: rgba(45,52,38,0.95);
+            border-top-color: var(--yurt-border);
         }
         .nav-item {
             display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -134,7 +197,7 @@
         .cal-day {
             aspect-ratio: 1; display: flex; align-items: center; justify-content: center;
             border-radius: 8px; font-size: .9rem; font-weight: 600; background: var(--surface);
-            transition: .2s; cursor: pointer; border: 1px solid transparent; color: #fff;
+            transition: .2s; cursor: pointer; border: 1px solid transparent; color: var(--text);
         }
         .cal-day.disabled { opacity: 0.2; pointer-events: none; }
         .cal-day.booked-full { background: rgba(255,50,50,.15); color: #ff6b6b; text-decoration: line-through; pointer-events: none; }
@@ -196,13 +259,13 @@
         .time-slot.selected { background: var(--gold); color: #fff; border-color: var(--gold); }
 
         /* KHAAN-DYT CARDS */
-        .kd-card { background: #2f3627; border: 1px solid rgba(225,211,165,0.2); border-radius: 16px; margin-bottom: 1rem; overflow: hidden; pointer-events: none; }
+        .kd-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; margin-bottom: 1rem; overflow: hidden; pointer-events: none; }
         .kd-img { width: 100%; height: 200px; object-fit: cover; }
         .kd-body { padding: 1.5rem; }
-        .kd-title { color: #e1d3a5; font-family: 'Playfair Display', serif; font-size: 1.25rem; margin-bottom: 1rem; font-weight: 700; letter-spacing: 1px; }
+        .kd-title { color: var(--gold); font-family: 'Playfair Display', serif; font-size: 1.25rem; margin-bottom: 1rem; font-weight: 700; letter-spacing: 1px; }
         .kd-list { list-style: none; padding: 0; margin: 0; }
-        .kd-list li { position: relative; padding-left: 1.2rem; margin-bottom: 0.6rem; font-size: 0.85rem; color: rgba(255,255,255,0.85); line-height: 1.4; }
-        .kd-list li::before { content: '•'; position: absolute; left: 0; color: #e1d3a5; font-size: 1.2rem; line-height: 1; }
+        .kd-list li { position: relative; padding-left: 1.2rem; margin-bottom: 0.6rem; font-size: 0.85rem; color: var(--text); opacity: 0.85; line-height: 1.4; }
+        .kd-list li::before { content: '•'; position: absolute; left: 0; color: var(--gold); font-size: 1.2rem; line-height: 1; }
 
         .btn-tg-float {
             position: fixed; bottom: 85px; right: 20px; width: 52px; height: 52px;
@@ -228,8 +291,8 @@
     <div id="view-hotel" class="view active">
         <div style="text-align:center; margin-bottom: 2rem;">
             <img src="uploads/chalama_logo.png" style="width: 100px; margin: 0 auto 1rem;" alt="Чалама Лого">
-            <p style="font-size: .75rem; letter-spacing: 3px; color: var(--gold); text-transform: uppercase;">Гостиничный комплекс</p>
-            <h1 class="view-title" style="margin-bottom: .5rem; color: #fff;">ОТЕЛЬ «ЧАЛАМА»</h1>
+            <p style="font-size: .75rem; letter-spacing: 3px; color: var(--gold); text-transform: uppercase; font-weight: 700;">Гостиничный комплекс</p>
+            <h1 class="view-title serif" style="margin-bottom: .5rem;">ОТЕЛЬ «ЧАЛАМА»</h1>
             <p style="color:var(--muted);font-size:.85rem; max-width: 280px; margin: 0 auto;">Комфорт и гостеприимство в самом сердце Кызыла.</p>
         </div>
 
@@ -281,8 +344,8 @@
     <div id="view-yurt" class="view">
         <div style="text-align:center; margin-bottom: 1.5rem;">
             <img src="uploads/kd_logo.png" style="width: 100px; margin: 0 auto 1rem;" alt="Хаан-Дыт Лого">
-            <p style="font-size: .75rem; letter-spacing: 3px; color: var(--gold); text-transform: uppercase;">Загородный отель-ресторан</p>
-            <h1 class="view-title" style="margin-bottom: .5rem; font-family: 'Playfair Display', serif; color: #fff;">ХААН-ДЫТ</h1>
+            <p style="font-size: .75rem; letter-spacing: 3px; color: var(--gold); text-transform: uppercase; font-weight: 700;">Загородный отель-ресторан</p>
+            <h1 class="view-title serif" style="margin-bottom: .5rem;">ХААН-ДЫТ</h1>
             <p style="color:var(--muted);font-size:.85rem; max-width: 280px; margin: 0 auto;">Погрузитесь в атмосферу традиционного гостеприимства и комфорта.</p>
         </div>
 
@@ -551,7 +614,10 @@
                     ${galleryHtml}
                     <div class="room-info">
                         <div class="room-name">${r.name}</div>
-                        <div style="display:flex;gap:.4rem;flex-wrap:wrap;margin:.3rem 0;">${areaInfo}${capInfo}</div>
+                        <div class="amenity-pills">
+                            ${areaInfo}
+                            ${capInfo}
+                        </div>
                         <div class="room-desc">${r.desc.split('·')[0]}</div>
                         ${tariffInfo}${prepayInfo}
                         <div class="room-price-row">
@@ -708,7 +774,10 @@
                     ${galleryHtml}
                     <div class="room-info">
                         <div class="room-name">${r.name}</div>
-                        <div style="display:flex;gap:.4rem;flex-wrap:wrap;margin:.3rem 0;">${areaInfo}${capInfo}</div>
+                        <div class="amenity-pills">
+                            ${areaInfo}
+                            ${capInfo}
+                        </div>
                         <div class="room-desc">${r.desc.split('·')[0]}</div>
                         ${tariffInfo}${prepayInfo}
                         <div class="room-price-row">
@@ -716,7 +785,7 @@
                                 <div class="room-price">${fmtPrice(totalPrice)}</div>
                                 <div style="font-size:.7rem;color:var(--muted);">за ${nights} ${nights < 5 ? 'ночи' : 'ночей'}</div>
                             </div>
-                            ${isAvail ? `<button class="btn-select" style="background:var(--gold);color:#fff;" onclick="mSelectRoom(${r.id}, '${r.name.replace(/'/g,"\\'")}', ${totalPrice}, ${nights}, ${r.price})">Выбрать</button>` : ''}
+                            ${isAvail ? `<button class="btn-select" onclick="mSelectRoom(${id}, '${r.name.replace(/'/g,"\\'")}', ${totalPrice}, ${nights}, ${r.price})">Выбрать</button>` : ''}
                         </div>
                     </div>
                 </div>`;
@@ -812,8 +881,23 @@
             document.getElementById('view-' + viewId).classList.add('active');
             
             document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
-            event.currentTarget.classList.add('active');
-            window.scrollTo(0, 0);
+            
+            // Background Theme Switching
+            if (viewId === 'yurt') {
+                document.body.classList.add('yurt-theme');
+            } else {
+                document.body.classList.remove('yurt-theme');
+            }
+            
+            // Highlight current button (using event or manual search)
+            if (event && event.currentTarget && event.currentTarget.classList.contains('nav-item')) {
+                event.currentTarget.classList.add('active');
+            } else {
+                const map = { 'hotel': 0, 'yurt': 1, 'info': 2 };
+                document.querySelectorAll('.nav-item')[map[viewId] || 0].classList.add('active');
+            }
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function fmtPrice(n) { return n.toLocaleString('ru') + ' ₽'; }
@@ -1291,9 +1375,9 @@
         function buildAmenitiesHtml(amenities) {
             if (!amenities || !amenities.length) return '';
             return `
-            <div style="margin-top:1rem; display:grid; grid-template-columns:1fr 1fr; gap:0.5rem; border-top:1px solid rgba(255,255,255,0.05); padding-top:1rem;">
+            <div style="margin-top:1rem; display:grid; grid-template-columns:1fr 1fr; gap:0.5rem; border-top:1px solid var(--border); padding-top:1rem;">
                 ${amenities.map(a => `
-                    <div style="font-size:0.75rem; color:rgba(255,255,255,0.7); display:flex; gap:0.4rem; align-items:flex-start;">
+                    <div style="font-size:0.75rem; color:var(--text); opacity:0.7; display:flex; gap:0.4rem; align-items:flex-start;">
                         <span>${getIconForAmenity(a)}</span>
                         <span>${a}</span>
                     </div>
@@ -1308,16 +1392,14 @@
                 return;
             }
             el.innerHTML = rooms.map(r => {
-                const firstImg = r.imgs && r.imgs.length ? r.imgs[0] : '';
-                const isAvail = true; // results always available in search
-                const areaInfo = r.area ? `<span style="font-size:.72rem;color:#333;padding:.2rem .5rem;background:rgba(255,255,255,0.05);border-radius:6px;border:1px solid rgba(255,255,255,0.1);">🏠 ${r.area}</span>` : '';
-                const capInfo = `<span style="font-size:.72rem;color:#333;padding:.2rem .5rem;background:rgba(255,255,255,0.05);border-radius:6px;border:1px solid rgba(255,255,255,0.1);">👤 ${r.capacity}</span>`;
-                const tariffInfo = `<div style="font-size:.78rem;font-weight:600;color:#e1d3a5;margin-top:.8rem;">«${r.tariff || 'Стандартный тариф'}»</div>`;
-                const prepayInfo = r.prepayment ? `<div style="font-size:.72rem;color:rgba(255,255,255,0.5);margin-top:.2rem;">💰 Предоплата ${fmtPrice(r.prepayment)}</div>` : '';
+                const areaInfo = r.area ? `<span class="amenity-pill">🏠 ${r.area}</span>` : '';
+                const capInfo = `<span class="amenity-pill">👤 ${r.capacity}</span>`;
+                const tariffInfo = `<div style="font-size:.78rem;font-weight:600;color:var(--gold);margin-top:.8rem;">«${r.tariff || 'Стандартный тариф'}»</div>`;
+                const prepayInfo = r.prepayment ? `<div style="font-size:.72rem;color:var(--muted);margin-top:.2rem;">💰 Предоплата ${fmtPrice(r.prepayment)}</div>` : '';
                 const imgsHtml = (r.imgs||[]).map(src => `<div class="room-img-wrap"><img src="${src}"></div>`).join('');
 
                 return `
-                <div class="room-card" style="background:#2f3627; border-color:rgba(225,211,165,0.2); margin-bottom:1.5rem;">
+                <div class="room-card">
                     <div style="position: relative;">
                         <div class="room-gallery" id="gal-yurt-res-${r.id}">
                             ${imgsHtml}
@@ -1328,23 +1410,22 @@
                         <button class="g-arrow right" onclick="scrollGal(event, 'yurt-res-${r.id}', 1)">›</button>
                         ` : ''}
                     </div>
-                    <div class="room-info" style="padding: 1.2rem;">
-                        <div class="room-name" style="color:#e1d3a5; font-size:1.15rem; font-weight:800; margin-bottom:0.6rem;">${r.name}</div>
-                        <div style="display:flex;gap:.5rem;margin-bottom:0.8rem;">
+                    <div class="room-info">
+                        <div class="room-name" style="color:var(--gold); font-size:1.15rem; font-weight:800;">${r.name}</div>
+                        <div class="amenity-pills">
                             ${areaInfo}
                             ${capInfo}
                         </div>
                         
-                        <div style="font-size:.85rem; color:rgba(255,255,255,0.7); line-height:1.4; margin-bottom:1rem;">${r.desc.split('·')[0]}</div>
+                        <div style="font-size:.85rem; color:var(--text); line-height:1.4; opacity: 0.8; margin-bottom:1rem;">${r.desc.split('·')[0]}</div>
                         
                         ${buildAmenitiesHtml(r.amenities)}
-
                         ${tariffInfo}
                         ${prepayInfo}
 
-                        <div class="room-price-row" style="margin-top:1.2rem; border-top:1px solid rgba(255,255,255,0.05); padding-top:1rem;">
-                            <div class="room-price" style="color:#e1d3a5;">${fmtPrice(r.price)} <span style="font-size:.7rem;font-weight:400;color:rgba(255,255,255,0.4); margin-left: 4px;">/ ночь</span></div>
-                            <button class="btn-select" style="background:#e1d3a5; color:#38402f; flex-shrink: 0; width: auto; padding: 0.6rem 1.4rem; min-width: 100px; border-radius:10px; font-weight:800;" onclick="mSelectYurt(${r.id})">Выбрать</button>
+                        <div class="room-price-row" style="margin-top:1.2rem; border-top:1px solid var(--border); padding-top:1rem;">
+                            <div class="room-price">${fmtPrice(r.price)} <span style="font-size:.7rem;font-weight:400;color:var(--muted); margin-left: 4px;">/ ночь</span></div>
+                            <button class="btn-select" onclick="mSelectYurt(${r.id})">Выбрать</button>
                         </div>
                     </div>
                 </div>`;
