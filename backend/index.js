@@ -67,7 +67,7 @@ async function sendMaxMessage(chatId, text) {
     const options = {
         hostname: 'platform-api.max.ru',
         port: 443,
-        path: `/messages?user_id=${chatId}`,
+        path: `/messages?chat_id=${chatId}`,
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -81,9 +81,9 @@ async function sendMaxMessage(chatId, text) {
         res.on('data', (chunk) => { responseBody += chunk; });
         res.on('end', () => {
             if (res.statusCode !== 200 && res.statusCode !== 201) {
-                console.error(`[MAX Notify] API Error ${res.statusCode}: ${responseBody}`);
+                console.error(`[MAX Notify Error] Status ${res.statusCode} for Chat ${chatId}. Response: ${responseBody}`);
             } else {
-                console.log(`[MAX Notify] Success - Sent to ${chatId}`);
+                console.log(`[MAX Notify Success] Message sent to ${chatId}`);
             }
         });
     });
