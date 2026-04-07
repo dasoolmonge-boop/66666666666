@@ -1559,14 +1559,20 @@
 
         <!-- BATH & TUB BOOKING BLOCK -->
         <div style="margin-top:5rem" id="bath-booking-block">
+            <h3 data-r style="font-size:1.8rem;margin-bottom:1.5rem;font-family: 'Playfair Display', serif; color: #e1d3a5;">Баня и Банный чан</h3>
+            <p style="color: rgba(255,255,255,0.7); font-size: 0.95rem; margin-bottom: 2.5rem;">Забронируйте комфортную Баню на дровах (до 10 человек, мин. 2 часа).</p>
+            
             <div class="booking-layout">
                 <div id="bath-rooms">
-                    <h3 data-r style="font-size:1.8rem;margin-bottom:1.5rem;font-family: 'Playfair Display', serif; color: #e1d3a5;">Баня и Банный чан</h3>
-                    <p style="color: rgba(255,255,255,0.7); font-size: 0.95rem; margin-bottom: 2.5rem;">Забронируйте комфортную Баню на дровах (до 10 человек, мин. 2 часа).</p>
                     <!-- Bath Card JS Injected -->
                 </div>
-                <div>
+                <div style="position: relative;">
                     <div class="cal-wrap" id="bath-calendar" style="background:#2a3123; border: 1px solid rgba(255,255,255,0.1); color:#fff;">
+                        <style>
+                            @media (min-width: 1025px) {
+                                #bath-calendar { margin-top: -110px; }
+                            }
+                        </style>
                         <div style="margin-bottom:1rem">
                             <p style="font-weight:700;font-size:.78rem;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.5)">Выбранный объект</p>
                             <p id="bath-selected-name" style="font-weight:800;font-size:1.1rem;margin-top:.3rem;color:#e1d3a5">Баня</p>
