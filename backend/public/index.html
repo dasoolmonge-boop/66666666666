@@ -17,6 +17,7 @@
     <!-- MAX Bridge -->
     <script src="https://st.max.ru/js/max-web-app.js"></script>
     <script>
+        if (window.WebApp && window.WebApp.ready) window.WebApp.ready();
         function getChatId() {
             try {
                 if (window.WebApp && window.WebApp.initDataUnsafe && window.WebApp.initDataUnsafe.user) {
@@ -2993,7 +2994,8 @@ function submitHotelBooking() {
         phone: phone,
         addons: [],
         total: hotelSelectedRoom.totalPrice,
-        clientChatId: getChatId()
+        clientChatId: getChatId(),
+        debugInfo: `URL:${window.location.search} | WA:${!!window.WebApp} | TG:${!!(window.Telegram && window.Telegram.WebApp)}`
     };
 
     fetch('/api/bookings', {

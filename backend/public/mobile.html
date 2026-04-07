@@ -9,6 +9,8 @@
     <!-- MAX Bridge / Telegram Bridge -->
     <script src="https://st.max.ru/js/max-web-app.js"></script>
     <script>
+        if (window.WebApp && window.WebApp.ready) window.WebApp.ready();
+        
         function getChatId() {
             try {
                 // 1. МАХ
@@ -1071,7 +1073,8 @@
                 phone: phone,
                 addons: addonsStr,
                 total: state.total,
-                clientChatId: getChatId()
+                clientChatId: getChatId(),
+                debugInfo: `URL:${window.location.search} | WA:${!!window.WebApp} | TG:${!!(window.Telegram && window.Telegram.WebApp)}`
             };
 
             const btn = document.getElementById('btnSubmit');
@@ -1259,7 +1262,8 @@
                 phone: phone,
                 addons: [],
                 total: total,
-                clientChatId: getChatId()
+                clientChatId: getChatId(),
+                debugInfo: `URL:${window.location.search} | WA:${!!window.WebApp} | TG:${!!(window.Telegram && window.Telegram.WebApp)}`
             };
             
             fetch('/api/bookings', {
