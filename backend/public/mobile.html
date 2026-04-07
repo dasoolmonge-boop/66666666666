@@ -141,9 +141,9 @@
         .cal-day.booked-in { background: linear-gradient(135deg, transparent 50%, rgba(255,50,50,.2) 50%); color: #ff6b6b; }
         .cal-day.booked-out { background: linear-gradient(135deg, rgba(255,50,50,.2) 50%, transparent 50%); color: #ff6b6b; }
         .cal-day.today { border-color: var(--muted); }
-        .cal-day.range { background: rgba(184,134,11,.15); color: var(--gold); border-radius: 0; }
         .cal-day.range-start { background: var(--gold); color: #fff; border-radius: 8px 0 0 8px; }
         .cal-day.range-end { background: var(--gold); color: #fff; border-radius: 0 8px 8px 0; }
+        .cal-day.range-mid { background: rgba(184,134,11,.15); color: var(--gold); border-radius: 0; }
         .cal-day.range-start.range-end { border-radius: 8px; }
         .cal-day.range-start.booked-out { background: linear-gradient(135deg, rgba(255,50,50,.2) 50%, var(--gold) 50%); color: #fff; }
         .cal-day.range-end.booked-in { background: linear-gradient(135deg, var(--gold) 50%, rgba(255,50,50,.2) 50%); color: #fff; }
@@ -234,20 +234,23 @@
         </div>
 
         <!-- Date Search -->
-        <div id="m-date-search" style="background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:1.2rem; margin-bottom:1.5rem;">
-            <p style="font-weight:700; font-size:.9rem; margin-bottom:1rem; color:var(--gold);">📅 Найти свободные номера</p>
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:.6rem; margin-bottom:.8rem;">
-                <div>
-                    <label style="display:block;font-size:.7rem;color:var(--muted);margin-bottom:.3rem;text-transform:uppercase;">Заезд</label>
-                    <input type="date" id="m-search-in" style="width:100%;padding:.7rem;background:var(--surface2);border:1px solid var(--border);border-radius:10px;color:#fff;font-size:.9rem;font-family:inherit;outline:none;">
+        <div id="m-date-search" style="background:var(--surface); border:1px solid var(--border); border-radius:20px; padding:1.2rem; margin-bottom:1.5rem;">
+            <p style="font-weight:700; font-size:.9rem; margin-bottom:1.2rem; color:var(--gold); display:flex; justify-content:space-between; align-items:center;">
+                <span>📅 Выберите даты заезда и выезда</span>
+                <span id="hotel-dates-summary" style="font-size:0.75rem; font-weight:500; color:var(--text); opacity:0.8;"></span>
+            </p>
+            
+            <div id="m-hotel-cal-wrap" style="margin-bottom: 1.2rem;">
+                <div class="cal-header">
+                    <button onclick="mNavSearchCal('hotel', -1)">‹</button>
+                    <div id="m-hotel-cal-month" style="font-weight:700; font-size:0.95rem;"></div>
+                    <button onclick="mNavSearchCal('hotel', 1)">›</button>
                 </div>
-                <div>
-                    <label style="display:block;font-size:.7rem;color:var(--muted);margin-bottom:.3rem;text-transform:uppercase;">Выезд</label>
-                    <input type="date" id="m-search-out" style="width:100%;padding:.7rem;background:var(--surface2);border:1px solid var(--border);border-radius:10px;color:#fff;font-size:.9rem;font-family:inherit;outline:none;">
-                </div>
+                <div class="cal-grid" id="m-hotel-cal-grid"></div>
             </div>
-            <button onclick="mSearchRooms()" style="width:100%;padding:.8rem;background:var(--gold);color:#fff;border:none;border-radius:10px;font-size:.9rem;font-weight:700;font-family:inherit;">Найти</button>
-            <div id="m-search-info" style="margin-top:.8rem;font-size:.8rem;color:var(--muted);display:none;"></div>
+
+            <button id="btn-hotel-search" onclick="mSearchRooms()" style="width:100%;padding:1rem;background:var(--gold);color:#fff;border:none;border-radius:12px;font-size:1rem;font-weight:800;font-family:inherit;box-shadow:0 10px 20px rgba(184,134,11,0.2);">Показать свободные номера</button>
+            <div id="m-search-info" style="margin-top:1rem;font-size:.85rem;color:var(--muted);display:none;padding:0.8rem;background:var(--surface2);border-radius:10px;"></div>
         </div>
         
         <div id="hotel-list">
@@ -284,20 +287,23 @@
         </div>
 
         <!-- Yurt Search Block -->
-        <div id="m-yurt-search" style="background:rgba(255,255,255,0.05); border:1px solid rgba(225,211,165,0.2); border-radius:16px; padding:1.2rem; margin-bottom:1.5rem;">
-            <p style="font-weight:700; font-size:.9rem; margin-bottom:1rem; color:#e1d3a5;">⛺ Найти свободные юрты</p>
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:.6rem; margin-bottom:.8rem;">
-                <div>
-                    <label style="display:block;font-size:.7rem;color:rgba(255,255,255,0.5);margin-bottom:.3rem;text-transform:uppercase;">Заезд</label>
-                    <input type="date" id="m-yurt-search-in" style="width:100%;padding:.7rem;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.1);border-radius:10px;color:#fff;font-size:.9rem;font-family:inherit;outline:none;">
+        <div id="m-yurt-search" style="background:rgba(255,255,255,0.05); border:1px solid rgba(225,211,165,0.2); border-radius:20px; padding:1.2rem; margin-bottom:1.5rem;">
+            <p style="font-weight:700; font-size:.9rem; margin-bottom:1.2rem; color:#e1d3a5; display:flex; justify-content:space-between; align-items:center;">
+                <span>⛺ Выберите даты для юрты</span>
+                <span id="yurt-dates-summary" style="font-size:0.75rem; font-weight:500; color:#fff; opacity:0.8;"></span>
+            </p>
+
+            <div id="m-yurt-cal-wrap" style="margin-bottom: 1.2rem;">
+                <div class="cal-header">
+                    <button onclick="mNavSearchCal('yurt', -1)" style="background:rgba(255,255,255,0.1);">‹</button>
+                    <div id="m-yurt-cal-month" style="font-weight:700; font-size:0.95rem; color:#fff;"></div>
+                    <button onclick="mNavSearchCal('yurt', 1)" style="background:rgba(255,255,255,0.1);">›</button>
                 </div>
-                <div>
-                    <label style="display:block;font-size:.7rem;color:rgba(255,255,255,0.5);margin-bottom:.3rem;text-transform:uppercase;">Выезд</label>
-                    <input type="date" id="m-yurt-search-out" style="width:100%;padding:.7rem;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.1);border-radius:10px;color:#fff;font-size:.9rem;font-family:inherit;outline:none;">
-                </div>
+                <div class="cal-grid" id="m-yurt-cal-grid"></div>
             </div>
-            <button onclick="mSearchYurts()" style="width:100%;padding:.8rem;background:#e1d3a5;color:#38402f;border:none;border-radius:10px;font-size:.9rem;font-weight:700;font-family:inherit;">Показать наличие</button>
-            <div id="m-yurt-search-info" style="margin-top:.8rem;font-size:.8rem;color:rgba(255,255,255,0.5);display:none;"></div>
+            
+            <button onclick="mSearchYurts()" style="width:100%;padding:1rem;background:#e1d3a5;color:#38402f;border:none;border-radius:12px;font-size:1rem;font-weight:800;font-family:inherit;box-shadow:0 10px 20px rgba(225,211,165,0.15);">Показать наличие</button>
+            <div id="m-yurt-search-info" style="margin-top:1rem;font-size:.85rem;color:rgba(255,255,255,0.6);display:none;padding:0.8rem;background:rgba(255,255,255,0.05);border-radius:10px;"></div>
         </div>
 
         <div id="yurt-list"></div>
@@ -421,8 +427,8 @@
         
         let allRooms = [];
         let bookedDates = []; // { room, checkIn, checkOut }
-        let mHotelDates = { checkIn: null, checkOut: null };
-        let mYurtDates = { checkIn: null, checkOut: null };
+        let mHotelDates = { checkIn: null, checkOut: null, calMonth: new Date().getMonth(), calYear: new Date().getFullYear() };
+        let mYurtDates = { checkIn: null, checkOut: null, calMonth: new Date().getMonth(), calYear: new Date().getFullYear() };
         let mSelectedRoom = null;
         let mSelectedYurt = null;
         
@@ -462,20 +468,8 @@
             renderList('sauna', 'sauna-list');
             renderList('bath', 'bath-list-mobile');
 
-            // Set min dates for mobile hotel search
-            const td = new Date().toISOString().split('T')[0];
-            document.getElementById('m-search-in').min = td;
-            document.getElementById('m-search-out').min = td;
-            document.getElementById('m-search-in').addEventListener('change', function() {
-                document.getElementById('m-search-out').min = this.value;
-            });
-            
-            // Set min dates for mobile yurt search
-            document.getElementById('m-yurt-search-in').min = td;
-            document.getElementById('m-yurt-search-out').min = td;
-            document.getElementById('m-yurt-search-in').addEventListener('change', function() {
-                document.getElementById('m-yurt-search-out').min = this.value;
-            });
+            renderSearchCal('hotel');
+            renderSearchCal('yurt');
         }).catch(console.error);
 
         function pollAvailability() {
@@ -569,29 +563,107 @@
             }).join('') || '<p style="color:var(--muted);">Нет номеров</p>';
         }
 
-        function mSearchRooms() {
-            const inVal = document.getElementById('m-search-in').value;
-            const outVal = document.getElementById('m-search-out').value;
-            if (!inVal || !outVal) return alert('Выберите даты заезда и выезда');
-            const ci = new Date(inVal), co = new Date(outVal);
-            const today = new Date(); today.setHours(0,0,0,0);
-            if (ci < today) return alert('Дата заезда не может быть в прошлом');
-            if (co <= ci) return alert('Дата выезда должна быть позже даты заезда');
+        // === MOBILE SEARCH CALENDARS ===
+        function mNavSearchCal(type, dir) {
+            const d = (type === 'hotel') ? mHotelDates : mYurtDates;
+            d.calMonth += dir;
+            if (d.calMonth < 0) { d.calMonth = 11; d.calYear--; }
+            if (d.calMonth > 11) { d.calMonth = 0; d.calYear++; }
+            renderSearchCal(type);
+        }
 
-            mHotelDates = { checkIn: inVal, checkOut: outVal };
+        function renderSearchCal(type) {
+            const dObj = (type === 'hotel') ? mHotelDates : mYurtDates;
+            const gridId = (type === 'hotel') ? 'm-hotel-cal-grid' : 'm-yurt-cal-grid';
+            const monthId = (type === 'hotel') ? 'm-hotel-cal-month' : 'm-yurt-cal-month';
+            const sumId = (type === 'hotel') ? 'hotel-dates-summary' : 'yurt-dates-summary';
+            
+            const monthEl = document.getElementById(monthId);
+            const gridEl = document.getElementById(gridId);
+            const sumEl = document.getElementById(sumId);
+            if (!monthEl || !gridEl) return;
+
+            monthEl.textContent = months[dObj.calMonth] + ' ' + dObj.calYear;
+            
+            let html = dayNames.map(d => `<div class="cal-day-name">${d}</div>`).join('');
+            const firstDay = new Date(dObj.calYear, dObj.calMonth, 1).getDay();
+            const shift = firstDay === 0 ? 6 : firstDay - 1;
+            const totalDays = new Date(dObj.calYear, dObj.calMonth + 1, 0).getDate();
+            const today = new Date(); today.setHours(0,0,0,0);
+            
+            for (let i = 0; i < shift; i++) html += '<div></div>';
+            
+            for (let d = 1; d <= totalDays; d++) {
+                const dt = new Date(dObj.calYear, dObj.calMonth, d); dt.setHours(0,0,0,0);
+                const isPast = dt < today;
+                const isToday = dt.getTime() === today.getTime();
+                
+                const cin = dObj.checkIn ? norm(new Date(dObj.checkIn)) : null;
+                const cout = dObj.checkOut ? norm(new Date(dObj.checkOut)) : null;
+                
+                const isStart = cin && dt.getTime() === cin;
+                const isEnd = cout && dt.getTime() === cout;
+                const inRange = cin && cout && dt > cin && dt < cout;
+                
+                const cls = ['cal-day'];
+                if(isPast) cls.push('disabled');
+                if(isToday) cls.push('today');
+                if(isStart) cls.push('range-start');
+                if(isEnd) cls.push('range-end');
+                if(inRange) cls.push('range-mid');
+                if(isStart && isEnd) cls.push('range-start','range-end');
+
+                const interact = isPast ? '' : `onclick="selSearchDate(${dt.getTime()}, '${type}')"`;
+                html += `<div class="${cls.join(' ')}" ${interact}>${d}</div>`;
+            }
+            gridEl.innerHTML = html;
+            
+            // Update summary
+            if (sumEl) {
+                const summary = (dObj.checkIn && dObj.checkOut) 
+                    ? fmtDate(dObj.checkIn) + ' — ' + fmtDate(dObj.checkOut)
+                    : (dObj.checkIn ? 'Выберите дату выезда' : '');
+                sumEl.textContent = summary;
+            }
+        }
+
+        function selSearchDate(ts, type) {
+            const clicked = new Date(ts);
+            const dObj = (type === 'hotel') ? mHotelDates : mYurtDates;
+            
+            if (!dObj.checkIn || (dObj.checkIn && dObj.checkOut)) {
+                dObj.checkIn = clicked.toISOString().split('T')[0];
+                dObj.checkOut = null;
+            } else {
+                if (clicked <= new Date(dObj.checkIn)) {
+                    dObj.checkIn = clicked.toISOString().split('T')[0];
+                } else {
+                    dObj.checkOut = clicked.toISOString().split('T')[0];
+                }
+            }
+            renderSearchCal(type);
+        }
+
+        function mSearchRooms() {
+            if(!mHotelDates.checkIn || !mHotelDates.checkOut) return alert('Выберите даты заезда и выезда в календаре');
+            
             mSelectedRoom = null;
             document.getElementById('m-book-form').style.display = 'none';
 
-            fetch(`/api/rooms/available?checkIn=${inVal}&checkOut=${outVal}`)
+            fetch(`/api/rooms/available?checkIn=${mHotelDates.checkIn}&checkOut=${mHotelDates.checkOut}`)
                 .then(r => r.json())
                 .then(rooms => {
-                    const nights = Math.round((co - ci) / 86400000);
-                    const avail = rooms.filter(r => r.available);
+                    const hotels = rooms.filter(r => r.type === 'hotel');
+                    const nights = Math.round((new Date(mHotelDates.checkOut) - new Date(mHotelDates.checkIn)) / 86400000);
+                    
+                    const avail = hotels.filter(r => r.available);
                     const info = document.getElementById('m-search-info');
-                    info.style.display = 'block';
-                    info.innerHTML = `<strong>${avail.length}</strong> свободных номеров на <strong>${nights}</strong> ${nights < 5 ? 'ночи' : 'ночей'}`;
-                    document.getElementById('m-date-search').style.borderColor = 'var(--gold)';
-                    mRenderHotelCards(rooms, nights);
+                    if (info) {
+                        info.style.display = 'block';
+                        info.innerHTML = `Найдено <strong>${avail.length}</strong> свободных номеров на <strong>${nights}</strong> ${nights < 5 ? 'ночи' : 'ночей'}`;
+                        document.getElementById('m-date-search').style.borderColor = 'var(--gold)';
+                    }
+                    mRenderHotelCards(avail, nights);
                 })
                 .catch(err => alert('Ошибка: ' + err.message));
         }
@@ -697,24 +769,16 @@
         }
 
         function mSearchYurts() {
-            const inVal = document.getElementById('m-yurt-search-in').value;
-            const outVal = document.getElementById('m-yurt-search-out').value;
-            if(!inVal || !outVal) return alert('Выберите даты заезда и выезда');
+            if(!mYurtDates.checkIn || !mYurtDates.checkOut) return alert('Выберите даты заезда и выезда в календаре');
             
-            const ci = new Date(inVal), co = new Date(outVal);
-            const today = new Date(); today.setHours(0,0,0,0);
-            if (ci < today) return alert('Дата заезда не может быть в прошлом');
-            if (co <= ci) return alert('Дата выезда должна быть позже заезда');
-            
-            mYurtDates = { checkIn: inVal, checkOut: outVal };
             mSelectedYurt = null;
             document.getElementById('m-yurt-book-form').style.display = 'none';
             
-            fetch(`/api/rooms/available?checkIn=${inVal}&checkOut=${outVal}`)
+            fetch(`/api/rooms/available?checkIn=${mYurtDates.checkIn}&checkOut=${mYurtDates.checkOut}`)
                 .then(r => r.json())
                 .then(rooms => {
                     const yur = rooms.filter(r => r.type === 'yurt' || r.type === 'yurt_vip' || r.type === 'yurt_standard');
-                    const nights = Math.round((co - ci) / 86400000);
+                    const nights = Math.round((new Date(mYurtDates.checkOut) - new Date(mYurtDates.checkIn)) / 86400000);
                     const avail = yur.filter(r => r.available);
                     const info = document.getElementById('m-yurt-search-info');
                     if (info) {
