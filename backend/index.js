@@ -207,6 +207,29 @@ db.serialize(() => {
                         WHERE NOT EXISTS (SELECT 1 FROM rooms WHERE type=?)`,
                         [type, name, desc, price, priceWeekend, type]);
             });
+
+            // Update Amenities for Yurts and Bath (One-time sync)
+            const listY123 = JSON.stringify([
+                'Двуспальная кровать', 'Раскладной диван', 'Комплект полотенец, халатов и тапочек на 4 человек',
+                'Посуда на 4 человек, сковорода и кастрюля', 'Кухня с индукционной плитой и раковиной',
+                'Чайник, микроволновая печь, холодильник', 'Кондиционер', 'Дровяная печь-камин',
+                'Санузел с душевой', 'Одноразовые гигиенические принадлежности'
+            ]);
+            const listY4 = JSON.stringify([
+                'Два раскладных дивана', 'Комплекты постельного белья', 'Большой стол на 10 персон',
+                'Комплект посуды и столовых приборов на 6 человек', 'Холодильник', 'Микроволновая печь',
+                'Индукционная плита', 'Кухонная зона с раковиной', 'Санузел', 'Дровяная печь'
+            ]);
+            const listBath = JSON.stringify([
+                'Традиционная дровяная печь', 'Просторная парилка', 'Душевая зона и санузел',
+                'Большой стол на 12 персон', 'Кухонная зона: плита, раковина, посуда',
+                'Телевизор с Триколор ТВ', 'Wi-Fi', 'Караоке для весёлого отдыха'
+            ]);
+
+            // Apply updates
+            db.run("UPDATE rooms SET amenities = ? WHERE type = 'yurt' AND (name LIKE '%Земля%' OR name LIKE '%Вода%' OR name LIKE '%Воздух%' OR name LIKE '%Малая%')", [listY123]);
+            db.run("UPDATE rooms SET amenities = ? WHERE type = 'yurt' AND (name LIKE '%Огонь%' OR name LIKE '%Большая%')", [listY4]);
+            db.run("UPDATE rooms SET amenities = ? WHERE type = 'bath'", [listBath]);
         });
 
 // Multer setup for file uploads

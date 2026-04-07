@@ -1110,33 +1110,37 @@
         applyPhoneMask('m-guest-phone');
         applyPhoneMask('m-yurt-guest-phone');
 
-        // === MOBILE YURTS: dates-first flow ===
-        let mYurtDates = { checkIn: null, checkOut: null };
-        let mSelectedYurt = null;
+        function getIconForAmenity(a) {
+            const al = a.toLowerCase();
+            if (al.includes('кровать')) return '🛏️';
+            if (al.includes('диван')) return '🛋️';
+            if (al.includes('полотенц') || al.includes('халат') || al.includes('тапоч')) return '🧖';
+            if (al.includes('посуда') || al.includes('сковорода') || al.includes('кастрюл')) return '🍳';
+            if (al.includes('кух') || al.includes('плит') || al.includes('раковин')) return '👩‍🍳';
+            if (al.includes('чайник') || al.includes('микроволн') || al.includes('холодиль')) return '🧊';
+            if (al.includes('кондицион')) return '❄️';
+            if (al.includes('печь') || al.includes('камин')) return '🔥';
+            if (al.includes('санузел') || al.includes('душев')) return '🚿';
+            if (al.includes('гигиенич')) return '🧼';
+            if (al.includes('стол') || al.includes('персон')) return '🪑';
+            if (al.includes('парил')) return '♨️';
+            if (al.includes('телевизор') || al.includes('триколор')) return '📺';
+            if (al.includes('wi-fi') || al.includes('интернет')) return '📶';
+            if (al.includes('караоке')) return '🎤';
+            return '✓';
+        }
 
-        function mSearchYurts() {
-            const inVal = document.getElementById('m-yurt-search-in').value;
-            const outVal = document.getElementById('m-yurt-search-out').value;
-            if(!inVal || !outVal) return alert('Выберите даты!');
-            
-            mYurtDates = { checkIn: inVal, checkOut: outVal };
-            mSelectedYurt = null;
-            document.getElementById('m-yurt-book-form').style.display = 'none';
-            
-            document.getElementById('yurt-list').innerHTML = '<div class="skeleton" style="height:200px"></div>';
-            
-            fetch('/api/rooms/available?checkIn=' + inVal + '&checkOut=' + outVal)
-                .then(r=>r.json()).then(available => {
-                    const yurts = available.filter(r => r.type === 'yurt');
-                    renderMobileYurtResults(yurts);
-                    
-                    const info = document.getElementById('m-yurt-search-info');
-                    if (info) {
-                        info.style.display = 'block';
-                        const nights = Math.round((new Date(outVal) - new Date(inVal)) / 86400000);
-                        info.innerHTML = `Найдено на период <strong>${fmtDate(new Date(inVal))} — ${fmtDate(new Date(outVal))}</strong> (${nights} ноч.)`;
-                    }
-                });
+        function buildAmenitiesHtml(amenities) {
+            if (!amenities || !amenities.length) return '';
+            return `
+            <div style="margin-top:1rem; display:grid; grid-template-columns:1fr 1fr; gap:0.5rem; border-top:1px solid rgba(255,255,255,0.05); padding-top:1rem;">
+                ${amenities.map(a => `
+                    <div style="font-size:0.75rem; color:rgba(255,255,255,0.7); display:flex; gap:0.4rem; align-items:flex-start;">
+                        <span>${getIconForAmenity(a)}</span>
+                        <span>${a}</span>
+                    </div>
+                `).join('')}
+            </div>`;
         }
 
         function renderMobileYurtResults(rooms) {
@@ -1175,6 +1179,8 @@
                         
                         <div style="font-size:.85rem; color:rgba(255,255,255,0.7); line-height:1.4; margin-bottom:1rem;">${r.desc.split('·')[0]}</div>
                         
+                        ${buildAmenitiesHtml(r.amenities)}
+
                         ${tariffInfo}
                         ${prepayInfo}
 

@@ -2011,6 +2011,49 @@ function renderSaunaCard(data) {
     }).join('');
 }
 
+function getIconForAmenity(a) {
+    const al = a.toLowerCase();
+    if (al.includes('кровать')) return '🛏️';
+    if (al.includes('диван')) return '🛋️';
+    if (al.includes('полотенц') || al.includes('халат') || al.includes('тапоч')) return '🧖';
+    if (al.includes('посуда') || al.includes('сковорода') || al.includes('кастрюл')) return '🍳';
+    if (al.includes('кух') || al.includes('плит') || al.includes('раковин')) return '👩‍🍳';
+    if (al.includes('чайник') || al.includes('микроволн') || al.includes('холодиль')) return '🧊';
+    if (al.includes('кондицион')) return '❄️';
+    if (al.includes('печь') || al.includes('камин')) return '🔥';
+    if (al.includes('санузел') || al.includes('душев')) return '🚿';
+    if (al.includes('гигиенич')) return '🧼';
+    if (al.includes('стол') || al.includes('персон')) return '🪑';
+    if (al.includes('парил')) return '♨️';
+    if (al.includes('телевизор') || al.includes('триколор')) return '📺';
+    if (al.includes('wi-fi') || al.includes('интернет')) return '📶';
+    if (al.includes('караоке')) return '🎤';
+    return '✓';
+}
+
+function buildAmenitiesHtml(amenities, isDark = false) {
+    if (!amenities || !amenities.length) return '';
+    const color = isDark ? 'rgba(255,255,255,0.9)' : '#333';
+    
+    // Split into 2 columns if more than 4 items
+    const mid = Math.ceil(amenities.length / 2);
+    const col1 = amenities.slice(0, mid);
+    const col2 = amenities.slice(mid);
+    
+    const renderCol = (list) => list.map(a => `
+        <div style="color:${color}; margin-bottom:0.4rem; font-size:0.85rem; display:flex; align-items:flex-start; gap:0.5rem;">
+            <span>${getIconForAmenity(a)}</span>
+            <span>${a}</span>
+        </div>
+    `).join('');
+
+    return `
+    <div class="card-amenities-split" style="margin-bottom: 1rem; display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+        <div class="am-col">${renderCol(col1)}</div>
+        <div class="am-col">${renderCol(col2)}</div>
+    </div>`;
+}
+
 function renderBathCard(data) {
     const el = document.getElementById('bath-rooms');
     if(!el) return;
@@ -2032,8 +2075,6 @@ function renderBathCard(data) {
             imgsHtml = '<div style="width:100%;height:100%;background:rgba(255,255,255,0.05);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.3);flex:0 0 100%;">Нет фото</div>';
         }
 
-        const amenHtml = (r.amenities || []).map(a => `<span style="font-size:.8rem; padding:.3rem .7rem; background:rgba(255,255,255,0.1); border-radius:8px; color:#fff; font-weight:500;">${a}</span>`).join('');
-
         return `
         <div class="hotel-room-card ${isActive ? 'active' : ''}" style="margin-bottom:2rem; cursor:pointer; background:rgba(255,255,255,0.05); border: ${isActive ? '2px solid #e1d3a5' : '2px solid transparent'};" onclick="selectRoom('bath',${i})">
             <div class="card-img" style="min-height: 250px; padding:0; border-radius: 20px 0 0 20px;">
@@ -2050,9 +2091,7 @@ function renderBathCard(data) {
                 <div>
                     <div class="card-name" style="font-size:1.5rem; margin-bottom:1rem; color:#fff;">${r.name}</div>
                     <div style="font-size:.9rem; color:rgba(255,255,255,0.7); margin-bottom:1.2rem; line-height:1.5;">${r.desc}</div>
-                    <div style="display:flex; flex-wrap:wrap; gap:.5rem;">
-                        ${amenHtml}
-                    </div>
+                    ${buildAmenitiesHtml(r.amenities, true)}
                 </div>
                 <div class="card-footer" style="margin-top: 1.5rem; padding-top:1.5rem; border-top:1px solid rgba(255,255,255,0.1); display:flex; justify-content:space-between; align-items:center;">
                     <div>
@@ -2683,17 +2722,7 @@ function buildYurtCard(r, nights, guests, isAvail, showPrice) {
                     <span class="clickable" style="color:#e1d3a5; font-weight:600; cursor:pointer;" onclick="openLightbox('${firstImg}')">Подробнее ›</span>
                 </div>
                 
-                <div class="card-amenities-split" style="margin-bottom: 1.5rem;">
-                    <div class="am-col">
-                        <div style="color:rgba(255,255,255,0.9); margin-bottom:0.4rem;">🔥 Традиционная печь</div>
-                        <div style="color:rgba(255,255,255,0.9); margin-bottom:0.4rem;">📶 Wi-Fi</div>
-                        <div style="color:rgba(255,255,255,0.9); margin-bottom:0.4rem;">🛌 Постельное белье</div>
-                    </div>
-                    <div class="am-col">
-                        <div style="color:rgba(255,255,255,0.9); margin-bottom:0.4rem;">🚠 Вид на горы</div>
-                        <div style="color:rgba(255,255,255,0.9); margin-bottom:0.4rem;">🧊 Холодильник</div>
-                    </div>
-                </div>
+                ${buildAmenitiesHtml(r.amenities, true)}
             </div>
             
             <div class="card-footer" style="margin-top: 1.5rem; padding-top:1.5rem; border-top:1px solid rgba(255,255,255,0.1); background:rgba(0,0,0,0.15); margin: 0 -1.8rem -1.8rem -1.8rem; padding: 1.5rem 1.8rem; display:flex; justify-content:space-between; align-items:flex-end;">
