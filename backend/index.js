@@ -408,6 +408,21 @@ app.post('/api/rooms/:id/photo/delete', (req, res) => {
 // API: BOOKINGS
 // =======================
 
+// Helper: Format ISO date to human readable
+function formatDate(isoString) {
+    if (!isoString) return '';
+    try {
+        const date = new Date(isoString);
+        if (isNaN(date.getTime())) return isoString;
+        const d = date.getDate().toString().padStart(2, '0');
+        const m = (date.getMonth() + 1).toString().padStart(2, '0');
+        const y = date.getFullYear();
+        return `${d}.${m}.${y}`;
+    } catch (e) {
+        return isoString;
+    }
+}
+
 // Create booking
 app.post('/api/bookings', (req, res) => {
     const b = req.body;
@@ -425,7 +440,8 @@ app.post('/api/bookings', (req, res) => {
             if (err) return res.status(500).json({ error: err.message });
             if (row) return res.status(400).json({ success: false, error: 'Даты уже заняты' });
 
-            const id = Date.now().toString(36) + Math.random().toString(36).substr(2);
+            // Generate shorter uppercase ID
+            const id = (Date.now().toString(36).slice(-5) + Math.random().toString(36).substr(2, 5)).toUpperCase();
             const createdAt = new Date().toISOString();
 
             const guestName = sanitize(b.guest || '').trim();
@@ -442,14 +458,15 @@ app.post('/api/bookings', (req, res) => {
                 function (err) {
                     if (err) return res.status(500).json({ error: err.message });
                     
-                    // Notify Admin (wrapped in try/catch to ensure booking is saved even if notify fails)
                     try {
                         const typeLabel = b.type === 'hotel' ? 'Отель "Чалама"' : (b.type === 'sauna' ? 'Сауна "Чалама"' : (b.type === 'bath' ? 'Баня ХААН-ДЫТ' : 'Юрт-комплекс'));
+                        const datesRange = `${formatDate(b.checkIn)} — ${formatDate(b.checkOut)}`;
                         
-                        const adminText = `✨ <b>НОВЫЙ ЗАКАЗ: #${id.toUpperCase()}</b>\n\n` +
+                        // Admin Notification (Premium Style)
+                        const adminText = `✨ <b>НОВЫЙ ЗАКАЗ: #${id}</b>\n\n` +
                                         `🏨 <b>${typeLabel}</b>\n` +
                                         `🛋 Объект: <b>${b.room}</b>\n` +
-                                        `📅 Даты: <b>${b.checkIn} — ${b.checkOut}</b>\n\n` +
+                                        `📅 Даты: <b>${datesRange}</b>\n\n` +
                                         `👤 Клиент: <b>${guestName}</b>\n` +
                                         `📞 Тел: <code>${guestPhone}</code>\n` +
                                         `💰 Сумма: <b>${b.total} ₽</b>\n\n` +
@@ -457,13 +474,13 @@ app.post('/api/bookings', (req, res) => {
                         
                         notifyAllAdmins(adminText);
 
-                        // NEW: Notify client if chatId is provided
+                        // Client Notification
                         if (b.clientChatId) {
                             const clientText = `🏨 <b>ООО «ЧАЛАМА»</b>\n\n` +
                                              `Здравствуйте, <b>${guestName}</b>!\n` +
-                                             `Ваша заявка <b>#${id.toUpperCase()}</b> успешно принята.\n\n` +
+                                             `Ваша заявка <b>#${id}</b> успешно принята.\n\n` +
                                              `📍 Объект: <b>${b.room}</b>\n` +
-                                             `📅 Период: <b>${b.checkIn} — ${b.checkOut}</b>\n\n` +
+                                             `📅 Период: <b>${datesRange}</b>\n\n` +
                                              `📞 Наш администратор свяжется с вами в ближайшее время для подтверждения.\n\n` +
                                              `✨ <i>Спасибо, что выбрали нас!</i>`;
                             sendMaxMessage(b.clientChatId, clientText);
