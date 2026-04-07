@@ -67,7 +67,7 @@ async function sendMaxMessage(chatId, text) {
     const options = {
         hostname: 'platform-api.max.ru',
         port: 443,
-        path: `/messages?chat_id=${chatId}`,
+        path: `/messages?user_id=${chatId}`,
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
