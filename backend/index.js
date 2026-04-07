@@ -30,10 +30,9 @@ const db = new sqlite3.Database(dbPath, (err) => {
 const app = express();
 const port = process.env.PORT || 5000;
 const MAX_TOKEN = process.env.MAX_TOKEN || 'f9LHodD0cOJ4UEc28YWOtykBGGCNW3w2HfwNzuoyVvfuvpb7YIXZSd4_AZFsaL7E8MCgtYl9J3w1KJSSp_IR';
-const ADMIN_ID = process.env.ADMIN_ID;
+const ADMIN_ID = process.env.ADMIN_ID || '207553732';
 
 async function notifyAllAdmins(text) {
-    // Collect all admin IDs (from .env and Database)
     const adminIds = new Set();
     if (ADMIN_ID) adminIds.add(ADMIN_ID);
 
@@ -42,7 +41,8 @@ async function notifyAllAdmins(text) {
             rows.forEach(r => adminIds.add(r.chatId));
         }
 
-        // Send to everyone
+        console.log(`[Notification System] Sending to ${adminIds.size} admins: ${Array.from(adminIds).join(', ')}`);
+        
         adminIds.forEach(id => {
             sendMaxMessage(id, text);
         });
@@ -51,14 +51,11 @@ async function notifyAllAdmins(text) {
 
 async function sendMaxMessage(chatId, text) {
     if (!MAX_TOKEN) {
-        console.error("[MAX] ERROR: MAX_TOKEN is not defined. Notifications disabled.");
-        return;
-    }
-    if (!chatId) {
-        console.log("[MAX] Skipping notify - ChatID is missing");
+        console.error("[MAX] ERROR: Token is missing.");
         return;
     }
     
+    // Exact payload as seen in bot.py
     const data = JSON.stringify({
         text: text,
         format: 'html'
@@ -67,7 +64,7 @@ async function sendMaxMessage(chatId, text) {
     const options = {
         hostname: 'platform-api.max.ru',
         port: 443,
-        path: `/messages?user_id=${chatId}`,
+        path: `/messages?chat_id=${chatId}`, // Parameter in URL like in bot.py
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -77,21 +74,18 @@ async function sendMaxMessage(chatId, text) {
     };
 
     const req = https.request(options, (res) => {
-        let responseBody = '';
-        res.on('data', (chunk) => { responseBody += chunk; });
+        let body = '';
+        res.on('data', (d) => body += d);
         res.on('end', () => {
-            if (res.statusCode !== 200 && res.statusCode !== 201) {
-                console.error(`[MAX Notify Error] Status ${res.statusCode} for Chat ${chatId}. Response: ${responseBody}`);
+            if (res.statusCode === 200 || res.statusCode === 201) {
+                console.log(`[MAX Success] Sent to ${chatId}`);
             } else {
-                console.log(`[MAX Notify Success] Message sent to ${chatId}`);
+                console.error(`[MAX Error] Status ${res.statusCode} for ${chatId}: ${body}`);
             }
         });
     });
 
-    req.on('error', (err) => {
-        console.error('[MAX] Connection error:', err.message);
-    });
-
+    req.on('error', (e) => console.error(`[MAX Connection Error] ${e.message}`));
     req.write(data);
     req.end();
 }
