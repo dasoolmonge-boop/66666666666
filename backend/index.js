@@ -227,8 +227,8 @@ db.serialize(() => {
             ]);
 
             // Apply updates
-            db.run("UPDATE rooms SET amenities = ? WHERE type = 'yurt' AND (name LIKE '%Земля%' OR name LIKE '%Вода%' OR name LIKE '%Воздух%' OR name LIKE '%Малая%')", [listY123]);
-            db.run("UPDATE rooms SET amenities = ? WHERE type = 'yurt' AND (name LIKE '%Огонь%' OR name LIKE '%Большая%')", [listY4]);
+            db.run("UPDATE rooms SET amenities = ?, capacity = 3 WHERE type = 'yurt' AND (name LIKE '%Земля%' OR name LIKE '%Вода%' OR name LIKE '%Воздух%' OR name LIKE '%Малая%')", [listY123]);
+            db.run("UPDATE rooms SET amenities = ?, capacity = 4 WHERE type = 'yurt' AND (name LIKE '%Огонь%' OR name LIKE '%Большая%')", [listY4]);
             db.run("UPDATE rooms SET amenities = ? WHERE type = 'bath'", [listBath]);
         });
 
