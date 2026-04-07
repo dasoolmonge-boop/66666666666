@@ -1077,6 +1077,43 @@
             }).catch(e => { alert('Ошибка сети'); btn.disabled=false; });
         }
 
+        function mSubmitHotelBooking() {
+            const name = document.getElementById('m-guest-name').value;
+            const phone = document.getElementById('m-guest-phone').value;
+            const consent = document.getElementById('m-hotel-consent').checked;
+            
+            if(!name || !phone) return alert('Введите имя и телефон!');
+            if(!consent) return alert('Требуется согласие на обработку данных');
+            if(!mSelectedRoom) return alert('Номер не выбран!');
+            
+            const nights = Math.round((new Date(mHotelDates.checkOut) - new Date(mHotelDates.checkIn)) / 86400000);
+            const total = mSelectedRoom.price * nights;
+            
+            const pkt = {
+                type: 'hotel',
+                room: mSelectedRoom.name,
+                checkIn: new Date(mHotelDates.checkIn).toISOString(),
+                checkOut: new Date(mHotelDates.checkOut).toISOString(),
+                nights: nights,
+                guest: name,
+                phone: phone,
+                addons: [],
+                total: total,
+                clientChatId: window.Telegram?.WebApp?.initDataUnsafe?.user?.id || null
+            };
+            
+            fetch('/api/bookings', {
+                method: 'POST',
+                headers:{ 'Content-Type':'application/json' },
+                body: JSON.stringify(pkt)
+            }).then(r=>r.json()).then(res => {
+                if(res.success) {
+                    alert('Заявка отправлена! Менеджер скоро свяжется с вами.');
+                    location.reload();
+                } else alert('Ошибка сервера: ' + res.error);
+            });
+        }
+
         // Phone Mask Functionality
         function applyPhoneMask(id) {
             const input = document.getElementById(id);
