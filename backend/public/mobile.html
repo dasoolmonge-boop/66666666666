@@ -627,18 +627,27 @@
             }
         }
 
+        function toLocalYMD(date) {
+            const y = date.getFullYear();
+            const m = (date.getMonth() + 1).toString().padStart(2, '0');
+            const d = date.getDate().toString().padStart(2, '0');
+            return `${y}-${m}-${d}`;
+        }
+
         function selSearchDate(ts, type) {
             const clicked = new Date(ts);
             const dObj = (type === 'hotel') ? mHotelDates : mYurtDates;
             
+            const dateStr = toLocalYMD(clicked);
+            
             if (!dObj.checkIn || (dObj.checkIn && dObj.checkOut)) {
-                dObj.checkIn = clicked.toISOString().split('T')[0];
+                dObj.checkIn = dateStr;
                 dObj.checkOut = null;
             } else {
                 if (clicked <= new Date(dObj.checkIn)) {
-                    dObj.checkIn = clicked.toISOString().split('T')[0];
+                    dObj.checkIn = dateStr;
                 } else {
-                    dObj.checkOut = clicked.toISOString().split('T')[0];
+                    dObj.checkOut = dateStr;
                 }
             }
             renderSearchCal(type);
