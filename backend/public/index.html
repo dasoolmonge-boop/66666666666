@@ -25,6 +25,9 @@
                 if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe && window.Telegram.WebApp.initDataUnsafe.user) {
                     return window.Telegram.WebApp.initDataUnsafe.user.id;
                 }
+                const urlParams = new URLSearchParams(window.location.search);
+                const uid = urlParams.get('userId') || urlParams.get('user_id') || urlParams.get('chat_id');
+                if (uid) return uid;
             } catch (e) { console.error('ChatID Error:', e); }
             return null;
         }

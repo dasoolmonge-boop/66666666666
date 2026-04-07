@@ -11,14 +11,18 @@
     <script>
         function getChatId() {
             try {
-                // Пытаемся взять ID из МАХ
+                // 1. МАХ
                 if (window.WebApp && window.WebApp.initDataUnsafe && window.WebApp.initDataUnsafe.user) {
                     return window.WebApp.initDataUnsafe.user.id;
                 }
-                // Пытаемся взять ID из Телеграм
+                // 2. Телеграм
                 if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe && window.Telegram.WebApp.initDataUnsafe.user) {
                     return window.Telegram.WebApp.initDataUnsafe.user.id;
                 }
+                // 3. FALLBACK: URL Params
+                const urlParams = new URLSearchParams(window.location.search);
+                const uid = urlParams.get('userId') || urlParams.get('user_id') || urlParams.get('chat_id');
+                if (uid) return uid;
             } catch (e) {
                 console.error('Error getting Chat ID:', e);
             }

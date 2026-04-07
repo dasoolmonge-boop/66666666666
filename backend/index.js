@@ -447,6 +447,8 @@ app.post('/api/bookings', (req, res) => {
             const guestName = sanitize(b.guest || '').trim();
             const guestPhone = sanitize(b.phone || '').trim();
 
+            console.log(`[Booking Debug] New Request: room=${b.room}, guest=${guestName}, clientChatId=${b.clientChatId || 'NULL'}`);
+
             if (!guestName || !guestPhone) {
                 return res.status(400).json({ success: false, error: 'Имя и телефон обязательны' });
             }
