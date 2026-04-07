@@ -14,20 +14,13 @@
     <meta name="theme-color" content="#b8860b">
     <link rel="icon" type="image/x-icon" href="https://www.chalamahotel.ru/favicon.ico">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Syne:wght@800&display=swap" rel="stylesheet">
+    <script src="https://static.max.ru/sdk/max-web-app.js"></script>
     <script>
-        // Детекция Telegram Mini App
         (function() {
-            try {
-                const isTelegram = window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initData && window.Telegram.WebApp.initData.length > 0;
-                // Дополнительная проверка на платформу, если initData пуст (бывает в некоторых версиях при первом запуске)
-                const isTGPlatform = window.Telegram && window.Telegram.WebApp && (window.Telegram.WebApp.platform !== 'unknown');
-                
-                if (isTelegram || isTGPlatform) {
-                    // Если открыто в Телеграм — перенаправляем на мобильную версию приложения
-                    window.location.replace('mobile.html');
-                }
-            } catch (e) {
-                console.error('Environment check error:', e);
+            if (window.MAX) { window.MAX.ready(); }
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            if (isMobile && !window.location.pathname.includes('mobile.html')) {
+                window.location.replace('mobile.html' + window.location.search);
             }
         })();
     </script>

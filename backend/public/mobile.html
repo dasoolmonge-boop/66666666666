@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>ООО «Чалама» | Приложение</title>
     <meta name="theme-color" content="#1a1d27">
+    <script src="https://static.max.ru/sdk/max-web-app.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -420,6 +421,11 @@
         
         let allRooms = [];
         let bookedDates = []; // { room, checkIn, checkOut }
+        let mHotelDates = { checkIn: null, checkOut: null };
+        let mYurtDates = { checkIn: null, checkOut: null };
+        let mSelectedRoom = null;
+        let mSelectedYurt = null;
+        
         let state = {
             room: null,
             in: null, out: null,
@@ -429,6 +435,19 @@
             calYear: new Date().getFullYear(),
             date: null, saunaHours: []
         };
+
+        if (window.MAX) { window.MAX.ready(); }
+
+        function fmtDate(d) {
+            if (!d) return '—';
+            const date = new Date(d);
+            return date.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' });
+        }
+        function fmtDateShort(d) {
+            if (!d) return '—';
+            const date = new Date(d);
+            return date.toLocaleDateString('ru-RU');
+        }
 
         // Fetch Data
         Promise.all([
@@ -510,8 +529,6 @@
         }
 
         // === MOBILE HOTEL: dates-first flow ===
-        let mHotelDates = { checkIn: null, checkOut: null };
-        let mSelectedRoom = null;
 
         function renderMobileHotelInitial(rooms, containerId) {
             const el = document.getElementById(containerId);
@@ -677,6 +694,36 @@
                     mSearchRooms();
                 } else alert('Ошибка: ' + res.error);
             }).catch(e => alert('Ошибка сети'));
+        }
+
+        function mSearchYurts() {
+            const inVal = document.getElementById('m-yurt-search-in').value;
+            const outVal = document.getElementById('m-yurt-search-out').value;
+            if(!inVal || !outVal) return alert('Выберите даты заезда и выезда');
+            
+            const ci = new Date(inVal), co = new Date(outVal);
+            const today = new Date(); today.setHours(0,0,0,0);
+            if (ci < today) return alert('Дата заезда не может быть в прошлом');
+            if (co <= ci) return alert('Дата выезда должна быть позже заезда');
+            
+            mYurtDates = { checkIn: inVal, checkOut: outVal };
+            mSelectedYurt = null;
+            document.getElementById('m-yurt-book-form').style.display = 'none';
+            
+            fetch(`/api/rooms/available?checkIn=${inVal}&checkOut=${outVal}`)
+                .then(r => r.json())
+                .then(rooms => {
+                    const yur = rooms.filter(r => r.type === 'yurt' || r.type === 'yurt_vip' || r.type === 'yurt_standard');
+                    const nights = Math.round((co - ci) / 86400000);
+                    const avail = yur.filter(r => r.available);
+                    const info = document.getElementById('m-yurt-search-info');
+                    if (info) {
+                        info.style.display = 'block';
+                        info.innerHTML = `Найдено <strong>${avail.length}</strong> свободных юрт на <strong>${nights}</strong> ${nights < 5 ? 'ночи' : 'ночей'}`;
+                    }
+                    renderMobileYurtResults(avail);
+                })
+                .catch(err => alert('Ошибка при поиске: ' + err.message));
         }
 
 
