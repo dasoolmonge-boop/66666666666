@@ -300,7 +300,7 @@ app.get('/api/rooms/available', (req, res) => {
             if (err) return res.status(500).json({ error: err.message });
             const busyNames = busyRows.map(r => r.room);
 
-            db.all("SELECT * FROM rooms WHERE type = 'hotel'", [], (err, rows) => {
+            db.all("SELECT * FROM rooms", [], (err, rows) => {
                 if (err) return res.status(500).json({ error: err.message });
                 const rooms = rows.map(r => ({
                     id: r.id,

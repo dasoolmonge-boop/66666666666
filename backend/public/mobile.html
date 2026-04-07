@@ -558,8 +558,15 @@
                 return;
             }
             const html = list.map(r => {
+                const isYurt = type === 'yurt' || type.startsWith('yurt');
                 const priceLabel = r.priceWeekend ? `от ${fmtPrice(r.price)}` : fmtPrice(r.price);
                 const imgs = (r.imgs||[]).map(src => `<div class="room-img-wrap"><img src="${src}"></div>`).join('');
+                
+                // For yurts, point to the unified top calendar instead of per-card toggle
+                const buttonHtml = isYurt 
+                    ? `<a href="#m-yurt-search" class="btn-select" style="text-decoration:none;text-align:center;">Проверить наличие</a>`
+                    : `<button class="btn-select" id="btn-toggle-${r.id}" onclick="openBook(${r.id}, event)">Свободные даты</button>`;
+
                 return `
                 <div class="room-card">
                     <div style="position: relative;">
@@ -576,7 +583,7 @@
                         <div class="room-desc">${r.desc.split('·')[0]}</div>
                         <div class="room-price-row">
                             <div class="room-price">${priceLabel}</div>
-                            <button class="btn-select" id="btn-toggle-${r.id}" onclick="openBook(${r.id}, event)">Свободные даты</button>
+                            ${buttonHtml}
                         </div>
                         <div id="card-inject-${r.id}"></div>
                     </div>
@@ -855,7 +862,8 @@
             fetch(`/api/rooms/available?checkIn=${mYurtDates.checkIn}&checkOut=${mYurtDates.checkOut}`)
                 .then(r => r.json())
                 .then(rooms => {
-                    const yur = rooms.filter(r => r.type === 'yurt' || r.type === 'yurt_vip' || r.type === 'yurt_standard');
+                    // Include all yurt types
+                    const yur = rooms.filter(r => r.type === 'yurt' || r.type.startsWith('yurt'));
                     const nights = Math.round((new Date(mYurtDates.checkOut) - new Date(mYurtDates.checkIn)) / 86400000);
                     const avail = yur.filter(r => r.available);
                     const info = document.getElementById('m-yurt-search-info');
