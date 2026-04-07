@@ -14,25 +14,6 @@
     <meta name="theme-color" content="#b8860b">
     <link rel="icon" type="image/x-icon" href="https://www.chalamahotel.ru/favicon.ico">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Syne:wght@800&display=swap" rel="stylesheet">
-    <!-- MAX Bridge -->
-    <script src="https://st.max.ru/js/max-web-app.js"></script>
-    <script>
-        if (window.WebApp && window.WebApp.ready) window.WebApp.ready();
-        function getChatId() {
-            try {
-                if (window.WebApp && window.WebApp.initDataUnsafe && window.WebApp.initDataUnsafe.user) {
-                    return window.WebApp.initDataUnsafe.user.id;
-                }
-                if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe && window.Telegram.WebApp.initDataUnsafe.user) {
-                    return window.Telegram.WebApp.initDataUnsafe.user.id;
-                }
-                const urlParams = new URLSearchParams(window.location.search);
-                const uid = urlParams.get('userId') || urlParams.get('user_id') || urlParams.get('chat_id');
-                if (uid) return uid;
-            } catch (e) { console.error('ChatID Error:', e); }
-            return null;
-        }
-    </script>
     <script>
         // Детекция Telegram Mini App
         (function() {
@@ -2993,9 +2974,7 @@ function submitHotelBooking() {
         guest: name,
         phone: phone,
         addons: [],
-        total: hotelSelectedRoom.totalPrice,
-        clientChatId: getChatId(),
-        debugInfo: `URL:${window.location.search} | WA:${!!window.WebApp} | TG:${!!(window.Telegram && window.Telegram.WebApp)}`
+        total: hotelSelectedRoom.totalPrice
     };
 
     fetch('/api/bookings', {

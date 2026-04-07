@@ -447,9 +447,6 @@ app.post('/api/bookings', (req, res) => {
             const guestName = sanitize(b.guest || '').trim();
             const guestPhone = sanitize(b.phone || '').trim();
 
-            console.log(`[Booking Debug] New Request: room=${b.room}, guest=${guestName}, clientChatId=${b.clientChatId || 'NULL'}`);
-            if (b.debugInfo) console.log(`[Booking Debug Info] Source: ${b.debugInfo}`);
-
             if (!guestName || !guestPhone) {
                 return res.status(400).json({ success: false, error: 'Имя и телефон обязательны' });
             }
@@ -457,7 +454,7 @@ app.post('/api/bookings', (req, res) => {
             db.run(
                 `INSERT INTO bookings (id, type, room, checkIn, checkOut, nights, guest, phone, addons, total, status, clientChatId, createdAt)
                  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-                [id, b.type, b.room, b.checkIn, b.checkOut, b.nights, guestName, guestPhone, JSON.stringify(b.addons || []), b.total, 'new', b.clientChatId || null, createdAt],
+                [id, b.type, b.room, b.checkIn, b.checkOut, b.nights, guestName, guestPhone, JSON.stringify(b.addons || []), b.total, 'new', null, createdAt],
                 function (err) {
                     if (err) return res.status(500).json({ error: err.message });
                     
@@ -476,20 +473,8 @@ app.post('/api/bookings', (req, res) => {
                                         `⚡️ <i>Система "Чалама"</i>`;
                         
                         notifyAllAdmins(adminText);
-
-                        // Client Notification
-                        if (b.clientChatId) {
-                            const clientText = `🏨 <b>ООО «ЧАЛАМА»</b>\n\n` +
-                                             `Здравствуйте, <b>${guestName}</b>!\n` +
-                                             `Ваша заявка <b>#${id}</b> успешно принята.\n\n` +
-                                             `📍 Объект: <b>${b.room}</b>\n` +
-                                             `📅 Период: <b>${datesRange}</b>\n\n` +
-                                             `📞 Наш администратор свяжется с вами в ближайшее время для подтверждения.\n\n` +
-                                             `✨ <i>Спасибо, что выбрали нас!</i>`;
-                            sendMaxMessage(b.clientChatId, clientText);
-                        }
                     } catch (notifyErr) {
-                        console.error("[Notify Error] Failed to send message to MAX:", notifyErr.message);
+                        console.error("[Notify Error] Failed to send message to admins:", notifyErr.message);
                     }
 
                     res.json({ success: true, id: id });

@@ -6,31 +6,6 @@
     <title>ООО «Чалама» | Приложение</title>
     <meta name="theme-color" content="#1a1d27">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- MAX Bridge / Telegram Bridge -->
-    <script src="https://st.max.ru/js/max-web-app.js"></script>
-    <script>
-        if (window.WebApp && window.WebApp.ready) window.WebApp.ready();
-        
-        function getChatId() {
-            try {
-                // 1. МАХ
-                if (window.WebApp && window.WebApp.initDataUnsafe && window.WebApp.initDataUnsafe.user) {
-                    return window.WebApp.initDataUnsafe.user.id;
-                }
-                // 2. Телеграм
-                if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe && window.Telegram.WebApp.initDataUnsafe.user) {
-                    return window.Telegram.WebApp.initDataUnsafe.user.id;
-                }
-                // 3. FALLBACK: URL Params
-                const urlParams = new URLSearchParams(window.location.search);
-                const uid = urlParams.get('userId') || urlParams.get('user_id') || urlParams.get('chat_id');
-                if (uid) return uid;
-            } catch (e) {
-                console.error('Error getting Chat ID:', e);
-            }
-            return null;
-        }
-    </script>
     <style>
         :root {
             --bg: #0f1117;
@@ -123,32 +98,6 @@
         }
         .nav-item.active { color: var(--gold); }
         .nav-icon { font-size: 1.4rem; line-height: 1; }
-        
-        /* Success Screen */
-        .success-screen {
-            position: fixed; inset: 0; background: var(--bg); z-index: 2000;
-            display: none; flex-direction: column; align-items: center; justify-content: center;
-            padding: 2rem; text-align: center;
-        }
-        .success-screen.active { display: flex; }
-        .success-icon {
-            width: 80px; height: 80px; background: #22c55e; color: #fff;
-            border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            font-size: 2.5rem; margin-bottom: 2rem; box-shadow: 0 0 30px rgba(34,197,94,0.4);
-            animation: successPop .6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        @keyframes successPop { from { transform: scale(0); } to { transform: scale(1); } }
-        .success-title { font-size: 1.8rem; font-weight: 800; margin-bottom: 1rem; color: #fff; }
-        .success-text { color: var(--muted); line-height: 1.6; margin-bottom: 2rem; }
-        .order-badge {
-            background: var(--surface); border: 1px solid var(--border);
-            padding: 1rem 1.5rem; border-radius: 12px; margin-bottom: 2rem;
-            font-family: monospace; font-size: 1.1rem; color: var(--gold);
-        }
-        .btn-done {
-            background: var(--gold); color: #fff; border: none; padding: 1rem 2rem;
-            border-radius: 12px; font-weight: 700; width: 100%; max-width: 280px;
-        }
         
         .room-price-row {
             display: flex; justify-content: space-between; align-items: center;
@@ -1099,8 +1048,7 @@
                 phone: phone,
                 addons: addonsStr,
                 total: state.total,
-                clientChatId: getChatId(),
-                debugInfo: `URL:${window.location.search} | WA:${!!window.WebApp} | TG:${!!(window.Telegram && window.Telegram.WebApp)}`
+                clientChatId: window.Telegram?.WebApp?.initDataUnsafe?.user?.id || null
             };
 
             const btn = document.getElementById('btnSubmit');
@@ -1113,10 +1061,9 @@
                 body: JSON.stringify(pkt)
             }).then(r=>r.json()).then(res => {
                 if(res.success) {
-                    document.getElementById('success-order-id').textContent = '#' + res.id;
-                    document.getElementById('success-screen').classList.add('active');
-                } else {
-                    alert('Ошибка сервера: ' + res.error);
+                    alert('Заявка отправлена! Менеджер скоро свяжется с вами.');
+                    closeBook();
+                    btn.innerHTML = 'Подтвердить • <span id="btnPrice">0</span> ₽';
                     btn.disabled = false;
                     state.in = null; state.out = null; calcTotal();
                     pollAvailability(); // force instant refresh
@@ -1289,8 +1236,7 @@
                 phone: phone,
                 addons: [],
                 total: total,
-                clientChatId: getChatId(),
-                debugInfo: `URL:${window.location.search} | WA:${!!window.WebApp} | TG:${!!(window.Telegram && window.Telegram.WebApp)}`
+                clientChatId: window.Telegram?.WebApp?.initDataUnsafe?.user?.id || null
             };
             
             fetch('/api/bookings', {
@@ -1299,23 +1245,12 @@
                 body: JSON.stringify(pkt)
             }).then(r=>r.json()).then(res => {
                 if(res.success) {
-                    document.getElementById('success-order-id').textContent = '#' + res.id;
-                    document.getElementById('success-screen').classList.add('active');
+                    alert('Заявка на юрту отправлена! Менеджер скоро свяжется с вами.');
+                    location.reload();
                 } else alert('Ошибка сервера: ' + res.error);
             });
         }
     </script>
-    <div id="success-screen" class="success-screen">
-        <div class="success-icon">✓</div>
-        <div class="success-title">Заявка принята!</div>
-        <div class="success-text">
-            Мы получили ваш заказ.<br>
-            В ближайшее время вам придет сообщение от бота с деталями бронирования.
-        </div>
-        <div class="order-badge" id="success-order-id">#XXXXX</div>
-        <button class="btn-done" onclick="location.reload()">Вернуться в начало</button>
-    </div>
-
     <a href="https://max.ru/" target="_blank" class="btn-tg-float" title="Написать в МАКС">
     <i class="fas fa-comments"></i>
 </a>
