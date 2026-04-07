@@ -1068,9 +1068,10 @@
                     state.in = null; state.out = null; calcTotal();
                     pollAvailability(); // force instant refresh
                 } else {
+                    const priceSpan = document.getElementById('btnPrice');
                     alert('Ошибка сервера: ' + res.error);
                     btn.disabled = false;
-                    btn.innerHTML = 'Подтвердить • <span id="btnPrice">' + btnPrice.textContent + '</span> ₽';
+                    btn.innerHTML = 'Подтвердить • <span id="btnPrice">' + (priceSpan ? priceSpan.textContent : '0') + '</span> ₽';
                     pollAvailability(); // probably busy, force calendar to update to show it
                 }
             }).catch(e => { alert('Ошибка сети'); btn.disabled=false; });

@@ -2995,45 +2995,6 @@ function submitHotelBooking() {
     }).catch(err => alert('Ошибка: ' + err.message));
 }
 
-function submitHotelBooking() {
-    if (!hotelSelectedRoom) { alert('Выберите номер'); return; }
-    const name = document.getElementById('hotel-name').value;
-    const phone = document.getElementById('hotel-phone').value;
-    const consent = document.getElementById('hotel-consent').checked;
-    if (!name || !phone) { alert('Заполните имя и телефон'); return; }
-    if (!consent) { alert('Подтвердите согласие на обработку персональных данных'); return; }
-
-    const booking = {
-        type: 'hotel',
-        room: hotelSelectedRoom.name,
-        checkIn: new Date(hotelSearchDates.checkIn).toISOString(),
-        checkOut: new Date(hotelSearchDates.checkOut).toISOString(),
-        nights: hotelSelectedRoom.nights,
-        guest: name,
-        phone: phone,
-        addons: [],
-        total: hotelSelectedRoom.totalPrice
-    };
-
-    fetch('/api/bookings', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(booking)
-    }).then(res => res.json()).then(data => {
-        if (data.success) {
-            booking.id = data.id;
-            sendTGNotification(booking);
-            document.getElementById('successModal').classList.add('open');
-            hotelSelectedRoom = null;
-            document.getElementById('hotel-book-form').style.display = 'none';
-            document.getElementById('hotel-name').value = '';
-            document.getElementById('hotel-phone').value = '';
-            // Refresh search results
-            searchAvailableRooms();
-        } else alert('Ошибка: ' + data.error);
-    }).catch(err => alert('Ошибка: ' + err.message));
-}
-
 
 
 Promise.all([
