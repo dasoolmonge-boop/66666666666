@@ -6,6 +6,25 @@
     <title>ООО «Чалама» | Приложение</title>
     <meta name="theme-color" content="#1a1d27">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- MAX Bridge / Telegram Bridge -->
+    <script src="https://st.max.ru/js/max-web-app.js"></script>
+    <script>
+        function getChatId() {
+            try {
+                // Пытаемся взять ID из МАХ
+                if (window.WebApp && window.WebApp.initDataUnsafe && window.WebApp.initDataUnsafe.user) {
+                    return window.WebApp.initDataUnsafe.user.id;
+                }
+                // Пытаемся взять ID из Телеграм
+                if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe && window.Telegram.WebApp.initDataUnsafe.user) {
+                    return window.Telegram.WebApp.initDataUnsafe.user.id;
+                }
+            } catch (e) {
+                console.error('Error getting Chat ID:', e);
+            }
+            return null;
+        }
+    </script>
     <style>
         :root {
             --bg: #0f1117;
@@ -1048,7 +1067,7 @@
                 phone: phone,
                 addons: addonsStr,
                 total: state.total,
-                clientChatId: window.Telegram?.WebApp?.initDataUnsafe?.user?.id || null
+                clientChatId: getChatId()
             };
 
             const btn = document.getElementById('btnSubmit');
@@ -1236,7 +1255,7 @@
                 phone: phone,
                 addons: [],
                 total: total,
-                clientChatId: window.Telegram?.WebApp?.initDataUnsafe?.user?.id || null
+                clientChatId: getChatId()
             };
             
             fetch('/api/bookings', {
