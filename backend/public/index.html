@@ -1624,10 +1624,6 @@ function buildHotelCard(r, nights, guests, isAvail, showPrice) {
     let isStudio = r.name.toLowerCase().includes('студия');
     let metaCapacityHtml = r.capacity ? `${r.capacity} 👤${isStudio ? ' + 1 👤 🛏️+🛋️' : ''}` : '';
     const hasKitchen = isStudio;
-    
-    // Mock the "last room" or "rooms left" banner randomly for visual demo based on screenshots
-    const leftText = isStudio ? "Осталось 2 номера" : "Остался последний номер";
-    const fireBannerHtml = isAvail ? `<div class="fire-banner">🔥 ${leftText}</div>` : '';
 
     let imgsHtml = '';
     let sliderDots = '';
@@ -1658,7 +1654,6 @@ function buildHotelCard(r, nights, guests, isAvail, showPrice) {
                 ${r.imgs && r.imgs.length > 1 ? `<div class="photo-count">+${r.imgs.length - 1} фото</div>` : ''}
                 ${!isAvail ? '<div style="position:absolute;inset:0;background:rgba(255,255,255,0.7);display:flex;align-items:center;justify-content:center;z-index:20;"><span style="background:#e53e3e;color:#fff;padding:.4rem 1.2rem;border-radius:20px;font-weight:700;">Занято</span></div>' : ''}
             </div>
-            ${fireBannerHtml}
         </div>
         <div class="card-content">
             <div>
