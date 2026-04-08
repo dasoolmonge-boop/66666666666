@@ -223,6 +223,36 @@
             height: 100%;
         }
         .nav-item.active { color: var(--gold); }
+        .card-meta span { color: var(--gold); }
+
+        /* Guest Selector Styles */
+        .guest-selector {
+            display: flex;
+            align-items: center;
+            background: var(--surface2);
+            border-radius: 12px;
+            padding: 0.8rem 1rem;
+            margin-bottom: 1.2rem;
+            border: 1px solid var(--border);
+        }
+        .guest-selector label {
+            font-size: 0.85rem;
+            color: var(--muted);
+            margin-bottom: 0px !important;
+            flex: 1;
+        }
+        .guest-selector select {
+            background: transparent;
+            border: none;
+            color: var(--text);
+            font-size: 0.95rem;
+            font-weight: 700;
+            outline: none;
+            cursor: pointer;
+            text-align: right;
+            -webkit-appearance: none;
+            padding-right: 5px;
+        }
         .nav-icon { font-size: 1.4rem; line-height: 1; }
         
         .room-price-row {
@@ -370,6 +400,18 @@
                     <button onclick="mNavSearchCal('hotel', 1)">›</button>
                 </div>
                 <div class="cal-grid" id="m-hotel-cal-grid"></div>
+            </div>
+
+            <div class="guest-selector">
+                <label>👥 Количество гостей</label>
+                <select id="m-hotel-guests" onchange="mHotelDates.guests = parseInt(this.value)">
+                    <option value="1">1 человек</option>
+                    <option value="2" selected>2 человека</option>
+                    <option value="3">3 человека</option>
+                    <option value="4">4 человека</option>
+                    <option value="5">5 человек</option>
+                    <option value="6">6 человек</option>
+                </select>
             </div>
 
             <button id="btn-hotel-search" onclick="mSearchRooms()" style="width:100%;padding:1rem;background:var(--gold);color:#fff;border:none;border-radius:12px;font-size:1rem;font-weight:800;font-family:inherit;box-shadow:0 10px 20px rgba(184,134,11,0.2);">Показать свободные номера</button>
@@ -550,7 +592,7 @@
         
         let allRooms = [];
         let bookedDates = []; // { room, checkIn, checkOut }
-        let mHotelDates = { checkIn: null, checkOut: null, calMonth: new Date().getMonth(), calYear: new Date().getFullYear() };
+        let mHotelDates = { checkIn: null, checkOut: null, guests: 2, calMonth: new Date().getMonth(), calYear: new Date().getFullYear() };
         let mYurtDates = { checkIn: null, checkOut: null, calMonth: new Date().getMonth(), calYear: new Date().getFullYear() };
         let mSelectedRoom = null;
         let mSelectedYurt = null;
@@ -872,11 +914,13 @@
                     const hotels = rooms.filter(r => r.type === 'hotel');
                     const nights = Math.round((new Date(mHotelDates.checkOut) - new Date(mHotelDates.checkIn)) / 86400000);
                     
-                    const avail = hotels.filter(r => r.available);
+                    // Filter by availability and capacity
+                    const avail = hotels.filter(r => r.available && (r.capacity || 2) >= mHotelDates.guests);
+                    
                     const info = document.getElementById('m-search-info');
                     if (info) {
                         info.style.display = 'block';
-                        info.innerHTML = `Найдено <strong>${avail.length}</strong> свободных номеров на <strong>${nights}</strong> ${nights < 5 ? 'ночи' : 'ночей'}`;
+                        info.innerHTML = `Найдено <strong>${avail.length}</strong> подходящих номеров на <strong>${nights}</strong> ${nights < 5 ? 'ночи' : 'ночей'}`;
                         document.getElementById('m-date-search').style.borderColor = 'var(--gold)';
                     }
                     mRenderHotelCards(avail, nights);

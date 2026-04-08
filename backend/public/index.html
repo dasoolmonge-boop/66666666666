@@ -2913,8 +2913,18 @@ function renderHotelCards(rooms, nights, guests) {
         grid.innerHTML = '<div style="text-align:center;padding:3rem;color:var(--gray);font-size:1.1rem;">Номера не найдены</div>';
         return;
     }
-    const avail = rooms.filter(r => r.available);
-    const busy = rooms.filter(r => !r.available);
+    
+    // Filter by capacity
+    const filtered = rooms.filter(r => (r.capacity || 2) >= guests);
+    
+    const avail = filtered.filter(r => r.available);
+    const busy = filtered.filter(r => !r.available);
+    
+    if (!filtered.length) {
+        grid.innerHTML = `<div style="text-align:center;padding:3rem;color:var(--gray);font-size:1.1rem;">К сожалению, нет номеров на ${guests} чел.</div>`;
+        return;
+    }
+
     let html = '';
     avail.forEach(r => { html += buildHotelCard(r, nights, guests || 2, true, true); });
     if (busy.length > 0) {
