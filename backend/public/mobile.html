@@ -118,14 +118,22 @@
         .room-img-wrap { flex: 0 0 100%; height: 100%; scroll-snap-align: start; }
         .room-gallery img { width: 100%; height: 100%; object-fit: cover; pointer-events: auto !important; }
         
-        .room-info { padding: 1.25rem; display: flex; flex-direction: column; gap: 0.8rem; }
-        .room-name { font-size: 1.25rem; font-weight: 800; letter-spacing: -0.5px; color: var(--text); }
-        .room-desc { font-size: 0.85rem; color: var(--muted); line-height: 1.5; }
+        .room-info { padding: 1rem 1.25rem; display: flex; flex-direction: column; gap: 0.6rem; }
+        .room-header-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; width: 100%; margin-bottom: 2px; }
+        .room-name { font-size: 1.25rem; font-weight: 800; letter-spacing: -0.5px; color: var(--text); flex: 1; line-height: 1.2; }
+        .capacity-badge { 
+            background: rgba(0,0,0,0.4); color: #fff; padding: 4px 10px; border-radius: 8px; 
+            font-size: 0.85rem; font-weight: 700; display: flex; align-items: center; gap: 6px; flex-shrink: 0;
+            border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(4px);
+        }
+        body.yurt-theme .capacity-badge { background: rgba(255,255,255,0.08); }
         
-        .room-meta { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+        .room-desc { font-size: 0.82rem; color: var(--muted); line-height: 1.4; margin-top: -2px; }
+        
+        .room-meta { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-bottom: 2px; }
         .room-meta-item {
-            font-size: 0.75rem; padding: 4px 10px; background: var(--surface2);
-            border-radius: 8px; color: var(--text); border: 1px solid var(--border);
+            font-size: 0.72rem; padding: 3px 8px; background: var(--surface2);
+            border-radius: 6px; color: var(--muted); border: 1px solid var(--border);
             display: flex; align-items: center; gap: 4px; font-weight: 600;
         }
         body.yurt-theme .room-meta-item { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.1); }
@@ -727,10 +735,12 @@
                     ${unavailableOverlay}
                 </div>
                 <div class="room-info" style="position:relative">
-                    <div class="room-name">${r.name}</div>
+                    <div class="room-header-row">
+                        <div class="room-name">${r.name}</div>
+                        ${r.capacity ? `<div class="capacity-badge"><i class="fa-solid fa-user-group" style="font-size: 0.7rem; opacity: 0.8;"></i> ${r.capacity}</div>` : ''}
+                    </div>
                     <div class="room-meta">
                         ${r.area ? `<div class="room-meta-item">🏠 ${r.area}</div>` : ''}
-                        ${r.capacity ? `<div class="room-meta-item">👤 ${r.capacity}</div>` : ''}
                     </div>
                     <div class="room-desc">${r.desc.split('·')[0]}</div>
                     ${buildAmenitiesHtml(r.amenities)}
