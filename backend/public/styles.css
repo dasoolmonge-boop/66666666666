@@ -1154,4 +1154,5 @@
         .yurts-theme .gallery-arrow { background: rgba(0,0,0,0.6); color: #fff; box-shadow: none; border: 1px solid rgba(255,255,255,0.2); }
         .yurts-theme .gallery-arrow:hover { background: #e1d3a5; color: #2a3123; }
         .yurts-theme p[style*="color:var(--gray)"] { color: rgba(255,255,255,0.7) !important; }
+        .yurts-theme .card-amenities-split { background: transparent !important; border: none !important; }
     
