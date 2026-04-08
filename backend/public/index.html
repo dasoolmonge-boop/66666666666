@@ -1615,16 +1615,12 @@ function scrollSlider(btn, direction) {
 }
 
 function handleDetailClick(e, id, img) {
-    if (window.innerWidth <= 768) {
-        e.preventDefault();
-        const el = document.getElementById(id);
-        if (el) {
-            const isVisible = el.classList.contains('visible');
-            el.classList.toggle('visible');
-            e.currentTarget.textContent = isVisible ? 'Подробнее ›' : 'Скрыть ‹';
-        }
-    } else {
-        openLightbox(img);
+    e.preventDefault();
+    const el = document.getElementById(id);
+    if (el) {
+        const isVisible = el.classList.contains('visible');
+        el.classList.toggle('visible');
+        e.currentTarget.textContent = isVisible ? 'Подробнее ›' : 'Скрыть ‹';
     }
 }
 
