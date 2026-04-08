@@ -82,7 +82,10 @@
         .hero-bg {
             position: absolute; inset: 0; background-image: url('https://www.chalamahotel.ru/upload/iblock/e5b/niub7dn3irklicps1kyxhyj06gull6fp.jpeg');
             background-size: cover; background-position: center; transform: scale(1.1);
-            animation: heroZoom 20s ease infinite alternate; filter: brightness(.45);
+            filter: brightness(.45);
+        }
+        @media (min-width: 1025px) {
+            .hero-bg { animation: heroZoom 20s ease infinite alternate; }
         }
         @keyframes heroZoom { 0% { transform: scale(1.1); } 100% { transform: scale(1.2); } }
         .hero-content { position: relative; z-index: 2; text-align: center; color: #fff; }

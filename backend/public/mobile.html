@@ -5,9 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>ООО «Чалама» | Приложение</title>
     <meta name="theme-color" content="#1a1d27">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://www.chalamahotel.ru">
+    <link rel="preconnect" href="https://i4.photo.2gis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/all.min.css">
     <link rel="stylesheet" href="mobile-styles.css">
+    <script async src="https://static.max.ru/sdk/max-web-app.js" onerror="this.remove()"></script>
 </head>
 <body>
 
@@ -20,7 +25,7 @@
     <!-- Views -->
     <div id="view-hotel" class="view active">
         <div style="text-align:center; margin-bottom: 2rem;">
-            <img src="uploads/chalama_logo.png" style="width: 100px; margin: 0 auto 1rem;" alt="Чалама Лого">
+            <img src="uploads/chalama_logo.png" style="width: 100px; margin: 0 auto 1rem;" alt="Чалама Лого" fetchpriority="high">
             <p style="font-size: .75rem; letter-spacing: 3px; color: var(--gold); text-transform: uppercase; font-weight: 700;">Гостиничный комплекс</p>
             <h1 class="view-title serif" style="margin-bottom: .5rem;">ОТЕЛЬ «ЧАЛАМА»</h1>
             <p style="color:var(--muted);font-size:.85rem; max-width: 280px; margin: 0 auto;">Комфорт и гостеприимство в самом сердце Кызыла.</p>
@@ -341,7 +346,7 @@
             ` : '';
 
             const galleryContent = imgs.length > 0 
-                ? imgs.map(src => `<div class="room-img-wrap"><img src="${src}"></div>`).join('')
+                ? imgs.map(src => `<div class="room-img-wrap"><img src="${src}" loading="lazy"></div>`).join('')
                 : `<div class="room-img-wrap" style="background:var(--surface2)"></div>`;
 
             const btnClass = "btn-select-premium";
