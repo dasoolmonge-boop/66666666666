@@ -125,9 +125,12 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public'), { index: false }));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Root route: Always serve index.html (it's adaptive)
-// Telegram identification is handled client-side in index.html to redirect to mobile.html if needed.
+// Root route: Detect mobile app/bot and serve mobile.html directly to avoid double-loading latency
 app.get('/', (req, res) => {
+    const isBotEnv = req.query.bot || req.query.tgWebAppStartParam;
+    if (isBotEnv) {
+        return res.sendFile(path.join(__dirname, 'public', 'mobile.html'));
+    }
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 // Ensure Database Schema & Initial Data
