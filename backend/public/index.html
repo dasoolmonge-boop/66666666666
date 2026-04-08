@@ -647,10 +647,17 @@
         }
 
         @media (max-width: 480px) {
-            .hero-title { font-size: 2.2rem !important; }
-            .section-title { font-size: 1.8rem !important; }
+            .hero-title { font-size: 1.8rem !important; }
+            .section-title { font-size: 1.5rem !important; }
             .e-card { height: 320px !important; }
             .btn-tg-float { bottom: 20px; right: 20px; width: 50px; height: 50px; font-size: 1.4rem; }
+            
+            /* Stacking search forms */
+            .hotel-search-inner { flex-direction: column !important; align-items: stretch !important; gap: 1.2rem !important; }
+            .hotel-search-field { width: 100% !important; }
+            .hotel-search-divider { display: none !important; }
+            .hotel-search-btn { width: 100% !important; justify-content: center !important; }
+            .hotel-search-panel { padding: 1.5rem !important; width: 100% !important; margin-left: 0 !important; margin-right: 0 !important; }
         }
 
         /* ===== CONTACTS ===== */
@@ -864,7 +871,10 @@
             .lightbox-close { top: 1rem; right: 1rem; width: 40px; height: 40px; font-size: 1.2rem; }
             #hotel-rooms-grid > div { grid-template-columns: 1fr !important; }
             #hotel-rooms-grid > div > div:first-child { height: 220px !important; }
-            #hotel-date-search { padding: 1.2rem !important; }
+            #hotel-date-search { padding: 1.2rem !important; width: 100% !important; }
+            #hotel-rooms-grid { width: 100% !important; overflow: hidden; }
+            .hotel-rooms-grid { gap: 1rem !important; }
+            .hotel-room-card { width: 100% !important; }
             #hotel-book-form > div > div:nth-child(3) { grid-template-columns: 1fr !important; }
         }
 
