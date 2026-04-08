@@ -14,15 +14,18 @@
     <meta name="theme-color" content="#b8860b">
     <link rel="icon" type="image/x-icon" href="https://www.chalamahotel.ru/favicon.ico">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Syne:wght@800&display=swap" rel="stylesheet">
-    <script src="https://static.max.ru/sdk/max-web-app.js"></script>
+    <script src="https://static.max.ru/sdk/max-web-app.js" defer></script>
     <script>
         (function() {
-            if (window.MAX) { window.MAX.ready(); }
-            // Detection of Bot/App environment (MAX or Telegram)
+            // Non-blocking SDK initialization
+            window.addEventListener('load', () => {
+                if (window.MAX) { window.MAX.ready(); }
+            });
+
+            // Detection of Bot/App environment
             const urlParams = new URLSearchParams(window.location.search);
             const isBotEnv = window.Telegram || urlParams.has('bot') || urlParams.has('tgWebAppStartParam') || window.name.includes('tgWebAppData') || (window.MAX && !window.location.href.includes('?web=1'));
             
-            // Only redirect to mobile.html if explicitly in bot/app mode
             if (isBotEnv && !window.location.pathname.includes('mobile.html')) {
                 window.location.replace('mobile.html' + window.location.search);
             }
@@ -721,160 +724,76 @@
         .header.scrolled .hamburger { color: var(--dark); }
         .mobile-nav {
             display: none; position: fixed; inset: 0; background: rgba(0,0,0,.95);
-            z-index: 150; flex-direction: column; align-items: center; justify-content: center; gap: 2rem;
-        }
-        .mobile-nav.open { display: flex; }
-        .mobile-nav a {
-            color: #fff; font-size: 1.3rem; font-weight: 600; letter-spacing: 2px;
-            text-transform: uppercase; transition: .3s;
-        }
-        .mobile-nav a:hover { color: var(--gold); }
-        .mobile-nav-close {
-            position: absolute; top: 1.5rem; right: 1.5rem; background: none; border: none;
-            color: #fff; font-size: 2rem; cursor: pointer;
-        }
-
-        /* Large tablets / small desktops */
-        @media (max-width: 1280px) {
-            .container { max-width: 1080px; }
-            .e-card { height: 450px; }
-        }
-
-        /* Tablets */
+            z-index: 150; flex-direction: column; align-items: center; justify-content: center; gap: 2rem;        /* ===== CONSOLIDATED RESPONSIVE DESIGN ===== */
+        
         @media (max-width: 1024px) {
+            .container { padding: 0 2rem; }
+            .hero-title { font-size: 3.5rem !important; }
             .e-grid { grid-template-columns: repeat(2, 1fr); }
-            .e-card { height: 400px; }
-            .booking-layout { grid-template-columns: 1fr; }
-            .cal-wrap { position: static; }
-            .rest-grid { grid-template-columns: repeat(2, 1fr); }
-            .bar-features { grid-template-columns: 1fr; }
-            .about-grid { gap: 3rem; }
-            .about-img { height: 400px; }
-            section { padding: 5rem 0; }
+            .booking-layout { grid-template-columns: 1fr !important; gap: 3rem; }
+            .cal-wrap { position: static !important; max-width: 500px; margin: 0 auto; }
+            .bar-mosaic { grid-template-columns: repeat(2, 1fr); }
+            .yurts-grid { grid-template-columns: 1fr; }
         }
 
-        /* Mobile landscape / small tablets */
         @media (max-width: 768px) {
+            html { font-size: 15px; }
+            .container { padding: 0 1.25rem; max-width: 100%; overflow: hidden; }
             .nav { display: none; }
             .hamburger { display: block; }
-            .container { padding: 0 1.2rem; }
-            section { padding: 4rem 0; }
-            .e-grid { grid-template-columns: 1fr; }
-            .e-card { height: 350px; }
-            .e-card h3 { font-size: 1.3rem; }
-            .about-grid { grid-template-columns: 1fr; gap: 2rem; }
-            .about-img { height: 300px; }
-            .about-img::after { display: none; }
-            .about-stats { grid-template-columns: repeat(3, 1fr); gap: 1rem; }
-            .stat-num { font-size: 2rem; }
-            .contacts-grid { grid-template-columns: 1fr; }
-            .footer-grid { grid-template-columns: 1fr 1fr; gap: 2rem; }
-            .footer-bottom { flex-direction: column; gap: .5rem; text-align: center; }
-            .hero-title { font-size: 2.5rem; }
-            .hero-desc { font-size: 1rem; padding: 0 1rem; }
-            .hero-btns { flex-direction: column; align-items: center; }
-            .hero-scroll { display: none; }
-            .section-title { font-size: 1.8rem; }
-            .rest-grid { grid-template-columns: 1fr; }
-            .rest-card { padding: 2rem; }
-            .rest-card .price-tag { font-size: 1.5rem; }
-            .bar-bg-text { font-size: 25vw; }
-            .bar-feat { padding: 2rem 1.5rem; }
-            .room-card-top { padding: 1.2rem 1.5rem; }
-            .room-gallery-inner img { width: 200px; height: 140px; }
-            .gallery-arrow { width: 34px; height: 34px; font-size: 1rem; }
-            .booking-layout { grid-template-columns: 1fr !important; gap: 2rem; }
-            .cal-wrap { position: static !important; }
-            .map-placeholder { height: 280px; }
-            .modal { padding: 2rem; }
-            .lightbox img { max-width: 95vw; max-height: 80vh; }
+            
+            .hero { height: auto; min-height: 85vh; padding: 10rem 0 5rem; }
+            .hero-title { font-size: 2.5rem !important; line-height: 1.1; }
+            .hero-desc { font-size: 1rem; margin-bottom: 2.5rem; }
+            .hero-btns { flex-direction: column; gap: 1rem; width: 100%; }
+            .btn { width: 100%; justify-content: center; padding: 1rem 2rem; }
+            
+            .e-grid { grid-template-columns: 1fr !important; gap: 1.5rem; }
+            .e-card { height: 350px !important; }
+            
+            .about-grid { grid-template-columns: 1fr !important; gap: 3rem; }
+            .about-img { height: 300px !important; }
+            .about-stats { grid-template-columns: repeat(3, 1fr); gap: 0.5rem; }
+            .stat-num { font-size: 1.8rem; }
+            
+            /* Hotel Search Panels */
+            .hotel-search-panel { padding: 1.2rem !important; width: 100% !important; margin-left: 0 !important; margin-right: 0 !important; }
+            .hotel-search-inner { flex-direction: column !important; align-items: stretch !important; gap: 1rem !important; }
+            .hotel-search-field { width: 100% !important; }
+            .hotel-search-divider { display: none !important; }
+            .hotel-search-btn { width: 100% !important; justify-content: center !important; }
+            
+            /* Hotel Room Cards Refinement */
+            .hotel-room-card { display: flex !important; flex-direction: column !important; width: 100% !important; }
+            .hotel-room-card .card-img { width: 100% !important; height: 220px !important; min-height: 220px !important; padding: 0 !important; }
+            .hotel-room-card .slider-wrapper { border-radius: 0 !important; }
+            .hotel-room-card .card-content { padding: 1.5rem !important; gap: 0.8rem !important; }
+            .hotel-room-card .card-name { font-size: 1.2rem !important; margin-bottom: 0.4rem !important; }
+            .hotel-room-card .card-meta { gap: 0.4rem !important; margin-bottom: 0.8rem !important; }
+            .hotel-room-card .card-meta span { font-size: 0.75rem !important; padding: 0.3rem 0.6rem !important; }
+            .hotel-room-card .card-amenities-split { grid-template-columns: 1fr !important; gap: 0.4rem !important; margin-bottom: 0.8rem !important; }
+            .hotel-room-card .card-amenities-split .am-col { gap: 0.4rem !important; }
+            
+            /* Footer Fix */
+            .hotel-room-card .card-footer { grid-template-columns: 1fr !important; display: block !important; }
+            .hotel-room-card .card-tariff-col { border-right: none !important; border-bottom: 1px solid #eee; padding: 1.25rem !important; }
+            .hotel-room-card .card-price-col { padding: 1.25rem !important; align-items: stretch !important; }
+            .hotel-room-card .card-total { font-size: 1.6rem !important; margin-bottom: 0.4rem; color: var(--gold) !important; }
+            .hotel-room-card .card-price-detail { text-align: left !important; margin-bottom: 1rem; font-size: 0.8rem !important; }
+            .hotel-room-card .card-select-btn, .hotel-room-card .card-check-btn { 
+                width: 100% !important; margin-top: 0 !important; padding: 0.9rem !important; 
+                display: flex !important; align-items: center; justify-content: center; font-size: 0.9rem !important;
+            }
+
+            .yurts-theme .hotel-room-card .card-tariff-col { border-bottom-color: rgba(255,255,255,0.1); }
+
+            .rest-grid { grid-template-columns: 1fr !important; }
+            .contacts-grid { grid-template-columns: 1fr !important; gap: 2rem; }
+            .footer-grid { grid-template-columns: 1fr !important; text-align: center; }
         }
 
-        /* Mobile portrait */
         @media (max-width: 480px) {
             html { font-size: 14px; }
-            .container { padding: 0 1rem; }
-            section { padding: 3rem 0; }
-            .hero { height: 100svh; }
-            .hero-title { font-size: 2rem; line-height: 1.15; }
-            .hero-sub { font-size: .72rem; letter-spacing: 4px; }
-            .hero-desc { font-size: .9rem; }
-            .btn { padding: .85rem 2rem; font-size: .78rem; width: 100%; justify-content: center; }
-            .e-grid { gap: 1rem; }
-            .e-card { height: 280px; border-radius: 16px; }
-            .e-card h3 { font-size: 1.15rem; }
-            .e-card p { font-size: .8rem; }
-            .e-badge { font-size: .6rem; padding: .25rem .7rem; }
-            .e-card .e-arrow { width: 36px; height: 36px; font-size: 1rem; top: 1rem; right: 1rem; }
-            .section-label { font-size: .68rem; letter-spacing: 3px; }
-            .section-title { font-size: 1.5rem; }
-            .section-desc { font-size: .92rem; }
-            .about-img { height: 240px; border-radius: 16px; }
-            .about-stats { grid-template-columns: repeat(3, 1fr); gap: .6rem; }
-            .stat { padding: 1rem .5rem; border-radius: 12px; }
-            .stat-num { font-size: 1.5rem; }
-            .stat-label { font-size: .65rem; }
-            .room-card { border-radius: 12px; }
-            .room-card-top { padding: 1.25rem; flex-direction: column; align-items: flex-start; gap: .8rem; }
-            .room-name { font-size: 1rem; }
-            .room-desc { font-size: .85rem; }
-            .room-price { font-size: 1.25rem; }
-            .room-gallery-inner { padding: 0 .8rem 1rem; gap: .5rem; }
-            .room-gallery-inner img { width: 180px; height: 120px; border-radius: 10px; }
-            .gallery-arrow { width: 34px; height: 34px; font-size: 1rem; }
-            .room-amenities { padding: .4rem .8rem .8rem; }
-            .room-amenity { font-size: .65rem; padding: .3rem .6rem; }
-            .yurts-theme .room-card { border: 1px solid rgba(255,255,255,.12); }
-            .yurts-theme .room-card.active { border-color: #e1d3a5; }
-            .room-amenity { font-size: .62rem; padding: .25rem .5rem; }
-            .cal-wrap { padding: 1.5rem; border-radius: 16px; }
-            .cal-day { font-size: .75rem; }
-            .cal-day-name { font-size: .6rem; }
-            .form-group input, .form-group select { padding: .8rem 1rem; font-size: .88rem; border-radius: 10px; }
-            .form-group label { font-size: .7rem; }
-            .btn-book { padding: 1rem; font-size: .85rem; border-radius: 12px; }
-            .addon-item { padding: .7rem .8rem; border-radius: 10px; }
-            .addon-label strong { font-size: .82rem; }
-            .addon-label span { font-size: .68rem; }
-            .addon-price { font-size: .85rem; }
-            .addon-check { width: 20px; height: 20px; border-radius: 5px; }
-            .cart { padding: 1rem; border-radius: 12px; }
-            .cart-row { font-size: .82rem; }
-            .cart-row.total { font-size: 1rem; }
-            .rest-grid { grid-template-columns: 1fr !important; gap: 1.5rem; }
-            .rest-card { padding: 1.5rem; border-radius: 14px; }
-            .rest-icon { font-size: 2rem; margin-bottom: 1rem; }
-            .rest-card h3 { font-size: 1.1rem; }
-            .yurts-theme .yurt-info-card { padding: 1.5rem !important; }
-            .yurts-theme .yurt-info-title { font-size: 1.1rem !important; }
-            .yurts-theme .yurt-info-card p { font-size: 0.82rem !important; }
-            .rest-card .price-tag { font-size: 1.4rem; }
-            .bar-feat { padding: 1.5rem 1rem; border-radius: 14px; }
-            .bar-feat .icon { font-size: 2rem; margin-bottom: 1rem; }
-            .bar-feat h4 { font-size: 1rem; }
-            .bar-feat p { font-size: .82rem; }
-            .contact-card { padding: 1.5rem; border-radius: 14px; }
-            .contact-card h3 { font-size: 1rem; }
-            .contact-item { font-size: .85rem; flex-direction: column; gap: .2rem; }
-            .contact-item strong { min-width: auto; }
-            .map-placeholder { height: 220px; border-radius: 14px; }
-            .footer { padding: 3rem 0 1.5rem; }
-            .footer-grid { grid-template-columns: 1fr; gap: 2rem; margin-bottom: 2.5rem; }
-            .footer-logo { font-size: .95rem; }
-            .footer h4 { font-size: .75rem; margin-bottom: .8rem; }
-            .footer a { font-size: .82rem; margin-bottom: .4rem; }
-            .header { padding: 1rem 0; }
-            .header.scrolled { padding: .8rem 0; }
-            .logo { font-size: .95rem; letter-spacing: 2px; }
-            .modal { padding: 1.5rem; border-radius: 18px; }
-            .modal-success .checkmark { width: 65px; height: 65px; font-size: 1.6rem; }
-            .lightbox-close { top: 1rem; right: 1rem; width: 40px; height: 40px; font-size: 1.2rem; }
-            #hotel-rooms-grid > div { grid-template-columns: 1fr !important; }
-            #hotel-rooms-grid > div > div:first-child { height: 220px !important; }
-            #hotel-date-search { padding: 1.2rem !important; width: 100% !important; }
-            #hotel-rooms-grid { width: 100% !important; overflow: hidden; }
-            .hotel-rooms-grid { gap: 1rem !important; }
-            .hotel-room-card { width: 100% !important; }
             #hotel-book-form > div > div:nth-child(3) { grid-template-columns: 1fr !important; }
         }
 
@@ -3071,46 +2990,78 @@ function submitHotelBooking() {
 
 
 
-Promise.all([
-    fetch('/api/rooms').then(r => r.json()),
-    fetch('/api/availability').then(r => r.json())
-]).then(([roomsData, aData]) => {
-    hotelRooms = roomsData.filter(r => r.type === 'hotel');
-    yurtRooms = roomsData.filter(r => r.type === 'yurt');
-    saunaRooms = roomsData.filter(r => r.type === 'sauna');
-    bathRooms = roomsData.filter(r => r.type === 'bath');
-    bookedDates = aData || [];
-    if(bookedDates.error) bookedDates = [];
+    // --- DATA FETCHING & CACHING ---
+    const CACHE_KEY = 'chalama_rooms_cache';
+    
+    function renderAllInitial(data) {
+        if (!data) return;
+        hotelRooms = data.filter(r => r.type === 'hotel');
+        yurtRooms = data.filter(r => r.type === 'yurt');
+        saunaRooms = data.filter(r => r.type === 'sauna');
+        bathRooms = data.filter(r => r.type === 'bath');
 
-    // Hotel: render initial cards (no dates selected yet)
-    renderInitialHotelCards(hotelRooms);
+        // Render UI
+        renderInitialHotelCards(hotelRooms);
+        if(yurtRooms.length > 0) renderInitialYurtCards(yurtRooms);
+        if(saunaRooms.length > 0) {
+            renderSaunaCard(saunaRooms);
+            const sName = document.getElementById('sauna-selected-name');
+            if(sName) sName.textContent = saunaRooms[state.sauna.selected].name;
+        }
+        if(bathRooms.length > 0) {
+            renderBathCard(bathRooms);
+            const bName = document.getElementById('bath-selected-name');
+            if(bName) bName.textContent = bathRooms[state.bath.selected].name;
+        }
+
+        // Yurt names
+        const yurtNames = ['Земля', 'Вода', 'Воздух', 'Огонь'];
+        yurtRooms.forEach((r, i) => { if(i < 4) r.name = yurtNames[i]; });
+        if(yurtRooms.length > 0) {
+            const yName = document.getElementById('yurt-selected-name');
+            if(yName) yName.textContent = yurtRooms[state.yurt.selected].name;
+        }
+    }
+
+    // 1. Try to load from cache immediately
+    const cached = localStorage.getItem(CACHE_KEY);
+    if (cached) {
+        try {
+            const parsed = JSON.parse(cached);
+            renderAllInitial(parsed);
+        } catch(e) { console.error("Cache corrupted"); }
+    }
+
+    // 2. Fetch fresh rooms data (Parallel)
+    fetch('/api/rooms').then(r => r.json()).then(data => {
+        if (!data || data.error) return;
+        localStorage.setItem(CACHE_KEY, JSON.stringify(data));
+        renderAllInitial(data); // Re-render with fresh data if any
+    }).catch(err => console.error("Room fetch failed", err));
+
+    // 3. Fetch availability separately (doesn't block room render)
+    fetch('/api/availability').then(r => r.json()).then(aData => {
+        bookedDates = aData || [];
+        if(bookedDates.error) bookedDates = [];
+        // Update calendars if already rendered
+        renderCalendar('sauna');
+        renderCalendar('bath');
+        renderCalendar('yurt');
+    }).catch(err => console.error("Avail fetch failed", err));
 
     // Set min dates for date inputs
     const today = new Date().toISOString().split('T')[0];
-    document.getElementById('hotel-search-in').min = today;
-    const todayYurt = new Date().toISOString().split('T')[0];
-    document.getElementById('yurt-search-in').value = todayYurt;
-    document.getElementById('yurt-search-in').min = todayYurt;
-    document.getElementById('yurt-search-out').min = todayYurt;
-    document.getElementById('yurt-search-in').addEventListener('change', function() {
-        document.getElementById('yurt-search-out').min = this.value;
-    });
-
-    if(yurtRooms.length > 0) {
-        renderInitialYurtCards(yurtRooms);
+    const hIn = document.getElementById('hotel-search-in');
+    if(hIn) hIn.min = today;
+    
+    const yIn = document.getElementById('yurt-search-in');
+    const yOut = document.getElementById('yurt-search-out');
+    if(yIn) {
+        yIn.value = today;
+        yIn.min = today;
+        yIn.addEventListener('change', function() { if(yOut) yOut.min = this.value; });
     }
-    if(saunaRooms.length > 0) {
-        renderSaunaCard(saunaRooms);
-        document.getElementById('sauna-selected-name').textContent = saunaRooms[state.sauna.selected].name;
-    }
-    if(bathRooms.length > 0) {
-        renderBathCard(bathRooms);
-        document.getElementById('bath-selected-name').textContent = bathRooms[state.bath.selected].name;
-    }
-
-    renderCalendar('sauna');
-    renderCalendar('bath');
-    renderCalendar('yurt');
+    if(yOut) yOut.min = today;
 
     // Rename Yurt names in local data if they match defaults
     const yurtNames = ['Земля', 'Вода', 'Воздух', 'Огонь'];
