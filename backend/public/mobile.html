@@ -123,7 +123,7 @@
         .room-name { font-size: 1.25rem; font-weight: 800; letter-spacing: -0.5px; color: var(--text); flex: 1; line-height: 1.2; }
         .capacity-badge { 
             background: rgba(0,0,0,0.4); color: #fff; padding: 4px 10px; border-radius: 8px; 
-            font-size: 0.85rem; font-weight: 700; display: flex; align-items: center; gap: 6px; flex-shrink: 0;
+            font-size: 0.85rem; font-weight: 700; display: flex; align-items: center; gap: 4px; flex-shrink: 0;
             border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(4px);
         }
         body.yurt-theme .capacity-badge { background: rgba(255,255,255,0.08); }
@@ -737,7 +737,7 @@
                 <div class="room-info" style="position:relative">
                     <div class="room-header-row">
                         <div class="room-name">${r.name}</div>
-                        ${r.capacity ? `<div class="capacity-badge"><i class="fa-solid fa-user-group" style="font-size: 0.7rem; opacity: 0.8;"></i> ${r.capacity}</div>` : ''}
+                        <div class="capacity-badge">👤 ${(r.capacity || 2)}</div>
                     </div>
                     <div class="room-meta">
                         ${r.area ? `<div class="room-meta-item">🏠 ${r.area}</div>` : ''}
