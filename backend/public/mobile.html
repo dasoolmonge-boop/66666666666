@@ -331,6 +331,23 @@
         }
 
         function mBuildRoomCardHTML(r, options = {}) {
+            if (r.type === 'sauna' || r.type === 'bath') {
+                const uid = options.customId || r.id;
+                const src = (r.imgs && r.imgs[0]) ? r.imgs[0] : '';
+                return `
+                <div class="compact-spa-card animate-up">
+                    <div class="cspa-img" style="background-image:url('${src}')"></div>
+                    <div class="cspa-info">
+                        <div class="cspa-name">${r.name}</div>
+                        <div class="cspa-desc">${r.desc.split('·')[0]}</div>
+                        <div class="cspa-footer">
+                            <div class="cspa-price">${fmtPrice(r.price)}<span> / час</span></div>
+                            <button class="cspa-btn" onclick="openBook(${r.id}, event)">Проверить даты</button>
+                        </div>
+                    </div>
+                </div>`;
+            }
+
             const { nights, isAvail = true, showCheckDates = false, customId = null } = options;
             const uid = customId || r.id;
             const totalPrice = nights ? r.price * nights : null;

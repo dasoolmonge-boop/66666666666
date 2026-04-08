@@ -810,12 +810,17 @@ function renderSaunaCard(data) {
                         ${amenHtml}
                     </div>
                 </div>
-                <div class="card-footer" style="margin-top: 1.5rem; padding-top:1.5rem; border-top:1px solid #eee; display:flex; justify-content:space-between; align-items:center;">
-                    <div>
-                        <div style="font-size: 1.4rem; font-weight: 800; color: var(--gold);">${fmtPrice(r.price)}</div>
-                        <div style="font-size: .8rem; color: #777;">в час (мин. 2 часа)</div>
+                <div class="card-footer" style="margin-top: 1.5rem; padding-top:1.5rem; border-top:1px solid #eee;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
+                        <div class="price-wrap-responsive">
+                            <div style="font-size: 1.4rem; font-weight: 800; color: var(--gold);">${fmtPrice(r.price)}</div>
+                            <div style="font-size: .8rem; color: #777;">в час (мин. 2 часа)</div>
+                        </div>
+                        <div class="desktop-select-btn">
+                            ${!isActive ? `<button style="background:var(--gold);color:#fff;border:none;padding:.6rem 1.2rem;border-radius:10px;font-weight:700;cursor:pointer;">Выбрать</button>` : `<div style="color:var(--gold);font-weight:700;">Выбрано ✓</div>`}
+                        </div>
                     </div>
-                    ${!isActive ? `<button style="background:var(--gold);color:#fff;border:none;padding:.6rem 1.2rem;border-radius:10px;font-weight:700;cursor:pointer;">Выбрать</button>` : `<div style="color:var(--gold);font-weight:700;">Выбрано ✓</div>`}
+                    ${!isActive ? `<button class="btn-mobile-calendar" onclick="event.stopPropagation(); selectRoom('sauna',${i}); toggleMobileCalendar('sauna');">Проверить свободные даты</button>` : `<button class="btn-mobile-calendar" style="background:#e8e8e8;color:#555;" onclick="event.stopPropagation(); toggleMobileCalendar('sauna');">Выбрано ✓</button>`}
                 </div>
             </div>
         </div>`;
@@ -904,16 +909,31 @@ function renderBathCard(data) {
                     <div style="font-size:.9rem; color:rgba(255,255,255,0.7); margin-bottom:1.2rem; line-height:1.5;">${r.desc}</div>
                     ${buildAmenitiesHtml(r.amenities, true)}
                 </div>
-                <div class="card-footer" style="margin-top: 1.5rem; padding-top:1.5rem; border-top:1px solid rgba(255,255,255,0.1); display:flex; justify-content:space-between; align-items:center;">
-                    <div>
-                        <div style="font-size: 1.4rem; font-weight: 800; color: #e1d3a5;">${fmtPrice(r.price)}</div>
-                        <div style="font-size: .8rem; color: rgba(255,255,255,0.5);">в час (мин. 2 часа)</div>
+                <div class="card-footer" style="margin-top: 1.5rem; padding-top:1.5rem; border-top:1px solid rgba(255,255,255,0.1);">
+                    <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
+                        <div class="price-wrap-responsive">
+                            <div style="font-size: 1.4rem; font-weight: 800; color: #e1d3a5;">${fmtPrice(r.price)}</div>
+                            <div style="font-size: .8rem; color: rgba(255,255,255,0.5);">в час (мин. 2 часа)</div>
+                        </div>
+                        <div class="desktop-select-btn">
+                            ${!isActive ? `<button style="background:#e1d3a5;color:#38402f;border:none;padding:.6rem 1.2rem;border-radius:10px;font-weight:700;cursor:pointer;">Выбрать</button>` : `<div style="color:#e1d3a5;font-weight:700;">Выбрано ✓</div>`}
+                        </div>
                     </div>
-                    ${!isActive ? `<button style="background:#e1d3a5;color:#38402f;border:none;padding:.6rem 1.2rem;border-radius:10px;font-weight:700;cursor:pointer;">Выбрать</button>` : `<div style="color:#e1d3a5;font-weight:700;">Выбрано ✓</div>`}
+                    ${!isActive ? `<button class="btn-mobile-calendar" onclick="event.stopPropagation(); selectRoom('bath',${i}); toggleMobileCalendar('bath');">Проверить свободные даты</button>` : `<button class="btn-mobile-calendar" style="background:rgba(255,255,255,0.1);color:rgba(255,255,255,0.5);" onclick="event.stopPropagation(); toggleMobileCalendar('bath');">Выбрано ✓</button>`}
                 </div>
             </div>
         </div>`;
     }).join('');
+}
+
+function toggleMobileCalendar(type) {
+    if (window.innerWidth <= 768) {
+        const cal = document.getElementById(type + '-calendar');
+        if (cal) {
+            cal.classList.add('mobile-open');
+            setTimeout(() => cal.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+        }
+    }
 }
 
 function selectRoom(type, idx) {
@@ -1614,16 +1634,6 @@ function scrollSlider(btn, direction) {
     inner.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
 }
 
-function handleDetailClick(e, id, img) {
-    e.preventDefault();
-    const el = document.getElementById(id);
-    if (el) {
-        const isVisible = el.classList.contains('visible');
-        el.classList.toggle('visible');
-        e.currentTarget.textContent = isVisible ? 'Подробнее ›' : 'Скрыть ‹';
-    }
-}
-
 function buildHotelCard(r, nights, guests, isAvail, showPrice) {
     const firstImg = r.imgs && r.imgs.length ? r.imgs[0] : '';
     const totalPrice = r.price * nights;
@@ -1671,10 +1681,10 @@ function buildHotelCard(r, nights, guests, isAvail, showPrice) {
                 <div class="card-meta">
                     ${r.area ? `<span>${r.area}</span>` : ''}
                     ${metaCapacityHtml ? `<span>${metaCapacityHtml}</span>` : ''}
-                    <span class="clickable" onclick="handleDetailClick(event, 'am-split-${r.id}', '${firstImg}')">Подробнее ›</span>
+                    <span class="clickable" onclick="openLightbox('${firstImg}')">Подробнее ›</span>
                 </div>
                 
-                <div class="card-amenities-split" id="am-split-${r.id}">
+                <div class="card-amenities-split">
                     <div class="am-col">
                         <div>❄️ Кондиционер</div>
                         <div>📶 Wi-Fi</div>

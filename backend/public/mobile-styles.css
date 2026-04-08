@@ -366,4 +366,34 @@
             pointer-events: auto !important; /* Ensure buttons remain clickable */
         }
         @keyframes tgPulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
-    
+        
+        /* Compact Spa Cards (Bot App) */
+        .compact-spa-card {
+            display: flex; flex-direction: row; background: var(--surface);
+            border-radius: var(--radius); border: 1px solid var(--border);
+            margin-bottom: 1rem; overflow: hidden; height: 120px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        body.yurt-theme .compact-spa-card {
+            background: rgba(255,255,255,0.05); border-color: rgba(225,211,165,0.15);
+        }
+        .cspa-img {
+            width: 110px; height: 100%; background-size: cover; background-position: center;
+            flex-shrink: 0;
+        }
+        .cspa-info {
+            padding: 0.8rem 1rem; display: flex; flex-direction: column; justify-content: space-between;
+            flex-grow: 1; min-width: 0;
+        }
+        .cspa-name { font-size: 1.05rem; font-weight: 800; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.1; margin-bottom: 0.2rem; }
+        body.yurt-theme .cspa-name { color: #fff; }
+        .cspa-desc { font-size: 0.75rem; color: var(--muted); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.3; }
+        .cspa-footer { display: flex; justify-content: space-between; align-items: center; margin-top: auto; }
+        .cspa-price { font-size: 1.1rem; font-weight: 800; color: var(--gold); }
+        body.yurt-theme .cspa-price { color: var(--yurt-gold); }
+        .cspa-price span { font-size: 0.7rem; color: var(--muted); font-weight: 600; }
+        .cspa-btn {
+            background: var(--gold); color: #fff; border: none; padding: 0.5rem 0.8rem;
+            border-radius: 8px; font-weight: 700; font-size: 0.75rem; cursor: pointer;
+        }
+        body.yurt-theme .cspa-btn { background: var(--yurt-gold); color: var(--yurt-bg); }
