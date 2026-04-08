@@ -1614,6 +1614,20 @@ function scrollSlider(btn, direction) {
     inner.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
 }
 
+function handleDetailClick(e, id, img) {
+    if (window.innerWidth <= 768) {
+        e.preventDefault();
+        const el = document.getElementById(id);
+        if (el) {
+            const isVisible = el.classList.contains('visible');
+            el.classList.toggle('visible');
+            e.currentTarget.textContent = isVisible ? 'Подробнее ›' : 'Скрыть ‹';
+        }
+    } else {
+        openLightbox(img);
+    }
+}
+
 function buildHotelCard(r, nights, guests, isAvail, showPrice) {
     const firstImg = r.imgs && r.imgs.length ? r.imgs[0] : '';
     const totalPrice = r.price * nights;
@@ -1661,10 +1675,10 @@ function buildHotelCard(r, nights, guests, isAvail, showPrice) {
                 <div class="card-meta">
                     ${r.area ? `<span>${r.area}</span>` : ''}
                     ${metaCapacityHtml ? `<span>${metaCapacityHtml}</span>` : ''}
-                    <span class="clickable" onclick="openLightbox('${firstImg}')">Подробнее ›</span>
+                    <span class="clickable" onclick="handleDetailClick(event, 'am-split-${r.id}', '${firstImg}')">Подробнее ›</span>
                 </div>
                 
-                <div class="card-amenities-split">
+                <div class="card-amenities-split" id="am-split-${r.id}">
                     <div class="am-col">
                         <div>❄️ Кондиционер</div>
                         <div>📶 Wi-Fi</div>
