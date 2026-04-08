@@ -813,12 +813,7 @@
             font-size: .75rem; font-weight: 600;
             box-shadow: 0 2px 8px rgba(0,0,0,.15);
         }
-        .hotel-room-card .fire-banner {
-            background: #ffebcc; border-radius: 8px;
-            padding: .5rem; text-align: center;
-            font-size: .8rem; font-weight: 500; color: #8a5a19;
-            margin-top: .5rem; display: flex; align-items: center; justify-content: center; gap: .4rem;
-        }
+        /* Removed fire-banner styles */
         
         .hotel-room-card .card-content {
             padding: 1.5rem 1.5rem 1.5rem 0;
