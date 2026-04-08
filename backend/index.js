@@ -2,6 +2,7 @@ const express = require('express');
 const sqlite3 = require('sqlite3').verbose();
 const cors = require('cors');
 const multer = require('multer');
+const compression = require('compression');
 const path = require('path');
 const fs = require('fs');
 const https = require('https');
@@ -116,6 +117,7 @@ const safeJsonParse = (str, fallback = []) => {
 };
 
 // Middleware
+app.use(compression());
 app.use(cors());
 app.use(express.json());
 
