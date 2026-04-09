@@ -1075,7 +1075,7 @@
             .hotel-room-card .card-amenities-split { 
                 grid-template-columns: 1fr !important; gap: 0.4rem !important; 
                 margin-bottom: 0.5rem !important; 
-                max-height: 1.4rem; /* 1 item on mobile */
+                max-height: 2.3rem; /* 1 item on mobile */
             }
             .hotel-room-card .card-amenities-split.expanded {
                 max-height: 1000px !important;
