@@ -1534,10 +1534,12 @@ function buildYurtCard(r, nights, guests, isAvail, showPrice) {
         </div>
         <div class="card-content" style="padding: 1.8rem;">
             <div>
-                <div class="card-name" style="font-size:1.5rem; margin-bottom:0.5rem; color:#fff;">${r.name}</div>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.8rem;">
+                    <div class="card-name" style="font-size:1.5rem; margin:0; color:#fff;">${r.name}</div>
+                    <div style="background:rgba(255,255,255,0.1); color:#e1d3a5; padding:.3rem .7rem; border-radius:10px; font-weight:700; font-size:0.9rem;">${r.capacity} 👤</div>
+                </div>
                 <div class="card-meta" style="margin-bottom: 1.2rem;">
-                    ${r.area ? `<span style="color:#333;">${r.area}</span>` : ''}
-                    <span style="color:#333;">${r.capacity} 👤</span>
+                    ${r.area ? `<span style="color:#777;">${r.area}</span>` : ''}
                 </div>
                 
                 ${buildAmenitiesHtml(r.amenities, true)}
@@ -1675,10 +1677,12 @@ function buildHotelCard(r, nights, guests, isAvail, showPrice) {
         </div>
         <div class="card-content">
             <div>
-                <div class="card-name">${r.name}</div>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem; flex-wrap:wrap; gap:0.5rem;">
+                    <div class="card-name" style="margin:0">${r.name}</div>
+                    <div style="background:var(--surface2); color:var(--gold-l); padding:.2rem .6rem; border-radius:8px; font-weight:700; font-size:0.85rem;">${r.capacity || 2} 👤</div>
+                </div>
                 <div class="card-meta">
                     ${r.area ? `<span>${r.area}</span>` : ''}
-                    ${metaCapacityHtml ? `<span>${metaCapacityHtml}</span>` : ''}
                     <span class="clickable" onclick="handleDetailClick(event, 'am-split-${r.id}', '${firstImg}')">Подробнее ›</span>
                 </div>
                 
