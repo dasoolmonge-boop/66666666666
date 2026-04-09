@@ -816,19 +816,32 @@
         /* Removed fire-banner styles */
 
         .card-amenities-split {
-            display: none; /* Скрыто по умолчанию на всех экранах */
-            grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;
-            margin-top: 1rem;
+            display: grid; 
+            grid-template-columns: 1fr 1fr 1fr; gap: 0.8rem; 
+            margin-bottom: 0.8rem;
+            margin-top: 0.8rem;
             padding: 0;
             background: transparent;
-            border-radius: 12px;
             border: none;
-            transition: all 0.3s ease;
+            max-height: 1.6rem; /* Should fit ~1 line */
+            overflow: hidden;
+            transition: max-height 0.4s ease;
+            position: relative;
         }
 
-        .card-amenities-split.visible {
-            display: grid;
+        .card-amenities-split.expanded {
+            max-height: 800px;
         }
+
+        .am-toggle-btn {
+            display: inline-block;
+            font-size: 0.75rem; color: var(--gold);
+            cursor: pointer; font-weight: 700;
+            margin-bottom: 1rem;
+            transition: color 0.2s;
+        }
+        .am-toggle-btn:hover { color: var(--gold-light); text-decoration: underline; }
+        .yurts-theme .am-toggle-btn { color: #e1d3a5; }
 
         /* Adaptive: Single column on mobile */
         @media (max-width: 768px) {
@@ -843,10 +856,10 @@
             display: flex; flex-direction: column; justify-content: space-between; gap: 0.8rem;
         }
         .hotel-room-card .card-name {
-            font-size: 1.4rem; font-weight: 800; color: #333; margin-bottom: .6rem;
+            font-size: 1.4rem; font-weight: 800; color: #333; margin-bottom: .3rem;
         }
         .hotel-room-card .card-meta {
-            display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: 1.2rem; align-items: center;
+            display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: 0.6rem; align-items: center;
         }
         .hotel-room-card .card-meta span {
             font-size: .8rem; padding: .35rem .7rem;
@@ -1044,9 +1057,12 @@
             
             /* Amenities Grid Stacking */
             .hotel-room-card .card-amenities-split { 
-                grid-template-columns: 1fr !important; gap: 0.5rem !important; 
-                margin-bottom: 1rem !important; padding-bottom: 1rem;
-                border-bottom: 1px solid rgba(0,0,0,0.05); 
+                grid-template-columns: 1fr !important; gap: 0.4rem !important; 
+                margin-bottom: 0.5rem !important; 
+                max-height: 1.4rem; /* 1 item on mobile */
+            }
+            .hotel-room-card .card-amenities-split.expanded {
+                max-height: 1000px !important;
             }
             .yurts-theme .hotel-room-card .card-amenities-split { border-bottom-color: rgba(255,255,255,0.05); }
 

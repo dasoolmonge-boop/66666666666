@@ -852,7 +852,7 @@ function getIconForAmenity(a) {
     return '•';
 }
 
-function buildAmenitiesHtml(amenities, isDark = false) {
+function buildAmenitiesHtml(amenities, roomId, isDark = false) {
     if (!amenities || !amenities.length) return '';
     const color = isDark ? 'rgba(255,255,255,0.9)' : '#333';
     
@@ -869,12 +869,22 @@ function buildAmenitiesHtml(amenities, isDark = false) {
         </div>
     `).join('');
 
+    const hasMore = amenities.length > 3;
+
     return `
-    <div class="card-amenities-split" style="margin-bottom: 1rem; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem;">
+    <div id="am-wrapper-${roomId}" class="card-amenities-split">
         <div class="am-col">${renderCol(col1)}</div>
         <div class="am-col">${renderCol(col2)}</div>
         <div class="am-col">${renderCol(col3)}</div>
-    </div>`;
+    </div>
+    ${hasMore ? `<div class="am-toggle-btn" onclick="toggleAmenities(this, '${roomId}')">Все услуги ›</div>` : ''}`;
+}
+
+function toggleAmenities(btn, roomId) {
+    const wrapper = document.getElementById(`am-wrapper-${roomId}`);
+    if (!wrapper) return;
+    const isExpanded = wrapper.classList.toggle('expanded');
+    btn.innerHTML = isExpanded ? 'Скрыть услуги ˆ' : 'Все услуги ›';
 }
 
 function renderBathCard(data) {
@@ -1544,7 +1554,7 @@ function buildYurtCard(r, nights, guests, isAvail, showPrice) {
                     ${r.area ? `<span style="color:#777;">${r.area}</span>` : ''}
                 </div>
                 
-                ${buildAmenitiesHtml(r.amenities, true)}
+                ${buildAmenitiesHtml(r.amenities, r.id, true)}
             </div>
             
             <div class="card-footer" style="margin-top: 1rem; padding-top:1rem; border-top:1px solid rgba(255,255,255,0.1); background:rgba(0,0,0,0.15); margin: 0 -1.2rem -1.2rem -1.2rem; padding: 1rem 1.2rem; display:flex; justify-content:space-between; align-items:flex-end;">
@@ -1685,10 +1695,10 @@ function buildHotelCard(r, nights, guests, isAvail, showPrice) {
                 </div>
                 <div class="card-meta">
                     ${r.area ? `<span>${r.area}</span>` : ''}
-                    <span class="clickable" onclick="handleDetailClick(event, 'am-split-${r.id}', '${firstImg}')">Подробнее ›</span>
+                    <span class="clickable" onclick="event.stopPropagation(); openLightbox('${firstImg}')">Фото ›</span>
                 </div>
                 
-                ${buildAmenitiesHtml(r.amenities)}
+                ${buildAmenitiesHtml(r.amenities, r.id)}
             </div>
             
             <div class="card-footer">
