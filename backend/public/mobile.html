@@ -61,11 +61,13 @@
 
             <button id="btn-hotel-search" onclick="mSearchRooms()" style="width:100%;padding:1rem;background:var(--gold);color:#fff;border:none;border-radius:12px;font-size:1rem;font-weight:800;font-family:inherit;box-shadow:0 10px 20px rgba(184,134,11,0.2);">Показать свободные номера</button>
             <div id="m-search-info" style="margin-top:1rem;font-size:.85rem;color:var(--muted);display:none;padding:0.8rem;background:var(--surface2);border-radius:10px;"></div>
-            <div id="m-hotel-busy-hint" class="busy-hint" style="display:none;">
-                <div class="hint-icon"><i class="fas fa-calendar-times"></i></div>
-                <div style="font-weight:800; color:var(--text); font-size:1.2rem; font-family:'Playfair Display', serif;">Все номера заняты</div>
-                <p style="font-size:.9rem; color:var(--muted); margin:.8rem 0 1.2rem; line-height:1.5;">На выбранный период в отеле нет свободных номеров. Посмотрите календарь загрузки всего комплекса.</p>
-                <button class="btn-show-cal" onclick="openComplexAvailability('hotel')">Посмотреть календарь</button>
+            <div id="m-hotel-busy-hint" class="busy-hint-row" style="display:none;" onclick="openComplexAvailability('hotel')">
+                <div class="bh-icon"><i class="fas fa-calendar-times"></i></div>
+                <div class="bh-content">
+                    <div class="bh-title">Все номера заняты</div>
+                    <div class="bh-subtitle">Нажмите, чтобы открыть календарь свободных дат</div>
+                </div>
+                <div class="bh-arrow"><i class="fas fa-chevron-right"></i></div>
             </div>
         </div>
         
@@ -120,11 +122,13 @@
             
             <button onclick="mSearchYurts()" style="width:100%;padding:1rem;background:#e1d3a5;color:#38402f;border:none;border-radius:12px;font-size:1rem;font-weight:800;font-family:inherit;box-shadow:0 10px 20px rgba(225,211,165,0.15);">Показать наличие</button>
             <div id="m-yurt-search-info" style="margin-top:1rem;font-size:.85rem;color:rgba(255,255,255,0.6);display:none;padding:0.8rem;background:rgba(255,255,255,0.05);border-radius:10px;"></div>
-            <div id="m-yurt-busy-hint" class="busy-hint" style="display:none;">
-                <div class="hint-icon" style="color:#e1d3a5; border-color:rgba(225,211,165,0.3);"><i class="fas fa-campground"></i></div>
-                <div style="font-weight:800; color:#e1d3a5; font-size:1.2rem; font-family:'Playfair Display', serif;">На эти даты всё занято</div>
-                <p style="font-size:.9rem; color:rgba(255,255,255,0.5); margin:.8rem 0 1.2rem; line-height:1.5;">В Хаан-Дыт нет свободных юрт на выбранный период. Мы подготовили календарь со свободными окошками.</p>
-                <button class="btn-show-cal" onclick="openComplexAvailability('yurt')">Открыть календарь юрт</button>
+            <div id="m-yurt-busy-hint" class="busy-hint-row" style="display:none;" onclick="openComplexAvailability('yurt')">
+                <div class="bh-icon"><i class="fas fa-campground"></i></div>
+                <div class="bh-content">
+                    <div class="bh-title">На эти даты всё занято</div>
+                    <div class="bh-subtitle">Открыть календарь свободных юрт Хаан-Дыт</div>
+                </div>
+                <div class="bh-arrow"><i class="fas fa-chevron-right"></i></div>
             </div>
         </div>
 
