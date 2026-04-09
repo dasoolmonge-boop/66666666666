@@ -61,6 +61,12 @@
 
             <button id="btn-hotel-search" onclick="mSearchRooms()" style="width:100%;padding:1rem;background:var(--gold);color:#fff;border:none;border-radius:12px;font-size:1rem;font-weight:800;font-family:inherit;box-shadow:0 10px 20px rgba(184,134,11,0.2);">Показать свободные номера</button>
             <div id="m-search-info" style="margin-top:1rem;font-size:.85rem;color:var(--muted);display:none;padding:0.8rem;background:var(--surface2);border-radius:10px;"></div>
+            <div id="m-hotel-busy-hint" class="busy-hint" style="display:none;">
+                <div style="font-size:2rem; margin-bottom:1rem;">🗓️</div>
+                <div style="font-weight:700; color:var(--text); font-size:1.1rem;">Все номера заняты</div>
+                <p style="font-size:.85rem; color:var(--muted); margin:.5rem 0 1rem;">Посмотрите календарь загрузки всего отеля, чтобы найти свободное окно.</p>
+                <button class="btn-show-cal" onclick="openComplexAvailability('hotel')">Посмотреть календарь</button>
+            </div>
         </div>
         
         <div id="hotel-list">
@@ -114,6 +120,12 @@
             
             <button onclick="mSearchYurts()" style="width:100%;padding:1rem;background:#e1d3a5;color:#38402f;border:none;border-radius:12px;font-size:1rem;font-weight:800;font-family:inherit;box-shadow:0 10px 20px rgba(225,211,165,0.15);">Показать наличие</button>
             <div id="m-yurt-search-info" style="margin-top:1rem;font-size:.85rem;color:rgba(255,255,255,0.6);display:none;padding:0.8rem;background:rgba(255,255,255,0.05);border-radius:10px;"></div>
+            <div id="m-yurt-busy-hint" class="busy-hint" style="display:none; background:rgba(255,255,255,0.03); border-color:rgba(225,211,165,0.2);">
+                <div style="font-size:2rem; margin-bottom:1rem;">🗓️</div>
+                <div style="font-weight:700; color:#e1d3a5; font-size:1.1rem;">На эти даты всё занято</div>
+                <p style="font-size:.85rem; color:rgba(255,255,255,0.5); margin:.5rem 0 1rem;">В Хаан-Дыт нет свободных юрт на выбранный период.</p>
+                <button class="btn-show-cal" style="background:#e1d3a5; color:#38402f;" onclick="openComplexAvailability('yurt')">Открыть календарь юрт</button>
+            </div>
         </div>
 
         <div id="yurt-list"></div>
@@ -675,11 +687,14 @@
                     const avail = hotels.filter(r => r.available && (r.capacity || 2) >= mHotelDates.guests);
                     
                     const info = document.getElementById('m-search-info');
+                    const hint = document.getElementById('m-hotel-busy-hint');
                     if (info) {
-                        info.style.display = 'block';
+                        info.style.display = avail.length > 0 ? 'block' : 'none';
                         info.innerHTML = `Найдено <strong>${avail.length}</strong> подходящих номеров на <strong>${nights}</strong> ${nights < 5 ? 'ночи' : 'ночей'}`;
                         document.getElementById('m-date-search').style.borderColor = 'var(--gold)';
                     }
+                    if (hint) hint.style.display = avail.length === 0 ? 'flex' : 'none';
+                    
                     mRenderHotelCards(avail, nights);
                 })
                 .catch(err => alert('Ошибка: ' + err.message));
@@ -773,10 +788,13 @@
                     const nights = Math.round((new Date(mYurtDates.checkOut) - new Date(mYurtDates.checkIn)) / 86400000);
                     const avail = yur.filter(r => r.available);
                     const info = document.getElementById('m-yurt-search-info');
+                    const hint = document.getElementById('m-yurt-busy-hint');
                     if (info) {
-                        info.style.display = 'block';
+                        info.style.display = avail.length > 0 ? 'block' : 'none';
                         info.innerHTML = `Найдено <strong>${avail.length}</strong> свободных юрт на <strong>${nights}</strong> ${nights < 5 ? 'ночи' : 'ночей'}`;
                     }
+                    if (hint) hint.style.display = avail.length === 0 ? 'flex' : 'none';
+
                     renderMobileYurtResults(avail);
                 })
                 .catch(err => alert('Ошибка при поиске: ' + err.message));
@@ -1446,7 +1464,174 @@
                 });
             });
         });
+
+        // ===== MOBILE AVAILABILITY CALENDAR LOGIC =====
+        let avCurrentMonth = new Date().getMonth();
+        let avCurrentYear = new Date().getFullYear();
+        let avCurrentType = 'hotel';
+        let avOccupancyData = [];
+        let avCategoryRooms = [];
+        let avSelectedIn = null;
+        let avSelectedOut = null;
+
+        async function openComplexAvailability(type) {
+            avCurrentType = type;
+            avSelectedIn = null;
+            avSelectedOut = null;
+            document.getElementById('av-subtitle').textContent = type === 'hotel' ? 'Загрузка отеля «Чалама»' : 'Загрузка юрт «Хаан-Дыт»';
+            document.getElementById('av-modal-bg').classList.add('open');
+            
+            // Show loading state in calendar
+            document.getElementById('av-calendar-container').innerHTML = '<div style="text-align:center; padding:3rem; color:rgba(255,255,255,0.4);">Загрузка...</div>';
+            
+            try {
+                const rRes = await fetch('/api/rooms');
+                const allRooms = await rRes.json();
+                avCategoryRooms = allRooms.filter(r => r.type === type);
+                
+                const bRes = await fetch('/api/availability');
+                avOccupancyData = await bRes.json();
+                
+                renderComplexCalendar();
+            } catch (e) {
+                alert('Ошибка загрузки данных');
+            }
+        }
+
+        function closeAvModal() {
+            document.getElementById('av-modal-bg').classList.remove('open');
+        }
+
+        function navAvMonth(dir) {
+            avCurrentMonth += dir;
+            if (avCurrentMonth > 11) { avCurrentMonth = 0; avCurrentYear++; }
+            if (avCurrentMonth < 0) { avCurrentMonth = 11; avCurrentYear--; }
+            renderComplexCalendar();
+        }
+
+        function renderComplexCalendar() {
+            const container = document.getElementById('av-calendar-container');
+            const monthDisplay = document.getElementById('av-month-display');
+            const monthsNames = ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"];
+            
+            monthDisplay.textContent = `${monthsNames[avCurrentMonth]} ${avCurrentYear}`;
+            
+            const firstDay = new Date(avCurrentYear, avCurrentMonth, 1).getDay();
+            const daysInMonth = new Date(avCurrentYear, avCurrentMonth + 1, 0).getDate();
+            const startOffset = firstDay === 0 ? 6 : firstDay - 1;
+            
+            let html = `
+            <div class="av-grid">
+                <div class="av-weekday">Пн</div><div class="av-weekday">Вт</div><div class="av-weekday">Ср</div>
+                <div class="av-weekday">Чт</div><div class="av-weekday">Пт</div><div class="av-weekday">Сб</div>
+                <div class="av-weekday">Вс</div>`;
+            
+            for (let i = 0; i < startOffset; i++) html += '<div></div>';
+            
+            const today = new Date(); today.setHours(0,0,0,0);
+            const totalCapacity = avCategoryRooms.length;
+            const relevantBookings = avOccupancyData.filter(b => avCategoryRooms.some(r => r.name === b.room));
+
+            for (let day = 1; day <= daysInMonth; day++) {
+                const date = new Date(avCurrentYear, avCurrentMonth, day);
+                date.setHours(0,0,0,0);
+                
+                let statusClass = '';
+                const isPast = date < today;
+                
+                if (isPast) {
+                    statusClass = 'past';
+                } else {
+                    let bookedCount = 0;
+                    relevantBookings.forEach(b => {
+                        const bStart = new Date(b.checkIn); bStart.setHours(0,0,0,0);
+                        const bEnd = new Date(b.checkOut); bEnd.setHours(0,0,0,0);
+                        // Standard check: is occupied on this night
+                        if (date >= bStart && date < bEnd) bookedCount++;
+                    });
+                    if (bookedCount >= totalCapacity && totalCapacity > 0) statusClass = 'busy';
+                }
+                
+                const isToday = date.getTime() === today.getTime();
+                const fullDateStr = `${avCurrentYear}-${(avCurrentMonth+1).toString().padStart(2,'0')}-${day.toString().padStart(2,'0')}`;
+                
+                let rangeClass = '';
+                if (avSelectedIn && fullDateStr === avSelectedIn) rangeClass = 'range-start';
+                else if (avSelectedOut && fullDateStr === avSelectedOut) rangeClass = 'range-end';
+                else if (avSelectedIn && avSelectedOut) {
+                    const dIn = new Date(avSelectedIn); dIn.setHours(0,0,0,0);
+                    const dOut = new Date(avSelectedOut); dOut.setHours(0,0,0,0);
+                    if (date > dIn && date < dOut) rangeClass = 'range';
+                }
+
+                html += `<div class="av-day ${statusClass} ${isToday ? 'today' : ''} ${rangeClass}" 
+                             ${statusClass !== 'busy' && !isPast ? `onclick="selectAvDate('${fullDateStr}')"` : ''}>
+                            ${day}
+                         </div>`;
+            }
+            container.innerHTML = html + '</div>';
+        }
+
+        function selectAvDate(dateStr) {
+            if (!avSelectedIn || (avSelectedIn && avSelectedOut)) {
+                avSelectedIn = dateStr;
+                avSelectedOut = null;
+            } else {
+                const dIn = new Date(avSelectedIn);
+                const dNew = new Date(dateStr);
+                if (dNew <= dIn) {
+                    avSelectedIn = dateStr;
+                    avSelectedOut = null;
+                } else {
+                    avSelectedOut = dateStr;
+                    
+                    // Apply to main search
+                    const dObj = (avCurrentType === 'hotel') ? mHotelDates : mYurtDates;
+                    dObj.checkIn = avSelectedIn;
+                    dObj.checkOut = avSelectedOut;
+                    
+                    setTimeout(() => {
+                        closeAvModal();
+                        renderSearchCal(avCurrentType);
+                        if (avCurrentType === 'hotel') mSearchRooms();
+                        else mSearchYurts();
+                    }, 300);
+                }
+            }
+            renderComplexCalendar();
+            if (window.Telegram?.WebApp) window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
+        }
     </script>
+
+    <div id="av-modal-bg" class="av-modal-bg" onclick="if(event.target===this)closeAvModal()">
+        <div class="av-header">
+            <button class="av-close" onclick="closeAvModal()">×</button>
+            <h3 style="margin:0; font-size:1.1rem; color:#fff;">Доступность</h3>
+            <p id="av-subtitle" style="font-size:.8rem; color:rgba(255,255,255,0.6); margin:4px 0 0;">Загрузка комплекса</p>
+        </div>
+        <div class="av-body">
+            <div class="av-nav">
+                <button class="av-nav-btn" onclick="navAvMonth(-1)">‹</button>
+                <div id="av-month-display" class="av-month-title">Апрель 2026</div>
+                <button class="av-nav-btn" onclick="navAvMonth(1)">›</button>
+            </div>
+            <div id="av-calendar-container"></div>
+            
+            <div style="margin-top:2rem; padding:1.2rem; background:rgba(255,255,255,0.03); border-radius:16px;">
+                <div style="display:flex; justify-content:center; gap:1.5rem; font-size:.75rem; color:rgba(255,255,255,0.6);">
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <div style="width:12px; height:12px; border-radius:3px; background:rgba(255,255,255,0.1);"></div> Свободно
+                    </div>
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <div style="width:12px; height:12px; border-radius:3px; background:rgba(255,100,100,0.3);"></div> Занято
+                    </div>
+                </div>
+                <p style="text-align:center; font-size:.7rem; color:rgba(255,255,255,0.4); margin-top:1.5rem;">
+                    * Нажмите на дату заезда, затем на дату выезда
+                </p>
+            </div>
+        </div>
+    </div>
 
 </body>
 </html>
