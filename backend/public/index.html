@@ -1544,7 +1544,7 @@ function buildYurtCard(r, nights, guests, isAvail, showPrice) {
                 </div>
                 <div class="card-meta" style="margin-bottom: 0.8rem;">
                     ${r.area ? `<span style="color:#777;">${r.area}</span>` : ''}
-                </div>
+                ${r.desc ? `<div style="font-size:0.85rem; color:rgba(255,255,255,0.6); margin-bottom:0.8rem; line-height:1.4;">${r.desc}</div>` : ''}
                 
                 ${buildAmenitiesHtml(r.amenities, r.id, true)}
             </div>
@@ -1688,7 +1688,7 @@ function buildHotelCard(r, nights, guests, isAvail, showPrice) {
                 <div class="card-meta">
                     ${r.area ? `<span>${r.area}</span>` : ''}
                     <span class="clickable" onclick="event.stopPropagation(); openLightbox('${firstImg}')">Фото ›</span>
-                </div>
+                ${r.desc ? `<div style="font-size:0.85rem; color:rgba(0,0,0,0.5); margin-bottom:0.6rem; line-height:1.4;">${r.desc}</div>` : ''}
                 
                 ${buildAmenitiesHtml(r.amenities, r.id)}
             </div>
