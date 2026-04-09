@@ -272,11 +272,17 @@
             .room-modal h2 { font-size: 1.2rem; }
             .form-group input, .form-group select, .form-group textarea { padding: .7rem; font-size: 1rem; }
             .btn-submit { padding: .8rem; }
+            .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
         }
         @media (max-width:480px) {
             .stats { grid-template-columns: 1fr 1fr; } /* Keep 2 columns on small but optimize content */
             .login-card { padding:2rem 1.5rem; }
+            .form-grid { grid-template-columns: 1fr; }
         }
+
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        .form-group.full { grid-column: span 2; }
+        @media (max-width: 600px) { .form-grid { grid-template-columns: 1fr; } .form-group.full { grid-column: span 1; } }
 
         /* Admin management */
         .admin-section {
@@ -452,6 +458,11 @@
             <div class="admin-add-row" style="margin-top: 1rem;">
                 <input type="text" id="newAdminName" placeholder="Имя (напр. Иван)">
                 <input type="text" id="newAdminId" placeholder="ID в MAX (напр. 12345)">
+                <select id="newAdminDept" style="padding:.6rem 1rem; background:var(--surface2); border:1.5px solid var(--border); border-radius:10px; color:var(--text); font-size:.85rem; outline:none; cursor:pointer;">
+                    <option value="all">Все уведомления</option>
+                    <option value="hotel_chalama">Отель Чалама + Сауна</option>
+                    <option value="haan_dyt">Хаан-Дыт + Баня</option>
+                </select>
                 <button class="btn-add" onclick="addAdmin()">Добавить админа</button>
             </div>
 
@@ -477,63 +488,62 @@
         <form id="roomForm" onsubmit="saveRoom(event)">
             <input type="hidden" id="r_id" value="">
             
-            <div class="form-group">
-                <label>Тип</label>
-                <select id="r_type" required>
-                    <option value="hotel">Отель</option>
-                    <option value="yurt">Юрта</option>
-                    <option value="sauna">Сауна</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label>Название</label>
-                <input type="text" id="r_name" required placeholder="Например: Стандарт">
-            </div>
-
-            <div class="form-group">
-                <label>Описание</label>
-                <textarea id="r_desc" required placeholder="Например: Односпальная кровать · 15 м²" rows="2"></textarea>
-            </div>
-
-            <div style="display:flex; gap:1rem">
-                <div class="form-group" style="flex:1">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Тип</label>
+                    <select id="r_type" required>
+                        <option value="hotel">Отель</option>
+                        <option value="yurt">Юрта</option>
+                        <option value="sauna">Сауна</option>
+                        <option value="bath">Баня</option>
+                    </select>
+                </div>
+    
+                <div class="form-group">
+                    <label>Название</label>
+                    <input type="text" id="r_name" required placeholder="Например: Стандарт">
+                </div>
+    
+                <div class="form-group full">
+                    <label>Описание</label>
+                    <textarea id="r_desc" required placeholder="Например: Односпальная кровать · 15 м²" rows="2"></textarea>
+                </div>
+    
+                <div class="form-group">
                     <label>Цена (Будни)</label>
                     <input type="number" id="r_price" required placeholder="6950">
                 </div>
-                <div class="form-group" style="flex:1">
+                <div class="form-group">
                     <label>Цена (Пт-Сб)</label>
                     <input type="number" id="r_priceweekend" placeholder="Не обязательно">
                 </div>
-            </div>
-
-            <div class="form-group">
-                <label>Удобства (через запятую)</label>
-                <input type="text" id="r_amenities" placeholder="Кондиционер, ТВ, Фен" required>
-            </div>
-
-            <div style="display:flex; gap:1rem">
-                <div class="form-group" style="flex:1">
+    
+                <div class="form-group full">
+                    <label>Удобства (через запятую)</label>
+                    <input type="text" id="r_amenities" placeholder="Кондиционер, ТВ, Фен" required>
+                </div>
+    
+                <div class="form-group">
                     <label>Площадь</label>
                     <input type="text" id="r_area" placeholder="19 м²">
                 </div>
-                <div class="form-group" style="flex:1">
+                <div class="form-group">
                     <label>Вместимость</label>
                     <input type="number" id="r_capacity" placeholder="2">
                 </div>
+    
+                <div class="form-group">
+                    <label>Тариф</label>
+                    <input type="text" id="r_tariff" placeholder="тариф без завтрака">
+                </div>
+    
+                <div class="form-group">
+                    <label>Предоплата (₽)</label>
+                    <input type="number" id="r_prepayment" placeholder="6950">
+                </div>
             </div>
 
-            <div class="form-group">
-                <label>Тариф</label>
-                <input type="text" id="r_tariff" placeholder="тариф без завтрака">
-            </div>
-
-            <div class="form-group">
-                <label>Предоплата (₽)</label>
-                <input type="number" id="r_prepayment" placeholder="6950">
-            </div>
-
-            <button type="submit" class="btn-submit">Сохранить</button>
+            <button type="submit" class="btn-submit" style="margin-top: 1rem;">Сохранить изменения</button>
         </form>
     </div>
 </div>
@@ -794,15 +804,23 @@ function renderRoomsPhotoList() {
         `).join('');
 
         return `
-            <div class="room-mgmt-card">
-                <div class="room-mgmt-header">
-                    <div>
-                        <div class="room-mgmt-title">${r.name}</div>
-                        <div style="font-size:.8rem;color:var(--muted)">${r.type === 'hotel' ? 'Отель' : r.type === 'yurt' ? 'Юрты' : 'Сауна'}</div>
+            <div class="room-mgmt-card" style="margin-bottom: 2rem; border-left: 4px solid ${r.type==='hotel'?'#c2b080':r.type==='yurt'?'#32cd32':r.type==='sauna'?'#ffa500':'#00bfff'}">
+                <div class="room-mgmt-header" style="margin-bottom: 1rem;">
+                    <div style="flex: 1;">
+                        <div style="display: flex; align-items: center; gap: 0.8rem; margin-bottom: 0.3rem;">
+                            <div class="room-mgmt-title" style="margin:0">${r.name}</div>
+                            <span class="tag" style="font-size: 0.65rem; padding: 2px 8px; background: var(--surface2);">${r.type === 'hotel' ? '🏨 Отель' : r.type === 'yurt' ? '⛺ Юрты' : r.type === 'sauna' ? '🧖‍♂️ Сауна' : '🚿 Баня'}</span>
+                        </div>
+                        <div style="font-size: .85rem; color: var(--gold-l); font-weight: 700; margin-bottom: 0.4rem;">${r.price.toLocaleString()} ₽ ${r.priceWeekend ? `/ ${r.priceWeekend.toLocaleString()} ₽` : ''}</div>
+                        <div style="font-size: .78rem; color: var(--muted); line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-bottom: 0.5rem;">${r.desc}</div>
+                        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                            ${r.area ? `<span style="font-size: 0.7rem; color: #ddd; background: rgba(255,255,255,0.05); padding: 2px 6px; border-radius: 4px;">📐 ${r.area}</span>` : ''}
+                            ${r.capacity ? `<span style="font-size: 0.7rem; color: #ddd; background: rgba(255,255,255,0.05); padding: 2px 6px; border-radius: 4px;">👤 ${r.capacity}</span>` : ''}
+                        </div>
                     </div>
-                    <div class="room-actions">
-                        <button class="btn-restore btn-action" onclick="openRoomModal(${r.id})">Редактировать</button>
-                        <button class="btn-cancel btn-action" onclick="deleteRoom(${r.id})">Удалить</button>
+                    <div class="room-actions" style="display: flex; flex-direction: column; gap: 0.5rem;">
+                        <button class="btn-restore btn-action" onclick="openRoomModal(${r.id})" style="width: 100%; white-space: nowrap;">✎ Изменить данные</button>
+                        <button class="btn-cancel btn-action" onclick="deleteRoom(${r.id})" style="width: 100%; white-space: nowrap; border-color: rgba(255,100,100,0.3); color: #ff6464;">🗑 Удалить</button>
                     </div>
                 </div>
                 <div class="photo-grid">${photosHtml}</div>
@@ -933,31 +951,46 @@ async function renderAdmins() {
             return;
         }
 
-        el.innerHTML = adminIds.map((id) => `
+        el.innerHTML = adminIds.map((admin) => {
+            const depts = {
+                'all': 'Все уведомления',
+                'hotel_chalama': 'Отель + Сауна',
+                'haan_dyt': 'Хаан-Дыт + Баня'
+            };
+            const deptName = depts[admin.department] || 'Все уведомления';
+            const chatId = admin.chatId;
+
+            return `
             <div class="admin-item">
                 <div class="admin-item-info">
                     <div class="admin-item-avatar">👤</div>
                     <div>
-                        <div class="admin-item-name">Администратор</div>
-                        <div class="admin-item-id">MAX ID: ${id}</div>
+                        <div class="admin-item-name">${admin.username || 'Администратор'}</div>
+                        <div class="admin-item-id">MAX ID: ${chatId} <span style="margin-left:8px; color:var(--gold-l); font-weight:700;">[${deptName}]</span></div>
                     </div>
                 </div>
-                <button class="btn-remove" onclick="deleteAdmin('${id}')">Удалить</button>
+                <button class="btn-remove" onclick="deleteAdmin('${chatId}')">Удалить</button>
             </div>
-        `).join('');
+            `;
+        }).join('');
     } catch (err) { console.error(err); }
 }
 
 async function addAdmin() {
     const name = document.getElementById('newAdminName').value;
     const id = document.getElementById('newAdminId').value;
+    const dept = document.getElementById('newAdminDept').value;
     if (!id) return alert('Введите ID!');
 
     try {
         const res = await fetch('/api/internal/admins', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ chatId: id, username: name || 'Администратор' })
+            body: JSON.stringify({ 
+                chatId: id, 
+                username: name || 'Администратор',
+                department: dept
+            })
         });
         if (res.ok) {
             document.getElementById('newAdminName').value = '';

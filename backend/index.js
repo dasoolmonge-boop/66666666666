@@ -57,15 +57,25 @@ async function checkToken() {
 
 checkToken();
 
-async function notifyAllAdmins(text) {
+async function notifyAdmins(text, type) {
     const adminIds = new Set();
     if (ADMIN_ID) adminIds.add(ADMIN_ID);
 
-    db.all("SELECT chatId FROM admins", [], (err, rows) => {
+    // Map booking type to department
+    let targetDept = 'all';
+    if (type === 'hotel' || type === 'sauna') targetDept = 'hotel_chalama';
+    if (type === 'yurt' || type === 'bath') targetDept = 'haan_dyt';
+
+    db.all("SELECT chatId, department FROM admins", [], (err, rows) => {
         if (!err && rows) {
-            rows.forEach(r => adminIds.add(r.chatId));
+            rows.forEach(r => {
+                // Send if it's superadmin ('all'), or matches the department
+                if (r.department === 'all' || r.department === targetDept) {
+                    adminIds.add(r.chatId);
+                }
+            });
         }
-        console.log(`[Notification System] Sending to admins: ${Array.from(adminIds).join(', ')}`);
+        console.log(`[Notification System] Sending type [${type}] to admins: ${Array.from(adminIds).join(', ')}`);
         adminIds.forEach(id => sendMaxMessage(id, text));
     });
 }
@@ -193,7 +203,8 @@ db.serialize(() => {
             db.run(`CREATE TABLE IF NOT EXISTS admins (
                 chatId TEXT PRIMARY KEY,
                 username TEXT,
-                createdAt TEXT
+                createdAt TEXT,
+                department TEXT
             )`);
 
             // Migration: Add username to admins if missing
@@ -207,6 +218,16 @@ db.serialize(() => {
             db.run("ALTER TABLE admins ADD COLUMN createdAt TEXT", (err) => {
                 if (err && !err.message.includes("duplicate column name")) {
                     console.error("[DB Migration] Error adding createdAt to admins:", err.message);
+                }
+            });
+
+            // Migration: Add department to admins if missing
+            db.run("ALTER TABLE admins ADD COLUMN department TEXT", (err) => {
+                if (err && !err.message.includes("duplicate column name")) {
+                    console.error("[DB Migration] Error adding department to admins:", err.message);
+                } else if (!err) {
+                    // Default existing admins to 'all'
+                    db.run("UPDATE admins SET department = 'all' WHERE department IS NULL");
                 }
             });
 
@@ -477,7 +498,7 @@ app.post('/api/bookings', (req, res) => {
                                         `💰 Сумма: <b>${b.total} ₽</b>\n\n` +
                                         `⚡️ <i>Система "Чалама"</i>`;
                         
-                        notifyAllAdmins(adminText);
+                        notifyAdmins(adminText, b.type);
                     } catch (notifyErr) {
                         console.error("[Notify Error] Failed to send message to admins:", notifyErr.message);
                     }
@@ -546,14 +567,14 @@ app.delete('/api/admin/bookings/archive', (req, res) => {
 
 // Admin management
 app.post('/api/internal/admins', (req, res) => {
-    const { chatId, username } = req.body;
+    const { chatId, username, department } = req.body;
     if (!chatId) return res.status(400).json({ error: "Missing chatId" });
 
-    console.log(`[Admin Add] Attempting to add: ${chatId} (${username || 'Администратор'})`);
+    console.log(`[Admin Add] Attempting to add: ${chatId} (${username || 'Администратор'}) to [${department || 'all'}]`);
     const createdAt = new Date().toISOString();
 
-    db.run("INSERT OR REPLACE INTO admins (chatId, username, createdAt) VALUES (?, ?, ?)", 
-        [chatId, username || 'Администратор', createdAt], (err) => {
+    db.run("INSERT OR REPLACE INTO admins (chatId, username, createdAt, department) VALUES (?, ?, ?, ?)", 
+        [chatId, username || 'Администратор', createdAt, department || 'all'], (err) => {
         if (err) {
             console.error(`[Admin Add ERROR] DB Error: ${err.message}`);
             return res.status(500).json({ error: "Ошибка базы данных: " + err.message });
@@ -564,9 +585,9 @@ app.post('/api/internal/admins', (req, res) => {
 });
 
 app.get('/api/internal/admins', (req, res) => {
-    db.all("SELECT chatId FROM admins", [], (err, rows) => {
+    db.all("SELECT chatId, username, department FROM admins", [], (err, rows) => {
         if (err) return res.status(500).json({ error: err.message });
-        res.json(rows.map(r => r.chatId));
+        res.json(rows);
     });
 });
 
