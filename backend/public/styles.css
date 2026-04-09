@@ -819,10 +819,10 @@
             display: none; /* Скрыто по умолчанию на всех экранах */
             grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;
             margin-top: 1rem;
-            padding: 1rem;
-            background: #fdfaf3;
+            padding: 0;
+            background: transparent;
             border-radius: 12px;
-            border: 1px dashed var(--gold);
+            border: none;
             transition: all 0.3s ease;
         }
 
