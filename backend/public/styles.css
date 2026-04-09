@@ -1316,4 +1316,98 @@
         .yurts-theme .gallery-arrow:hover { background: #e1d3a5; color: #2a3123; }
         .yurts-theme p[style*="color:var(--gray)"] { color: rgba(255,255,255,0.7) !important; }
         .yurts-theme .card-amenities-split { background: transparent !important; border: none !important; }
-    
+
+        /* ===== AVAILABILITY CALENDAR MODAL ===== */
+        .av-modal-bg {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(10px); z-index: 10000;
+            display: none; align-items: center; justify-content: center;
+            opacity: 0; transition: opacity .4s ease;
+        }
+        .av-modal-bg.open { display: flex; opacity: 1; }
+        .av-modal {
+            background: #fff; width: 95%; max-width: 500px;
+            border-radius: 24px; overflow: hidden; position: relative;
+            box-shadow: 0 30px 100px rgba(0,0,0,0.5);
+            transform: translateY(30px); transition: transform .4s ease;
+        }
+        .av-modal-bg.open .av-modal { transform: translateY(0); }
+        
+        .av-header {
+            background: linear-gradient(135deg, #1a1a1a, #333);
+            color: #fff; padding: 2rem; position: relative;
+        }
+        .av-close {
+            position: absolute; top: 1.5rem; right: 1.5rem;
+            background: rgba(255,255,255,0.1); border: none; color: #fff;
+            width: 36px; height: 36px; border-radius: 50%;
+            cursor: pointer; font-size: 1.2rem; transition: .3s;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .av-close:hover { background: var(--gold); transform: rotate(90deg); }
+        
+        .av-body { padding: 1.5rem; }
+        .av-nav {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        .av-nav-btn {
+            background: #f8f8f8; border: 1.5px solid #eee;
+            width: 40px; height: 40px; border-radius: 12px;
+            cursor: pointer; transition: .3s; font-size: 1.1rem;
+        }
+        .av-nav-btn:hover { background: #eee; border-color: var(--gold); color: var(--gold); }
+        .av-month-title { font-weight: 700; font-size: 1.1rem; color: var(--dark); }
+        
+        .av-grid {
+            display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px;
+        }
+        .av-weekday {
+            text-align: center; font-size: .7rem; font-weight: 700;
+            color: var(--gray); text-transform: uppercase;
+            padding-bottom: .8rem;
+        }
+        .av-day {
+            aspect-ratio: 1/1; display: flex; align-items: center; justify-content: center;
+            border-radius: 10px; font-size: .9rem; font-weight: 600;
+            cursor: pointer; transition: .3s; position: relative;
+            background: #fdfdfd; border: 1px solid #f0f0f0;
+            color: var(--dark);
+        }
+        .av-day:hover:not(.busy):not(.past) {
+            background: var(--gold) !important; color: #fff !important; transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(184,134,11,0.3);
+            z-index: 10;
+        }
+        .av-day.today { border: 2px solid var(--gold); color: var(--gold); }
+        .av-day.past { color: #ccc !important; cursor: not-allowed; background: #fafafa; border-color: transparent; }
+        .av-day.busy {
+            background: #ffebeb !important; color: #ff4d4d !important; cursor: not-allowed;
+            text-decoration: line-through; opacity: 0.6;
+        }
+        .av-day.selected { background: var(--gold) !important; color: #fff !important; }
+        
+        .av-legend {
+            margin-top: 2rem; display: flex; gap: 1.5rem; justify-content: center;
+            font-size: .75rem; color: var(--gray);
+        }
+        .av-legend-item { display: flex; align-items: center; gap: .5rem; }
+        .av-dot { width: 10px; height: 10px; border-radius: 50%; }
+        
+        /* Hint Bubble */
+        .busy-hint {
+            background: #fff9f0; border: 1.5px dashed #e1d3a5;
+            padding: 1.5rem; border-radius: 16px; margin: 2rem 0;
+            display: none; flex-direction: column; align-items: center; text-align: center;
+            animation: avFadeIn .4s ease-out;
+        }
+        .btn-show-cal {
+            margin-top: 1rem; padding: .6rem 1.5rem;
+            background: var(--gold); color: #fff; border: none;
+            border-radius: 50px; font-weight: 700; font-size: .85rem;
+            cursor: pointer; transition: .3s;
+            box-shadow: 0 4px 12px rgba(184,134,11,0.25);
+        }
+        .btn-show-cal:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(184,134,11,0.4); }
+
+        @keyframes avFadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
