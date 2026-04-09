@@ -1385,7 +1385,18 @@
             background: #ffebeb !important; color: #ff4d4d !important; cursor: not-allowed;
             text-decoration: line-through; opacity: 0.6;
         }
-        .av-day.selected { background: var(--gold) !important; color: #fff !important; }
+        .av-day.selected, .av-day.range-start, .av-day.range-end { 
+            background: var(--gold) !important; color: #fff !important; 
+            border-radius: 50% !important; transform: scale(1.1);
+            box-shadow: 0 5px 15px rgba(184,134,11,0.4);
+            z-index: 10;
+        }
+        .av-day.range {
+            background: rgba(184,134,11,0.1) !important;
+            border-radius: 0 !important;
+        }
+        .av-day.range-start { border-top-right-radius: 0 !important; border-bottom-right-radius: 0 !important; }
+        .av-day.range-end { border-top-left-radius: 0 !important; border-bottom-left-radius: 0 !important; }
         
         .av-legend {
             margin-top: 2rem; display: flex; gap: 1.5rem; justify-content: center;

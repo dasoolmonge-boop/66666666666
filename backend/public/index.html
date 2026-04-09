@@ -1889,9 +1889,13 @@ let avCurrentYear = new Date().getFullYear();
 let avCurrentType = 'hotel';
 let avOccupancyData = [];
 let avCategoryRooms = [];
+let avSelectedIn = null;
+let avSelectedOut = null;
 
 async function openComplexAvailability(type) {
     avCurrentType = type;
+    avSelectedIn = null;
+    avSelectedOut = null;
     document.getElementById('av-subtitle').textContent = type === 'hotel' ? 'Загрузка отеля «Чалама»' : 'Загрузка юрт «Хаан-Дыт»';
     document.getElementById('av-modal-bg').classList.add('open');
     
@@ -1979,7 +1983,16 @@ function renderComplexCalendar() {
         const isToday = date.getTime() === today.getTime();
         const fullDateStr = `${avCurrentYear}-${(avCurrentMonth+1).toString().padStart(2,'0')}-${day.toString().padStart(2,'0')}`;
         
-        html += `<div class="av-day ${statusClass} ${isToday ? 'today' : ''}" 
+        let rangeClass = '';
+        if (avSelectedIn && fullDateStr === avSelectedIn) rangeClass = 'range-start';
+        else if (avSelectedOut && fullDateStr === avSelectedOut) rangeClass = 'range-end';
+        else if (avSelectedIn && avSelectedOut) {
+            const dIn = new Date(avSelectedIn); dIn.setHours(0,0,0,0);
+            const dOut = new Date(avSelectedOut); dOut.setHours(0,0,0,0);
+            if (date > dIn && date < dOut) rangeClass = 'range';
+        }
+
+        html += `<div class="av-day ${statusClass} ${isToday ? 'today' : ''} ${rangeClass}" 
                      ${statusClass !== 'busy' && !isPast ? `onclick="selectAvDate('${fullDateStr}')"` : ''}>
                     ${day}
                  </div>`;
@@ -1990,18 +2003,36 @@ function renderComplexCalendar() {
 }
 
 function selectAvDate(dateStr) {
-    const inputId = avCurrentType === 'hotel' ? 'hotel-search-in' : 'yurt-search-in';
-    document.getElementById(inputId).value = dateStr;
+    if (!avSelectedIn || (avSelectedIn && avSelectedOut)) {
+        avSelectedIn = dateStr;
+        avSelectedOut = null;
+    } else {
+        const dIn = new Date(avSelectedIn);
+        const dNew = new Date(dateStr);
+        if (dNew <= dIn) {
+            avSelectedIn = dateStr;
+            avSelectedOut = null;
+        } else {
+            avSelectedOut = dateStr;
+            
+            // Finalize
+            const typePrefix = avCurrentType === 'hotel' ? 'hotel' : 'yurt';
+            document.getElementById(`${typePrefix}-search-in`).value = avSelectedIn;
+            document.getElementById(`${typePrefix}-search-out`).value = avSelectedOut;
+            
+            setTimeout(() => {
+                closeAvModal();
+                // Trigger search automatically
+                if (avCurrentType === 'hotel') searchAvailableRooms();
+                else searchAvailableYurts();
+            }, 300);
+        }
+    }
     
-    // Close modal and show success animation on the input
-    closeAvModal();
-    const input = document.getElementById(inputId);
-    input.style.borderColor = 'var(--gold)';
-    input.focus();
+    renderComplexCalendar();
     
-    // Highlight that date was selected
     if (window.Telegram?.WebApp) {
-        window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
+        window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
     }
 }
 </script>
