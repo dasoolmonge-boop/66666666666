@@ -141,102 +141,109 @@
 
     <!-- Relocated Sauna & Full Info View -->
     <div id="view-info" class="view">
-        
-        <div class="info-hero reveal-up">
-            <p style="font-size: 0.75rem; letter-spacing: 3px; color: var(--gold); text-transform: uppercase; font-weight: 800; position: relative; z-index: 2;">Гид по комплексу</p>
-            <h2>ООО «Чалама»</h2>
-            <p>Гостеприимство в самом сердце Тувы</p>
+        <!-- Background Decor -->
+        <div class="info-blobs">
+            <div class="blob blob-1"></div>
+            <div class="blob blob-2"></div>
         </div>
 
-        <!-- Restaurant Section -->
-        <div class="info-section reveal-up">
-            <h3 class="info-section-title">🍽 Ресторан «Чалама»</h3>
-            
-            <div class="info-card reveal-up">
-                <div class="info-card-header">
-                    <div class="info-card-title">Банкеты и Торжества</div>
-                    <div class="info-card-price">от 3 500 ₽ <span style="font-size:0.7rem; font-weight:500;">/ чел</span></div>
-                </div>
-                <div class="info-card-desc">
-                    Паназиатская и национальная тувинская кухня. Полное меню, профессиональная сервировка и аппаратура для вашего идеального праздника.<br><br>
-                    <strong style="color:var(--gold);">🔥 Акция: 2 500 ₽ до 30 марта 2026</strong>
-                </div>
+        <div class="info-content-wrap">
+            <div class="info-hero reveal-up">
+                <div class="info-hero-badge">Prestige Collection</div>
+                <h2>ООО «Чалама»</h2>
+                <p>Традиции гостеприимства и современный комфорт в самом сердце Тувы.</p>
             </div>
 
-            <div class="info-card reveal-up">
-                <div class="info-card-header">
-                    <div class="info-card-title">Фуршет / Коктейль-бар</div>
-                    <div class="info-card-price">~ 12 000 ₽</div>
-                </div>
-                <div class="info-card-desc">
-                    Формат на 10 человек. Идеально для корпоративов и стильных вечеринок. Услуги профессионального бармена включены.
-                </div>
-            </div>
-        </div>
-
-        <!-- Bar Skala Section -->
-        <div class="info-section reveal-up">
-            <h3 class="info-section-title">🍸 Бар «Скала»</h3>
-            <p style="font-size: 0.9rem; color: var(--muted); margin-bottom: 1rem; line-height: 1.5; padding: 0 0.5rem;">
-                Ночной лаунж бар с панорамным видом, авторскими коктейлями и живой музыкой. Пт–Сб с 21:00 до 05:00.
-            </p>
-            
-            <div class="info-gallery">
-                <div class="info-gallery-item" onclick="openLightbox('https://i4.photo.2gis.com/photo-gallery/9b086357-76fa-4b41-aea4-83d80ef20438.jpg')">
-                    <img src="https://i4.photo.2gis.com/photo-gallery/9b086357-76fa-4b41-aea4-83d80ef20438.jpg" alt="Интерьер бара" loading="lazy">
-                    <div class="info-gallery-label">Интерьер</div>
-                </div>
-                <div class="info-gallery-item" onclick="openLightbox('https://i2.photo.2gis.com/photo-gallery/210e67b4-7d42-42bb-b3a1-8b5ace7199c5.jpg')">
-                    <img src="https://i2.photo.2gis.com/photo-gallery/210e67b4-7d42-42bb-b3a1-8b5ace7199c5.jpg" alt="Барная стойка" loading="lazy">
-                    <div class="info-gallery-label">Барная стойка</div>
-                </div>
-                <div class="info-gallery-item" onclick="openLightbox('https://i7.photo.2gis.com/photo-gallery/71a7702e-c05d-4b48-b537-ad9be1fbfb52.jpg')">
-                    <img src="https://i7.photo.2gis.com/photo-gallery/71a7702e-c05d-4b48-b537-ad9be1fbfb52.jpg" alt="Основной зал" loading="lazy">
-                    <div class="info-gallery-label">Основной зал</div>
-                </div>
-                <div class="info-gallery-item" onclick="openLightbox('https://i6.photo.2gis.com/photo-gallery/8d7be2a8-0dce-4b56-b5a7-d7323fcb6983.jpg')">
-                    <img src="https://i6.photo.2gis.com/photo-gallery/8d7be2a8-0dce-4b56-b5a7-d7323fcb6983.jpg" alt="Коктейли" loading="lazy">
-                    <div class="info-gallery-label">Коктейли</div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Yurt & Country Complex -->
-        <div class="info-section reveal-up">
-            <h3 class="info-section-title">🌲 Загородный комплекс</h3>
-            <div class="info-card">
-                <div class="info-card-header">
-                    <div class="info-card-title serif">ХААН-ДЫТ</div>
-                </div>
-                <div class="info-card-desc">
-                    Традиционные благоустроенные юрты, сибирское SPA (баня на дровах и Сибирский чан), выездные регистрации брака на природе.
-                </div>
-                <button onclick="nav('yurt')" style="width:100%; padding: 0.8rem; border-radius: 12px; background: transparent; border: 1px solid var(--gold); color: var(--gold); font-weight: 700; font-family: inherit;">Перейти к бронированию</button>
-            </div>
-        </div>
-
-        <!-- Contacts -->
-        <div class="info-section reveal-up" style="margin-bottom: 5rem;">
-            <h3 class="info-section-title">📞 Контакты</h3>
-            <div class="contact-list">
-                <a href="tel:+73942221082" class="contact-item">
-                    <div class="contact-icon"><i class="fas fa-phone-alt"></i></div>
-                    <div class="contact-detail">
-                        <div class="contact-label">Позвонить (Круглосуточно)</div>
-                        <div class="contact-value">+7 (394) 222-10-82</div>
+            <!-- Restaurant Section -->
+            <div class="info-section reveal-up">
+                <h3 class="info-section-title"><i class="fas fa-utensils"></i> Ресторан «Чалама»</h3>
+                
+                <div class="info-card reveal-up">
+                    <div class="info-card-header">
+                        <div class="info-card-title">Гастрономические банкеты</div>
+                        <div class="info-card-price">от 3 500 ₽ <span style="font-size:0.65rem; opacity:0.7;">/ чел</span></div>
                     </div>
-                </a>
-                <a href="https://2gis.ru/kyzyl/firm/70000001037599059" target="_blank" class="contact-item">
-                    <div class="contact-icon"><i class="fas fa-map-marker-alt"></i></div>
-                    <div class="contact-detail">
-                        <div class="contact-label">Адрес комплекса</div>
-                        <div class="contact-value" style="font-size: 0.85rem; line-height: 1.3;">г. Кызыл,<br>ул. Интернациональная, 12</div>
+                    <div class="info-card-desc">
+                        Насладитесь изысканной паназиатской и национальной тувинской кухней. Идеальное пространство для ваших торжеств любого масштаба.<br><br>
+                        <strong style="color:var(--gold);"><i class="fas fa-fire"></i> Акция: 2 500 ₽ до конца марта</strong>
                     </div>
-                </a>
+                </div>
+
+                <div class="info-card reveal-up">
+                    <div class="info-card-header">
+                        <div class="info-card-title">Вечерние фуршеты</div>
+                        <div class="info-card-price">~ 12 000 ₽</div>
+                    </div>
+                    <div class="info-card-desc">
+                        Стильный формат на 10 человек для частных встреч и бизнес-коктейлей. Услуги бармена предоставляются бесплатно.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bar Skala Section -->
+            <div class="info-section reveal-up">
+                <h3 class="info-section-title"><i class="fas fa-glass-martini-alt"></i> Бар-лаунж «Скала»</h3>
+                <p style="font-size: 0.95rem; color: var(--text); opacity:0.7; margin-bottom: 1.5rem; line-height: 1.6; padding: 0 0.5rem;">
+                    Место силы с панорамным видом на горы, авторской коктейльной картой и атмосферой абсолютного релакса.
+                </p>
+                
+                <div class="info-gallery">
+                    <div class="info-gallery-item" onclick="openMLightbox('https://i4.photo.2gis.com/photo-gallery/9b086357-76fa-4b41-aea4-83d80ef20438.jpg')">
+                        <img src="https://i4.photo.2gis.com/photo-gallery/9b086357-76fa-4b41-aea4-83d80ef20438.jpg" alt="Интерьер" loading="lazy">
+                        <div class="info-gallery-label">Интерьер</div>
+                    </div>
+                    <div class="info-gallery-item" onclick="openMLightbox('https://i2.photo.2gis.com/photo-gallery/210e67b4-7d42-42bb-b3a1-8b5ace7199c5.jpg')">
+                        <img src="https://i2.photo.2gis.com/photo-gallery/210e67b4-7d42-42bb-b3a1-8b5ace7199c5.jpg" alt="Барная стойка" loading="lazy">
+                        <div class="info-gallery-label">Барная стойка</div>
+                    </div>
+                    <div class="info-gallery-item" onclick="openMLightbox('https://i7.photo.2gis.com/photo-gallery/71a7702e-c05d-4b48-b537-ad9be1fbfb52.jpg')">
+                        <img src="https://i7.photo.2gis.com/photo-gallery/71a7702e-c05d-4b48-b537-ad9be1fbfb52.jpg" alt="Основной зал" loading="lazy">
+                        <div class="info-gallery-label">Атмосфера</div>
+                    </div>
+                    <div class="info-gallery-item" onclick="openMLightbox('https://i6.photo.2gis.com/photo-gallery/8d7be2a8-0dce-4b56-b5a7-d7323fcb6983.jpg')">
+                        <img src="https://i6.photo.2gis.com/photo-gallery/8d7be2a8-0dce-4b56-b5a7-d7323fcb6983.jpg" alt="Коктейли" loading="lazy">
+                        <div class="info-gallery-label">Коктейли</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- SPA Section -->
+            <div class="info-section reveal-up">
+                <h3 class="info-section-title"><i class="fas fa-hot-tub"></i> Сибирское SPA</h3>
+                <div class="info-card">
+                    <div class="info-card-header">
+                        <div class="info-card-title serif">Хаан-Дыт &SPA</div>
+                    </div>
+                    <div class="info-card-desc">
+                        Настоящая баня на березовых дровах и традиционный Сибирский чан под открытым небом. Погрузитесь в гармонию с природой.
+                    </div>
+                    <button onclick="nav('yurt')" style="width:100%; padding: 1rem; border-radius: 16px; background: rgba(184,134,11,0.1); border: 1px solid var(--gold); color: var(--gold); font-weight: 800; font-size:0.9rem;">Забронировать отдых</button>
+                </div>
+            </div>
+
+            <!-- Contacts Premium -->
+            <div class="info-section reveal-up" style="margin-bottom: 6rem;">
+                <h3 class="info-section-title"><i class="fas fa-id-card"></i> Контакты</h3>
+                <div class="contact-list">
+                    <a href="tel:+73942221082" class="contact-item">
+                        <div class="contact-icon"><i class="fas fa-phone"></i></div>
+                        <div class="contact-detail">
+                            <div class="contact-label">Круглосуточная рецепция</div>
+                            <div class="contact-value">+7 (394) 222-10-82</div>
+                        </div>
+                    </a>
+                    <a href="https://2gis.ru/kyzyl/firm/70000001037599059" target="_blank" class="contact-item">
+                        <div class="contact-icon"><i class="fas fa-compass"></i></div>
+                        <div class="contact-detail">
+                            <div class="contact-label">Наш адрес</div>
+                            <div class="contact-value" style="font-size: 0.9rem; line-height: 1.4;">г. Кызыл, ул. Интернациональная, 12</div>
+                        </div>
+                    </a>
+                </div>
             </div>
         </div>
-
     </div>
+
 
     <!-- Bottom Nav -->
     <nav class="bottom-nav">
@@ -312,7 +319,25 @@
     </div>
 
     <!-- Script -->
+    <div id="m-lightbox" class="m-lightbox" onclick="closeMLightbox()">
+        <button class="m-lightbox-close">✕</button>
+        <img id="m-lightbox-img" class="m-lightbox-img" src="" alt="">
+    </div>
+
     <script>
+        function openMLightbox(src) {
+            const lb = document.getElementById('m-lightbox');
+            const img = document.getElementById('m-lightbox-img');
+            img.src = src;
+            lb.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+        function closeMLightbox() {
+            const lb = document.getElementById('m-lightbox');
+            lb.classList.remove('open');
+            document.body.style.overflow = '';
+        }
+
         const dayNames = ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
         const months = ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
         
