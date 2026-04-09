@@ -161,9 +161,7 @@ db.serialize(() => {
         prepayment INTEGER
     )`);
 
-            db.run("ALTER TABLE rooms ADD COLUMN desc TEXT", (err) => {
-                if (err && !err.message.includes("duplicate column name")) console.error("[DB Migration]", err.message);
-            });
+            // Migrations for rooms: add new fields if missing
             db.run("ALTER TABLE rooms ADD COLUMN area TEXT", (err) => {
                 if (err && !err.message.includes("duplicate column name")) console.error("[DB Migration]", err.message);
             });
