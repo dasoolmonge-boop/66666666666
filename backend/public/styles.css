@@ -33,13 +33,13 @@
 
         .btn-tg-float {
             position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px;
-            background: var(--tg-blue); color: #fff; border-radius: 50%;
+            background: linear-gradient(135deg, #0077FF 0%, #00C3FF 100%); color: #fff; border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
-            font-size: 1.8rem; box-shadow: 0 10px 30px rgba(36,161,222,0.4);
+            font-size: 1.8rem; box-shadow: 0 10px 30px rgba(0,119,255,0.4);
             z-index: 999; transition: .3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             animation: tgPulse 2s infinite;
         }
-        .btn-tg-float:hover { transform: scale(1.1) translateY(-5px); background: #2293c9; }
+        .btn-tg-float:hover { transform: scale(1.1) translateY(-5px); background: linear-gradient(135deg, #005FCC 0%, #00A8E0 100%); }
         @keyframes tgPulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
 
         /* ===== HEADER ===== */

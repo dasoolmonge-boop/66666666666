@@ -358,9 +358,9 @@
 
         .btn-tg-float {
             position: fixed; bottom: 85px; right: 20px; width: 52px; height: 52px;
-            background: #24A1DE; color: #fff; border-radius: 50%;
+            background: linear-gradient(135deg, #0077FF 0%, #00C3FF 100%); color: #fff; border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
-            font-size: 1.5rem; box-shadow: 0 8px 25px rgba(36,161,222,0.4);
+            font-size: 1.5rem; box-shadow: 0 8px 25px rgba(0,119,255,0.4);
             z-index: 99; transition: .3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             animation: tgPulse 2s infinite;
             pointer-events: auto !important; /* Ensure buttons remain clickable */
