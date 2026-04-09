@@ -368,81 +368,87 @@
         @keyframes tgPulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
         
         /* ===== INFO VIEW REDESIGN ===== */
+        #view-info {
+            overflow-x: hidden;
+            width: 100%;
+        }
+        
         .info-hero {
-            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
+            background: linear-gradient(135deg, #1f2326 0%, #111 100%);
             border-radius: 20px;
-            padding: 2rem 1.5rem;
+            padding: 3rem 1.5rem;
             color: #fff;
             text-align: center;
             margin-bottom: 2rem;
-            box-shadow: 0 15px 30px rgba(184,134,11,0.2);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.4);
             position: relative;
             overflow: hidden;
-            border: 1px solid rgba(255,255,255,0.2);
+            border: 1px solid rgba(225,211,165,0.2);
         }
         .info-hero::after {
             content: '';
             position: absolute; inset: 0;
             background: url('uploads/chalama_logo.png') no-repeat center/contain;
-            opacity: 0.1;
-            transform: scale(2);
+            opacity: 0.15;
+            transform: scale(1.5);
             pointer-events: none;
             background-blend-mode: overlay;
-        }
-        body.yurt-theme .info-hero {
-            background: linear-gradient(135deg, #4a543e 0%, #38402f 100%);
-            box-shadow: 0 15px 30px rgba(0,0,0,0.5);
-            border: 1px solid rgba(225,211,165,0.2);
         }
         body.yurt-theme .info-hero::after {
             background-image: url('uploads/kd_logo.png');
         }
 
-        .info-hero h2 { font-family: 'Playfair Display', serif; font-size: 2.2rem; margin-bottom: 0.5rem; position: relative; z-index: 2; }
-        .info-hero p { font-size: 0.95rem; opacity: 0.9; position: relative; z-index: 2; font-weight: 500;}
+        .info-hero h2 { font-family: 'Playfair Display', serif; font-size: 2.2rem; margin-bottom: 0.5rem; position: relative; z-index: 2; color: var(--gold); letter-spacing: 1px;}
+        .info-hero p { font-size: 0.95rem; opacity: 0.8; position: relative; z-index: 2; font-weight: 500;}
 
         .info-section {
-            margin-bottom: 2.5rem;
+            margin-bottom: 3rem;
         }
         .info-section-title {
-            font-size: 1.4rem;
+            font-size: 1.5rem;
+            font-family: 'Playfair Display', serif;
             font-weight: 800;
-            margin-bottom: 1.2rem;
+            margin-bottom: 1.5rem;
             color: var(--text);
-            display: flex; align-items: center; gap: 0.6rem;
+            display: flex; align-items: center; gap: 0.8rem;
+            letter-spacing: 0.5px;
         }
         
         /* Premium Info Card (Glassmorphism inspired) */
         .info-card {
             background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 1.5rem;
-            margin-bottom: 1.2rem;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+            background-image: linear-gradient(to bottom right, rgba(255,255,255,0.05), rgba(0,0,0,0.02));
+            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(184,134,11,0.15);
+            border-radius: 24px;
+            padding: 1.8rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.08);
             position: relative;
             overflow: hidden;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         body.yurt-theme .info-card {
-            background: rgba(255,255,255,0.03);
-            border-color: rgba(225,211,165,0.1);
+            background-image: linear-gradient(to bottom right, rgba(255,255,255,0.08), rgba(0,0,0,0.2));
+            border-color: rgba(225,211,165,0.2);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
         }
         
         .info-card-header {
-            display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.8rem;
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;
         }
-        .info-card-title { font-weight: 800; font-size: 1.2rem; color: var(--gold); }
-        .info-card-price { border: 1px solid var(--border); font-weight: 800; font-size: 0.95rem; color: var(--gold); background: var(--surface2); padding: 0.35rem 0.8rem; border-radius: 12px; }
-        body.yurt-theme .info-card-price { border-color: rgba(225,211,165,0.2); background: rgba(255,255,255,0.05); }
+        .info-card-title { font-weight: 800; font-size: 1.25rem; color: var(--gold); font-family: 'Playfair Display', serif; letter-spacing: 0.5px; }
+        .info-card-price { border: 1px solid var(--gold); font-weight: 800; font-size: 0.95rem; color: var(--gold); background: rgba(184,134,11,0.05); padding: 0.4rem 1rem; border-radius: 12px; }
+        body.yurt-theme .info-card-price { border-color: rgba(225,211,165,0.3); color: #e1d3a5; background: rgba(225,211,165,0.05); }
 
-        .info-card-desc { font-size: 0.9rem; color: var(--text); line-height: 1.6; opacity: 0.85; margin-bottom: 1rem;}
+        .info-card-desc { font-size: 0.92rem; color: var(--text); line-height: 1.7; opacity: 0.85; margin-bottom: 1rem;}
         
         /* Horizontal Gallery for Mobile */
         .info-gallery {
             display: flex; gap: 0.8rem; padding-bottom: 1rem;
             overflow-x: auto; scroll-behavior: smooth; scrollbar-width: none;
             scroll-snap-type: x mandatory;
-            margin: 0 -1.5rem; padding: 0 1.5rem 1rem 1.5rem;
+            margin: 0 -0.8rem; padding: 0 0.8rem 1rem 0.8rem; /* FIXED HORIZONTAL SCROLL */
         }
         .info-gallery::-webkit-scrollbar { display: none; }
         .info-gallery-item {
