@@ -856,10 +856,11 @@ function buildAmenitiesHtml(amenities, isDark = false) {
     if (!amenities || !amenities.length) return '';
     const color = isDark ? 'rgba(255,255,255,0.9)' : '#333';
     
-    // Split into 2 columns if more than 4 items
-    const mid = Math.ceil(amenities.length / 2);
-    const col1 = amenities.slice(0, mid);
-    const col2 = amenities.slice(mid);
+    // Split into 3 columns
+    const third = Math.ceil(amenities.length / 3);
+    const col1 = amenities.slice(0, third);
+    const col2 = amenities.slice(third, third * 2);
+    const col3 = amenities.slice(third * 2);
     
     const renderCol = (list) => list.map(a => `
         <div style="color:${color}; margin-bottom:0.4rem; font-size:0.85rem; display:flex; align-items:flex-start; gap:0.5rem;">
@@ -869,9 +870,10 @@ function buildAmenitiesHtml(amenities, isDark = false) {
     `).join('');
 
     return `
-    <div class="card-amenities-split" style="margin-bottom: 1rem; display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+    <div class="card-amenities-split" style="margin-bottom: 1rem; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem;">
         <div class="am-col">${renderCol(col1)}</div>
         <div class="am-col">${renderCol(col2)}</div>
+        <div class="am-col">${renderCol(col3)}</div>
     </div>`;
 }
 

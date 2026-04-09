@@ -817,7 +817,7 @@
 
         .card-amenities-split {
             display: none; /* Скрыто по умолчанию на всех экранах */
-            grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;
+            grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;
             margin-top: 1rem;
             padding: 0;
             background: transparent;
