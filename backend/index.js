@@ -320,7 +320,7 @@ app.get('/api/rooms/available', (req, res) => {
     db.all(
         `SELECT DISTINCT room FROM bookings 
          WHERE status != 'cancelled' AND status != 'completed'
-         AND checkIn < ? AND checkOut > ?`,
+         AND date(checkIn) < date(?) AND date(checkOut) > date(?)`,
         [checkOut, checkIn],
         (err, busyRows) => {
             if (err) return res.status(500).json({ error: err.message });
