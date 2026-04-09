@@ -856,15 +856,9 @@ function buildAmenitiesHtml(amenities, roomId, isDark = false) {
     if (!amenities || !amenities.length) return '';
     const color = isDark ? 'rgba(255,255,255,0.9)' : '#333';
     
-    // Split into 3 columns
-    const third = Math.ceil(amenities.length / 3);
-    const col1 = amenities.slice(0, third);
-    const col2 = amenities.slice(third, third * 2);
-    const col3 = amenities.slice(third * 2);
-    
-    const renderCol = (list) => list.map(a => `
-        <div style="color:${color}; margin-bottom:0.4rem; font-size:0.85rem; display:flex; align-items:flex-start; gap:0.5rem;">
-            <span>${getIconForAmenity(a)}</span>
+    const itemsHtml = amenities.map(a => `
+        <div class="am-item" style="color:${color}; font-size:0.85rem; display:flex; align-items:flex-start; gap:0.5rem; line-height:1.2;">
+            <span style="flex-shrink:0;">${getIconForAmenity(a)}</span>
             <span>${a}</span>
         </div>
     `).join('');
@@ -873,9 +867,7 @@ function buildAmenitiesHtml(amenities, roomId, isDark = false) {
 
     return `
     <div id="am-wrapper-${roomId}" class="card-amenities-split">
-        <div class="am-col">${renderCol(col1)}</div>
-        <div class="am-col">${renderCol(col2)}</div>
-        <div class="am-col">${renderCol(col3)}</div>
+        ${itemsHtml}
     </div>
     ${hasMore ? `<div class="am-toggle-btn" onclick="toggleAmenities(this, '${roomId}')">Все услуги ›</div>` : ''}`;
 }

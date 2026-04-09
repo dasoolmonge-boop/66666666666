@@ -817,30 +817,37 @@
 
         .card-amenities-split {
             display: grid; 
-            grid-template-columns: 1fr 1fr 1fr; gap: 0.8rem; 
+            grid-template-columns: repeat(3, 1fr); 
+            gap: 1.2rem 0.8rem; 
             margin-bottom: 0.8rem;
             margin-top: 0.8rem;
             padding: 0;
             background: transparent;
             border: none;
-            max-height: 1.6rem; /* Should fit ~1 line */
+            max-height: 2.8rem; /* Fits 1 row even if an item wraps slightly */
             overflow: hidden;
-            transition: max-height 0.4s ease;
+            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
         }
 
         .card-amenities-split.expanded {
-            max-height: 800px;
+            max-height: 1000px;
+        }
+
+        .am-item {
+            margin-bottom: 0; /* Managed by grid gap */
         }
 
         .am-toggle-btn {
             display: inline-block;
             font-size: 0.75rem; color: var(--gold);
             cursor: pointer; font-weight: 700;
-            margin-bottom: 1rem;
+            margin-bottom: 1.2rem;
             transition: color 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
-        .am-toggle-btn:hover { color: var(--gold-light); text-decoration: underline; }
+        .am-toggle-btn:hover { color: var(--gold-light); }
         .yurts-theme .am-toggle-btn { color: #e1d3a5; }
 
         /* Adaptive: Single column on mobile */
