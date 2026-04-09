@@ -739,7 +739,7 @@
         .hotel-room-card {
             background: #fff; border-radius: 20px; overflow: hidden;
             border: 2px solid transparent;
-            display: grid; grid-template-columns: 340px 1fr;
+            display: grid; grid-template-columns: 450px 1fr;
             transition: all .3s ease;
             animation: fadeUp .5s ease backwards;
             margin-bottom: 2rem;
@@ -1035,7 +1035,7 @@
                 border-radius: 18px !important; overflow: hidden !important;
                 grid-template-columns: none !important; /* Force override */
             }
-            .hotel-room-card .card-img { width: 100% !important; height: 220px !important; min-height: 220px !important; padding: 0 !important; }
+            .hotel-room-card .card-img { width: 100% !important; height: 280px !important; min-height: 280px !important; padding: 0 !important; }
             .hotel-room-card .slider-wrapper { border-radius: 0 !important; }
             .hotel-room-card .card-content { padding: 1.25rem !important; gap: 0.8rem !important; box-sizing: border-box !important; }
             .hotel-room-card .card-name { font-size: 1.2rem !important; margin-bottom: 0.4rem !important; line-height: 1.3; }
