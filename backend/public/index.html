@@ -199,34 +199,7 @@
             <!-- JS Generated -->
         </div>
 
-        <!-- Booking Form (appears after selecting a room) -->
-        <div id="hotel-book-form" style="display:none; margin-top:2rem;">
-            <div class="hotel-booking-form">
-                <div class="hotel-form-header">
-                    <div class="hotel-form-icon">📝</div>
-                    <div>
-                        <h3>Оформление бронирования</h3>
-                        <p>Заполните данные для подтверждения</p>
-                    </div>
-                </div>
-                <div id="hotel-book-summary" class="hotel-form-summary"></div>
-                <div class="hotel-form-fields">
-                    <div class="form-group" style="margin:0;">
-                        <label>Ваше имя</label>
-                        <input type="text" placeholder="Иван Иванов" id="hotel-name">
-                    </div>
-                    <div class="form-group" style="margin:0;">
-                        <label>Телефон</label>
-                        <input type="tel" placeholder="+7 (___) ___-__-__" id="hotel-phone">
-                    </div>
-                </div>
-                <div style="margin: 1rem 0; font-size: 0.75rem; color: var(--gray); display: flex; gap: 0.8rem; align-items: flex-start;">
-                    <input type="checkbox" id="hotel-consent" checked style="margin-top: 0.2rem;">
-                    <label for="hotel-consent">Я согласен на <a href="policy.html" target="_blank" style="color: var(--gold); text-decoration: underline;">обработку персональных данных</a></label>
-                </div>
-                <button class="btn-book" onclick="submitHotelBooking()">Забронировать номер</button>
-            </div>
-        </div>
+        <!-- Booking handled by #booking-modal -->
     </div>
 </section>
 
@@ -334,34 +307,7 @@
         <!-- Yurt Room Cards Grid -->
         <div id="yurt-rooms-grid" class="hotel-rooms-grid" style="margin-top:2rem;"></div>
 
-        <!-- Yurt Booking Form -->
-        <div id="yurt-book-form" style="display:none; margin-top:2rem;">
-            <div class="hotel-booking-form" style="background:rgba(255,255,255,0.05); border:1px solid rgba(225,211,165,0.2);">
-                <div class="hotel-form-header">
-                    <div class="hotel-form-icon" style="background:rgba(225,211,165,0.1); color:#e1d3a5;">📝</div>
-                    <div>
-                        <h3 style="color:#e1d3a5;">Оформление бронирования Юрты</h3>
-                        <p style="color:rgba(255,255,255,0.7);">Заполните данные для подтверждения</p>
-                    </div>
-                </div>
-                <div id="yurt-book-summary" class="hotel-form-summary" style="background:rgba(0,0,0,0.2); border-color:rgba(225,211,165,0.2); color:#fff;"></div>
-                <div class="hotel-form-fields">
-                    <div class="form-group" style="margin:0;">
-                        <label style="color:rgba(255,255,255,0.7);">Ваше имя</label>
-                        <input type="text" placeholder="Иван Иванов" id="yurt-name" style="background:rgba(255,255,255,0.05); color:#fff; border-color:rgba(255,255,255,0.2);">
-                    </div>
-                    <div class="form-group" style="margin:0;">
-                        <label style="color:rgba(255,255,255,0.7);">Телефон</label>
-                        <input type="tel" placeholder="+7 (___) ___-__-__" id="yurt-phone" style="background:rgba(255,255,255,0.05); color:#fff; border-color:rgba(255,255,255,0.2);">
-                    </div>
-                </div>
-                <div style="margin: 1rem 0; font-size: 0.75rem; color: rgba(255,255,255,0.6); display: flex; gap: 0.8rem; align-items: flex-start;">
-                    <input type="checkbox" id="yurt-consent" checked style="margin-top: 0.2rem;">
-                    <label for="yurt-consent">Я согласен на <a href="policy.html" target="_blank" style="color: #e1d3a5; text-decoration: underline;">обработку персональных данных</a></label>
-                </div>
-                <button class="btn-book" onclick="submitYurtBooking()" style="background:#e1d3a5; color:#38402f;">Забронировать юрту</button>
-            </div>
-        </div>
+        <!-- Booking handled by #booking-modal -->
 
         <!-- BATH & TUB BOOKING BLOCK -->
         <div style="margin-top:5rem" id="bath-booking-block">
@@ -1433,7 +1379,7 @@ function searchAvailableYurts() {
     if (checkOut <= checkIn) { alert('Дата выезда должна быть позже даты заезда'); return; }
     yurtSearchDates = { checkIn: inVal, checkOut: outVal };
     yurtSelectedRoom = null;
-    document.getElementById('yurt-book-form').style.display = 'none';
+    closeBookingModal();
     const guests = parseInt(document.getElementById('yurt-guests').value) || 2;
     
     fetch('/api/rooms/available?checkIn=' + inVal + '&checkOut=' + outVal)
@@ -1471,14 +1417,12 @@ function renderInitialYurtCards(rooms) {
 
 function selectYurtRoomForBooking(id, escapedName, totalPrice, nights, pricePerNight) {
     yurtSelectedRoom = { id, name: escapedName, totalPrice, nights, price: pricePerNight };
-    const summary = document.getElementById('yurt-book-summary');
-    const form = document.getElementById('yurt-book-form');
     
     const checkInText = fmtDate(new Date(yurtSearchDates.checkIn));
     const checkOutText = fmtDate(new Date(yurtSearchDates.checkOut));
     
-    summary.innerHTML = `
-        <div style="font-size:1.2rem; font-weight:800; color:#e1d3a5; margin-bottom:.5rem;">${escapedName}</div>
+    const summary = `
+        <div style="font-size:1.2rem; font-weight:800; color:var(--gold); margin-bottom:.5rem;">${escapedName}</div>
         <div style="display:flex; justify-content:space-between; margin-bottom:.5rem; font-size:.9rem;">
             <span>Заезд: <strong>${checkInText}</strong></span>
             <span>Выезд: <strong>${checkOutText}</strong></span>
@@ -1487,52 +1431,13 @@ function selectYurtRoomForBooking(id, escapedName, totalPrice, nights, pricePerN
             <span>${nights} ночей</span>
             <span>${fmtPrice(pricePerNight)} / ночь</span>
         </div>
-        <div style="border-top:1px solid rgba(255,255,255,0.1); margin-top:.8rem; padding-top:.8rem; display:flex; justify-content:space-between; font-weight:800; font-size:1.2rem; color:#e1d3a5;">
+        <div style="border-top:1px solid rgba(0,0,0,0.08); margin-top:.8rem; padding-top:.8rem; display:flex; justify-content:space-between; font-weight:800; font-size:1.2rem; color:var(--gold);">
             <span>Итого:</span>
             <span>${fmtPrice(totalPrice)}</span>
         </div>
     `;
     
-    form.style.display = 'block';
-    form.scrollIntoView({ behavior: 'smooth', block: 'center' });
-}
-
-function submitYurtBooking() {
-    if (!yurtSelectedRoom) { alert('Выберите номер'); return; }
-    const name = document.getElementById('yurt-name').value;
-    const phone = document.getElementById('yurt-phone').value;
-    const consent = document.getElementById('yurt-consent').checked;
-    if (!name || !phone) { alert('Заполните имя и телефон'); return; }
-    if (!consent) { alert('Подтвердите согласие на обработку персональных данных'); return; }
-
-    const booking = {
-        type: 'yurt',
-        room: yurtSelectedRoom.name,
-        checkIn: new Date(yurtSearchDates.checkIn).toISOString(),
-        checkOut: new Date(yurtSearchDates.checkOut).toISOString(),
-        nights: yurtSelectedRoom.nights,
-        guest: name,
-        phone: phone,
-        addons: [],
-        total: yurtSelectedRoom.totalPrice
-    };
-
-    fetch('/api/bookings', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(booking)
-    }).then(res => res.json()).then(data => {
-        if (data.success) {
-            booking.id = data.id;
-            sendTGNotification(booking);
-            document.getElementById('successModal').classList.add('open');
-            yurtSelectedRoom = null;
-            document.getElementById('yurt-book-form').style.display = 'none';
-            document.getElementById('yurt-name').value = '';
-            document.getElementById('yurt-phone').value = '';
-            searchAvailableYurts();
-        } else alert('Ошибка: ' + data.error);
-    }).catch(err => alert('Ошибка: ' + err.message));
+    openBookingModal('yurt', escapedName, summary, totalPrice, nights, pricePerNight, id);
 }
 
 function buildYurtCard(r, nights, guests, isAvail, showPrice) {
@@ -1634,7 +1539,7 @@ function searchAvailableRooms() {
     if (checkOut <= checkIn) { alert('Дата выезда должна быть позже даты заезда'); return; }
     hotelSearchDates = { checkIn: inVal, checkOut: outVal };
     hotelSelectedRoom = null;
-    document.getElementById('hotel-book-form').style.display = 'none';
+    closeBookingModal();
     const guests = parseInt(document.getElementById('hotel-guests').value) || 2;
     fetch('/api/rooms/available?checkIn=' + inVal + '&checkOut=' + outVal)
         .then(r => r.json())
@@ -1801,9 +1706,8 @@ function renderInitialHotelCards(rooms) {
 
 function selectHotelRoom(id, name, totalPrice, nights, pricePerNight) {
     hotelSelectedRoom = { id, name, totalPrice, nights, pricePerNight };
-    const form = document.getElementById('hotel-book-form');
     const nightsLabel = nights === 1 ? 'ночь' : nights < 5 ? 'ночи' : 'ночей';
-    document.getElementById('hotel-book-summary').innerHTML = `
+    const summary = `
         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;">
             <div>
                 <div style="font-weight:700;font-size:1.1rem;">${name}</div>
@@ -1816,46 +1720,7 @@ function selectHotelRoom(id, name, totalPrice, nights, pricePerNight) {
                 <div style="font-size:.78rem;color:var(--gray);">${fmtPrice(pricePerNight)} × ${nights}</div>
             </div>
         </div>`;
-    form.style.display = 'block';
-    form.scrollIntoView({ behavior: 'smooth', block: 'center' });
-}
-
-function submitHotelBooking() {
-    if (!hotelSelectedRoom) { alert('Выберите номер'); return; }
-    const name = document.getElementById('hotel-name').value;
-    const phone = document.getElementById('hotel-phone').value;
-    const consent = document.getElementById('hotel-consent').checked;
-    if (!name || !phone) { alert('Заполните имя и телефон'); return; }
-    if (!consent) { alert('Подтвердите согласие на обработку персональных данных'); return; }
-
-    const booking = {
-        type: 'hotel',
-        room: hotelSelectedRoom.name,
-        checkIn: new Date(hotelSearchDates.checkIn).toISOString(),
-        checkOut: new Date(hotelSearchDates.checkOut).toISOString(),
-        nights: hotelSelectedRoom.nights,
-        guest: name,
-        phone: phone,
-        addons: [],
-        total: hotelSelectedRoom.totalPrice
-    };
-
-    fetch('/api/bookings', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(booking)
-    }).then(res => res.json()).then(data => {
-        if (data.success) {
-            booking.id = data.id;
-            sendTGNotification(booking);
-            document.getElementById('successModal').classList.add('open');
-            hotelSelectedRoom = null;
-            document.getElementById('hotel-book-form').style.display = 'none';
-            document.getElementById('hotel-name').value = '';
-            document.getElementById('hotel-phone').value = '';
-            searchAvailableRooms();
-        } else alert('Ошибка: ' + data.error);
-    }).catch(err => alert('Ошибка: ' + err.message));
+    openBookingModal('hotel', name, summary, totalPrice, nights, pricePerNight, id);
 }
 
 
@@ -1891,7 +1756,7 @@ function submitHotelBooking() {
         const today = new Date().toISOString().split('T')[0];
         const hi = document.getElementById('hotel-search-in');
         if(hi) hi.min = today;
-        ['hotel-phone', 'sauna-phone', 'yurt-phone', 'bath-phone'].forEach(applyPhoneMask);
+        ['sauna-phone', 'bath-phone', 'bm-phone'].forEach(applyPhoneMask);
     });
 
     function applyPhoneMask(id) {
@@ -1914,7 +1779,115 @@ function submitHotelBooking() {
             if (!e.target.value || e.target.value === '+7 ') e.target.value = '+7 ';
         });
     }
+
+// ===== BOOKING MODAL =====
+let bookingModalData = null;
+
+function openBookingModal(type, roomName, summary, totalPrice, nights, pricePerNight, roomId) {
+    bookingModalData = { type, roomName, totalPrice, nights, pricePerNight, roomId };
+    
+    document.getElementById('bm-title').textContent = type === 'hotel' ? 'Бронирование номера' : (type === 'yurt' ? 'Бронирование юрты' : 'Бронирование');
+    document.getElementById('bm-summary').innerHTML = summary;
+    document.getElementById('bm-name').value = '';
+    document.getElementById('bm-phone').value = '+7 ';
+    document.getElementById('bm-consent').checked = true;
+    
+    const btn = document.getElementById('bm-submit-btn');
+    btn.textContent = type === 'hotel' ? 'Забронировать номер' : 'Забронировать юрту';
+    
+    document.getElementById('booking-modal-bg').classList.add('open');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeBookingModal() {
+    document.getElementById('booking-modal-bg').classList.remove('open');
+    document.body.style.overflow = '';
+}
+
+async function submitBookingModal() {
+    if (!bookingModalData) return;
+    const name = document.getElementById('bm-name').value.trim();
+    const phone = document.getElementById('bm-phone').value.trim();
+    const consent = document.getElementById('bm-consent').checked;
+    
+    if (!name || !phone) return alert('Заполните имя и телефон!');
+    if (!consent) return alert('Необходимо согласие на обработку данных.');
+    
+    const d = bookingModalData;
+    const dates = d.type === 'hotel' ? hotelSearchDates : yurtSearchDates;
+    const checkIn = dates ? new Date(dates.checkIn).toISOString() : null;
+    const checkOut = dates ? new Date(dates.checkOut).toISOString() : null;
+    
+    if (!checkIn || !checkOut) return alert('Сначала выберите даты.');
+    
+    const btn = document.getElementById('bm-submit-btn');
+    btn.disabled = true;
+    btn.textContent = 'Оформляем...';
+    
+    try {
+        const res = await fetch('/api/bookings', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                type: d.type,
+                room: d.roomName,
+                checkIn,
+                checkOut,
+                nights: d.nights,
+                guest: name,
+                phone: phone,
+                addons: [],
+                total: d.totalPrice
+            })
+        });
+        const data = await res.json();
+        if (data.success) {
+            closeBookingModal();
+            document.getElementById('successModal').classList.add('open');
+            bookingModalData = null;
+            // Refresh room list
+            if (d.type === 'hotel') searchAvailableRooms();
+            else if (d.type === 'yurt') searchAvailableYurts();
+        } else {
+            alert(data.error || 'Ошибка при бронировании');
+        }
+    } catch (e) {
+        alert('Ошибка сети. Попробуйте позже.');
+    }
+    btn.disabled = false;
+    btn.textContent = d.type === 'hotel' ? 'Забронировать номер' : 'Забронировать юрту';
+}
 </script>
+
+<!-- Booking Modal -->
+<div class="modal-bg" id="booking-modal-bg" onclick="if(event.target===this)closeBookingModal()">
+    <div class="modal" style="max-width:520px;">
+        <button class="modal-close" onclick="closeBookingModal()">×</button>
+        <div style="display:flex; align-items:center; gap:1rem; margin-bottom:1.5rem;">
+            <div style="width:50px; height:50px; border-radius:14px; background:linear-gradient(135deg, rgba(184,134,11,.1), rgba(184,134,11,.05)); display:flex; align-items:center; justify-content:center; font-size:1.4rem; flex-shrink:0;">📝</div>
+            <div>
+                <h3 id="bm-title" style="font-size:1.15rem; margin:0;">Бронирование</h3>
+                <p style="font-size:.82rem; color:var(--gray); margin:.2rem 0 0;">Заполните данные для подтверждения</p>
+            </div>
+        </div>
+        <div id="bm-summary" style="padding:1rem 1.2rem; background:var(--light); border-radius:12px; border:1px solid rgba(184,134,11,.1); margin-bottom:1.5rem; font-size:.9rem; line-height:1.6;"></div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1rem;">
+            <div>
+                <label style="display:block; font-size:.75rem; font-weight:700; color:var(--gray); letter-spacing:1px; text-transform:uppercase; margin-bottom:.4rem;">Ваше имя</label>
+                <input type="text" placeholder="Иван Иванов" id="bm-name" style="width:100%; padding:.75rem 1rem; border:1.5px solid #e8e8e8; border-radius:12px; font-size:.95rem; font-family:inherit; outline:none; transition:.3s;">
+            </div>
+            <div>
+                <label style="display:block; font-size:.75rem; font-weight:700; color:var(--gray); letter-spacing:1px; text-transform:uppercase; margin-bottom:.4rem;">Телефон</label>
+                <input type="tel" placeholder="+7 (___) ___-__-__" id="bm-phone" style="width:100%; padding:.75rem 1rem; border:1.5px solid #e8e8e8; border-radius:12px; font-size:.95rem; font-family:inherit; outline:none; transition:.3s;">
+            </div>
+        </div>
+        <div style="margin:1rem 0; font-size:.75rem; color:var(--gray); display:flex; gap:.8rem; align-items:flex-start;">
+            <input type="checkbox" id="bm-consent" checked style="margin-top:.2rem;">
+            <label for="bm-consent">Я согласен на <a href="policy.html" target="_blank" style="color:var(--gold); text-decoration:underline;">обработку персональных данных</a></label>
+        </div>
+        <button id="bm-submit-btn" class="btn-book" onclick="submitBookingModal()" style="width:100%; padding:1rem; border-radius:14px; background:linear-gradient(135deg, var(--gold), var(--gold-light)); color:#fff; border:none; font-size:.95rem; font-weight:700; cursor:pointer; font-family:inherit; box-shadow:0 4px 15px rgba(184,134,11,.25); transition:.3s;">Забронировать</button>
+    </div>
+</div>
 
 <a href="https://max.ru/id1701062159_bot" target="_blank" class="btn-tg-float" title="Написать в МАКС">
     <i class="fas fa-comments"></i>
