@@ -1560,14 +1560,17 @@ function searchAvailableRooms() {
             const available = rooms.filter(r => r.available && r.type === 'hotel');
             const infoEl = document.getElementById('hotel-results-info');
             const hintEl = document.getElementById('hotel-busy-hint');
+            const gridEl = document.getElementById('hotel-rooms-grid');
             
             infoEl.style.display = 'block';
             if (available.length > 0) {
                 hintEl.style.display = 'none';
+                gridEl.style.display = 'grid';
                 infoEl.innerHTML = `✨ Найдено <strong>${available.length}</strong> свободных номеров из ${rooms.length} на <strong>${nights}</strong> ${nights === 1 ? 'ночь' : nights < 5 ? 'ночи' : 'ночей'} (${fmtDate(checkIn)} — ${fmtDate(checkOut)})`;
             } else {
                 infoEl.innerHTML = '';
                 hintEl.style.display = 'flex';
+                gridEl.style.display = 'none';
             }
             renderHotelCards(rooms, nights, guests);
         })
