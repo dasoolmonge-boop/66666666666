@@ -1522,9 +1522,9 @@ function buildYurtCard(r, nights, guests, isAvail, showPrice) {
     const hasStove = r.name.includes('юрта');
 
     return `
-    <div class="hotel-room-card ${isAvail ? '' : 'unavailable'}" style="background:rgba(255,255,255,0.05); border:1px solid ${isAvail ? 'rgba(225,211,165,0.2)' : 'rgba(255,255,255,0.05)'}; margin-bottom: 2rem;">
-        <div class="card-img" style="padding:0; border-radius: 20px 0 0 20px;">
-            <div class="slider-wrapper" style="border-radius: 20px 0 0 20px;">
+    <div class="hotel-room-card ${isAvail ? '' : 'unavailable'}" style="background:rgba(255,255,255,0.05); border:1px solid ${isAvail ? 'rgba(225,211,165,0.2)' : 'rgba(255,255,255,0.05)'}; margin-bottom: 1.5rem;">
+        <div class="card-img" style="padding:0; border-radius: 20px 0 0 20px; min-height: 240px;">
+            <div class="slider-wrapper" style="border-radius: 20px 0 0 20px; min-height: 180px;">
                 <div class="card-img-inner" onscroll="updateSliderDots(this)">
                     ${imgsHtml}
                 </div>
@@ -1534,20 +1534,20 @@ function buildYurtCard(r, nights, guests, isAvail, showPrice) {
                 ${!isAvail ? '<div style="position:absolute;inset:0;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;z-index:20;"><span style="background:#e53e3e;color:#fff;padding:.4rem 1.2rem;border-radius:20px;font-weight:700;">Занято</span></div>' : ''}
             </div>
         </div>
-        <div class="card-content" style="padding: 1.8rem;">
+        <div class="card-content" style="padding: 1.2rem;">
             <div>
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.8rem;">
-                    <div class="card-name" style="font-size:1.5rem; margin:0; color:#fff;">${r.name}</div>
+                    <div class="card-name" style="font-size:1.4rem; margin:0; color:#fff;">${r.name}</div>
                     <div style="background:rgba(255,255,255,0.1); color:#e1d3a5; padding:.3rem .7rem; border-radius:10px; font-weight:700; font-size:0.9rem;">${r.capacity} 👤</div>
                 </div>
-                <div class="card-meta" style="margin-bottom: 1.2rem;">
+                <div class="card-meta" style="margin-bottom: 0.8rem;">
                     ${r.area ? `<span style="color:#777;">${r.area}</span>` : ''}
                 </div>
                 
                 ${buildAmenitiesHtml(r.amenities, true)}
             </div>
             
-            <div class="card-footer" style="margin-top: 1.5rem; padding-top:1.5rem; border-top:1px solid rgba(255,255,255,0.1); background:rgba(0,0,0,0.15); margin: 0 -1.8rem -1.8rem -1.8rem; padding: 1.5rem 1.8rem; display:flex; justify-content:space-between; align-items:flex-end;">
+            <div class="card-footer" style="margin-top: 1rem; padding-top:1rem; border-top:1px solid rgba(255,255,255,0.1); background:rgba(0,0,0,0.15); margin: 0 -1.2rem -1.2rem -1.2rem; padding: 1rem 1.2rem; display:flex; justify-content:space-between; align-items:flex-end;">
                 <div class="card-tariff-col" style="flex:1;">
                     <div class="card-tariff-name" style="color:#e1d3a5; font-weight:700; margin-bottom:0.4rem; font-size:0.9rem;">«${r.tariff || 'Стандартный тариф'}»</div>
                     <div class="card-tariff-detail">
