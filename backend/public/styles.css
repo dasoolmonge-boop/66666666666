@@ -664,9 +664,9 @@
         }
         #sauna { padding-top: 2rem !important; }
         .hotel-hero-bg {
-            position: absolute; top: 0; left: 0; right: 0; height: 350px;
+            position: absolute; top: 0; left: 0; right: 0; height: 450px;
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-            clip-path: ellipse(85% 100% at 50% 0%);
+            clip-path: ellipse(100% 100% at 50% 0%);
         }
         .hotel-section .section-title { color: #fff !important; }
         .hotel-section .section-label { color: var(--gold-light) !important; }
