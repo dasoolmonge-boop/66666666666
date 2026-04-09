@@ -366,4 +366,137 @@
             pointer-events: auto !important; /* Ensure buttons remain clickable */
         }
         @keyframes tgPulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+        
+        /* ===== INFO VIEW REDESIGN ===== */
+        .info-hero {
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
+            border-radius: 20px;
+            padding: 2rem 1.5rem;
+            color: #fff;
+            text-align: center;
+            margin-bottom: 2rem;
+            box-shadow: 0 15px 30px rgba(184,134,11,0.2);
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        .info-hero::after {
+            content: '';
+            position: absolute; inset: 0;
+            background: url('uploads/chalama_logo.png') no-repeat center/contain;
+            opacity: 0.1;
+            transform: scale(2);
+            pointer-events: none;
+            background-blend-mode: overlay;
+        }
+        body.yurt-theme .info-hero {
+            background: linear-gradient(135deg, #4a543e 0%, #38402f 100%);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.5);
+            border: 1px solid rgba(225,211,165,0.2);
+        }
+        body.yurt-theme .info-hero::after {
+            background-image: url('uploads/kd_logo.png');
+        }
+
+        .info-hero h2 { font-family: 'Playfair Display', serif; font-size: 2.2rem; margin-bottom: 0.5rem; position: relative; z-index: 2; }
+        .info-hero p { font-size: 0.95rem; opacity: 0.9; position: relative; z-index: 2; font-weight: 500;}
+
+        .info-section {
+            margin-bottom: 2.5rem;
+        }
+        .info-section-title {
+            font-size: 1.4rem;
+            font-weight: 800;
+            margin-bottom: 1.2rem;
+            color: var(--text);
+            display: flex; align-items: center; gap: 0.6rem;
+        }
+        
+        /* Premium Info Card (Glassmorphism inspired) */
+        .info-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-bottom: 1.2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+            position: relative;
+            overflow: hidden;
+        }
+        body.yurt-theme .info-card {
+            background: rgba(255,255,255,0.03);
+            border-color: rgba(225,211,165,0.1);
+        }
+        
+        .info-card-header {
+            display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.8rem;
+        }
+        .info-card-title { font-weight: 800; font-size: 1.2rem; color: var(--gold); }
+        .info-card-price { border: 1px solid var(--border); font-weight: 800; font-size: 0.95rem; color: var(--gold); background: var(--surface2); padding: 0.35rem 0.8rem; border-radius: 12px; }
+        body.yurt-theme .info-card-price { border-color: rgba(225,211,165,0.2); background: rgba(255,255,255,0.05); }
+
+        .info-card-desc { font-size: 0.9rem; color: var(--text); line-height: 1.6; opacity: 0.85; margin-bottom: 1rem;}
+        
+        /* Horizontal Gallery for Mobile */
+        .info-gallery {
+            display: flex; gap: 0.8rem; padding-bottom: 1rem;
+            overflow-x: auto; scroll-behavior: smooth; scrollbar-width: none;
+            scroll-snap-type: x mandatory;
+            margin: 0 -1.5rem; padding: 0 1.5rem 1rem 1.5rem;
+        }
+        .info-gallery::-webkit-scrollbar { display: none; }
+        .info-gallery-item {
+            position: relative;
+            flex: 0 0 85%;
+            height: 220px;
+            border-radius: 16px;
+            overflow: hidden;
+            scroll-snap-align: center;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .info-gallery-item img {
+            width: 100%; height: 100%; object-fit: cover;
+        }
+        .info-gallery-label {
+            position: absolute; bottom: 12px; left: 12px;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);
+            color: #fff; padding: 0.4rem 0.8rem;
+            border-radius: 10px; font-size: 0.75rem; font-weight: 800; letter-spacing: 1px;
+            text-transform: uppercase; border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* Contacts List */
+        .contact-list { background: var(--surface); border-radius: 20px; border: 1px solid var(--border); padding: 0.5rem 1.5rem; box-shadow: 0 10px 30px rgba(0,0,0,0.03); }
+        body.yurt-theme .contact-list { background: rgba(255,255,255,0.03); border-color: rgba(225,211,165,0.1); }
+        .contact-item {
+            display: flex; align-items: center; gap: 1rem; padding: 1.2rem 0;
+            border-bottom: 1px solid var(--border);
+            text-decoration: none; color: var(--text);
+        }
+        .contact-item:last-child { border-bottom: none; }
+        body.yurt-theme .contact-item { border-bottom-color: rgba(255,255,255,0.05); }
+        
+        .contact-icon {
+            width: 44px; height: 44px; border-radius: 50%;
+            background: rgba(184,134,11,0.1); color: var(--gold);
+            display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+        body.yurt-theme .contact-icon { background: rgba(225,211,165,0.1); color: #e1d3a5; }
+        .contact-detail { flex: 1; }
+        .contact-label { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.3rem; font-weight: 600;}
+        .contact-value { font-weight: 700; font-size: 1rem; }
+
+        /* Generic intersection observer animation class */
+        .reveal-up {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1), transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .reveal-up.is-revealed {
+            opacity: 1;
+            transform: translateY(0);
+        }
     

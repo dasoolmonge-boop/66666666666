@@ -139,22 +139,103 @@
         </div>
     </div>
 
-    <!-- Relocated Sauna to Hotel View -->
+    <!-- Relocated Sauna & Full Info View -->
     <div id="view-info" class="view">
-        <h1 class="view-title">О нас</h1>
-        <div style="background:var(--surface);padding:1.5rem;border-radius:16px">
-            <h3>Ресторан и Банкеты</h3>
-            <p style="font-size:.85rem;color:var(--muted);margin-top:.5rem">Паназиатская кухня, аренда на мероприятия. Банкет от 3500₽ с человека.</p>
-            <br>
-            <h3>Бар Скала</h3>
-            <p style="font-size:.85rem;color:var(--muted);margin-top:.5rem">Авторские коктейли, терраса и панорамный вид на горы.</p>
-            <br>
-            <h3>Банный комплекс ХААН-ДЫТ</h3>
-            <p style="font-size:.85rem;color:var(--muted);margin-top:.5rem">Настоящая баня на дровах и банный чан в загородном комплексе.</p>
-            <br>
-            <h3>Контакты</h3>
-            <p style="font-size:.85rem;color:var(--muted);margin-top:.5rem">Кызыл, ул. Интернациональная, 12<br>+7 394 222-10-82</p>
+        
+        <div class="info-hero reveal-up">
+            <p style="font-size: 0.75rem; letter-spacing: 3px; color: var(--gold); text-transform: uppercase; font-weight: 800; position: relative; z-index: 2;">Гид по комплексу</p>
+            <h2>ООО «Чалама»</h2>
+            <p>Гостеприимство в самом сердце Тувы</p>
         </div>
+
+        <!-- Restaurant Section -->
+        <div class="info-section reveal-up">
+            <h3 class="info-section-title">🍽 Ресторан «Чалама»</h3>
+            
+            <div class="info-card reveal-up">
+                <div class="info-card-header">
+                    <div class="info-card-title">Банкеты и Торжества</div>
+                    <div class="info-card-price">от 3 500 ₽ <span style="font-size:0.7rem; font-weight:500;">/ чел</span></div>
+                </div>
+                <div class="info-card-desc">
+                    Паназиатская и национальная тувинская кухня. Полное меню, профессиональная сервировка и аппаратура для вашего идеального праздника.<br><br>
+                    <strong style="color:var(--gold);">🔥 Акция: 2 500 ₽ до 30 марта 2026</strong>
+                </div>
+            </div>
+
+            <div class="info-card reveal-up">
+                <div class="info-card-header">
+                    <div class="info-card-title">Фуршет / Коктейль-бар</div>
+                    <div class="info-card-price">~ 12 000 ₽</div>
+                </div>
+                <div class="info-card-desc">
+                    Формат на 10 человек. Идеально для корпоративов и стильных вечеринок. Услуги профессионального бармена включены.
+                </div>
+            </div>
+        </div>
+
+        <!-- Bar Skala Section -->
+        <div class="info-section reveal-up">
+            <h3 class="info-section-title">🍸 Бар «Скала»</h3>
+            <p style="font-size: 0.9rem; color: var(--muted); margin-bottom: 1rem; line-height: 1.5; padding: 0 0.5rem;">
+                Ночной лаунж бар с панорамным видом, авторскими коктейлями и живой музыкой. Пт–Сб с 21:00 до 05:00.
+            </p>
+            
+            <div class="info-gallery">
+                <div class="info-gallery-item" onclick="openLightbox('https://i4.photo.2gis.com/photo-gallery/9b086357-76fa-4b41-aea4-83d80ef20438.jpg')">
+                    <img src="https://i4.photo.2gis.com/photo-gallery/9b086357-76fa-4b41-aea4-83d80ef20438.jpg" alt="Интерьер бара" loading="lazy">
+                    <div class="info-gallery-label">Интерьер</div>
+                </div>
+                <div class="info-gallery-item" onclick="openLightbox('https://i2.photo.2gis.com/photo-gallery/210e67b4-7d42-42bb-b3a1-8b5ace7199c5.jpg')">
+                    <img src="https://i2.photo.2gis.com/photo-gallery/210e67b4-7d42-42bb-b3a1-8b5ace7199c5.jpg" alt="Барная стойка" loading="lazy">
+                    <div class="info-gallery-label">Барная стойка</div>
+                </div>
+                <div class="info-gallery-item" onclick="openLightbox('https://i7.photo.2gis.com/photo-gallery/71a7702e-c05d-4b48-b537-ad9be1fbfb52.jpg')">
+                    <img src="https://i7.photo.2gis.com/photo-gallery/71a7702e-c05d-4b48-b537-ad9be1fbfb52.jpg" alt="Основной зал" loading="lazy">
+                    <div class="info-gallery-label">Основной зал</div>
+                </div>
+                <div class="info-gallery-item" onclick="openLightbox('https://i6.photo.2gis.com/photo-gallery/8d7be2a8-0dce-4b56-b5a7-d7323fcb6983.jpg')">
+                    <img src="https://i6.photo.2gis.com/photo-gallery/8d7be2a8-0dce-4b56-b5a7-d7323fcb6983.jpg" alt="Коктейли" loading="lazy">
+                    <div class="info-gallery-label">Коктейли</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Yurt & Country Complex -->
+        <div class="info-section reveal-up">
+            <h3 class="info-section-title">🌲 Загородный комплекс</h3>
+            <div class="info-card">
+                <div class="info-card-header">
+                    <div class="info-card-title serif">ХААН-ДЫТ</div>
+                </div>
+                <div class="info-card-desc">
+                    Традиционные благоустроенные юрты, сибирское SPA (баня на дровах и Сибирский чан), выездные регистрации брака на природе.
+                </div>
+                <button onclick="nav('yurt')" style="width:100%; padding: 0.8rem; border-radius: 12px; background: transparent; border: 1px solid var(--gold); color: var(--gold); font-weight: 700; font-family: inherit;">Перейти к бронированию</button>
+            </div>
+        </div>
+
+        <!-- Contacts -->
+        <div class="info-section reveal-up" style="margin-bottom: 5rem;">
+            <h3 class="info-section-title">📞 Контакты</h3>
+            <div class="contact-list">
+                <a href="tel:+73942221082" class="contact-item">
+                    <div class="contact-icon"><i class="fas fa-phone-alt"></i></div>
+                    <div class="contact-detail">
+                        <div class="contact-label">Позвонить (Круглосуточно)</div>
+                        <div class="contact-value">+7 (394) 222-10-82</div>
+                    </div>
+                </a>
+                <a href="https://2gis.ru/kyzyl/firm/70000001037599059" target="_blank" class="contact-item">
+                    <div class="contact-icon"><i class="fas fa-map-marker-alt"></i></div>
+                    <div class="contact-detail">
+                        <div class="contact-label">Адрес комплекса</div>
+                        <div class="contact-value" style="font-size: 0.85rem; line-height: 1.3;">г. Кызыл,<br>ул. Интернациональная, 12</div>
+                    </div>
+                </a>
+            </div>
+        </div>
+
     </div>
 
     <!-- Bottom Nav -->
@@ -1304,6 +1385,38 @@
                 } else alert('Ошибка сервера: ' + res.error);
             });
         }
+
+        // --- Intersection Observer for Animations ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.1
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-revealed');
+                    }
+                });
+            }, observerOptions);
+
+            const revealElements = document.querySelectorAll('.reveal-up');
+            revealElements.forEach(el => observer.observe(el));
+
+            // Small patch to trigger observer when switching tabs
+            const navButtons = document.querySelectorAll('.nav-item');
+            navButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    setTimeout(() => {
+                        const evt = document.createEvent('HTMLEvents');
+                        evt.initEvent('scroll', false, true);
+                        window.dispatchEvent(evt);
+                    }, 50); // slight delay for view switch
+                });
+            });
+        });
     </script>
     <a href="https://max.ru/" target="_blank" class="btn-tg-float" title="Написать в МАКС">
     <i class="fas fa-comments"></i>
