@@ -429,54 +429,90 @@
     </div>
 </section>
 
-<!-- ========== RESTAURANT ========== -->
-<section class="booking-section" id="restaurant">
-    <div class="container">
-        <div style="text-align:center" data-r>
-            <p class="section-label">Гастрономия</p>
-            <h2 class="section-title">Ресторан «Чалама»</h2>
-            <p class="section-desc" style="margin:0 auto">Паназиатская и национальная тувинская кухня. Банкеты, фуршеты и торжественные мероприятия.</p>
+<!-- ========== RESTAURANT (PREMIUM REDESIGN) ========== -->
+<section class="rest-section" id="restaurant">
+
+    <!-- Restaurant Hero Banner -->
+    <div class="rest-hero">
+        <div class="rest-hero-bg" style="background-image:url('uploads/rest_2.jpg')"></div>
+        <div class="rest-hero-overlay"></div>
+        <div class="rest-hero-content" data-r>
+            <p class="rest-hero-label">Гастрономия & Банкеты</p>
+            <h2 class="rest-hero-title">Ресторан<br>«Чалама»</h2>
+            <p class="rest-hero-sub">Паназиатская и национальная тувинская кухня<br>в интерьерах с вековыми традициями</p>
         </div>
-        <div class="rest-grid">
-            <div class="rest-card" data-r>
-                <div class="rest-icon">🍽</div>
-                <h3>Фуршет</h3>
-                <p style="color:var(--gray);font-size:.9rem">На 10 человек, полное меню и сервировка</p>
-                <div class="price-tag">12 500 ₽</div>
+    </div>
+
+    <div class="container" style="position:relative; z-index:2;">
+
+        <!-- Photo Gallery -->
+        <div style="text-align:center; margin-bottom: 3rem; padding-top: 4rem;" data-r>
+            <p class="section-label">Интерьеры</p>
+            <h2 class="section-title serif">Атмосфера ресторана</h2>
+        </div>
+
+        <div class="rest-gallery" data-r>
+            <div class="rest-gallery-item" onclick="openLightbox('uploads/rest_1.jpg')">
+                <img src="uploads/rest_1.jpg" alt="Лаунж-зона" loading="lazy">
+                <div class="rest-gallery-badge">Лаунж</div>
             </div>
-            <div class="rest-card" data-r>
-                <div class="rest-icon">🥂</div>
-                <h3>Коктейльный бар</h3>
-                <p style="color:var(--gray);font-size:.9rem">На 10 человек, профессиональный бармен</p>
-                <div class="price-tag">12 000 ₽</div>
+            <div class="rest-gallery-item" onclick="openLightbox('uploads/rest_2.jpg')">
+                <img src="uploads/rest_2.jpg" alt="Основной зал" loading="lazy">
+                <div class="rest-gallery-badge">Основной зал</div>
             </div>
-            <div class="rest-card" data-r>
-                <div class="rest-icon">🎉</div>
+            <div class="rest-gallery-item" onclick="openLightbox('uploads/rest_3.jpg')">
+                <img src="uploads/rest_3.jpg" alt="VIP-зона" loading="lazy">
+                <div class="rest-gallery-badge">VIP-зона</div>
+            </div>
+            <div class="rest-gallery-item" onclick="openLightbox('uploads/rest_4.jpg')">
+                <img src="uploads/rest_4.jpg" alt="Терраса" loading="lazy">
+                <div class="rest-gallery-badge">Терраса</div>
+            </div>
+        </div>
+
+        <!-- Services -->
+        <div style="text-align:center; margin: 5rem 0 3rem;" data-r>
+            <p class="section-label">Мероприятия</p>
+            <h2 class="section-title serif">Форматы торжеств</h2>
+        </div>
+
+        <div class="rest-services-grid">
+            <div class="rest-service-card" data-r>
+                <div class="rest-service-icon"><i class="fas fa-champagne-glasses"></i></div>
                 <h3>Банкет</h3>
-                <p style="color:var(--gray);font-size:.9rem">Стоимость с каждого человека, аппаратура входит</p>
-                <div class="price-tag">3 500 ₽<span class="price-note"> / чел</span></div>
-                <p style="color:var(--gold);font-size:.82rem;margin-top:.5rem;font-weight:600">Акция 2 500 ₽ до 30 марта 2026</p>
+                <p>Полное банкетное меню, сервировка, аппаратура для вашего идеального праздника.</p>
+                <div class="rest-service-price">3 500 ₽ <span>/ чел</span></div>
+                <div class="rest-service-promo"><i class="fas fa-fire"></i> Акция: 2 500 ₽ до 30 марта</div>
             </div>
-        </div>
-        <div class="rest-grid" style="margin-top:2rem">
-            <div class="rest-card" data-r>
-                <div class="rest-icon">🏠</div>
-                <h3>Аренда ресторана + терраса</h3>
-                <p style="color:var(--gray);font-size:.9rem">Минимум 3 часа (не банкеты), до 30 апреля</p>
-                <div class="price-tag">10 000 ₽<span class="price-note"> / час</span></div>
+            <div class="rest-service-card" data-r>
+                <div class="rest-service-icon"><i class="fas fa-martini-glass-citrus"></i></div>
+                <h3>Фуршет</h3>
+                <p>На 10 человек: полное меню, напитки и профессиональная сервировка.</p>
+                <div class="rest-service-price">12 500 ₽</div>
             </div>
-            <div class="rest-card" data-r>
-                <div class="rest-icon">💍</div>
-                <h3>Выездные регистрации (Хаан-Дыт)</h3>
-                <p style="color:var(--gray);font-size:.9rem">До 4 часов, полное оформление и регистратор (муж/жен)</p>
-                <div class="price-tag">40 000 ₽</div>
-                <p style="color:var(--gold);font-size:.82rem;margin-top:.5rem;font-weight:600">Брони после 1 апреля 2026</p>
+            <div class="rest-service-card" data-r>
+                <div class="rest-service-icon"><i class="fas fa-glass-cheers"></i></div>
+                <h3>Коктейль-бар</h3>
+                <p>На 10 человек, профессиональный бармен, авторские коктейли.</p>
+                <div class="rest-service-price">12 000 ₽</div>
             </div>
-            <div class="rest-card" data-r>
-                <div class="rest-icon">📞</div>
-                <h3>Забронировать мероприятие</h3>
-                <p style="color:var(--gray);font-size:.9rem;margin-bottom:1.5rem">Свяжитесь с нами для обсуждения деталей вашего торжества</p>
-                <a href="tel:+73942221082" class="btn btn-gold" style="width:100%;justify-content:center">Позвонить</a>
+            <div class="rest-service-card" data-r>
+                <div class="rest-service-icon"><i class="fas fa-building"></i></div>
+                <h3>Аренда ресторана</h3>
+                <p>Включая террасу. Минимум 3 часа.</p>
+                <div class="rest-service-price">10 000 ₽ <span>/ час</span></div>
+            </div>
+            <div class="rest-service-card" data-r>
+                <div class="rest-service-icon"><i class="fas fa-ring"></i></div>
+                <h3>Выездная регистрация</h3>
+                <p>Загородный комплекс Хаан-Дыт. До 4 часов, полное оформление.</p>
+                <div class="rest-service-price">40 000 ₽</div>
+            </div>
+            <div class="rest-service-card rest-service-cta" data-r>
+                <div class="rest-service-icon" style="background: linear-gradient(135deg, var(--gold), var(--gold-light)); color:#fff;"><i class="fas fa-phone-alt"></i></div>
+                <h3>Забронировать<br>мероприятие</h3>
+                <p>Обсудим детали вашего торжества и подберём идеальный формат.</p>
+                <a href="tel:+73942221082" class="btn btn-gold" style="width:100%; justify-content:center; margin-top:auto;">Позвонить</a>
             </div>
         </div>
     </div>

@@ -581,6 +581,134 @@
             .hotel-search-panel { padding: 1.5rem !important; width: 100% !important; margin-left: 0 !important; margin-right: 0 !important; }
         }
 
+        /* ===== RESTAURANT SECTION (PREMIUM) ===== */
+        .rest-section {
+            position: relative; overflow: hidden;
+            background: linear-gradient(180deg, #faf8f3 0%, #f5efe4 100%);
+            padding-bottom: 5rem;
+        }
+        
+        /* Hero Banner */
+        .rest-hero { position: relative; height: 550px; overflow: hidden; }
+        .rest-hero-bg {
+            position: absolute; inset: 0; background-size: cover; background-position: center;
+            transition: transform 8s ease;
+        }
+        .rest-hero:hover .rest-hero-bg { transform: scale(1.05); }
+        .rest-hero-overlay {
+            position: absolute; inset: 0;
+            background: linear-gradient(180deg, rgba(30,20,10,0.3) 0%, rgba(30,20,10,0.85) 100%);
+        }
+        .rest-hero-content {
+            position: absolute; bottom: 4rem; left: 0; right: 0; text-align: center;
+            color: #fff; z-index: 2;
+        }
+        .rest-hero-label {
+            font-size: .75rem; font-weight: 800; letter-spacing: 4px;
+            text-transform: uppercase; color: var(--gold-light); margin-bottom: 1rem;
+        }
+        .rest-hero-title {
+            font-family: 'Playfair Display', serif; font-size: 4rem;
+            font-weight: 700; line-height: 1.1; margin-bottom: 1rem;
+            text-shadow: 0 4px 20px rgba(0,0,0,0.4);
+        }
+        .rest-hero-sub {
+            font-size: 1.1rem; opacity: .8; line-height: 1.6;
+        }
+
+        /* Photo Gallery */
+        .rest-gallery {
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .rest-gallery-item {
+            position: relative; border-radius: 20px; overflow: hidden;
+            height: 380px; cursor: pointer;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+        }
+        .rest-gallery-item:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 16px 50px rgba(0,0,0,0.15);
+        }
+        .rest-gallery-item img {
+            width: 100%; height: 100%; object-fit: cover;
+            transition: transform 0.6s ease;
+        }
+        .rest-gallery-item:hover img { transform: scale(1.08); }
+        .rest-gallery-badge {
+            position: absolute; bottom: 16px; left: 16px;
+            background: rgba(0,0,0,0.6); backdrop-filter: blur(10px);
+            color: #fff; padding: .5rem 1rem; border-radius: 12px;
+            font-size: .75rem; font-weight: 800; letter-spacing: 1.5px;
+            text-transform: uppercase; border: 1px solid rgba(255,255,255,0.15);
+        }
+
+        /* Service Cards */
+        .rest-services-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+        .rest-service-card {
+            background: #fff; border-radius: 24px; padding: 2rem;
+            box-shadow: 0 6px 25px rgba(0,0,0,0.06);
+            border: 1px solid rgba(184,134,11,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex; flex-direction: column;
+        }
+        .rest-service-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.1);
+        }
+        .rest-service-icon {
+            width: 56px; height: 56px; border-radius: 16px;
+            background: rgba(184,134,11,0.08);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.4rem; color: var(--gold); margin-bottom: 1.2rem;
+        }
+        .rest-service-card h3 {
+            font-size: 1.15rem; font-weight: 800; margin-bottom: .6rem;
+            color: var(--dark);
+        }
+        .rest-service-card p {
+            font-size: .9rem; color: var(--gray); line-height: 1.5;
+            margin-bottom: 1rem; flex: 1;
+        }
+        .rest-service-price {
+            font-size: 1.6rem; font-weight: 800; color: var(--dark);
+        }
+        .rest-service-price span {
+            font-size: .85rem; font-weight: 500; color: var(--gray);
+        }
+        .rest-service-promo {
+            margin-top: .6rem; padding: .5rem 1rem; border-radius: 10px;
+            background: rgba(184,134,11,0.08); color: var(--gold);
+            font-size: .82rem; font-weight: 700;
+            display: inline-flex; align-items: center; gap: .4rem;
+        }
+        .rest-service-cta {
+            border: 2px solid var(--gold);
+            background: linear-gradient(135deg, rgba(184,134,11,0.03) 0%, rgba(184,134,11,0.08) 100%);
+        }
+
+        @media (max-width: 1024px) {
+            .rest-gallery { grid-template-columns: repeat(2, 1fr); }
+            .rest-services-grid { grid-template-columns: repeat(2, 1fr); }
+            .rest-hero-title { font-size: 3rem; }
+        }
+        @media (max-width: 768px) {
+            .rest-hero { height: 400px; }
+            .rest-hero-title { font-size: 2.2rem; }
+            .rest-hero-content { bottom: 2rem; padding: 0 1.5rem; }
+            .rest-gallery { grid-template-columns: 1fr 1fr; gap: 1rem; }
+            .rest-gallery-item { height: 250px; }
+            .rest-services-grid { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 480px) {
+            .rest-gallery { grid-template-columns: 1fr; }
+            .rest-gallery-item { height: 300px; }
+        }
+
         /* ===== CONTACTS ===== */
         .contacts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; margin-top: 3rem; }
         .contact-card {
