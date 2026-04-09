@@ -1791,6 +1791,7 @@ function openBookingModal(type, roomName, summary, totalPrice, nights, pricePerN
     document.getElementById('bm-name').value = '';
     document.getElementById('bm-phone').value = '+7 ';
     document.getElementById('bm-consent').checked = true;
+    document.getElementById('bm-age').checked = true;
     
     const btn = document.getElementById('bm-submit-btn');
     btn.textContent = type === 'hotel' ? 'Забронировать номер' : 'Забронировать юрту';
@@ -1812,6 +1813,7 @@ async function submitBookingModal() {
     
     if (!name || !phone) return alert('Заполните имя и телефон!');
     if (!consent) return alert('Необходимо согласие на обработку данных.');
+    if (!document.getElementById('bm-age').checked) return alert('Необходимо подтвердить совершеннолетие и ознакомление с политикой конфиденциальности.');
     
     const d = bookingModalData;
     const dates = d.type === 'hotel' ? hotelSearchDates : yurtSearchDates;
@@ -1883,7 +1885,11 @@ async function submitBookingModal() {
         </div>
         <div style="margin:1rem 0; font-size:.75rem; color:var(--gray); display:flex; gap:.8rem; align-items:flex-start;">
             <input type="checkbox" id="bm-consent" checked style="margin-top:.2rem;">
-            <label for="bm-consent">Я согласен на <a href="policy.html" target="_blank" style="color:var(--gold); text-decoration:underline;">обработку персональных данных</a></label>
+            <label for="bm-consent">Даю <a href="policy.html" target="_blank" style="color:var(--gold); text-decoration:underline;">согласие</a> на обработку персональных данных</label>
+        </div>
+        <div style="margin:0 0 1rem; font-size:.75rem; color:var(--gray); display:flex; gap:.8rem; align-items:flex-start;">
+            <input type="checkbox" id="bm-age" checked style="margin-top:.2rem;">
+            <label for="bm-age">Подтверждаю свое совершеннолетие, ознакомление с <a href="https://kontur.ru/about/policy" target="_blank" style="color:var(--gold); text-decoration:underline;">политикой конфиденциальности</a></label>
         </div>
         <button id="bm-submit-btn" class="btn-book" onclick="submitBookingModal()" style="width:100%; padding:1rem; border-radius:14px; background:linear-gradient(135deg, var(--gold), var(--gold-light)); color:#fff; border:none; font-size:.95rem; font-weight:700; cursor:pointer; font-family:inherit; box-shadow:0 4px 15px rgba(184,134,11,.25); transition:.3s;">Забронировать</button>
     </div>
