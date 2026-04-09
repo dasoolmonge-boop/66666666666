@@ -837,8 +837,19 @@ function getIconForAmenity(a) {
     if (al.includes('парил')) return '♨️';
     if (al.includes('телевизор') || al.includes('триколор')) return '📺';
     if (al.includes('wi-fi') || al.includes('интернет')) return '📶';
+    if (al.includes('кофемашина')) return '☕';
+    if (al.includes('халат')) return '🧖';
+    if (al.includes('тапочки')) return '👟';
+    if (al.includes('посуда') || al.includes('кастрюля')) return '🍳';
+    if (al.includes('плита') || al.includes('варочная')) return '👩‍🍳';
+    if (al.includes('печь') || al.includes('камин')) return '🔥';
+    if (al.includes('санузел') || al.includes('ванная') || al.includes('душ')) return '🚿';
+    if (al.includes('мыло') || al.includes('гигиенические')) return '🧼';
+    if (al.includes('фен')) return '💨';
+    if (al.includes('сейф')) return '🔒';
+    if (al.includes('утюг')) return '💨';
     if (al.includes('караоке')) return '🎤';
-    return '✓';
+    return '•';
 }
 
 function buildAmenitiesHtml(amenities, isDark = false) {
@@ -1488,16 +1499,13 @@ function buildYurtCard(r, nights, guests, isAvail, showPrice) {
     const totalPrice = r.price * nights;
     const nightsLabel = nights === 1 ? 'ночь' : nights < 5 ? 'ночи' : 'ночей';
     
-    // Convert generic names back to friendly ones for display
-    const yNames = ['Малая юрта — Земля', 'Малая юрта — Вода', 'Малая юрта — Воздух', 'Большая юрта — Огонь'];
-    const friendlyName = yNames.find(n => n.includes(r.name)) || r.name;
-    const escapedName = friendlyName.replace(/'/g, "\\'");
+    const escapedName = r.name.replace(/'/g, "\\'");
     
     let imgsHtml = '';
     let sliderDots = '';
     let sliderArrows = '';
     if (r.imgs && r.imgs.length > 0) {
-        imgsHtml = r.imgs.map((img) => `<img src="${img}" alt="${friendlyName}" loading="lazy" onclick="event.stopPropagation(); openLightbox('${img}')">`).join('');
+        imgsHtml = r.imgs.map((img) => `<img src="${img}" alt="${r.name}" loading="lazy" onclick="event.stopPropagation(); openLightbox('${img}')">`).join('');
         if (r.imgs.length > 1) {
             sliderDots = '<div class="slider-dots">' + r.imgs.map((_, i) => `<span class="slider-dot ${i===0?'active':''}"></span>`).join('') + '</div>';
             sliderArrows = `
@@ -1526,7 +1534,7 @@ function buildYurtCard(r, nights, guests, isAvail, showPrice) {
         </div>
         <div class="card-content" style="padding: 1.8rem;">
             <div>
-                <div class="card-name" style="font-size:1.5rem; margin-bottom:0.5rem; color:#fff;">${friendlyName}</div>
+                <div class="card-name" style="font-size:1.5rem; margin-bottom:0.5rem; color:#fff;">${r.name}</div>
                 <div class="card-meta" style="margin-bottom: 1.2rem;">
                     ${r.area ? `<span style="color:#333;">${r.area}</span>` : ''}
                     <span style="color:#333;">${r.capacity} 👤</span>
@@ -1674,19 +1682,7 @@ function buildHotelCard(r, nights, guests, isAvail, showPrice) {
                     <span class="clickable" onclick="handleDetailClick(event, 'am-split-${r.id}', '${firstImg}')">Подробнее ›</span>
                 </div>
                 
-                <div class="card-amenities-split" id="am-split-${r.id}">
-                    <div class="am-col">
-                        <div>❄️ Кондиционер</div>
-                        <div>📶 Wi-Fi</div>
-                        <div>📺 Телевизор</div>
-                    </div>
-                    <div class="am-col">
-                        <div>🚿 Душ или ванна в номере</div>
-                        ${hasKitchen ? '<div>🍳 Кухня в номере</div>' : ''}
-                        <div>👁️ Вид из окна</div>
-                        <div style="padding-left:22px;color:#777;">✓ На улицу</div>
-                    </div>
-                </div>
+                ${buildAmenitiesHtml(r.amenities)}
             </div>
             
             <div class="card-footer">
@@ -1829,9 +1825,6 @@ function submitHotelBooking() {
         if(yurtRooms.length > 0) renderInitialYurtCards(yurtRooms);
         if(saunaRooms.length > 0) renderSaunaCard(saunaRooms);
         if(bathRooms.length > 0) renderBathCard(bathRooms);
-        
-        const yurtNames = ['Земля', 'Вода', 'Воздух', 'Огонь'];
-        yurtRooms.forEach((r, i) => { if(i < 4) r.name = yurtNames[i]; });
     }
 
     const rFetch = fetch('/api/rooms').then(r => r.json());
