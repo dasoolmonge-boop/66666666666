@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://i4.photo.2gis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/all.min.css">
-    <link rel="stylesheet" href="mobile-styles.css?v=2.0">
+    <link rel="stylesheet" href="mobile-styles.css?v=2.1">
     <link rel="canonical" href="https://chalama-group.ru/">
     <script async src="https://static.max.ru/sdk/max-web-app.js" onerror="this.remove()"></script>
 </head>
@@ -321,6 +321,9 @@
     <div id="m-lightbox" class="m-lightbox" onclick="closeMLightbox()">
         <button class="m-lightbox-close">✕</button>
         <img id="m-lightbox-img" class="m-lightbox-img" src="" alt="">
+        <div style="text-align: center; color: rgba(255,255,255,0.2); font-size: 0.6rem; padding: 2rem 0;">
+            Chalama App v2.1 · 2024
+        </div>
     </div>
 
     <script>
@@ -1248,8 +1251,15 @@
             };
 
             const btn = document.getElementById('btnSubmit');
-            btn.innerHTML = 'Отправка...';
+            btn.innerHTML = 'Отправка... v2.1';
             btn.disabled = true;
+
+            // Robust ID detection for Max Messenger / Telegram
+            const clientChatId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id || 
+                               window.Max?.WebApp?.initDataUnsafe?.user?.id ||
+                               new URLSearchParams(window.location.search).get('user_id');
+
+            pkt.clientChatId = clientChatId;
 
             fetch('/api/bookings', {
                 method: 'POST',
