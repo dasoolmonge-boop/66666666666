@@ -1576,7 +1576,7 @@ function searchAvailableRooms() {
                 hintEl.style.display = 'flex';
                 gridEl.style.display = 'none';
             }
-            renderHotelCards(rooms, nights, guests);
+            renderHotelCards(available, nights, guests);
         })
         .catch(err => { alert('Ошибка: ' + err.message); });
 }
