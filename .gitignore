@@ -1,0 +1,17 @@
+# Node
+node_modules/
+npm-debug.log*
+
+# Database (CRITICAL: Do not track server data)
+backend/db/database.sqlite
+backend/db/*.sqlite-journal
+backend/db/*.sqlite-shm
+backend/db/*.sqlite-wal
+
+# Uploads (Keep the logo, but ignore user-uploaded content)
+backend/public/uploads/*
+!backend/public/uploads/chalama_logo.png
+
+# Environment
+.env
+.DS_Store
