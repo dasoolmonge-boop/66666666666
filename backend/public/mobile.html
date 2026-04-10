@@ -383,7 +383,7 @@
         function getIconForAmenity(a) {
             const al = a.toLowerCase();
             if (al.includes('кровать')) return '🛏️';
-            if (al.includes('диван')) return ' Couch';
+            if (al.includes('диван')) return '🛋️';
             if (al.includes('полотенц') || al.includes('халат') || al.includes('тапоч')) return '🧖';
             if (al.includes('посуда') || al.includes('сковорода') || al.includes('кастрюл')) return '🍳';
             if (al.includes('кух') || al.includes('плит') || al.includes('раковин')) return '👩‍🍳';
@@ -790,18 +790,24 @@
             if (!consent || !age) return alert('Необходимо принять все условия для бронирования');
 
             const dates = mSelectedRoom ? mHotelDates : mYurtDates;
+            const typeLabel = mSelectedRoom ? 'hotel' : 'yurt';
 
             const booking = {
-                type: mSelectedRoom ? 'hotel' : 'yurt',
+                type: typeLabel,
                 room: selected.name,
                 checkIn: new Date(dates.checkIn).toISOString(),
                 checkOut: new Date(dates.checkOut).toISOString(),
                 nights: selected.nights,
-                guest: name, phone: phone,
+                guest: name, 
+                phone: phone,
                 addons: [],
-                total: selected.totalPrice,
-                clientChatId: window.Telegram?.WebApp?.initDataUnsafe?.user?.id || null
+                total: selected.totalPrice
             };
+
+            // Robust ID detection for Max Messenger / Telegram
+            booking.clientChatId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id || 
+                                 window.Max?.WebApp?.initDataUnsafe?.user?.id ||
+                                 new URLSearchParams(window.location.search).get('user_id');
 
             const btn = document.getElementById('m-modal-submit');
             btn.disabled = true;
@@ -815,7 +821,17 @@
                 btn.disabled = false;
                 btn.textContent = 'Забронировать';
                 if (res.success) {
-                    alert('Заявка успешно отправлена! Менеджер свяжется с вами в ближайшее время.');
+                    const confirmMsg = `✅ Заявка #${res.id} принята!\n\n` +
+                        `Мы отправили подтверждение в этот чат.\n` +
+                        `Менеджер свяжется с вами в течение 15 минут.\n\n` +
+                        `📞 +7 394 222-10-82`;
+                    
+                    if (window.Telegram?.WebApp?.showAlert) {
+                        window.Telegram.WebApp.showAlert(confirmMsg);
+                    } else {
+                        alert(confirmMsg);
+                    }
+                    
                     closeMCheckoutModal();
                     if (mSelectedRoom) mSearchRooms(); else mSearchYurts();
                 } else alert('Ошибка: ' + res.error);
@@ -1317,12 +1333,6 @@
                     e.preventDefault(); 
                 }
             });
-        }
-
-        // Initialize Masks
-        document.addEventListener('DOMContentLoaded', () => {
-            applyPhoneMask('guestPhone');
-        });
 
             input.addEventListener('focus', (e) => {
                 if (!e.target.value || e.target.value === '+7 ') {
@@ -1330,28 +1340,14 @@
                 }
             });
         }
-        applyPhoneMask('guestPhone');
-        applyPhoneMask('m-modal-phone');
 
-        function getIconForAmenity(a) {
-            const al = a.toLowerCase();
-            if (al.includes('кровать')) return '🛏️';
-            if (al.includes('диван')) return '🛋️';
-            if (al.includes('полотенц') || al.includes('халат') || al.includes('тапоч')) return '🧖';
-            if (al.includes('посуда') || al.includes('сковорода') || al.includes('кастрюл')) return '🍳';
-            if (al.includes('кух') || al.includes('плит') || al.includes('раковин')) return '👩‍🍳';
-            if (al.includes('чайник') || al.includes('микроволн') || al.includes('холодиль')) return '🧊';
-            if (al.includes('кондицион')) return '❄️';
-            if (al.includes('печь') || al.includes('камин')) return '🔥';
-            if (al.includes('санузел') || al.includes('душев')) return '🚿';
-            if (al.includes('гигиенич')) return '🧼';
-            if (al.includes('стол') || al.includes('персон')) return '🪑';
-            if (al.includes('парил')) return '♨️';
-            if (al.includes('телевизор') || al.includes('триколор')) return '📺';
-            if (al.includes('wi-fi') || al.includes('интернет')) return '📶';
-            if (al.includes('караоке')) return '🎤';
-            return '✓';
-        }
+        // Initialize Masks and Observers
+        document.addEventListener('DOMContentLoaded', () => {
+            applyPhoneMask('guestPhone');
+            applyPhoneMask('m-modal-phone');
+            
+            // Interaction observers (existing logic below)
+        });
 
         function buildAmenitiesHtml(amenities) {
             if (!amenities || !amenities.length) return '';
