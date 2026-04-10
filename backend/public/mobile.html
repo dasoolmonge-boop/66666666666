@@ -49,7 +49,7 @@
 
             <div class="guest-selector">
                 <label>👥 Количество гостей</label>
-                <select id="m-hotel-guests" onchange="mHotelDates.guests = parseInt(this.value)">
+                <select id="m-hotel-guests" onchange="mHotelDates.guests = parseInt(this.value); if(mHotelDates.checkIn && mHotelDates.checkOut) mSearchRooms();">
                     <option value="1">1 человек</option>
                     <option value="2" selected>2 человека</option>
                     <option value="3">3 человека</option>
@@ -564,7 +564,11 @@
         setInterval(pollAvailability, 5000);
 
         function renderList(type, containerId) {
-            const list = allRooms.filter(r => r.type === type);
+            const list = allRooms.filter(r => {
+                if (type === 'hotel') return r.type === 'hotel';
+                if (type === 'yurt') return r.type === 'yurt' || r.type.startsWith('yurt');
+                return r.type === type;
+            });
             if (type === 'hotel') {
                 renderMobileHotelInitial(list, containerId);
                 return;
@@ -684,6 +688,7 @@
             fetch(`/api/rooms/available?checkIn=${mHotelDates.checkIn}&checkOut=${mHotelDates.checkOut}`)
                 .then(r => r.json())
                 .then(rooms => {
+                    // Strict filter for hotel rooms only
                     const hotels = rooms.filter(r => r.type === 'hotel');
                     const nights = Math.round((new Date(mHotelDates.checkOut) - new Date(mHotelDates.checkIn)) / 86400000);
                     
@@ -707,7 +712,9 @@
         function mRenderHotelCards(rooms, nights) {
             const el = document.getElementById('hotel-list');
             if (!el) return;
-            el.innerHTML = rooms.map(r => mBuildRoomCardHTML(r, { 
+            // Additional safety filter: strictly hotel type
+            const hotelOnly = rooms.filter(r => r.type === 'hotel');
+            el.innerHTML = hotelOnly.map(r => mBuildRoomCardHTML(r, { 
                 nights, 
                 isAvail: r.available,
                 customId: 'hotel-search-' + r.id
@@ -718,7 +725,11 @@
             const el = document.getElementById('yurt-list');
             if (!el) return;
             const nights = Math.round((new Date(mYurtDates.checkOut) - new Date(mYurtDates.checkIn)) / 86400000);
-            el.innerHTML = rooms.map(r => mBuildRoomCardHTML(r, { 
+            
+            // Additional safety filter: strictly yurt types
+            const yurtOnly = rooms.filter(r => r.type === 'yurt' || r.type.startsWith('yurt'));
+            
+            el.innerHTML = yurtOnly.map(r => mBuildRoomCardHTML(r, { 
                 nights, 
                 isAvail: r.available,
                 customId: 'yurt-search-' + r.id 
