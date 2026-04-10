@@ -182,15 +182,16 @@
         .price-total { font-size: 1.6rem; font-weight: 900; color: var(--gold); line-height: 1; letter-spacing: -0.5px; }
         .price-sub { font-size: 0.75rem; color: var(--muted); margin-top: 6px; font-weight: 500; }
         
-        .btn-select-premium {
+        .btn-select-premium, .btn-select {
             background: var(--gold); color: #fff; border: none; padding: 12px 24px;
             border-radius: 14px; font-weight: 800; font-size: 0.92rem; letter-spacing: 0.5px;
             box-shadow: 0 10px 25px rgba(184,134,11,0.25); transition: 0.2s;
-            font-family: inherit;
+            font-family: inherit; display: inline-flex; align-items: center; justify-content: center;
         }
-        .btn-select-premium:active { transform: scale(0.96); }
-        body.yurt-theme .btn-select-premium {
-            background: var(--yurt-gold); color: var(--yurt-bg);
+        .btn-select-premium:active, .btn-select:active { transform: scale(0.96); }
+        
+        body.yurt-theme .btn-select-premium, body.yurt-theme .btn-select {
+            background: var(--yurt-gold) !important; color: var(--yurt-bg) !important;
             box-shadow: 0 10px 30px rgba(0,0,0,0.4);
         }
 
@@ -686,4 +687,50 @@
         body.yurt-theme .bh-icon { background: linear-gradient(135deg, #e1d3a5 0%, #b8a670 100%); color: #38402f; box-shadow: 0 8px 20px rgba(225,211,165,0.2); }
         body.yurt-theme .bh-title { color: #e1d3a5; }
         body.yurt-theme .bh-subtitle { color: rgba(255,255,255,0.6); }
-        body.yurt-theme .bh-arrow { background: rgba(255,255,255,0.05); border-color: rgba(225,211,165,0.2); color: #e1d3a5; }
+        body.yurt-theme .bh-arrow { background: rgba(255,255,255,0.05); border-color: rgba(225,211,165,0.2); color: #e1d3a5; }
+
+        /* Premium Mobile Modal (Checkout) */
+        .m-modal-bg {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+            z-index: 3000; display: none; align-items: flex-end;
+            transition: opacity .3s ease;
+        }
+        .m-modal-bg.open { display: flex; }
+        
+        .m-modal {
+            background: var(--surface); width: 100%; max-height: 92vh;
+            border-top-left-radius: 30px; border-top-right-radius: 30px;
+            padding: 2rem 1.5rem calc(2rem + env(safe-area-inset-bottom));
+            transform: translateY(100%); transition: transform .4s cubic-bezier(0.19, 1, 0.22, 1);
+            position: relative; overflow-y: auto;
+        }
+        .m-modal-bg.open .m-modal { transform: translateY(0); }
+        
+        .m-modal-close {
+            position: absolute; top: 1rem; right: 1rem;
+            width: 32px; height: 32px; border-radius: 50%;
+            background: var(--surface2); border: none; color: var(--text);
+            font-size: 1.2rem; display: flex; align-items: center; justify-content: center; z-index: 10;
+        }
+        
+        .m-modal-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem; }
+        .m-modal-icon {
+            width: 50px; height: 50px; border-radius: 14px;
+            background: linear-gradient(135deg, rgba(184,134,11,.15), rgba(184,134,11,.05));
+            display: flex; align-items: center; justify-content: center; font-size: 1.4rem;
+        }
+        .m-modal-header h3 { font-size: 1.25rem; font-weight: 800; margin: 0; color: var(--text); }
+        .m-modal-header p { font-size: .85rem; color: var(--muted); margin: .3rem 0 0; }
+        
+        .m-summary-box {
+            background: var(--surface2); border: 1px solid var(--border);
+            border-radius: 18px; padding: 1.2rem; margin-bottom: 2rem;
+        }
+        
+        .m-form-grid { display: flex; flex-direction: column; gap: 1rem; margin-bottom: 1.5rem; }
+        .m-legal-group { display: flex; flex-direction: column; gap: 1rem; margin-bottom: 1rem; }
+        .m-consent-item { display: flex; gap: .8rem; align-items: flex-start; font-size: .82rem; color: var(--muted); line-height: 1.4; }
+        .m-consent-item input { margin-top: .2rem; width: 18px; height: 18px; }
+        .m-consent-item a { color: var(--gold); text-decoration: underline; }
+
