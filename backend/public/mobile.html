@@ -1314,9 +1314,15 @@
 
             input.addEventListener('keydown', (e) => {
                 if (e.key === 'Backspace' && e.target.value.length <= 4) {
-                    e.preventDefault(); // Don't let them delete +7 
+                    e.preventDefault(); 
                 }
             });
+        }
+
+        // Initialize Masks
+        document.addEventListener('DOMContentLoaded', () => {
+            applyPhoneMask('guestPhone');
+        });
 
             input.addEventListener('focus', (e) => {
                 if (!e.target.value || e.target.value === '+7 ') {
