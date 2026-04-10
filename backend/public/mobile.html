@@ -1257,12 +1257,21 @@
                 body: JSON.stringify(pkt)
             }).then(r=>r.json()).then(res => {
                 if(res.success) {
-                    alert('Заявка отправлена! Менеджер скоро свяжется с вами.');
+                    // Show enhanced confirmation
+                    const confirmMsg = `✅ Заявка #${res.id} принята!\n\n` +
+                        `Мы отправили вам подтверждение в этот чат.\n` +
+                        `Менеджер свяжется с вами в течение 15 минут.\n\n` +
+                        `📞 +7 394 222-10-82`;
+                    if (window.Telegram?.WebApp?.showAlert) {
+                        window.Telegram.WebApp.showAlert(confirmMsg);
+                    } else {
+                        alert(confirmMsg);
+                    }
                     closeBook();
                     btn.innerHTML = 'Подтвердить • <span id="btnPrice">0</span> ₽';
                     btn.disabled = false;
                     state.in = null; state.out = null; calcTotal();
-                    pollAvailability(); // force instant refresh
+                    pollAvailability();
                 } else {
                     const priceSpan = document.getElementById('btnPrice');
                     alert('Ошибка сервера: ' + res.error);

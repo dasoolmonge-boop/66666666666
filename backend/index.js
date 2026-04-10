@@ -480,7 +480,7 @@ app.post('/api/bookings', (req, res) => {
             db.run(
                 `INSERT INTO bookings (id, type, room, checkIn, checkOut, nights, guest, phone, addons, total, status, clientChatId, createdAt)
                  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-                [id, b.type, b.room, b.checkIn, b.checkOut, b.nights, guestName, guestPhone, JSON.stringify(b.addons || []), b.total, 'new', null, createdAt],
+                [id, b.type, b.room, b.checkIn, b.checkOut, b.nights, guestName, guestPhone, JSON.stringify(b.addons || []), b.total, 'new', b.clientChatId || null, createdAt],
                 function (err) {
                     if (err) return res.status(500).json({ error: err.message });
                     
@@ -499,8 +499,22 @@ app.post('/api/bookings', (req, res) => {
                                         `⚡️ <i>Система "Чалама"</i>`;
                         
                         notifyAdmins(adminText, b.type);
+
+                        // Client Notification (via Max bot, only for bot users)
+                        if (b.clientChatId) {
+                            const clientText = `✅ <b>Заявка принята!</b>\n\n` +
+                                             `📋 Номер заказа: <b>#${id}</b>\n` +
+                                             `🏨 ${typeLabel}\n` +
+                                             `🛋 ${b.room}\n` +
+                                             `📅 ${datesRange}\n` +
+                                             `💰 Сумма: <b>${b.total} ₽</b>\n\n` +
+                                             `📞 Наш менеджер свяжется с вами в течение 15 минут для подтверждения бронирования.\n\n` +
+                                             `Если у вас есть вопросы, позвоните нам:\n` +
+                                             `☎️ <b>+7 394 222-10-82</b>`;
+                            sendMaxMessage(b.clientChatId, clientText);
+                        }
                     } catch (notifyErr) {
-                        console.error("[Notify Error] Failed to send message to admins:", notifyErr.message);
+                        console.error("[Notify Error] Failed to send notifications:", notifyErr.message);
                     }
 
                     res.json({ success: true, id: id });

@@ -720,9 +720,16 @@
         <button class="modal-close" onclick="closeModal()">×</button>
         <div class="modal-success">
             <div class="checkmark">✓</div>
-            <h2 style="margin-bottom:.8rem">Заявка принята!</h2>
-            <p style="color:var(--gray)">Наш менеджер свяжется с вами в течение 15 минут для подтверждения бронирования.</p>
-            <button class="btn btn-gold" style="margin-top:2rem" onclick="closeModal()">Отлично</button>
+            <h2 style="margin-bottom:.5rem">Заявка принята!</h2>
+            <p id="success-booking-id" style="font-size:.9rem; color:var(--gold); font-weight:700; margin-bottom:1rem"></p>
+            <p style="color:var(--gray); line-height:1.6; margin-bottom:1rem">
+                Наш менеджер свяжется с вами <strong>в течение 15 минут</strong> для подтверждения бронирования и уточнения деталей оплаты.
+            </p>
+            <p style="color:var(--gray); font-size:.85rem; margin-bottom:.5rem">Не получили звонок? Позвоните нам:</p>
+            <a href="tel:+73942221082" style="display:inline-block; font-size:1.1rem; font-weight:700; color:var(--gold); text-decoration:none; margin-bottom:1.5rem">
+                📞 +7 394 222-10-82
+            </a>
+            <button class="btn btn-gold" style="margin-top:.5rem" onclick="closeModal()">Отлично</button>
         </div>
     </div>
 </div>
@@ -1327,6 +1334,7 @@ function submitBooking(type) {
             // Also save locally for tg notification script
             booking.id = data.id;
             sendTGNotification(booking);
+            document.getElementById('success-booking-id').textContent = 'Номер заказа: #' + data.id;
             document.getElementById('successModal').classList.add('open');
         } else alert('Ошибка сервера: ' + data.error);
     }).catch(err => alert('Ошибка при отправке: ' + err.message));
@@ -1924,6 +1932,7 @@ async function submitBookingModal() {
         const data = await res.json();
         if (data.success) {
             closeBookingModal();
+            document.getElementById('success-booking-id').textContent = 'Номер заказа: #' + data.id;
             document.getElementById('successModal').classList.add('open');
             bookingModalData = null;
             // Refresh room list
