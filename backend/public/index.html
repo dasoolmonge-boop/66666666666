@@ -178,7 +178,7 @@
                 <div class="hotel-search-divider"></div>
                 <div class="hotel-search-field">
                     <label class="hotel-search-label">👥 Гости</label>
-                    <select id="hotel-guests" class="hotel-search-input">
+                    <select id="hotel-guests" class="hotel-search-input" onchange="const inVal = document.getElementById('hotel-search-in').value; const outVal = document.getElementById('hotel-search-out').value; if(inVal && outVal) searchAvailableRooms();">
                         <option value="1">1 взрослый</option>
                         <option value="2" selected>2 взрослых</option>
                         <option value="3">3 взрослых</option>
@@ -1397,7 +1397,7 @@ function searchAvailableYurts() {
     fetch('/api/rooms/available?checkIn=' + inVal + '&checkOut=' + outVal)
         .then(r => r.json())
         .then(rooms => {
-            const yurts = rooms.filter(r => r.type === 'yurt');
+            const yurts = rooms.filter(r => r.type === 'yurt' || r.type.startsWith('yurt'));
             const nights = nightsBetween(checkIn, checkOut);
             const available = yurts.filter(r => r.available);
             const infoEl = document.getElementById('yurt-results-info');
@@ -1410,8 +1410,10 @@ function searchAvailableYurts() {
 
 function renderYurtCards(rooms, nights, guests) {
     const grid = document.getElementById('yurt-rooms-grid');
-    const available = rooms.filter(r => r.available);
-    const busy = rooms.filter(r => !r.available);
+    // Strict secondary filter for safety
+    const yurOnly = rooms.filter(r => r.type === 'yurt' || r.type.startsWith('yurt'));
+    const available = yurOnly.filter(r => r.available);
+    const busy = yurOnly.filter(r => !r.available);
     
     let html = available.map(r => buildYurtCard(r, nights, guests, true, true)).join('');
     if (busy.length > 0) {
@@ -1424,7 +1426,8 @@ function renderYurtCards(rooms, nights, guests) {
 function renderInitialYurtCards(rooms) {
     const grid = document.getElementById('yurt-rooms-grid');
     if(!grid) return;
-    grid.innerHTML = rooms.map(r => buildYurtCard(r, 1, 2, true, false)).join('');
+    const yurOnly = rooms.filter(r => r.type === 'yurt' || r.type.startsWith('yurt'));
+    grid.innerHTML = yurOnly.map(r => buildYurtCard(r, 1, 2, true, false)).join('');
 }
 
 function selectYurtRoomForBooking(id, escapedName, totalPrice, nights, pricePerNight) {
@@ -1557,6 +1560,7 @@ function searchAvailableRooms() {
         .then(r => r.json())
         .then(rooms => {
             const nights = nightsBetween(checkIn, checkOut);
+            // Strict filter for hotel rooms only
             const available = rooms.filter(r => r.available && r.type === 'hotel');
             const infoEl = document.getElementById('hotel-results-info');
             const hintEl = document.getElementById('hotel-busy-hint');
@@ -1749,15 +1753,16 @@ function selectHotelRoom(id, name, totalPrice, nights, pricePerNight) {
 
 
     // --- DATA INITIALIZATION ---
-    function renderAll(data) {
-        if (!data || data.error) return;
-        hotelRooms = data.filter(r => r.type === 'hotel');
-        yurtRooms = data.filter(r => r.type === 'yurt');
-        saunaRooms = data.filter(r => r.type === 'sauna');
-        bathRooms = data.filter(r => r.type === 'bath');
+    function renderAll(rData, aData) {
+        if (!rData || rData.error) return;
+        bookedDates = aData || [];
+        allHotels = rData.filter(r => r.type === 'hotel');
+        allYurts = rData.filter(r => r.type === 'yurt' || r.type.startsWith('yurt'));
+        saunaRooms = rData.filter(r => r.type === 'sauna');
+        bathRooms = rData.filter(r => r.type === 'bath');
 
-        renderInitialHotelCards(hotelRooms);
-        if(yurtRooms.length > 0) renderInitialYurtCards(yurtRooms);
+        renderInitialHotelCards(allHotels);
+        if(allYurts.length > 0) renderInitialYurtCards(allYurts);
         if(saunaRooms.length > 0) renderSaunaCard(saunaRooms);
         if(bathRooms.length > 0) renderBathCard(bathRooms);
     }
