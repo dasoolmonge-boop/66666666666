@@ -58,6 +58,9 @@
                     <option value="6">6 человек</option>
                 </select>
             </div>
+            
+            <button onclick="mSearchRooms()" style="width:100%;padding:1rem;background:var(--gold);color:#fff;border:none;border-radius:12px;font-size:1rem;font-weight:800;font-family:inherit;box-shadow:0 10px 20px rgba(184,134,11,0.2);margin-bottom:1.2rem;">Показать наличие</button>
+            <p id="m-search-info" style="display:none;font-size:0.85rem;color:var(--text);background:var(--surface2);padding:0.8rem;border-radius:10px;margin-bottom:1.5rem;text-align:center;border:1px solid var(--border);"></p>
 
             <div id="m-hotel-busy-hint" class="busy-hint-row" style="display:none;" onclick="openComplexAvailability('hotel')">
                 <div class="bh-icon"><i class="fas fa-calendar-times"></i></div>
@@ -104,7 +107,8 @@
                 <div class="cal-grid" id="m-yurt-cal-grid"></div>
             </div>
             
-            <button onclick="mSearchYurts()" style="width:100%;padding:1rem;background:#e1d3a5;color:#38402f;border:none;border-radius:12px;font-size:1rem;font-weight:800;font-family:inherit;box-shadow:0 10px 20px rgba(225,211,165,0.15);">Показать наличие</button>
+            <button onclick="mSearchYurts()" style="width:100%;padding:1rem;background:#e1d3a5;color:#38402f;border:none;border-radius:12px;font-size:1rem;font-weight:800;font-family:inherit;box-shadow:0 10px 20px rgba(225,211,165,0.15);margin-bottom:1.5rem;">Показать наличие</button>
+            <p id="m-yurt-search-info" style="display:none;font-size:0.85rem;color:#fff;background:rgba(255,255,255,0.05);padding:0.8rem;border-radius:10px;margin-bottom:1.5rem;text-align:center;border:1px solid rgba(225,211,165,0.2);"></p>
             <div id="m-yurt-busy-hint" class="busy-hint-row" style="display:none;" onclick="openComplexAvailability('yurt')">
                 <div class="bh-icon"><i class="fas fa-campground"></i></div>
                 <div class="bh-content">
@@ -113,7 +117,7 @@
                 </div>
                 <div class="bh-arrow"><i class="fas fa-chevron-right"></i></div>
             </div>
-            <div id="yurt-list"></div>
+            <div id="yurt-list" style="margin-top:1rem;"></div>
         </div>
 
         <!-- Bath & Tub Block -->
