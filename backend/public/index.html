@@ -1543,7 +1543,6 @@ function buildYurtCard(r, nights, guests, isAvail, showPrice) {
                 </div>
                 ${sliderDots}
                 ${sliderArrows}
-                ${r.imgs && r.imgs.length > 1 ? `<div class="photo-count">+${r.imgs.length - 1} фото</div>` : ''}
                 ${!isAvail ? '<div style="position:absolute;inset:0;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;z-index:20;"><span style="background:#e53e3e;color:#fff;padding:.4rem 1.2rem;border-radius:20px;font-weight:700;">Занято</span></div>' : ''}
             </div>
         </div>
@@ -1699,7 +1698,6 @@ function buildHotelCard(r, nights, guests, isAvail, showPrice) {
                 </div>
                 ${sliderDots}
                 ${sliderArrows}
-                ${r.imgs && r.imgs.length > 1 ? `<div class="photo-count">+${r.imgs.length - 1} фото</div>` : ''}
                 ${!isAvail ? '<div style="position:absolute;inset:0;background:rgba(255,255,255,0.7);display:flex;align-items:center;justify-content:center;z-index:20;"><span style="background:#e53e3e;color:#fff;padding:.4rem 1.2rem;border-radius:20px;font-weight:700;">Занято</span></div>' : ''}
             </div>
         </div>
@@ -1711,7 +1709,6 @@ function buildHotelCard(r, nights, guests, isAvail, showPrice) {
                 </div>
                 <div class="card-meta">
                     ${r.area ? `<span>${r.area}</span>` : ''}
-                    <span class="clickable" onclick="event.stopPropagation(); openLightbox('${firstImg}')">Фото ›</span>
                 </div>
                 ${r.desc ? `<div style="font-size:0.75rem; color:rgba(0,0,0,0.45); margin-bottom:0.4rem; line-height:1.3;">${r.desc}</div>` : ''}
                 

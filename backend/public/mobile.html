@@ -462,7 +462,6 @@
             const subText = nights ? `за ${nights} ${nights < 5 ? 'ночи' : 'ночей'}` : ( (r.type === 'sauna' || r.type === 'bath') ? 'в час' : 'за сутки');
             
             const imgs = (r.imgs||[]);
-            const photoCountHtml = imgs.length > 1 ? `<div class="photo-count">+${imgs.length-1} фото</div>` : '';
             const dotsHtml = imgs.length > 1 ? `<div class="slider-dots">${imgs.map((_, i) => `<div class="slider-dot ${i===0?'active':''}"></div>`).join('')}</div>` : '';
             const arrowsHtml = imgs.length > 1 ? `
                 <button class="g-arrow left" onclick="scrollGal(event, '${uid}', -1)">‹</button>
