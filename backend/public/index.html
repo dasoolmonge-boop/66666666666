@@ -81,8 +81,6 @@
             border: 1px solid rgba(184,134,11,0.15);
             font-family: 'Inter', sans-serif;
             padding: 5px;
-            width: 300px !important;
-            max-width: 95vw !important;
             z-index: 99999 !important;
         }
         .flatpickr-day { max-width: 38px; height: 38px; line-height: 38px; }
@@ -1479,10 +1477,11 @@ let yurtSearchDates = { checkIn: null, checkOut: null };
 let yurtSelectedRoom = null;
 
 function searchAvailableYurts() {
-    const inVal = document.getElementById('yurt-search-in').value;
-    const outVal = document.getElementById('yurt-search-out').value;
-    if (!inVal || !outVal) { alert('Выберите даты заезда и выезда'); return; }
-    const checkIn = new Date(inVal), checkOut = new Date(outVal);
+    if (!yurtRangePicker || yurtRangePicker.selectedDates.length < 2) { alert('Выберите даты заезда и выезда'); return; }
+    const dates = yurtRangePicker.selectedDates;
+    const inVal = dates[0].toISOString().split('T')[0];
+    const outVal = dates[1].toISOString().split('T')[0];
+    const checkIn = dates[0], checkOut = dates[1];
     const today = new Date(); today.setHours(0,0,0,0);
     if (checkIn < today) { alert('Дата заезда не может быть в прошлом'); return; }
     if (checkOut <= checkIn) { alert('Дата выезда должна быть позже даты заезда'); return; }
@@ -1641,10 +1640,11 @@ let hotelSearchDates = { checkIn: null, checkOut: null };
 let hotelSelectedRoom = null;
 
 function searchAvailableRooms() {
-    const inVal = document.getElementById('hotel-search-in').value;
-    const outVal = document.getElementById('hotel-search-out').value;
-    if (!inVal || !outVal) { alert('Выберите даты заезда и выезда'); return; }
-    const checkIn = new Date(inVal), checkOut = new Date(outVal);
+    if (!hotelRangePicker || hotelRangePicker.selectedDates.length < 2) { alert('Выберите даты заезда и выезда'); return; }
+    const dates = hotelRangePicker.selectedDates;
+    const inVal = dates[0].toISOString().split('T')[0];
+    const outVal = dates[1].toISOString().split('T')[0];
+    const checkIn = dates[0], checkOut = dates[1];
     const today = new Date(); today.setHours(0,0,0,0);
     if (checkIn < today) { alert('Дата заезда не может быть в прошлом'); return; }
     if (checkOut <= checkIn) { alert('Дата выезда должна быть позже даты заезда'); return; }
@@ -2256,7 +2256,7 @@ function initRangeCalendars() {
 
     // Hotel Range
     if (document.getElementById('hotel-search-in')) {
-        flatpickr("#hotel-search-in", {
+        hotelRangePicker = flatpickr("#hotel-search-in", {
             ...commonConfig,
             mode: "range",
             plugins: [new rangePlugin({ input: "#hotel-search-out"})],
@@ -2268,7 +2268,7 @@ function initRangeCalendars() {
 
     // Yurt Range
     if (document.getElementById('yurt-search-in')) {
-        flatpickr("#yurt-search-in", {
+        yurtRangePicker = flatpickr("#yurt-search-in", {
             ...commonConfig,
             mode: "range",
             theme: "dark",
