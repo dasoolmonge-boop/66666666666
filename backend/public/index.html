@@ -77,11 +77,14 @@
         .flatpickr-calendar {
             background: #fff;
             box-shadow: 0 15px 45px rgba(0,0,0,0.15);
-            border-radius: 16px;
+            border-radius: 12px;
             border: 1px solid rgba(184,134,11,0.15);
             font-family: 'Inter', sans-serif;
-            padding: 10px;
+            padding: 5px;
+            width: 300px !important;
+            z-index: 9999 !important;
         }
+        .flatpickr-day { max-width: 38px; height: 38px; line-height: 38px; }
         .flatpickr-day.selected, .flatpickr-day.startRange, .flatpickr-day.endRange {
             background: var(--gold) !important;
             border-color: var(--gold) !important;
@@ -2238,10 +2241,13 @@ function initRangeCalendars() {
     const commonConfig = {
         locale: "ru",
         dateFormat: "Y-m-d",
+        altInput: true,
+        altFormat: "d.m.y",
         minDate: "today",
         allowInput: false,
-        disableMobile: true, // Force premium calendar on mobile
-        monthSelectorType: "static"
+        disableMobile: true, 
+        monthSelectorType: "static",
+        animate: true
     };
 
     // Hotel Range
