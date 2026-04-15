@@ -69,8 +69,45 @@
     <link rel="preconnect" href="https://i4.photo.2gis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Syne:wght@800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <link rel="stylesheet" href="styles.css">
     <link rel="canonical" href="https://chalama-group.ru/">
+    <style>
+        /* 📅 Custom Chalama Gold Theme for Flatpickr */
+        .flatpickr-calendar {
+            background: #fff;
+            box-shadow: 0 15px 45px rgba(0,0,0,0.15);
+            border-radius: 16px;
+            border: 1px solid rgba(184,134,11,0.15);
+            font-family: 'Inter', sans-serif;
+            padding: 10px;
+        }
+        .flatpickr-day.selected, .flatpickr-day.startRange, .flatpickr-day.endRange {
+            background: var(--gold) !important;
+            border-color: var(--gold) !important;
+            color: #fff !important;
+        }
+        .flatpickr-day.inRange {
+            background: rgba(184,134,11,0.1) !important;
+            box-shadow: -5px 0 0 rgba(184,134,11,0.1), 5px 0 0 rgba(184,134,11,0.1) !important;
+        }
+        .flatpickr-months .flatpickr-month { background: transparent; color: var(--dark); }
+        .flatpickr-current-month .flatpickr-monthDropdown-months { font-weight: 700; }
+        .flatpickr-weekday { color: var(--gray); font-weight: 600; text-transform: uppercase; font-size: 0.7rem; }
+        
+        /* Modal and general positioning fix */
+        .flatpickr-calendar.static { top: 100% !important; }
+        
+        /* Dark theme for Yurts section */
+        .yurts-theme .flatpickr-calendar {
+            background: #2a3123;
+            border-color: rgba(225,211,165,0.2);
+            color: #fff;
+        }
+        .yurts-theme .flatpickr-month, .yurts-theme .flatpickr-current-month, .yurts-theme .cur-month { color: #e1d3a5 !important; }
+        .yurts-theme .flatpickr-day { color: rgba(255,255,255,0.8); }
+        .yurts-theme .flatpickr-day.flatpickr-disabled { color: rgba(255,255,255,0.2); }
+    </style>
     <script async src="https://static.max.ru/sdk/max-web-app.js" onerror="this.remove()"></script>
     <script>
         (function() {
@@ -218,12 +255,12 @@
             <div class="hotel-search-inner">
                 <div class="hotel-search-field">
                     <label class="hotel-search-label">📅 Заезд</label>
-                    <input type="date" id="hotel-search-in" class="hotel-search-input">
+                    <input type="text" id="hotel-search-in" class="hotel-search-input" placeholder="Выберите дату">
                 </div>
                 <div class="hotel-search-divider"></div>
                 <div class="hotel-search-field">
                     <label class="hotel-search-label">📅 Выезд</label>
-                    <input type="date" id="hotel-search-out" class="hotel-search-input">
+                    <input type="text" id="hotel-search-out" class="hotel-search-input" placeholder="Дата выезда">
                 </div>
                 <div class="hotel-search-divider"></div>
                 <div class="hotel-search-field">
@@ -334,12 +371,12 @@
             <div class="hotel-search-inner">
                 <div class="hotel-search-field">
                     <label class="hotel-search-label" style="color: rgba(255,255,255,0.7);">📅 Заезд</label>
-                    <input type="date" id="yurt-search-in" class="hotel-search-input" style="color:#fff; background:transparent;">
+                    <input type="text" id="yurt-search-in" class="hotel-search-input" style="color:#fff; background:transparent;" placeholder="Дата заезда">
                 </div>
                 <div class="hotel-search-divider" style="background: rgba(255,255,255,0.1);"></div>
                 <div class="hotel-search-field">
                     <label class="hotel-search-label" style="color: rgba(255,255,255,0.7);">📅 Выезд</label>
-                    <input type="date" id="yurt-search-out" class="hotel-search-input" style="color:#fff; background:transparent;">
+                    <input type="text" id="yurt-search-out" class="hotel-search-input" style="color:#fff; background:transparent;" placeholder="Дата выезда">
                 </div>
                 <div class="hotel-search-divider" style="background: rgba(255,255,255,0.1);"></div>
                 <div class="hotel-search-field">
@@ -2195,12 +2232,55 @@ function applyPhoneMask(id) {
         if (!e.target.value) e.target.value = '+7 ';
     });
 }
+
+// 📅 Range Calendar Initialization (Flatpickr)
+function initRangeCalendars() {
+    const commonConfig = {
+        locale: "ru",
+        dateFormat: "Y-m-d",
+        minDate: "today",
+        allowInput: false,
+        disableMobile: true, // Force premium calendar on mobile
+        monthSelectorType: "static"
+    };
+
+    // Hotel Range
+    if (document.getElementById('hotel-search-in')) {
+        flatpickr("#hotel-search-in", {
+            ...commonConfig,
+            mode: "range",
+            plugins: [new rangePlugin({ input: "#hotel-search-out"})],
+            onClose: function(selectedDates) {
+                if (selectedDates.length === 2) searchAvailableRooms();
+            }
+        });
+    }
+
+    // Yurt Range
+    if (document.getElementById('yurt-search-in')) {
+        flatpickr("#yurt-search-in", {
+            ...commonConfig,
+            mode: "range",
+            theme: "dark",
+            plugins: [new rangePlugin({ input: "#yurt-search-out"})],
+            onClose: function(selectedDates) {
+                if (selectedDates.length === 2) searchAvailableYurts();
+            }
+        });
+    }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     applyPhoneMask('sauna-phone');
     applyPhoneMask('bath-phone');
     applyPhoneMask('bm-phone');
+    initRangeCalendars();
 });
 </script>
+
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ru.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/plugins/rangePlugin.js"></script>
 
 <a href="https://max.ru/id1701062159_bot" target="_blank" class="btn-tg-float" title="Написать в МАКС">
     <i class="fas fa-comments"></i>
