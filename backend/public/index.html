@@ -1516,8 +1516,19 @@ function searchAvailableYurts() {
             const nights = nightsBetween(checkIn, checkOut);
             const available = yurts.filter(r => r.available);
             const infoEl = document.getElementById('yurt-results-info');
+            const hintEl = document.getElementById('yurt-busy-hint');
+            const gridEl = document.getElementById('yurt-rooms-grid');
+            
             infoEl.style.display = 'block';
-            infoEl.innerHTML = `Найдено <strong>${available.length}</strong> свободных юрт на <strong>${nights}</strong> ${nights === 1 ? 'ночь' : nights < 5 ? 'ночи' : 'ночей'} (${fmtDate(checkIn)} — ${fmtDate(checkOut)})`;
+            if (available.length > 0) {
+                hintEl.style.display = 'none';
+                gridEl.style.display = 'grid';
+                infoEl.innerHTML = `Найдено <strong>${available.length}</strong> свободных юрт на <strong>${nights}</strong> ${nights === 1 ? 'ночь' : nights < 5 ? 'ночи' : 'ночей'} (${fmtDate(checkIn)} — ${fmtDate(checkOut)})`;
+            } else {
+                infoEl.innerHTML = '';
+                hintEl.style.display = 'flex';
+                gridEl.style.display = 'none';
+            }
             renderYurtCards(yurts, nights, guests);
         })
         .catch(err => { alert('Ошибка: ' + err.message); });
