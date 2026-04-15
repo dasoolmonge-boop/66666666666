@@ -73,71 +73,73 @@
     <link rel="stylesheet" href="styles.css">
     <link rel="canonical" href="https://chalama-group.ru/">
     <style>
-        /* 📅 Custom Chalama Gold Theme for Flatpickr (Restored to Rollback Style) */
+        /* 📅 Premium Chalama Elite Theme (Glassmorphism + Gold Gradients) */
         .flatpickr-calendar {
-            background: #fdfdfd;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.12);
-            border-radius: 18px;
-            border: 1px solid #f0f0f0;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(20px) saturate(160%);
+            -webkit-backdrop-filter: blur(20px) saturate(160%);
+            box-shadow: 0 30px 90px rgba(0,0,0,0.15), 0 0 0 1px rgba(184, 134, 11, 0.05);
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.4);
             font-family: 'Inter', sans-serif;
-            padding: 10px;
+            padding: 15px;
             z-index: 99999 !important;
+            animation: flatpickrFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        @keyframes flatpickrFadeIn {
+            from { opacity: 0; transform: translateY(10px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
         }
         .flatpickr-day { 
-            max-width: 38px; height: 38px; line-height: 38px; 
-            border-radius: 8px;
-            transition: all 0.2s ease;
+            max-width: 40px; height: 40px; line-height: 40px; 
+            border-radius: 12px;
+            font-weight: 500;
+            margin: 2px;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            color: #444;
         }
         .flatpickr-day.selected, .flatpickr-day.startRange, .flatpickr-day.endRange {
-            background: var(--gold) !important;
-            border-color: var(--gold) !important;
+            background: linear-gradient(135deg, #b8860b 0%, #e1d3a5 100%) !important;
+            border: none !important;
             color: #fff !important;
-            border-radius: 50% !important;
-            transform: scale(1.05);
-            box-shadow: 0 5px 15px rgba(184,134,11,0.3);
+            border-radius: 14px !important;
+            transform: scale(1.08);
+            box-shadow: 0 10px 20px rgba(184, 134, 11, 0.35);
+            z-index: 2;
         }
         .flatpickr-day.inRange {
-            background: rgba(184,134,11,0.1) !important;
-            box-shadow: -5px 0 0 rgba(184,134,11,0.1), 5px 0 0 rgba(184,134,11,0.1) !important;
+            background: rgba(184, 134, 11, 0.08) !important;
+            box-shadow: none !important;
+            color: var(--gold) !important;
             border-radius: 0 !important;
         }
-        .flatpickr-day.startRange { border-radius: 50% 0 0 50% !important; }
-        .flatpickr-day.endRange { border-radius: 0 50% 50% 0 !important; }
-        .flatpickr-day:hover:not(.selected) {
-            background: #f0f0f0 !important;
+        .flatpickr-day.startRange { border-radius: 14px 0 0 14px !important; }
+        .flatpickr-day.endRange { border-radius: 0 14px 14px 0 !important; }
+        
+        .flatpickr-day:hover:not(.selected):not(.startRange):not(.endRange) {
+            background: rgba(184, 134, 11, 0.12) !important;
+            transform: translateY(-2px);
             color: var(--gold) !important;
         }
-        .flatpickr-months .flatpickr-month { background: transparent; color: var(--dark); }
-        .flatpickr-current-month .flatpickr-monthDropdown-months { font-weight: 700; }
-        .flatpickr-weekday { color: var(--gray); font-weight: 600; text-transform: uppercase; font-size: 0.7rem; }
+        .flatpickr-months .flatpickr-month { background: transparent; color: var(--dark); padding: 10px 0; }
+        .flatpickr-current-month { font-size: 1.1rem; }
+        .flatpickr-current-month .flatpickr-monthDropdown-months { font-weight: 800; color: var(--dark); }
+        .flatpickr-weekday { color: var(--gold); font-weight: 700; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 1px; }
         
-        /* Modal and general positioning fix */
-        .flatpickr-calendar.static { top: 100% !important; }
-        
-        /* 📱 Responsive Calendar for Mobile */
-        @media (max-width: 480px) {
-            .flatpickr-calendar {
-                left: 50% !important;
-                transform: translateX(-50%) !important;
-                margin: 5px auto !important;
-            }
-        }
-        @media (max-width: 380px) {
-            .flatpickr-calendar {
-                transform: translateX(-50%) scale(0.9) !important;
-                transform-origin: top center;
-            }
-        }
-        
-        /* Dark theme for Yurts section (Styled like rollback) */
+        /* Dark Glass for Yurts (Obsidian Glass) */
         .yurts-theme .flatpickr-calendar {
-            background: #2a3123;
-            border-color: rgba(255,255,255,0.1);
-            color: #fff;
+            background: rgba(10, 15, 10, 0.85);
+            backdrop-filter: blur(25px) brightness(0.8);
+            border-color: rgba(225, 211, 165, 0.15);
+            box-shadow: 0 40px 100px rgba(0,0,0,0.6), 0 0 20px rgba(184, 134, 11, 0.1);
         }
-        .yurts-theme .flatpickr-month, .yurts-theme .flatpickr-current-month, .yurts-theme .cur-month { color: #e1d3a5 !important; }
-        .yurts-theme .flatpickr-day { color: rgba(255,255,255,0.8); }
-        .yurts-theme .flatpickr-day.flatpickr-disabled { color: rgba(255,255,255,0.2); }
+        .yurts-theme .flatpickr-day { color: rgba(255,255,255,0.9); }
+        .yurts-theme .flatpickr-day.inRange { background: rgba(225,211,165,0.1) !important; }
+        .yurts-theme .flatpickr-current-month .flatpickr-monthDropdown-months, .yurts-theme .cur-month { color: #fff !important; }
+        .yurts-theme .flatpickr-month { color: #fff !important; }
+        
+        /* Modal and positioning */
+        .flatpickr-calendar.static { top: 100% !important; }
     </style>
     <script async src="https://static.max.ru/sdk/max-web-app.js" onerror="this.remove()"></script>
     <script>
