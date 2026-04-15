@@ -82,7 +82,8 @@
             font-family: 'Inter', sans-serif;
             padding: 5px;
             width: 300px !important;
-            z-index: 9999 !important;
+            max-width: 95vw !important;
+            z-index: 99999 !important;
         }
         .flatpickr-day { max-width: 38px; height: 38px; line-height: 38px; }
         .flatpickr-day.selected, .flatpickr-day.startRange, .flatpickr-day.endRange {
@@ -806,8 +807,10 @@ function nightsBetween(a, b) {
     return Math.round((b - a) / 86400000);
 }
 function fmtDate(d) {
-    if (!d) return '—';
-    return d.getDate() + ' ' + months[d.getMonth()].substring(0,3).toLowerCase();
+    if (!d || isNaN(d.getTime())) return '—';
+    const m = months[d.getMonth()];
+    if (!m) return d.toLocaleDateString('ru');
+    return d.getDate() + ' ' + m.substring(0,3).toLowerCase();
 }
 function fmtPrice(n) { return n.toLocaleString('ru') + ' ₽'; }
 
@@ -2247,7 +2250,8 @@ function initRangeCalendars() {
         allowInput: false,
         disableMobile: true, 
         monthSelectorType: "static",
-        animate: true
+        animate: true,
+        appendTo: document.body
     };
 
     // Hotel Range
