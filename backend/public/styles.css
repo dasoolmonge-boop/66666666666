@@ -583,7 +583,7 @@
 
         /* ===== RESTAURANT SECTION (PREMIUM) ===== */
         .rest-section {
-            position: relative; overflow: hidden;
+            position: relative;
             background: linear-gradient(180deg, #faf8f3 0%, #f5efe4 100%);
             padding-bottom: 5rem;
         }
@@ -787,7 +787,7 @@
 
         /* ===== HOTEL SECTION (NEW PREMIUM) ===== */
         .hotel-section {
-            position: relative; padding: 6rem 0 2rem; overflow: hidden;
+            position: relative; padding: 6rem 0 2rem;
             background: linear-gradient(180deg, #faf8f3 0%, #fff 40%, #f7f5f0 100%);
         }
         #sauna { padding-top: 2rem !important; }
@@ -806,6 +806,9 @@
             box-shadow: 0 8px 40px rgba(0,0,0,.08), 0 2px 8px rgba(0,0,0,.04);
             border: 1px solid rgba(184,134,11,.12);
             margin-bottom: 2.5rem;
+            position: relative;
+            overflow: visible !important;
+        }
             transition: box-shadow .4s ease, border-color .3s ease;
         }
         .hotel-search-panel:hover {
@@ -1151,7 +1154,7 @@
 
         @media (max-width: 768px) {
             html, body { overflow-x: hidden !important; width: 100vw !important; position: relative; }
-            .container { padding: 0 1.25rem !important; max-width: 100% !important; margin: 0 auto !important; overflow: hidden !important; box-sizing: border-box !important; }
+            .container { padding: 0 1.25rem !important; max-width: 100% !important; margin: 0 auto !important; box-sizing: border-box !important; }
             
             /* Navbar & Hamburger */
             .nav { display: none !important; }

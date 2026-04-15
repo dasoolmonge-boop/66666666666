@@ -100,6 +100,21 @@
         /* Modal and general positioning fix */
         .flatpickr-calendar.static { top: 100% !important; }
         
+        /* 📱 Responsive Calendar for Mobile */
+        @media (max-width: 480px) {
+            .flatpickr-calendar {
+                left: 50% !important;
+                transform: translateX(-50%) !important;
+                margin: 5px auto !important;
+            }
+        }
+        @media (max-width: 380px) {
+            .flatpickr-calendar {
+                transform: translateX(-50%) scale(0.9) !important;
+                transform-origin: top center;
+            }
+        }
+        
         /* Dark theme for Yurts section */
         .yurts-theme .flatpickr-calendar {
             background: #2a3123;
@@ -2252,7 +2267,9 @@ function initRangeCalendars() {
         disableMobile: true, 
         monthSelectorType: "static",
         animate: true,
-        appendTo: document.body
+        appendTo: document.body,
+        static: false,
+        position: "auto"
     };
 
     // Hotel Range
