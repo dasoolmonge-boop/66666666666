@@ -71,72 +71,60 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <link rel="stylesheet" href="styles.css">
-    <link rel="canonical" href="https://chalama-group.ru/">
-    <style>
-        /* 📅 Premium Chalama Elite Theme (Glassmorphism + Gold Gradients) */
+        /* 📅 Mobile Style Theme (Square-Rounded + Solid Colors) */
         .flatpickr-calendar {
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(20px) saturate(160%);
-            -webkit-backdrop-filter: blur(20px) saturate(160%);
-            box-shadow: 0 30px 90px rgba(0,0,0,0.15), 0 0 0 1px rgba(184, 134, 11, 0.05);
-            border-radius: 24px;
-            border: 1px solid rgba(255, 255, 255, 0.4);
+            background: #fff;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+            border-radius: 20px;
+            border: 1px solid #eee;
             font-family: 'Inter', sans-serif;
-            padding: 15px;
+            padding: 10px;
             z-index: 99999 !important;
-            animation: flatpickrFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        @keyframes flatpickrFadeIn {
-            from { opacity: 0; transform: translateY(10px) scale(0.98); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
         }
         .flatpickr-day { 
             max-width: 40px; height: 40px; line-height: 40px; 
-            border-radius: 12px;
-            font-weight: 500;
+            border-radius: 8px;
+            font-weight: 600;
             margin: 2px;
-            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-            color: #444;
+            transition: .2s;
+            color: var(--dark);
         }
         .flatpickr-day.selected, .flatpickr-day.startRange, .flatpickr-day.endRange {
-            background: linear-gradient(135deg, #b8860b 0%, #e1d3a5 100%) !important;
+            background: var(--gold) !important;
             border: none !important;
             color: #fff !important;
-            border-radius: 14px !important;
-            transform: scale(1.08);
-            box-shadow: 0 10px 20px rgba(184, 134, 11, 0.35);
-            z-index: 2;
+            border-radius: 8px !important;
         }
         .flatpickr-day.inRange {
-            background: rgba(184, 134, 11, 0.08) !important;
+            background: rgba(184, 134, 11, 0.15) !important;
             box-shadow: none !important;
             color: var(--gold) !important;
             border-radius: 0 !important;
         }
-        .flatpickr-day.startRange { border-radius: 14px 0 0 14px !important; }
-        .flatpickr-day.endRange { border-radius: 0 14px 14px 0 !important; }
+        .flatpickr-day.startRange { border-radius: 8px 0 0 8px !important; }
+        .flatpickr-day.endRange { border-radius: 0 8px 8px 0 !important; }
         
         .flatpickr-day:hover:not(.selected):not(.startRange):not(.endRange) {
-            background: rgba(184, 134, 11, 0.12) !important;
-            transform: translateY(-2px);
+            background: #f8f8f8 !important;
             color: var(--gold) !important;
         }
-        .flatpickr-months .flatpickr-month { background: transparent; color: var(--dark); padding: 10px 0; }
-        .flatpickr-current-month { font-size: 1.1rem; }
-        .flatpickr-current-month .flatpickr-monthDropdown-months { font-weight: 800; color: var(--dark); }
-        .flatpickr-weekday { color: var(--gold); font-weight: 700; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 1px; }
+        .flatpickr-months .flatpickr-month { background: transparent; color: var(--dark); padding: 5px 0; }
+        .flatpickr-current-month { font-size: 1rem; }
+        .flatpickr-current-month .flatpickr-monthDropdown-months { font-weight: 700; color: var(--dark); }
+        .flatpickr-weekday { color: var(--gray); font-weight: 600; text-transform: uppercase; font-size: 0.7rem; }
         
-        /* Dark Glass for Yurts (Obsidian Glass) */
+        /* Obsidian Mobile style for Yurts */
         .yurts-theme .flatpickr-calendar {
-            background: rgba(10, 15, 10, 0.85);
-            backdrop-filter: blur(25px) brightness(0.8);
-            border-color: rgba(225, 211, 165, 0.15);
-            box-shadow: 0 40px 100px rgba(0,0,0,0.6), 0 0 20px rgba(184, 134, 11, 0.1);
+            background: #38402f;
+            border-color: rgba(255,255,255,0.1);
+            color: #fff;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
         }
-        .yurts-theme .flatpickr-day { color: rgba(255,255,255,0.9); }
-        .yurts-theme .flatpickr-day.inRange { background: rgba(225,211,165,0.1) !important; }
-        .yurts-theme .flatpickr-current-month .flatpickr-monthDropdown-months, .yurts-theme .cur-month { color: #fff !important; }
-        .yurts-theme .flatpickr-month { color: #fff !important; }
+        .yurts-theme .flatpickr-day { color: #fff; }
+        .yurts-theme .flatpickr-day.inRange { background: rgba(255,255,255,0.1) !important; }
+        .yurts-theme .flatpickr-day:hover:not(.selected) { background: rgba(255,255,255,0.15) !important; color: #fff !important; }
+        .yurts-theme .flatpickr-month, .yurts-theme .flatpickr-current-month, .yurts-theme .cur-month { color: #fff !important; }
+        .yurts-theme .flatpickr-weekday { color: rgba(255,255,255,0.5); }
         
         /* Modal and positioning */
         .flatpickr-calendar.static { top: 100% !important; }
