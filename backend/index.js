@@ -131,9 +131,14 @@ app.use(compression());
 app.use(cors());
 app.use(express.json());
 
-// Serve static files (disable automatic index.html serving)
-app.use(express.static(path.join(__dirname, 'public'), { index: false }));
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+// Serve static files with caching for performance (1 day)
+const cacheOptions = {
+    maxAge: '1d',
+    etag: true,
+    index: false
+};
+app.use(express.static(path.join(__dirname, 'public'), cacheOptions));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads'), cacheOptions));
 
 // Root route: Detect mobile app/bot and serve mobile.html directly to avoid double-loading latency
 app.get('/', (req, res) => {
@@ -161,112 +166,83 @@ db.serialize(() => {
         prepayment INTEGER
     )`);
 
-            // Migrations for rooms: add new fields if missing
-            db.run("ALTER TABLE rooms ADD COLUMN area TEXT", (err) => {
-                if (err && !err.message.includes("duplicate column name")) console.error("[DB Migration]", err.message);
+    // Check if initialization is already done using PRAGMA user_version as a marker
+    db.get("PRAGMA user_version", (err, row) => {
+        const currentVersion = row ? row.user_version : 0;
+        const TARGET_VERSION = 10; // Increment this to trigger migrations
+
+        if (currentVersion < TARGET_VERSION) {
+            console.log(`[DB Migration] Current version ${currentVersion} < ${TARGET_VERSION}. Running migrations...`);
+            
+            db.serialize(() => {
+                // Migrations for rooms: add new fields if missing
+                db.run("ALTER TABLE rooms ADD COLUMN area TEXT", (err) => {});
+                db.run("ALTER TABLE rooms ADD COLUMN capacity INTEGER", (err) => {});
+                db.run("ALTER TABLE rooms ADD COLUMN tariff TEXT", (err) => {});
+                db.run("ALTER TABLE rooms ADD COLUMN prepayment INTEGER", (err) => {});
+
+                // Updated bookings table
+                db.run(`CREATE TABLE IF NOT EXISTS bookings (
+                    id TEXT PRIMARY KEY,
+                    type TEXT,
+                    room TEXT,
+                    checkIn TEXT,
+                    checkOut TEXT,
+                    nights INTEGER,
+                    guest TEXT,
+                    phone TEXT,
+                    addons TEXT,
+                    total INTEGER,
+                    status TEXT,
+                    clientChatId TEXT,
+                    createdAt TEXT
+                )`);
+
+                db.run("ALTER TABLE bookings ADD COLUMN clientChatId TEXT", (err) => {});
+
+                // Admins table
+                db.run(`CREATE TABLE IF NOT EXISTS admins (
+                    chatId TEXT PRIMARY KEY,
+                    username TEXT,
+                    createdAt TEXT,
+                    department TEXT
+                )`);
+
+                db.run("ALTER TABLE admins ADD COLUMN username TEXT", (err) => {});
+                db.run("ALTER TABLE admins ADD COLUMN createdAt TEXT", (err) => {});
+                db.run("ALTER TABLE admins ADD COLUMN department TEXT", (err) => {
+                    if (!err) db.run("UPDATE admins SET department = 'all' WHERE department IS NULL");
+                });
+
+                // Initial Room Seeding
+                const seedRooms = [
+                    ['sauna', 'Сауна Отеля', 'Почасовая аренда · Вместимость до 6 человек · 2000₽/час', 2000, 2000],
+                    ['bath', 'Баня Хаан-Дыт', 'Настоящая баня на дровах · Вместимость до 10 человек · 3500₽/час', 3500, 3500]
+                ];
+
+                seedRooms.forEach(([type, name, desc, price, priceWeekend]) => {
+                    db.run(`INSERT INTO rooms (type, name, desc, price, priceWeekend, amenities, imgs) 
+                            SELECT ?, ?, ?, ?, ?, '[]', '[]' 
+                            WHERE NOT EXISTS (SELECT 1 FROM rooms WHERE type=?)`,
+                            [type, name, desc, price, priceWeekend, type]);
+                });
+
+                // Update Amenities
+                const listY123 = JSON.stringify(['Двуспальная кровать', 'Раскладной диван', 'Комплект полотенец, халатов и тапочек на 4 человек', 'Посуда на 4 человек, сковорода и кастрюля', 'Кухня с индукционной плитой и раковиной', 'Чайник, микроволновая печь, холодильник', 'Кондиционер', 'Дровяная печь-камин', 'Санузел с душевой', 'Одноразовые гигиенические принадлежности']);
+                const listY4 = JSON.stringify(['Два раскладных дивана', 'Комплекты постельного белья', 'Большой стол на 10 персон', 'Комплект посуды и столовых приборов на 6 человек', 'Холодильник', 'Микроволновая печь', 'Индукционная плита', 'Кухонная зона с раковиной', 'Санузел', 'Дровяная печь']);
+                const listBath = JSON.stringify(['Традиционная дровяная печь', 'Просторная парилка', 'Душевая зона и санузел', 'Большой стол на 12 персон', 'Кухонная зона: плита, раковина, посуда', 'Телевизор с Триколор ТВ', 'Wi-Fi', 'Караоке для весёлого отдыха']);
+
+                db.run("UPDATE rooms SET amenities = ?, capacity = 3 WHERE type = 'yurt' AND (name LIKE '%Земля%' OR name LIKE '%Вода%' OR name LIKE '%Воздух%' OR name LIKE '%Малая%')", [listY123]);
+                db.run("UPDATE rooms SET amenities = ?, capacity = 4 WHERE type = 'yurt' AND (name LIKE '%Огонь%' OR name LIKE '%Большая%')", [listY4]);
+                db.run("UPDATE rooms SET amenities = ? WHERE type = 'bath'", [listBath]);
+
+                // Finalize version
+                db.run(`PRAGMA user_version = ${TARGET_VERSION}`);
+                console.log(`[DB Migration] Database initialized to version ${TARGET_VERSION}`);
             });
-            db.run("ALTER TABLE rooms ADD COLUMN capacity INTEGER", (err) => {
-                if (err && !err.message.includes("duplicate column name")) console.error("[DB Migration]", err.message);
-            });
-            db.run("ALTER TABLE rooms ADD COLUMN tariff TEXT", (err) => {
-                if (err && !err.message.includes("duplicate column name")) console.error("[DB Migration]", err.message);
-            });
-            db.run("ALTER TABLE rooms ADD COLUMN prepayment INTEGER", (err) => {
-                if (err && !err.message.includes("duplicate column name")) console.error("[DB Migration]", err.message);
-            });
-
-            // Updated bookings table
-            db.run(`CREATE TABLE IF NOT EXISTS bookings (
-                id TEXT PRIMARY KEY,
-                type TEXT,
-                room TEXT,
-                checkIn TEXT,
-                checkOut TEXT,
-                nights INTEGER,
-                guest TEXT,
-                phone TEXT,
-                addons TEXT,
-                total INTEGER,
-                status TEXT,
-                clientChatId TEXT,
-                createdAt TEXT
-            )`);
-
-            // Migration: Add clientChatId if missing (for older databases)
-            db.run("ALTER TABLE bookings ADD COLUMN clientChatId TEXT", (err) => {
-                if (err && !err.message.includes("duplicate column name")) {
-                    console.error("[DB Migration] Error adding clientChatId:", err.message);
-                }
-            });
-
-            // Admins table
-            db.run(`CREATE TABLE IF NOT EXISTS admins (
-                chatId TEXT PRIMARY KEY,
-                username TEXT,
-                createdAt TEXT,
-                department TEXT
-            )`);
-
-            // Migration: Add username to admins if missing
-            db.run("ALTER TABLE admins ADD COLUMN username TEXT", (err) => {
-                if (err && !err.message.includes("duplicate column name")) {
-                    console.error("[DB Migration] Error adding username to admins:", err.message);
-                }
-            });
-
-            // Migration: Add createdAt to admins if missing
-            db.run("ALTER TABLE admins ADD COLUMN createdAt TEXT", (err) => {
-                if (err && !err.message.includes("duplicate column name")) {
-                    console.error("[DB Migration] Error adding createdAt to admins:", err.message);
-                }
-            });
-
-            // Migration: Add department to admins if missing
-            db.run("ALTER TABLE admins ADD COLUMN department TEXT", (err) => {
-                if (err && !err.message.includes("duplicate column name")) {
-                    console.error("[DB Migration] Error adding department to admins:", err.message);
-                } else if (!err) {
-                    // Default existing admins to 'all'
-                    db.run("UPDATE admins SET department = 'all' WHERE department IS NULL");
-                }
-            });
-
-            // Initial Room Seeding (Sauna & Bath)
-            const seedRooms = [
-                ['sauna', 'Сауна Отеля', 'Почасовая аренда · Вместимость до 6 человек · 2000₽/час', 2000, 2000],
-                ['bath', 'Баня Хаан-Дыт', 'Настоящая баня на дровах · Вместимость до 10 человек · 3500₽/час', 3500, 3500]
-            ];
-
-            seedRooms.forEach(([type, name, desc, price, priceWeekend]) => {
-                db.run(`INSERT INTO rooms (type, name, desc, price, priceWeekend, amenities, imgs) 
-                        SELECT ?, ?, ?, ?, ?, '[]', '[]' 
-                        WHERE NOT EXISTS (SELECT 1 FROM rooms WHERE type=?)`,
-                        [type, name, desc, price, priceWeekend, type]);
-            });
-
-            // Update Amenities for Yurts and Bath (One-time sync)
-            const listY123 = JSON.stringify([
-                'Двуспальная кровать', 'Раскладной диван', 'Комплект полотенец, халатов и тапочек на 4 человек',
-                'Посуда на 4 человек, сковорода и кастрюля', 'Кухня с индукционной плитой и раковиной',
-                'Чайник, микроволновая печь, холодильник', 'Кондиционер', 'Дровяная печь-камин',
-                'Санузел с душевой', 'Одноразовые гигиенические принадлежности'
-            ]);
-            const listY4 = JSON.stringify([
-                'Два раскладных дивана', 'Комплекты постельного белья', 'Большой стол на 10 персон',
-                'Комплект посуды и столовых приборов на 6 человек', 'Холодильник', 'Микроволновая печь',
-                'Индукционная плита', 'Кухонная зона с раковиной', 'Санузел', 'Дровяная печь'
-            ]);
-            const listBath = JSON.stringify([
-                'Традиционная дровяная печь', 'Просторная парилка', 'Душевая зона и санузел',
-                'Большой стол на 12 персон', 'Кухонная зона: плита, раковина, посуда',
-                'Телевизор с Триколор ТВ', 'Wi-Fi', 'Караоке для весёлого отдыха'
-            ]);
-
-            // Apply updates
-            db.run("UPDATE rooms SET amenities = ?, capacity = 3 WHERE type = 'yurt' AND (name LIKE '%Земля%' OR name LIKE '%Вода%' OR name LIKE '%Воздух%' OR name LIKE '%Малая%')", [listY123]);
-            db.run("UPDATE rooms SET amenities = ?, capacity = 4 WHERE type = 'yurt' AND (name LIKE '%Огонь%' OR name LIKE '%Большая%')", [listY4]);
-            db.run("UPDATE rooms SET amenities = ? WHERE type = 'bath'", [listBath]);
-        });
+        }
+    });
+});
 
 // Multer setup for file uploads
 const storage = multer.diskStorage({
