@@ -811,7 +811,6 @@
             margin-bottom: 2.5rem;
             position: relative;
             overflow: visible !important;
-        }
             transition: box-shadow .4s ease, border-color .3s ease;
         }
         .hotel-search-panel:hover {
@@ -1440,18 +1439,42 @@
     border-radius: 18px;
     border: 1px solid #ddd;
     font-family: 'Inter', sans-serif;
-    padding: 12px 10px;
+    padding: 12px 5px;
     z-index: 999999 !important;
-    width: 315px !important;
+    width: 320px !important;
     max-width: 98vw;
     box-sizing: border-box;
     overflow: visible;
 }
+.flatpickr-weekdays, .flatpickr-days, .dayContainer {
+    width: 100% !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    justify-content: space-around !important;
+}
+.flatpickr-weekdaycontainer {
+    display: flex !important;
+    width: 100% !important;
+    justify-content: space-around !important;
+}
+.flatpickr-weekday {
+    font-size: 0.75rem !important;
+    font-weight: 700 !important;
+    color: var(--gray) !important;
+    width: 40px !important;
+}
+.dayContainer {
+    flex-wrap: wrap !important;
+    justify-content: flex-start !important;
+}
 .flatpickr-day { 
-    max-width: 36px; height: 36px; line-height: 36px; 
-    border-radius: 8px;
+    max-width: 38px !important; 
+    flex-basis: 38px !important;
+    height: 38px; line-height: 38px; 
+    margin: 1px !important; border-radius: 8px !important;
     font-weight: 600;
-    margin: 1px;
     transition: .2s;
     color: var(--dark);
 }
