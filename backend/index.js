@@ -526,7 +526,7 @@ app.post('/api/bookings', (req, res) => {
 
 // Get Availability for calendar (public)
 app.get('/api/availability', (req, res) => {
-    db.all("SELECT room, checkIn, checkOut FROM bookings WHERE status = 'new' OR status = 'confirmed'", [], (err, rows) => {
+    db.all("SELECT room, checkIn, checkOut FROM bookings WHERE status != 'cancelled' AND status != 'completed'", [], (err, rows) => {
         if (err) return res.status(500).json({ error: err.message });
         res.json(rows);
     });

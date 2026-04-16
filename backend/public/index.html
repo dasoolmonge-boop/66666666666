@@ -2034,7 +2034,7 @@ async function openComplexAvailability(type) {
     // Fetch rooms to know total capacity
     const rRes = await fetch('/api/rooms');
     const allRooms = await rRes.json();
-    avCategoryRooms = allRooms.filter(r => r.type === type);
+    avCategoryRooms = allRooms.filter(r => r.type === type || r.type.startsWith(type));
     
     // Fetch all bookings
     const bRes = await fetch('/api/availability');
