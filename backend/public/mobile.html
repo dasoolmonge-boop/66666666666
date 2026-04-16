@@ -1012,7 +1012,7 @@
             return 'free';
         }
         function isDateBooked(d) {
-            if(state.room && state.room.type === 'sauna') return false;
+            if(state.room && (state.room.type === 'sauna' || state.room.type === 'bath')) return false;
             const st = getDateStatus(d);
             return st === 'full' || st === 'in';
         }
@@ -1055,7 +1055,7 @@
                 if(inRange) cls.push('range');
                 if(isStart && isEnd) cls.push('range-start','range-end');
 
-                const interact = (isPast || (st === 'full' && (state.room.type !== 'sauna' && state.room.type !== 'bath'))) ? '' : `onclick="selDate(${dt.getTime()})"`;
+                const interact = (isPast || (st === 'full' && (state.room.type !== 'sauna' && state.room.type !== 'bath') && !state.in)) ? '' : `onclick="selDate(${dt.getTime()})"`;
                 html += `<div class="${cls.join(' ')}" ${interact}>${d}</div>`;
             }
             document.getElementById('cal-grid').innerHTML = html;
@@ -1483,21 +1483,32 @@
             for (let day = 1; day <= daysInMonth; day++) {
                 const date = new Date(avCurrentYear, avCurrentMonth, day);
                 date.setHours(0,0,0,0);
-                
-                let statusClass = '';
                 const isPast = date < today;
                 
-                if (isPast) {
-                    statusClass = 'past';
-                } else {
-                    let bookedCount = 0;
+                let statusClass = '';
+                if (isPast) statusClass = 'past';
+                else {
+                    let nightOccupiedCount = 0;
                     relevantBookings.forEach(b => {
-                        const bStart = new Date(b.checkIn); bStart.setHours(0,0,0,0);
-                        const bEnd = new Date(b.checkOut); bEnd.setHours(0,0,0,0);
-                        // Standard check: is occupied on this night
-                        if (date >= bStart && date < bEnd) bookedCount++;
+                        const bin = new Date(b.checkIn); bin.setHours(0,0,0,0);
+                        const bout = new Date(b.checkOut); bout.setHours(0,0,0,0);
+                        if (date >= bin && date < bout) nightOccupiedCount++;
                     });
-                    if (bookedCount >= totalCapacity && totalCapacity > 0) statusClass = 'busy';
+
+                    const prevDate = new Date(date); prevDate.setDate(date.getDate() - 1);
+                    let prevNightOccupiedCount = 0;
+                    relevantBookings.forEach(b => {
+                        const bin = new Date(b.checkIn); bin.setHours(0,0,0,0);
+                        const bout = new Date(b.checkOut); bout.setHours(0,0,0,0);
+                        if (prevDate >= bin && prevDate < bout) prevNightOccupiedCount++;
+                    });
+
+                    const isNightBusy = (nightOccupiedCount >= totalCapacity && totalCapacity > 0);
+                    const isPrevNightBusy = (prevNightOccupiedCount >= totalCapacity && totalCapacity > 0);
+
+                    if (isNightBusy && isPrevNightBusy) statusClass = 'busy';
+                    else if (isNightBusy && !isPrevNightBusy) statusClass = 'turn-in';
+                    else if (!isNightBusy && isPrevNightBusy) statusClass = 'turn-out';
                 }
                 
                 const isToday = date.getTime() === today.getTime();
@@ -1512,8 +1523,8 @@
                     if (date > dIn && date < dOut) rangeClass = 'range';
                 }
 
-                html += `<div class="av-day ${statusClass} ${isToday ? 'today' : ''} ${rangeClass}" 
-                             ${statusClass !== 'busy' && !isPast ? `onclick="selectAvDate('${fullDateStr}')"` : ''}>
+                const interact = (isPast || (statusClass === 'busy' && !avSelectedIn)) ? '' : `onclick="selectAvDate('${fullDateStr}')"`;
+                html += `<div class="av-day ${statusClass} ${isToday ? 'today' : ''} ${rangeClass}" ${interact}>
                             ${day}
                          </div>`;
             }

@@ -290,9 +290,11 @@
             transition: .2s; cursor: pointer; border: 1px solid transparent; color: var(--text);
         }
         .cal-day.disabled { opacity: 0.2; pointer-events: none; }
-        .cal-day.booked-full { background: rgba(255,50,50,.15); color: #ff6b6b; text-decoration: line-through; pointer-events: none; }
-        .cal-day.booked-in { background: linear-gradient(135deg, transparent 50%, rgba(255,50,50,.2) 50%); color: #ff6b6b; }
-        .cal-day.booked-out { background: linear-gradient(135deg, rgba(255,50,50,.2) 50%, transparent 50%); color: #ff6b6b; }
+        .cal-day.booked-full { background: rgba(255,100,100,0.3); color: #fff; text-decoration: none; pointer-events: none; }
+        .cal-day.booked-in { background: linear-gradient(135deg, transparent 50%, rgba(255,100,100,0.3) 50%); color: #ff6b6b; }
+        .cal-day.booked-out { background: linear-gradient(135deg, rgba(255,100,100,0.3) 50%, transparent 50%); color: #ff6b6b; }
+        .cal-day.turn-in { background: linear-gradient(135deg, transparent 50%, rgba(255,100,100,0.3) 50%); }
+        .cal-day.turn-out { background: linear-gradient(135deg, rgba(255,100,100,0.3) 50%, transparent 50%); }
         .cal-day.today { border-color: var(--muted); }
         .cal-day.range-start { background: var(--gold); color: #fff; border-radius: 8px 0 0 8px; }
         .cal-day.range-end { background: var(--gold); color: #fff; border-radius: 0 8px 8px 0; }
