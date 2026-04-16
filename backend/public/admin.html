@@ -372,7 +372,9 @@
         .adm-cal-day.disabled { color: var(--muted); opacity: 0.5; cursor: not-allowed; }
         .adm-cal-day.today { color: var(--gold); font-weight: 800; }
         .adm-cal-day.booked { background: var(--red-bg); color: var(--red); cursor: not-allowed; }
-        .adm-cal-day.selected { background: var(--gold); color: #fff; }
+        .adm-cal-day.booked-out { background: linear-gradient(135deg, var(--red-bg) 50%, var(--surface2) 50%); cursor: pointer; }
+        .adm-cal-day.booked-in { background: linear-gradient(135deg, var(--surface2) 50%, var(--red-bg) 50%); cursor: pointer; }
+        .adm-cal-day.selected { background: var(--gold) !important; color: #fff; }
         .adm-cal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
         .adm-cal-header button { background: none; border: 1px solid var(--border); color: #fff; border-radius: 4px; padding: 2px 8px; cursor: pointer; }
         .adm-cal-day-name { text-align: center; font-size: 0.65rem; color: var(--muted); padding-bottom: 5px; font-weight: 700; }
@@ -1222,17 +1224,17 @@ function renderRecCalendar() {
         const isToday = dt.getTime() === today.getTime();
         
         // Availability check
-        let isBooked = false;
+        let hasIn = false;
+        let hasOut = false;
+        let isMid = false;
         globalBookings.forEach(b => {
             if(b.room !== s.roomName || b.status === 'cancelled') return;
             const bin = new Date(b.checkIn); bin.setHours(0,0,0,0);
             const bout = new Date(b.checkOut); bout.setHours(0,0,0,0);
             
-            if (s.type === 'sauna' || s.type === 'bath') {
-                if (dt.getTime() === bin.getTime()) isBooked = true; // For hourly, we just mark the day if it has ANY bookings? No, let's show day as free but check hours.
-            } else {
-                if (dt >= bin && dt < bout) isBooked = true;
-            }
+            if (dt.getTime() === bin.getTime()) hasIn = true;
+            else if (dt.getTime() === bout.getTime()) hasOut = true;
+            else if (dt.getTime() > bin.getTime() && dt.getTime() < bout.getTime()) isMid = true;
         });
 
         const isSel = (s.checkIn && dt.getTime() === s.checkIn.getTime()) || 
@@ -1242,10 +1244,23 @@ function renderRecCalendar() {
         const cls = ['adm-cal-day'];
         if (isPast) cls.push('disabled');
         if (isToday) cls.push('today');
-        if (isBooked && s.type !== 'sauna' && s.type !== 'bath') cls.push('booked');
+        
+        let dayBooked = false;
+        if (s.type !== 'sauna' && s.type !== 'bath') {
+            if (isMid || (hasIn && hasOut)) {
+                cls.push('booked');
+                dayBooked = true;
+            } else if (hasIn) {
+                cls.push('booked-in');
+                // dayBooked depends on what we are picking
+            } else if (hasOut) {
+                cls.push('booked-out');
+            }
+        }
+
         if (isSel) cls.push('selected');
 
-        html += `<div class="${cls.join(' ')}" onclick="selectRecDate(${dt.getTime()}, ${isBooked && s.type !== 'sauna' && s.type !== 'bath'})">${d}</div>`;
+        html += `<div class="${cls.join(' ')}" onclick="selectRecDate(${dt.getTime()}, ${dayBooked})">${d}</div>`;
     }
     grid.innerHTML = html;
     
@@ -1263,12 +1278,54 @@ function selectRecDate(ts, booked) {
         renderRecCalendar();
         renderRecHours();
     } else {
+        // Selection Logic for Hotel/Yurt
+        // Check if this date is "booked-in" or "booked-out"
+        let hasIn = false;
+        let hasOut = false;
+        let isMid = false;
+        globalBookings.forEach(b => {
+             if(b.room !== s.roomName || b.status === 'cancelled') return;
+             const bin = new Date(b.checkIn); bin.setHours(0,0,0,0);
+             const bout = new Date(b.checkOut); bout.setHours(0,0,0,0);
+             if (dt.getTime() === bin.getTime()) hasIn = true;
+             else if (dt.getTime() === bout.getTime()) hasOut = true;
+             else if (dt.getTime() > bin.getTime() && dt.getTime() < bout.getTime()) isMid = true;
+        });
+
         if (!s.checkIn || (s.checkIn && s.checkOut)) {
+            // Picking Check-In
+            if (isMid || hasIn) return; // Cannot check-in if night is occupied starting now
             s.checkIn = dt;
             s.checkOut = null;
         } else if (dt > s.checkIn) {
+            // Picking Check-Out
+            if (isMid || hasOut) return; // Wait, hasOut is actually FREE for checking out? NO. 
+            // If someone else already checks out here, it means they stayed the night BEFORE.
+            // If WE want to check out here, we stay the night BEFORE.
+            // So we can't BOTH stay the night before.
+            // So if hasOut is true, the night BEFORE is occupied. We can't stay that night.
+            
+            // Re-eval: 
+            // Night 4-5 is occupied by Guest A. Guest A leaves on 5.
+            // Guest B wants 3-5. Night 3-4 and night 4-5. Night 4-5 is busy!
+            // Guest B wants 5-6. Night 5-6. Night 5-6 is FREE. Yes.
+            
+            // Strict check: ALL nights between s.checkIn and dt must be free.
+            let overlap = false;
+            globalBookings.forEach(b => {
+                if(b.room !== s.roomName || b.status === 'cancelled') return;
+                const bin = new Date(b.checkIn); bin.setHours(0,0,0,0);
+                const bout = new Date(b.checkOut); bout.setHours(0,0,0,0);
+                // If any part of our stay [checkIn, dt) overlaps with any [bin, bout)
+                if (s.checkIn < bout && dt > bin) overlap = true;
+            });
+            if(overlap) {
+                alert("Эти даты частично заняты");
+                return;
+            }
             s.checkOut = dt;
         } else {
+            if (isMid || hasIn) return;
             s.checkIn = dt;
         }
         renderRecCalendar();

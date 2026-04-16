@@ -2073,15 +2073,26 @@ function renderComplexCalendar() {
             statusClass = 'past';
         } else {
             // Check occupancy
-            let bookedCount = 0;
+            let nightOccupiedCount = 0;
+            let checkInCount = 0;
+            let checkOutCount = 0;
+            
             relevantBookings.forEach(b => {
                 const bStart = new Date(b.checkIn); bStart.setHours(0,0,0,0);
                 const bEnd = new Date(b.checkOut); bEnd.setHours(0,0,0,0);
-                if (date >= bStart && date < bEnd) bookedCount++;
+                
+                if (date >= bStart && date < bEnd) nightOccupiedCount++;
+                if (date.getTime() === bStart.getTime()) checkInCount++;
+                if (date.getTime() === bEnd.getTime()) checkOutCount++;
             });
             
-            if (bookedCount >= totalCapacity && totalCapacity > 0) {
+            if (nightOccupiedCount >= totalCapacity && totalCapacity > 0) {
                 statusClass = 'busy';
+            } else if (checkInCount > 0 && checkInCount >= (totalCapacity - nightOccupiedCount)) {
+                // Not fully booked for night, but many check-ins
+                statusClass = 'turn-in';
+            } else if (checkOutCount > 0 && nightOccupiedCount > 0) {
+                statusClass = 'turn-out';
             }
         }
         
@@ -2097,8 +2108,8 @@ function renderComplexCalendar() {
             if (date > dIn && date < dOut) rangeClass = 'range';
         }
 
-        html += `<div class="av-day ${statusClass} ${isToday ? 'today' : ''} ${rangeClass}" 
-                     ${statusClass !== 'busy' && !isPast ? `onclick="selectAvDate('${fullDateStr}')"` : ''}>
+        const interact = (statusClass === 'busy' && !avSelectedIn) || isPast ? '' : `selectAvDate('${fullDateStr}', '${statusClass}')`;
+        html += `<div class="av-day ${statusClass} ${isToday ? 'today' : ''} ${rangeClass}" onclick="${interact}">
                     ${day}
                  </div>`;
     }
@@ -2107,17 +2118,50 @@ function renderComplexCalendar() {
     container.innerHTML = html;
 }
 
-function selectAvDate(dateStr) {
+function selectAvDate(dateStr, status) {
     if (!avSelectedIn || (avSelectedIn && avSelectedOut)) {
+        if (status === 'busy') return; // Cannot check-in if night is full
         avSelectedIn = dateStr;
         avSelectedOut = null;
     } else {
         const dIn = new Date(avSelectedIn);
         const dNew = new Date(dateStr);
         if (dNew <= dIn) {
+            if (status === 'busy') return;
             avSelectedIn = dateStr;
             avSelectedOut = null;
         } else {
+            // Check for overlaps in between
+            const dStart = dIn;
+            const dEnd = dNew;
+            let hasOverlap = false;
+
+            // Simple check: for each date from dIn to dEnd-1, is it FULLY busy?
+            const tempDate = new Date(dIn);
+            while (tempDate < dEnd) {
+                let nightOcc = 0;
+                const tTime = tempDate.getTime();
+                
+                avOccupancyData.forEach(b => {
+                    const room = avCategoryRooms.find(r => r.name === b.room);
+                    if(!room) return;
+                    const bIn = new Date(b.checkIn).setHours(0,0,0,0);
+                    const bOut = new Date(b.checkOut).setHours(0,0,0,0);
+                    if (tTime >= bIn && tTime < bOut) nightOcc++;
+                });
+
+                if (nightOcc >= avCategoryRooms.length && avCategoryRooms.length > 0) {
+                    hasOverlap = true;
+                    break;
+                }
+                tempDate.setDate(tempDate.getDate() + 1);
+            }
+
+            if (hasOverlap) {
+                alert("К сожалению, в выбранном интервале нет свободных номеров сквозь все даты.");
+                return;
+            }
+
             avSelectedOut = dateStr;
             
             // Finalize

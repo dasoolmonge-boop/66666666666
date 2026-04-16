@@ -1393,6 +1393,8 @@
             background: #ffebeb !important; color: #ff4d4d !important; cursor: not-allowed;
             text-decoration: line-through; opacity: 0.6;
         }
+        .av-day.turn-out { background: linear-gradient(135deg, #ffebeb 50%, #fdfdfd 50%) !important; cursor: pointer; }
+        .av-day.turn-in { background: linear-gradient(135deg, #fdfdfd 50%, #ffebeb 50%) !important; cursor: pointer; }
         .av-day.selected, .av-day.range-start, .av-day.range-end { 
             background: var(--gold) !important; color: #fff !important; 
             border-radius: 50% !important; transform: scale(1.1);
