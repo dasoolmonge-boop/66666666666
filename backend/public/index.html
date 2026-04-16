@@ -77,7 +77,6 @@
     <!-- Preload Critical Assets -->
     <link rel="preload" href="uploads/chalama_logo.png" as="image">
     <link rel="preload" href="https://www.chalamahotel.ru/upload/iblock/e5b/niub7dn3irklicps1kyxhyj06gull6fp.jpeg" as="image">
-    <script async src="https://static.max.ru/sdk/max-web-app.js" onerror="this.remove()"></script>
     <script>
         (function() {
             // Passive bot/app detection
@@ -792,7 +791,13 @@ function renderRooms(type, data) {
     const el = document.getElementById(type + '-rooms');
     el.innerHTML = data.map((r, i) => {
         const isActive = i === state[type].selected;
-        const imgHtml = (r.imgs || []).map(src => `<img src="${src}" alt="${r.name}" onclick="event.stopPropagation();openLightbox('${src}')">`).join('');
+        
+        // Lazy-Gallery: Only render all images for ACTIVE room. Others get only the FIRST image.
+        const imgsToRender = (isActive || !r.imgs || r.imgs.length === 0) 
+            ? (r.imgs || []) 
+            : [r.imgs[0]];
+            
+        const imgHtml = imgsToRender.map(src => `<img src="${src}" alt="${r.name}" onclick="event.stopPropagation();openLightbox('${src}')">`).join('');
         const amenHtml = (r.amenities || []).map(a => `<span class="room-amenity">${a}</span>`).join('');
         const priceLabel = r.priceWeekend
             ? `<div class="room-price">от ${fmtPrice(r.price)}</div><div class="room-per">Пт-Сб: ${fmtPrice(r.priceWeekend)}</div>`
@@ -801,6 +806,12 @@ function renderRooms(type, data) {
             ? r.desc.split('·').slice(0,1).join('·').trim()
             : r.desc;
         const rName = (type === 'yurt' && i < 4) ? YURT_NAMES[i] : r.name;
+
+        // If not active, we still show the "+X photos" hint if there are more
+        const morePhotosHint = (!isActive && r.imgs && r.imgs.length > 1) 
+            ? `<div class="photo-count">+${r.imgs.length - 1} фото</div>` 
+            : '';
+
         return `
         <div class="room-card ${isActive ? 'active' : ''}" onclick="selectRoom('${type}',${i})">
             <div class="room-card-top">
@@ -817,6 +828,7 @@ function renderRooms(type, data) {
                     <button class="gallery-arrow left" onclick="event.stopPropagation();scrollGallery(this,-1)">‹</button>
                     <div class="room-gallery-inner">${imgHtml}</div>
                     <button class="gallery-arrow right" onclick="event.stopPropagation();scrollGallery(this,1)">›</button>
+                    ${morePhotosHint}
                 </div>
                 <div class="room-amenities">${amenHtml}</div>
             </div>
@@ -831,9 +843,14 @@ function renderSaunaCard(data) {
         let imgsHtml = '';
         let sliderDots = '';
         let sliderArrows = '';
-        if (r.imgs && r.imgs.length > 0) {
-            imgsHtml = r.imgs.map(img => `<img src="${img}" alt="${r.name}" onclick="openLightbox('${img}')">`).join('');
-            if (r.imgs.length > 1) {
+        // Lazy-Gallery for Sauna
+        const imgsToRender = (isActive || !r.imgs || r.imgs.length === 0) 
+            ? (r.imgs || []) 
+            : [r.imgs[0]];
+
+        if (imgsToRender.length > 0) {
+            imgsHtml = imgsToRender.map(img => `<img src="${img}" alt="${r.name}" onclick="openLightbox('${img}')">`).join('');
+            if (isActive && r.imgs.length > 1) {
                 sliderDots = '<div class="slider-dots">' + r.imgs.map((_, idx) => `<span class="slider-dot ${idx===0?'active':''}"></span>`).join('') + '</div>';
                 sliderArrows = `
                     <button class="slider-arrow prev" onclick="event.stopPropagation(); scrollSlider(this, -1)">❮</button>
@@ -855,7 +872,7 @@ function renderSaunaCard(data) {
                     </div>
                     ${sliderDots}
                     ${sliderArrows}
-                    ${r.imgs && r.imgs.length > 1 ? `<div class="photo-count">+${r.imgs.length - 1} фото</div>` : ''}
+                    ${(!isActive && r.imgs && r.imgs.length > 1) ? `<div class="photo-count">+${r.imgs.length - 1} фото</div>` : ''}
                 </div>
             </div>
             <div class="card-content" style="padding: 1.8rem;">
@@ -943,9 +960,14 @@ function renderBathCard(data) {
         let imgsHtml = '';
         let sliderDots = '';
         let sliderArrows = '';
-        if (r.imgs && r.imgs.length > 0) {
-            imgsHtml = r.imgs.map(img => `<img src="${img}" alt="${r.name}" onclick="openLightbox('${img}')">`).join('');
-            if (r.imgs.length > 1) {
+        // Lazy-Gallery for Bath
+        const imgsToRender = (isActive || !r.imgs || r.imgs.length === 0) 
+            ? (r.imgs || []) 
+            : [r.imgs[0]];
+
+        if (imgsToRender.length > 0) {
+            imgsHtml = imgsToRender.map(img => `<img src="${img}" alt="${r.name}" onclick="openLightbox('${img}')">`).join('');
+            if (isActive && r.imgs.length > 1) {
                 sliderDots = '<div class="slider-dots">' + r.imgs.map((_, idx) => `<span class="slider-dot ${idx===0?'active':''}"></span>`).join('') + '</div>';
                 sliderArrows = `
                     <button class="slider-arrow prev" onclick="event.stopPropagation(); scrollSlider(this, -1)" style="background:rgba(0,0,0,0.6);color:#fff;">❮</button>
@@ -965,7 +987,7 @@ function renderBathCard(data) {
                     </div>
                     ${sliderDots}
                     ${sliderArrows}
-                    ${r.imgs && r.imgs.length > 1 ? `<div class="photo-count">+${r.imgs.length - 1} фото</div>` : ''}
+                    ${(!isActive && r.imgs && r.imgs.length > 1) ? `<div class="photo-count">+${r.imgs.length - 1} фото</div>` : ''}
                 </div>
             </div>
             <div class="card-content" style="padding: 1.8rem;">
