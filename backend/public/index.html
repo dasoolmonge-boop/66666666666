@@ -2072,26 +2072,31 @@ function renderComplexCalendar() {
         if (isPast) {
             statusClass = 'past';
         } else {
-            // Check occupancy
+            // Advanced occupancy logic
             let nightOccupiedCount = 0;
-            let checkInCount = 0;
-            let checkOutCount = 0;
-            
             relevantBookings.forEach(b => {
                 const bStart = new Date(b.checkIn); bStart.setHours(0,0,0,0);
                 const bEnd = new Date(b.checkOut); bEnd.setHours(0,0,0,0);
-                
                 if (date >= bStart && date < bEnd) nightOccupiedCount++;
-                if (date.getTime() === bStart.getTime()) checkInCount++;
-                if (date.getTime() === bEnd.getTime()) checkOutCount++;
+            });
+
+            // Previous night check
+            const prevDate = new Date(date); prevDate.setDate(date.getDate() - 1);
+            let prevNightOccupiedCount = 0;
+            relevantBookings.forEach(b => {
+                const bStart = new Date(b.checkIn); bStart.setHours(0,0,0,0);
+                const bEnd = new Date(b.checkOut); bEnd.setHours(0,0,0,0);
+                if (prevDate >= bStart && prevDate < bEnd) prevNightOccupiedCount++;
             });
             
-            if (nightOccupiedCount >= totalCapacity && totalCapacity > 0) {
+            const isNightBusy = nightOccupiedCount >= totalCapacity && totalCapacity > 0;
+            const isPrevNightBusy = prevNightOccupiedCount >= totalCapacity && totalCapacity > 0;
+            
+            if (isNightBusy && isPrevNightBusy) {
                 statusClass = 'busy';
-            } else if (checkInCount > 0 && checkInCount >= (totalCapacity - nightOccupiedCount)) {
-                // Not fully booked for night, but many check-ins
+            } else if (isNightBusy && !isPrevNightBusy) {
                 statusClass = 'turn-in';
-            } else if (checkOutCount > 0 && nightOccupiedCount > 0) {
+            } else if (!isNightBusy && isPrevNightBusy) {
                 statusClass = 'turn-out';
             }
         }
