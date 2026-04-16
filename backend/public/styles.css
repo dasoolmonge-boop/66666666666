@@ -1293,6 +1293,8 @@
         .yurts-theme .room-amenity { background: rgba(255,255,255,0.1); color: #eee; }
         .yurts-theme .cal-wrap { background: #2a3123; border: 1px solid rgba(255,255,255,0.1); color: #fff; box-shadow: 0 10px 40px rgba(0,0,0,0.4); }
         .yurts-theme .form-group input, .yurts-theme .form-group select { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.2); color: #fff; }
+        .yurts-theme .hotel-search-input, .yurts-theme .flatpickr-input { background: rgba(255,255,255,0.05) !important; border-color: rgba(255,255,255,0.2) !important; color: #fff !important; }
+        .yurts-theme .hotel-search-input::placeholder { color: rgba(255,255,255,0.4); }
         .yurts-theme .form-group label { color: rgba(255,255,255,0.7); }
         .yurts-theme .addon-item { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1); color: #fff; }
         .yurts-theme .addon-item.on { background: rgba(255,255,255,0.15); border-color: #e1d3a5; }
