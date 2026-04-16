@@ -169,7 +169,7 @@ db.serialize(() => {
     // Check if initialization is already done using PRAGMA user_version as a marker
     db.get("PRAGMA user_version", (err, row) => {
         const currentVersion = row ? row.user_version : 0;
-        const TARGET_VERSION = 10; // Increment this to trigger migrations
+        const TARGET_VERSION = 11; // Incremented for indexing
 
         if (currentVersion < TARGET_VERSION) {
             console.log(`[DB Migration] Current version ${currentVersion} < ${TARGET_VERSION}. Running migrations...`);
@@ -180,6 +180,9 @@ db.serialize(() => {
                 db.run("ALTER TABLE rooms ADD COLUMN capacity INTEGER", (err) => {});
                 db.run("ALTER TABLE rooms ADD COLUMN tariff TEXT", (err) => {});
                 db.run("ALTER TABLE rooms ADD COLUMN prepayment INTEGER", (err) => {});
+
+                // Indexes for rooms
+                db.run("CREATE INDEX IF NOT EXISTS idx_rooms_type ON rooms(type)");
 
                 // Updated bookings table
                 db.run(`CREATE TABLE IF NOT EXISTS bookings (
@@ -199,6 +202,10 @@ db.serialize(() => {
                 )`);
 
                 db.run("ALTER TABLE bookings ADD COLUMN clientChatId TEXT", (err) => {});
+                
+                // Indexes for bookings
+                db.run("CREATE INDEX IF NOT EXISTS idx_bookings_overlap ON bookings(status, checkIn, checkOut)");
+                db.run("CREATE INDEX IF NOT EXISTS idx_bookings_room ON bookings(room)");
 
                 // Admins table
                 db.run(`CREATE TABLE IF NOT EXISTS admins (

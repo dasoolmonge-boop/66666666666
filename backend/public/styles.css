@@ -1430,3 +1430,70 @@
         .btn-show-cal:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(184,134,11,0.4); }
 
         @keyframes avFadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+/* 📅 Mobile Style Theme (Square-Rounded + Solid Colors) */
+.flatpickr-calendar {
+    background: #fff;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+    border-radius: 18px;
+    border: 1px solid #ddd;
+    font-family: 'Inter', sans-serif;
+    padding: 12px 20px;
+    z-index: 999999 !important;
+    min-width: 315px;
+}
+.flatpickr-day { 
+    max-width: 36px; height: 36px; line-height: 36px; 
+    border-radius: 8px;
+    font-weight: 600;
+    margin: 1px;
+    transition: .2s;
+    color: var(--dark);
+}
+.flatpickr-day.selected, .flatpickr-day.startRange, .flatpickr-day.endRange {
+    background: var(--gold) !important;
+    border: none !important;
+    color: #fff !important;
+    border-radius: 8px !important;
+}
+.flatpickr-day.inRange {
+    background: rgba(184, 134, 11, 0.15) !important;
+    box-shadow: none !important;
+    color: var(--gold) !important;
+    border-radius: 0 !important;
+}
+.flatpickr-day.startRange { border-radius: 8px 0 0 8px !important; }
+.flatpickr-day.endRange { border-radius: 0 8px 8px 0 !important; }
+
+.flatpickr-day:hover:not(.selected):not(.startRange):not(.endRange) {
+    background: #f8f8f8 !important;
+    color: var(--gold) !important;
+}
+.flatpickr-months .flatpickr-month { background: transparent; color: var(--dark); padding: 5px 0; }
+.flatpickr-current-month { font-size: 1rem; }
+.flatpickr-current-month .flatpickr-monthDropdown-months { font-weight: 700; color: var(--dark); }
+.flatpickr-weekday { color: var(--gray); font-weight: 600; text-transform: uppercase; font-size: 0.7rem; }
+
+/* Obsidian Mobile style for Yurts */
+.yurts-theme .flatpickr-calendar {
+    background: #38402f;
+    border-color: rgba(255,255,255,0.1);
+    color: #fff;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+}
+.yurts-theme .flatpickr-day { color: #fff; }
+.yurts-theme .flatpickr-day.inRange { background: rgba(255,255,255,0.1) !important; }
+.yurts-theme .flatpickr-day:hover:not(.selected) { background: rgba(255,255,255,0.15) !important; color: #fff !important; }
+.yurts-theme .flatpickr-month, .yurts-theme .flatpickr-current-month, .yurts-theme .cur-month { color: #fff !important; }
+.yurts-theme .flatpickr-weekday { color: rgba(255,255,255,0.5); }
+
+/* Search inputs dark theme */
+.yurts-theme .hotel-search-input, .yurts-theme .flatpickr-input { 
+    background: rgba(255,255,255,0.05) !important; 
+    border-color: rgba(255,255,255,0.2) !important; 
+    color: #fff !important; 
+}
+.yurts-theme .hotel-search-input::placeholder { color: rgba(255,255,255,0.4); }
+
+/* Modal and positioning */
+.flatpickr-calendar.static { top: 100% !important; }
