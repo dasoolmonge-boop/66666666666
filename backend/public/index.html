@@ -2148,9 +2148,10 @@ function selectAvDate(dateStr) {
             avSelectedOut = dateStr;
             
             // Finalize
-            const typePrefix = avCurrentType === 'hotel' ? 'hotel' : 'yurt';
-            document.getElementById(`${typePrefix}-search-in`).value = avSelectedIn;
-            document.getElementById(`${typePrefix}-search-out`).value = avSelectedOut;
+            const picker = avCurrentType === 'hotel' ? hotelRangePicker : yurtRangePicker;
+            if (picker) {
+                picker.setDate([avSelectedIn, avSelectedOut], true);
+            }
             
             setTimeout(() => {
                 closeAvModal();
