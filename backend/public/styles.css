@@ -1440,9 +1440,11 @@
     border-radius: 18px;
     border: 1px solid #ddd;
     font-family: 'Inter', sans-serif;
-    padding: 12px 20px;
+    padding: 12px 15px;
     z-index: 999999 !important;
-    min-width: 315px;
+    min-width: 280px;
+    max-width: 95vw;
+    box-sizing: border-box;
 }
 .flatpickr-day { 
     max-width: 36px; height: 36px; line-height: 36px; 
