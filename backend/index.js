@@ -460,10 +460,12 @@ app.post('/api/bookings', (req, res) => {
                 return res.status(400).json({ success: false, error: 'Имя и телефон обязательны' });
             }
 
+            const status = b.status || 'new';
+
             db.run(
                 `INSERT INTO bookings (id, type, room, checkIn, checkOut, nights, guest, phone, addons, total, status, clientChatId, createdAt)
                  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-                [id, b.type, b.room, b.checkIn, b.checkOut, b.nights, guestName, guestPhone, JSON.stringify(b.addons || []), b.total, 'new', b.clientChatId || null, createdAt],
+                [id, b.type, b.room, b.checkIn, b.checkOut, b.nights, guestName, guestPhone, JSON.stringify(b.addons || []), b.total, status, b.clientChatId || null, createdAt],
                 function (err) {
                     if (err) return res.status(500).json({ error: err.message });
                     

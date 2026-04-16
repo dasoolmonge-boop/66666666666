@@ -344,6 +344,43 @@
         }
         .tg-status.success { display:block; background:var(--green-bg); color:var(--green); }
         .tg-status.error { display:block; background:var(--red-bg); color:var(--red); }
+        
+        /* ===== RECEPTION / MANUAL BOOKING ===== */
+        .reception-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 2rem; }
+        .reception-card {
+            background: var(--surface); border: 2px solid var(--border); border-radius: var(--radius);
+            padding: 1.5rem; cursor: pointer; transition: .3s; text-align: center;
+        }
+        .reception-card:hover { border-color: var(--gold); background: var(--surface2); }
+        .reception-card.active { border-color: var(--gold); background: var(--surface2); box-shadow: 0 0 15px rgba(184,134,11,0.2); }
+        .reception-card-icon { font-size: 2rem; margin-bottom: 0.5rem; }
+        .reception-card-title { font-weight: 700; font-size: 0.9rem; }
+        
+        #receptionBookingPanel {
+            display: grid; grid-template-columns: 350px 1fr; gap: 2rem;
+            background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+            padding: 2rem; margin-top: 1.5rem;
+        }
+        @media (max-width: 900px) { #receptionBookingPanel { grid-template-columns: 1fr; } }
+        
+        .reception-form { display: flex; flex-direction: column; gap: 1.2rem; }
+        
+        /* Compact Admin Calendar */
+        .adm-cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; background: var(--border); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+        .adm-cal-day { background: var(--surface2); padding: 10px 5px; text-align: center; font-size: 0.8rem; cursor: pointer; transition: 0.2s; position: relative; }
+        .adm-cal-day:hover:not(.disabled) { background: var(--surface); }
+        .adm-cal-day.disabled { color: var(--muted); opacity: 0.5; cursor: not-allowed; }
+        .adm-cal-day.today { color: var(--gold); font-weight: 800; }
+        .adm-cal-day.booked { background: var(--red-bg); color: var(--red); cursor: not-allowed; }
+        .adm-cal-day.selected { background: var(--gold); color: #fff; }
+        .adm-cal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+        .adm-cal-header button { background: none; border: 1px solid var(--border); color: #fff; border-radius: 4px; padding: 2px 8px; cursor: pointer; }
+        .adm-cal-day-name { text-align: center; font-size: 0.65rem; color: var(--muted); padding-bottom: 5px; font-weight: 700; }
+        
+        .hour-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem; margin-top: 1rem; }
+        .hour-btn { padding: 0.5rem; background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; font-size: 0.75rem; color: #fff; cursor: pointer; text-align: center; }
+        .hour-btn.booked { opacity: 0.3; cursor: not-allowed; background: var(--red-bg); }
+        .hour-btn.selected { background: var(--gold); border-color: var(--gold); }
     </style>
 </head>
 <body>
@@ -401,6 +438,7 @@
         <!-- Tabs -->
         <div class="tabs">
             <button class="tab active" onclick="switchTab('all')" id="tab-all">Все<span class="tab-count" id="cnt-all">0</span></button>
+            <button class="tab" onclick="switchTab('reception')" id="tab-reception">🛎 Ресепшн</button>
             <button class="tab" onclick="switchTab('hotel')" id="tab-hotel">🏨 Отель<span class="tab-count" id="cnt-hotel">0</span></button>
             <button class="tab" onclick="switchTab('yurt')" id="tab-yurt">⛺ Юрты<span class="tab-count" id="cnt-yurt">0</span></button>
             <button class="tab" onclick="switchTab('sauna')" id="tab-sauna">🧖‍♂️ Сауна<span class="tab-count" id="cnt-sauna">0</span></button>
@@ -439,6 +477,76 @@
                     <thead><tr><th>ID</th><th>Тип</th><th>Номер</th><th>Гость</th><th>Даты</th><th>Ночи</th><th>Сумма</th><th>Статус</th></tr></thead>
                     <tbody id="bodyArchive"></tbody>
                 </table>
+            </div>
+        </div>
+
+        <!-- Reception Section -->
+        <div id="receptionSection" style="display:none">
+            <div class="reception-grid">
+                <div class="reception-card" id="card-rec-hotel" onclick="selectRecType('hotel')">
+                    <div class="reception-card-icon">🏨</div>
+                    <div class="reception-card-title">Отель</div>
+                </div>
+                <div class="reception-card" id="card-rec-yurt" onclick="selectRecType('yurt')">
+                    <div class="reception-card-icon">⛺</div>
+                    <div class="reception-card-title">Юрты</div>
+                </div>
+                <div class="reception-card" id="card-rec-sauna" onclick="selectRecType('sauna')">
+                    <div class="reception-card-icon">🧖‍♂️</div>
+                    <div class="reception-card-title">Сауна</div>
+                </div>
+                <div class="reception-card" id="card-rec-bath" onclick="selectRecType('bath')">
+                    <div class="reception-card-icon">🚿</div>
+                    <div class="reception-card-title">Баня</div>
+                </div>
+            </div>
+
+            <div id="receptionBookingPanel" style="display:none">
+                <div class="reception-form">
+                    <h3 id="recPanelTitle">Бронирование</h3>
+                    
+                    <div class="form-group">
+                        <label>Номер / Объект</label>
+                        <select id="recRoomSelect" onchange="onRecRoomChange()"></select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Имя гостя</label>
+                        <input type="text" id="recGuestName" placeholder="Иван Иванов">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Телефон</label>
+                        <input type="text" id="recGuestPhone" placeholder="+7 (___) ___-__-__">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Итоговая сумма (₽)</label>
+                        <input type="number" id="recTotal" placeholder="0">
+                    </div>
+
+                    <button class="btn-submit" onclick="createManualBooking()">Создать бронирование</button>
+                    <div id="recStatusMsg" style="font-size:0.8rem; text-align:center;"></div>
+                </div>
+
+                <div class="reception-calendar">
+                    <div class="adm-cal-header">
+                        <button onclick="changeRecMonth(-1)">‹</button>
+                        <h4 id="recCalTitle">Месяц 202X</h4>
+                        <button onclick="changeRecMonth(1)">›</button>
+                    </div>
+                    <div id="recCalGrid" class="adm-cal-grid"></div>
+                    
+                    <!-- Hourly selection for Sauna/Bath -->
+                    <div id="recHourPanel" style="display:none; margin-top:1.5rem; border-top:1px solid var(--border); padding-top:1.5rem;">
+                        <label style="font-size:0.7rem; color:var(--muted); font-weight:700; text-transform:uppercase;">Выберите часы (по 1 час)</label>
+                        <div class="hour-grid" id="recHourGrid"></div>
+                    </div>
+
+                    <div id="recSelectionSummary" style="margin-top:1.5rem; font-size:0.85rem; color:var(--gold-l); font-weight:600;">
+                        Выберите даты на календаре
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -636,10 +744,17 @@ function switchTab(tab) {
     if (tab === 'photos') {
         document.getElementById('bookingsSection').style.display = 'none';
         document.getElementById('photosSection').style.display = 'block';
+        document.getElementById('receptionSection').style.display = 'none';
         loadRoomsForPhotos();
+    } else if (tab === 'reception') {
+        document.getElementById('bookingsSection').style.display = 'none';
+        document.getElementById('photosSection').style.display = 'none';
+        document.getElementById('receptionSection').style.display = 'block';
+        initReception();
     } else {
         document.getElementById('bookingsSection').style.display = 'block';
         document.getElementById('photosSection').style.display = 'none';
+        document.getElementById('receptionSection').style.display = 'none';
         const titles = { all:'Все бронирования', hotel:'Отель «Чалама»', yurt:'Юрточный отель «Хаан-Дыт»', sauna:'Сауна' };
         document.getElementById('tableTitle').textContent = titles[tab];
         renderTable();
@@ -1022,6 +1137,281 @@ function showTgStatus(type, msg) {
     el.className = 'tg-status ' + type;
     el.textContent = msg;
     setTimeout(() => { el.className = 'tg-status'; }, 5000);
+}
+
+// ===== RECEPTION LOGIC =====
+let recState = {
+    type: null,
+    roomId: null,
+    roomName: '',
+    month: new Date().getMonth(),
+    year: new Date().getFullYear(),
+    checkIn: null,
+    checkOut: null,
+    hours: []
+};
+
+async function initReception() {
+    if(!globalRooms.length) await loadRoomsForPhotos();
+    selectRecType('hotel'); // default
+}
+
+function selectRecType(type) {
+    recState.type = type;
+    recState.checkIn = null;
+    recState.checkOut = null;
+    recState.hours = [];
+    
+    document.querySelectorAll('.reception-card').forEach(c => c.classList.remove('active'));
+    document.getElementById('card-rec-' + type).classList.add('active');
+    
+    const rooms = globalRooms.filter(r => {
+        if (type === 'hotel') return r.type === 'hotel';
+        if (type === 'yurt') return r.type === 'yurt' || r.type.startsWith('yurt');
+        return r.type === type;
+    });
+    
+    const select = document.getElementById('recRoomSelect');
+    select.innerHTML = rooms.map(r => `<option value="${r.id}">${r.name}</option>`).join('');
+    
+    document.getElementById('receptionBookingPanel').style.display = 'grid';
+    document.getElementById('recPanelTitle').textContent = 'Бронирование: ' + (type==='hotel'?'Отель':type==='yurt'?'Юрты':type==='sauna'?'Сауна':'Баня');
+    
+    onRecRoomChange();
+}
+
+function onRecRoomChange() {
+    const id = parseInt(document.getElementById('recRoomSelect').value);
+    const r = globalRooms.find(x => x.id === id);
+    if(!r) return;
+    recState.roomId = r.id;
+    recState.roomName = r.name;
+    recState.checkIn = null;
+    recState.checkOut = null;
+    recState.hours = [];
+    
+    document.getElementById('recHourPanel').style.display = (recState.type === 'sauna' || recState.type === 'bath') ? 'block' : 'none';
+    
+    renderRecCalendar();
+    updateRecSummary();
+}
+
+function changeRecMonth(dir) {
+    recState.month += dir;
+    if (recState.month < 0) { recState.month = 11; recState.year--; }
+    if (recState.month > 11) { recState.month = 0; recState.year++; }
+    renderRecCalendar();
+}
+
+function renderRecCalendar() {
+    const s = recState;
+    const grid = document.getElementById('recCalGrid');
+    document.getElementById('recCalTitle').textContent = months[s.month] + ' ' + s.year;
+
+    let html = ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'].map(d => `<div class="adm-cal-day-name">${d}</div>`).join('');
+    const firstDay = new Date(s.year, s.month, 1).getDay();
+    const shift = firstDay === 0 ? 6 : firstDay - 1;
+    const totalDays = new Date(s.year, s.month + 1, 0).getDate();
+    const today = new Date(); today.setHours(0,0,0,0);
+
+    for (let i = 0; i < shift; i++) html += '<div class="adm-cal-day disabled"></div>';
+    
+    for (let d = 1; d <= totalDays; d++) {
+        const dt = new Date(s.year, s.month, d); dt.setHours(0,0,0,0);
+        const isPast = dt < today;
+        const isToday = dt.getTime() === today.getTime();
+        
+        // Availability check
+        let isBooked = false;
+        globalBookings.forEach(b => {
+            if(b.room !== s.roomName || b.status === 'cancelled') return;
+            const bin = new Date(b.checkIn); bin.setHours(0,0,0,0);
+            const bout = new Date(b.checkOut); bout.setHours(0,0,0,0);
+            
+            if (s.type === 'sauna' || s.type === 'bath') {
+                if (dt.getTime() === bin.getTime()) isBooked = true; // For hourly, we just mark the day if it has ANY bookings? No, let's show day as free but check hours.
+            } else {
+                if (dt >= bin && dt < bout) isBooked = true;
+            }
+        });
+
+        const isSel = (s.checkIn && dt.getTime() === s.checkIn.getTime()) || 
+                      (s.checkOut && dt.getTime() === s.checkOut.getTime()) ||
+                      (s.checkIn && s.checkOut && dt > s.checkIn && dt < s.checkOut);
+
+        const cls = ['adm-cal-day'];
+        if (isPast) cls.push('disabled');
+        if (isToday) cls.push('today');
+        if (isBooked && s.type !== 'sauna' && s.type !== 'bath') cls.push('booked');
+        if (isSel) cls.push('selected');
+
+        html += `<div class="${cls.join(' ')}" onclick="selectRecDate(${dt.getTime()}, ${isBooked && s.type !== 'sauna' && s.type !== 'bath'})">${d}</div>`;
+    }
+    grid.innerHTML = html;
+    
+    if (s.type === 'sauna' || s.type === 'bath') renderRecHours();
+}
+
+function selectRecDate(ts, booked) {
+    if (booked) return;
+    const dt = new Date(ts);
+    const s = recState;
+
+    if (s.type === 'sauna' || s.type === 'bath') {
+        s.checkIn = dt;
+        s.checkOut = dt;
+        renderRecCalendar();
+        renderRecHours();
+    } else {
+        if (!s.checkIn || (s.checkIn && s.checkOut)) {
+            s.checkIn = dt;
+            s.checkOut = null;
+        } else if (dt > s.checkIn) {
+            s.checkOut = dt;
+        } else {
+            s.checkIn = dt;
+        }
+        renderRecCalendar();
+    }
+    updateRecSummary();
+}
+
+function renderRecHours() {
+    if (!recState.checkIn) {
+        document.getElementById('recHourGrid').innerHTML = '<p style="font-size:0.7rem; color:var(--muted)">Сначала выберите дату</p>';
+        return;
+    }
+    const grid = document.getElementById('recHourGrid');
+    let html = '';
+    const today = new Date();
+    
+    const dayBookings = globalBookings.filter(b => {
+        if(b.room !== recState.roomName || b.status === 'cancelled') return false;
+        const bin = new Date(b.checkIn);
+        return bin.toDateString() === recState.checkIn.toDateString();
+    });
+
+    for (let h = 8; h <= 23; h++) {
+        const isBooked = dayBookings.some(b => {
+            const bin = new Date(b.checkIn).getHours();
+            const bout = new Date(b.checkOut).getHours();
+            return h >= bin && h < bout;
+        });
+        const isPast = recState.checkIn.toDateString() === today.toDateString() && h <= today.getHours();
+        const isSel = recState.hours.includes(h);
+        
+        let cls = 'hour-btn';
+        if (isBooked || isPast) cls += ' booked';
+        if (isSel) cls += ' selected';
+        
+        html += `<div class="${cls}" onclick="toggleRecHour(${h}, ${isBooked || isPast})">${h}:00</div>`;
+    }
+    grid.innerHTML = html;
+}
+
+function toggleRecHour(h, disabled) {
+    if (disabled) return;
+    const idx = recState.hours.indexOf(h);
+    if (idx > -1) recState.hours.splice(idx, 1);
+    else recState.hours.push(h);
+    recState.hours.sort((a,b) => a-b);
+    renderRecHours();
+    updateRecSummary();
+}
+
+function updateRecSummary() {
+    const s = recState;
+    const el = document.getElementById('recSelectionSummary');
+    if (s.type === 'sauna' || s.type === 'bath') {
+        if (!s.checkIn || !s.hours.length) el.textContent = 'Выберите дату и часы';
+        else el.textContent = `${s.checkIn.toLocaleDateString()} | ${s.hours.length} ч. (${s.hours.join(', ')}:00)`;
+    } else {
+        if (!s.checkIn) el.textContent = 'Выберите дату заезда';
+        else if (!s.checkOut) el.textContent = 'Выберите дату выезда';
+        else {
+            const nights = Math.ceil((s.checkOut - s.checkIn) / 86400000);
+            el.textContent = `${s.checkIn.toLocaleDateString()} — ${s.checkOut.toLocaleDateString()} (${nights} н.)`;
+            
+            // Auto-calculate price if not set
+            const r = globalRooms.find(x => x.id === s.roomId);
+            if(r) {
+                let total = 0;
+                for(let i=0; i<nights; i++) {
+                    const d = new Date(s.checkIn); d.setDate(d.getDate() + i);
+                    const isWE = d.getDay() === 5 || d.getDay() === 6;
+                    total += (isWE && r.priceWeekend) ? r.priceWeekend : r.price;
+                }
+                document.getElementById('recTotal').value = total;
+            }
+        }
+    }
+}
+
+async function createManualBooking() {
+    const s = recState;
+    const guest = document.getElementById('recGuestName').value.trim();
+    const phone = document.getElementById('recGuestPhone').value.trim();
+    const total = parseInt(document.getElementById('recTotal').value) || 0;
+    const msg = document.getElementById('recStatusMsg');
+    
+    if (!guest || !phone) return alert('Введите имя и телефон гостя');
+    if (!s.checkIn || (s.type!=='sauna' && s.type!=='bath' && !s.checkOut)) return alert('Выберите даты');
+    if ((s.type === 'sauna' || s.type === 'bath') && !s.hours.length) return alert('Выберите часы');
+
+    let checkIn, checkOut, nights;
+    if (s.type === 'sauna' || s.type === 'bath') {
+        const startH = s.hours[0];
+        const endH = s.hours[s.hours.length - 1] + 1;
+        const dIn = new Date(s.checkIn); dIn.setHours(startH, 0, 0, 0);
+        const dOut = new Date(s.checkIn); dOut.setHours(endH, 0, 0, 0);
+        checkIn = dIn.toISOString();
+        checkOut = dOut.toISOString();
+        nights = s.hours.length;
+    } else {
+        checkIn = s.checkIn.toISOString();
+        checkOut = s.checkOut.toISOString();
+        nights = Math.ceil((s.checkOut - s.checkIn) / 86400000);
+    }
+
+    const body = {
+        type: s.type,
+        room: s.roomName,
+        checkIn,
+        checkOut,
+        nights,
+        guest,
+        phone,
+        total,
+        status: 'confirmed'
+    };
+
+    msg.textContent = 'Создание...';
+    try {
+        const res = await fetch('/api/bookings', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body)
+        });
+        const data = await res.json();
+        if (data.success) {
+            msg.style.color = 'var(--green)';
+            msg.textContent = '✅ Бронирование создано!';
+            setTimeout(() => {
+                switchTab('all');
+                document.getElementById('recGuestName').value = '';
+                document.getElementById('recGuestPhone').value = '';
+                document.getElementById('recTotal').value = '';
+                msg.textContent = '';
+            }, 2000);
+            renderAll();
+        } else {
+            msg.style.color = 'var(--red)';
+            msg.textContent = '❌ Ошибка: ' + (data.error || 'неизвестно');
+        }
+    } catch(err) {
+        console.error(err);
+        msg.textContent = 'Ошибка сети';
+    }
 }
 
 // Init
