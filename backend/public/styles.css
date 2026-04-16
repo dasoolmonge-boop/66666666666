@@ -1446,28 +1446,32 @@
     box-sizing: border-box;
     overflow: visible;
 }
-.flatpickr-weekdays, .flatpickr-days, .dayContainer {
+.flatpickr-weekdays, .flatpickr-days {
     width: 100% !important;
-    min-width: 100% !important;
-    max-width: 100% !important;
     display: flex !important;
-    flex-wrap: nowrap !important;
-    justify-content: space-around !important;
+    justify-content: center !important;
 }
 .flatpickr-weekdaycontainer {
     display: flex !important;
-    width: 100% !important;
-    justify-content: space-around !important;
+    width: 280px !important;
+    justify-content: flex-start !important;
 }
 .flatpickr-weekday {
     font-size: 0.75rem !important;
     font-weight: 700 !important;
     color: var(--gray) !important;
     width: 40px !important;
+    flex: 0 0 40px !important;
+    max-width: 40px !important;
 }
 .dayContainer {
+    width: 280px !important;
+    min-width: 280px !important;
+    max-width: 280px !important;
+    display: flex !important;
     flex-wrap: wrap !important;
     justify-content: flex-start !important;
+    margin: 0 auto !important;
 }
 .flatpickr-day { 
     max-width: 38px !important; 
