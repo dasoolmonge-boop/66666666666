@@ -48,8 +48,9 @@
             padding: 1.5rem 0; transition: all .4s ease;
         }
         .header.scrolled {
-            background: rgba(255,255,255,.97); backdrop-filter: blur(20px);
-            box-shadow: 0 1px 30px rgba(0,0,0,.06); padding: 1rem 0;
+            background: #ffffff;
+            box-shadow: 0 4px 25px rgba(0,0,0,0.08); 
+            padding: 0.8rem 0;
         }
         .header-inner { display: flex; justify-content: space-between; align-items: center; }
         .logo { font-size: 1.1rem; font-weight: 800; letter-spacing: 3px; text-transform: uppercase; color: #fff; transition: .3s; }
@@ -69,8 +70,10 @@
         .header.scrolled .nav a { color: var(--dark); }
         .header.scrolled .nav a:hover { color: var(--gold); }
         .nav-phone {
-            background: var(--gold); color: #fff; padding: .65rem 1.6rem; border-radius: 50px;
-            font-size: .82rem; font-weight: 700; letter-spacing: 1px; transition: .3s;
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%); 
+            color: #fff; padding: .65rem 1.8rem; border-radius: 10px;
+            font-size: .85rem; font-weight: 700; letter-spacing: 0.5px; transition: .3s;
+            box-shadow: 0 10px 25px rgba(184,134,11,0.2);
         }
         .nav-phone:hover { background: var(--gold-light); transform: translateY(-2px); box-shadow: 0 8px 25px rgba(184,134,11,.3); }
 
