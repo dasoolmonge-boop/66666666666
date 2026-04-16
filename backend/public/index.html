@@ -1351,8 +1351,8 @@ function submitBooking(type) {
         nightsOrHours = s.hours.length;
     } else {
         if (!s.checkIn || !s.checkOut) { alert('Пожалуйста, выберите даты заезда и выезда на календаре.'); return; }
-        checkIn = s.checkIn.toISOString();
-        checkOut = s.checkOut.toISOString();
+        checkIn = toLocalISO(s.checkIn);
+        checkOut = toLocalISO(s.checkOut);
         nightsOrHours = nightsBetween(s.checkIn, s.checkOut);
     }
 
@@ -1443,6 +1443,11 @@ async function sendTGNotification(booking) {
     });
 }
 function closeModal() { document.getElementById('successModal').classList.remove('open'); }
+function toLocalISO(date) {
+    if (!date) return null;
+    const d = new Date(date);
+    return d.getFullYear() + '-' + (d.getMonth() + 1).toString().padStart(2, '0') + '-' + d.getDate().toString().padStart(2, '0');
+}
 
 // === GALLERY SCROLL ===
 function scrollGallery(btn, dir) {
@@ -1500,8 +1505,8 @@ let yurtSelectedRoom = null;
 function searchAvailableYurts() {
     if (!yurtRangePicker || yurtRangePicker.selectedDates.length < 2) { alert('Выберите даты заезда и выезда'); return; }
     const dates = yurtRangePicker.selectedDates;
-    const inVal = dates[0].toISOString().split('T')[0];
-    const outVal = dates[1].toISOString().split('T')[0];
+    const inVal = toLocalISO(dates[0]);
+    const outVal = toLocalISO(dates[1]);
     const checkIn = dates[0], checkOut = dates[1];
     const today = new Date(); today.setHours(0,0,0,0);
     if (checkIn < today) { alert('Дата заезда не может быть в прошлом'); return; }
@@ -1674,8 +1679,8 @@ let hotelSelectedRoom = null;
 function searchAvailableRooms() {
     if (!hotelRangePicker || hotelRangePicker.selectedDates.length < 2) { alert('Выберите даты заезда и выезда'); return; }
     const dates = hotelRangePicker.selectedDates;
-    const inVal = dates[0].toISOString().split('T')[0];
-    const outVal = dates[1].toISOString().split('T')[0];
+    const inVal = toLocalISO(dates[0]);
+    const outVal = toLocalISO(dates[1]);
     const checkIn = dates[0], checkOut = dates[1];
     const today = new Date(); today.setHours(0,0,0,0);
     if (checkIn < today) { alert('Дата заезда не может быть в прошлом'); return; }
