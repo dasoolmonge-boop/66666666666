@@ -75,13 +75,20 @@ async function notifyAdmins(text, type) {
                 }
             });
         }
-        console.log(`[Notification System] Sending type [${type}] to admins: ${Array.from(adminIds).join(', ')}`);
-        adminIds.forEach(id => sendMaxMessage(id, text));
+        console.log(`[Admin Notification] Sending type [${type}] to admins: ${Array.from(adminIds).join(', ')}`);
+        adminIds.forEach(id => sendMaxMessage(id, text, `Admin-Dept-${type}`));
     });
 }
 
-async function sendMaxMessage(chatId, text) {
-    if (!MAX_TOKEN) return;
+async function sendMaxMessage(chatId, text, debugContext = "Notification") {
+    if (!MAX_TOKEN) {
+        console.warn(`[MAX ${debugContext} SKIP] No MAX_TOKEN configured.`);
+        return;
+    }
+    if (!chatId) {
+        console.warn(`[MAX ${debugContext} SKIP] No chatId provided.`);
+        return;
+    }
     
     const data = JSON.stringify({
         text: text,
@@ -91,7 +98,7 @@ async function sendMaxMessage(chatId, text) {
     const options = {
         hostname: 'platform-api.max.ru',
         port: 443,
-        path: `/messages?user_id=${chatId}`, // user_id для личных сообщений по доке
+        path: `/messages?user_id=${chatId}`,
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -100,19 +107,21 @@ async function sendMaxMessage(chatId, text) {
         }
     };
 
+    console.log(`[MAX ${debugContext} START] Sending to ${chatId}...`);
+
     const req = https.request(options, (res) => {
         let body = '';
         res.on('data', (d) => body += d);
         res.on('end', () => {
             if (res.statusCode === 200 || res.statusCode === 201) {
-                console.log(`[MAX Success] Sent notification to ${chatId}`);
+                console.log(`[MAX ${debugContext} SUCCESS] Response from ${chatId}: ${body}`);
             } else {
-                console.error(`[MAX Error] Status ${res.statusCode} for ${chatId}: ${body}`);
+                console.error(`[MAX ${debugContext} ERROR] Status ${res.statusCode} for ${chatId}: ${body}`);
             }
         });
     });
 
-    req.on('error', (e) => console.error(`[MAX Connection Error] ${e.message}`));
+    req.on('error', (e) => console.error(`[MAX ${debugContext} CONN ERROR] ${e.message}`));
     req.write(data);
     req.end();
 }
@@ -496,7 +505,9 @@ app.post('/api/bookings', (req, res) => {
                                              `📞 Наш менеджер свяжется с вами в течение 15 минут для подтверждения бронирования.\n\n` +
                                              `Если у вас есть вопросы, позвоните нам:\n` +
                                              `☎️ <b>+7 394 222-10-82</b>`;
-                            sendMaxMessage(b.clientChatId, clientText);
+                            sendMaxMessage(b.clientChatId, clientText, "Client-NewBooking");
+                        } else {
+                            console.log(`[Booking Notification] No clientChatId received for booking ${id}. Clipping client bot notification.`);
                         }
                     } catch (notifyErr) {
                         console.error("[Notify Error] Failed to send notifications:", notifyErr.message);
@@ -548,7 +559,7 @@ app.patch('/api/admin/bookings/:id/status', (req, res) => {
                     
                     const clientMsg = `${icon} <b>ООО «ЧАЛАМА»</b>\n\n${statusText}\n\n📦 Номер заказа: <b>#${b.id.toUpperCase()}</b>\n📍 Объект: <b>${b.room}</b>\n📅 Дата: <b>${b.checkIn}</b>${detail}`;
                     
-                    sendMaxMessage(b.clientChatId, clientMsg);
+                    sendMaxMessage(b.clientChatId, clientMsg, `Client-Status-${status}`);
                 }
             });
         }

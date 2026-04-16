@@ -1953,6 +1953,10 @@ async function submitBookingModal() {
     btn.disabled = true;
     btn.textContent = 'Оформляем...';
     
+    const clientChatId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id || 
+                       window.Max?.WebApp?.initDataUnsafe?.user?.id ||
+                       new URLSearchParams(window.location.search).get('user_id');
+
     try {
         const res = await fetch('/api/bookings', {
             method: 'POST',
@@ -1966,7 +1970,8 @@ async function submitBookingModal() {
                 guest: name,
                 phone: phone,
                 addons: [],
-                total: d.totalPrice
+                total: d.totalPrice,
+                clientChatId: clientChatId || null
             })
         });
         const data = await res.json();
