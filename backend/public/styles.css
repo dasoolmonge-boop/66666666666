@@ -957,7 +957,7 @@
             padding: 0;
             background: transparent; 
             border: none;
-            max-height: 2.6rem; /* Fits roughly 1 segment of tags */
+            max-height: 4.5rem; /* Show 2 rows of amenity tags */
             overflow: hidden;
             transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;

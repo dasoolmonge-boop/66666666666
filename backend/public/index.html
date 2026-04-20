@@ -941,7 +941,7 @@ function buildAmenitiesHtml(amenities, roomId, isDark = false) {
     <div id="am-wrapper-${roomId}" class="card-amenities-split">
         ${itemsHtml}
     </div>
-    ${hasMore ? `<div class="am-toggle-btn" onclick="toggleAmenities(this, '${roomId}')">Все услуги ›</div>` : ''}`;
+    ${hasMore ? `<div class="am-toggle-btn" onclick="event.stopPropagation(); toggleAmenities(this, '${roomId}')">Все услуги ›</div>` : ''}`;
 }
 
 function toggleAmenities(btn, roomId) {
