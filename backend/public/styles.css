@@ -348,6 +348,9 @@
         }
         .time-slot:hover:not(.booked) { border-color: var(--gold-light); background: var(--light); }
         .time-slot.selected { background: var(--gold); border-color: var(--gold); color: #fff; }
+        .time-slot.selected.range-start { border-radius: 10px 4px 4px 10px; }
+        .time-slot.selected.range-end { border-radius: 4px 10px 10px 4px; }
+        .time-slot.selected.range-mid { border-radius: 4px; background: rgba(184,134,11,0.75); border-color: rgba(184,134,11,0.6); }
         .time-slot.booked { background: #fee; color: #f88; pointer-events: none; opacity: 0.6; }
 
         /* Fix Sauna Card */

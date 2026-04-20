@@ -294,6 +294,7 @@
                         <div id="sauna-time-select" style="display:none; margin-top: 1.5rem;">
                             <p style="font-size:.8rem;color:var(--gray);margin-bottom:.5rem">2. Выберите время (мин. 2 часа):</p>
                             <div class="time-grid" id="sauna-time-grid"></div>
+                            <p id="sauna-time-hint" style="font-size:.78rem; color:var(--gold); margin-top:.5rem; font-weight:600;">Выберите время начала</p>
                         </div>
                         <div id="sauna-cart"></div>
                         <div class="form-group">
@@ -402,6 +403,7 @@
                         <div id="bath-time-select" style="display:none; margin-top: 1.5rem;">
                             <p style="font-size:.8rem;color:rgba(255,255,255,0.7);margin-bottom:.5rem">2. Выберите время (мин. 2 часа):</p>
                             <div class="time-grid" id="bath-time-grid"></div>
+                            <p id="bath-time-hint" style="font-size:.78rem; color:#e1d3a5; margin-top:.5rem; font-weight:600;">Выберите время начала</p>
                         </div>
                         <div id="bath-cart"></div>
 
@@ -1120,6 +1122,11 @@ function renderTimeSlots(type) {
     const roomArr = type === 'sauna' ? saunaRooms : bathRooms;
     const room = roomArr[s.selected];
     const grid = document.getElementById(type + '-time-grid');
+    
+    // Determine range boundaries for visual styling
+    const rangeStart = s.hours.length > 0 ? s.hours[0] : null;
+    const rangeEnd = s.hours.length > 1 ? s.hours[s.hours.length - 1] : null;
+    
     let html = '';
     for (let h = 10; h < 23; h++) {
         const start = new Date(s.checkIn); start.setHours(h, 0, 0, 0);
@@ -1131,34 +1138,67 @@ function renderTimeSlots(type) {
         const isSelected = s.hours.includes(h);
         const cls = ['time-slot'];
         if (isBooked) cls.push('booked');
-        if (isSelected) cls.push('selected');
+        if (isSelected) {
+            cls.push('selected');
+            if (h === rangeStart && rangeEnd !== null) cls.push('range-start');
+            else if (h === rangeEnd) cls.push('range-end');
+            else if (rangeStart !== null && rangeEnd !== null && h > rangeStart && h < rangeEnd) cls.push('range-mid');
+        }
         html += `<div class="${cls.join(' ')}" onclick="selectHour('${type}', ${h})">${h}:00</div>`;
     }
+    
+    // Hint text
+    const hintEl = document.getElementById(type + '-time-hint');
+    if (hintEl) {
+        if (s.hours.length === 0) {
+            hintEl.textContent = 'Выберите время начала';
+        } else if (s.hours.length === 1) {
+            hintEl.textContent = 'Теперь выберите время окончания (мин. 2 часа)';
+        } else {
+            hintEl.textContent = `Выбрано: ${s.hours[0]}:00 — ${s.hours[s.hours.length-1] + 1}:00 (${s.hours.length} ч.)`;
+        }
+    }
+    
     grid.innerHTML = html;
 }
 function selectHour(type, h) {
     const s = state[type];
     const roomArr = type === 'sauna' ? saunaRooms : bathRooms;
-    if (s.hours.includes(h)) {
-        s.hours = s.hours.filter(x => x !== h);
-    } else {
-        s.hours.push(h);
-        s.hours.sort((a, b) => a - b);
-        if (s.hours.length > 1) {
-            const range = [];
-            for (let i = s.hours[0]; i <= s.hours[s.hours.length-1]; i++) {
-                 const start = new Date(s.checkIn); start.setHours(i, 0, 0, 0);
-                 const end = new Date(s.checkIn); end.setHours(i + 1, 0, 0, 0);
-                 if (bookedDates.some(b => b.room === roomArr[s.selected].name && start < new Date(b.checkOut) && end > new Date(b.checkIn))) {
-                     alert('Это время уже занято!');
-                     s.hours = [h];
-                     renderTimeSlots(type);
-                     return;
-                 }
-                 range.push(i);
+    const room = roomArr[s.selected];
+
+    // Range selection logic: first click = start, second click = end
+    if (s.hours.length === 0) {
+        // First click — set start hour
+        s.hours = [h];
+    } else if (s.hours.length === 1 && h === s.hours[0]) {
+        // Clicked same hour again — deselect
+        s.hours = [];
+    } else if (s.hours.length >= 1) {
+        // Second click (or re-click) — define range
+        const startH = s.hours[0];
+        const from = Math.min(startH, h);
+        const to = Math.max(startH, h);
+
+        // Check for booked hours in range
+        const range = [];
+        for (let i = from; i <= to; i++) {
+            const slotStart = new Date(s.checkIn); slotStart.setHours(i, 0, 0, 0);
+            const slotEnd = new Date(s.checkIn); slotEnd.setHours(i + 1, 0, 0, 0);
+            if (bookedDates.some(b => b.room === room.name && slotStart < new Date(b.checkOut) && slotEnd > new Date(b.checkIn))) {
+                alert('В выбранном диапазоне есть занятое время! Выберите другой промежуток.');
+                s.hours = [];
+                renderTimeSlots(type);
+                return;
             }
-            s.hours = range;
+            range.push(i);
         }
+
+        if (range.length < 2) {
+            alert('Минимальное бронирование — 2 часа');
+            return;
+        }
+
+        s.hours = range;
     }
     renderTimeSlots(type);
     renderCart(type);

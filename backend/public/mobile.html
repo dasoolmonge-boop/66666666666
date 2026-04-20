@@ -265,6 +265,7 @@
             <div id="sauna-time-wrap" style="display:none; margin-top: 1rem; border-top: 1px dashed var(--border); padding-top: 1rem;">
                 <h3 style="font-size: .9rem; margin-bottom: .8rem; color: var(--gold-l);">Выберите время (минимум 2 часа):</h3>
                 <div class="time-grid" id="time-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: .4rem;"></div>
+                <p id="time-hint" style="font-size:.78rem; color:var(--gold-l); margin-top:.5rem; font-weight:600;">Выберите время начала</p>
             </div>
 
             <div class="date-display" style="margin-top:1rem">
@@ -1119,13 +1120,16 @@
         function renderTimeSlots() {
             if (!state.date) return;
             const grid = document.getElementById('time-grid');
+            
+            const rangeStart = state.saunaHours.length > 0 ? state.saunaHours[0] : null;
+            const rangeEnd = state.saunaHours.length > 1 ? state.saunaHours[state.saunaHours.length - 1] : null;
+            
             let html = '';
             
             for (let h = 10; h < 23; h++) {
                 const startTime = new Date(state.date); startTime.setHours(h, 0, 0, 0);
                 const endTime = new Date(state.date); endTime.setHours(h + 1, 0, 0, 0);
                 
-                // Check if this specific hour is booked
                 const isBooked = bookedDates.some(b => {
                     if (b.room !== state.room.name) return false;
                     const bIn = new Date(b.checkIn);
@@ -1136,43 +1140,64 @@
                 const isSelected = state.saunaHours.includes(h);
                 const cls = ['time-slot'];
                 if (isBooked) cls.push('booked');
-                if (isSelected) cls.push('selected');
+                if (isSelected) {
+                    cls.push('selected');
+                    if (h === rangeStart && rangeEnd !== null) cls.push('range-start');
+                    else if (h === rangeEnd) cls.push('range-end');
+                    else if (rangeStart !== null && rangeEnd !== null && h > rangeStart && h < rangeEnd) cls.push('range-mid');
+                }
                 
                 html += `<div class="${cls.join(' ')}" onclick="toggleSaunaTime(${h})">${h}:00</div>`;
             }
             grid.innerHTML = html;
+            
+            // Hint text
+            const hintEl = document.getElementById('time-hint');
+            if (hintEl) {
+                if (state.saunaHours.length === 0) {
+                    hintEl.textContent = 'Выберите время начала';
+                } else if (state.saunaHours.length === 1) {
+                    hintEl.textContent = 'Теперь выберите время окончания (мин. 2 часа)';
+                } else {
+                    hintEl.textContent = `Выбрано: ${state.saunaHours[0]}:00 — ${state.saunaHours[state.saunaHours.length-1] + 1}:00 (${state.saunaHours.length} ч.)`;
+                }
+            }
         }
 
         function toggleSaunaTime(h) {
-            if (state.saunaHours.includes(h)) {
-                state.saunaHours = state.saunaHours.filter(x => x !== h);
-            } else {
-                state.saunaHours.push(h);
-                state.saunaHours.sort((a, b) => a - b);
-                
-                // Ensure continuity
-                if (state.saunaHours.length > 1) {
-                    const first = state.saunaHours[0];
-                    const last = state.saunaHours[state.saunaHours.length - 1];
-                    const range = [];
-                    for (let i = first; i <= last; i++) {
-                        // Check if any hour in between is booked
-                        const startTime = new Date(state.date); startTime.setHours(i, 0, 0, 0);
-                        const endTime = new Date(state.date); endTime.setHours(i + 1, 0, 0, 0);
-                        const isBooked = bookedDates.some(b => {
-                            if (b.room !== state.room.name) return false;
-                            return (startTime < new Date(b.checkOut) && endTime > new Date(b.checkIn));
-                        });
-                        if (isBooked) {
-                            alert('Это время уже занято!');
-                            state.saunaHours = [h];
-                            renderCal();
-                            return;
-                        }
-                        range.push(i);
+            // Range selection: first click = start, second click = end
+            if (state.saunaHours.length === 0) {
+                state.saunaHours = [h];
+            } else if (state.saunaHours.length === 1 && h === state.saunaHours[0]) {
+                state.saunaHours = [];
+            } else if (state.saunaHours.length >= 1) {
+                const startH = state.saunaHours[0];
+                const from = Math.min(startH, h);
+                const to = Math.max(startH, h);
+
+                const range = [];
+                for (let i = from; i <= to; i++) {
+                    const startTime = new Date(state.date); startTime.setHours(i, 0, 0, 0);
+                    const endTime = new Date(state.date); endTime.setHours(i + 1, 0, 0, 0);
+                    const isBooked = bookedDates.some(b => {
+                        if (b.room !== state.room.name) return false;
+                        return (startTime < new Date(b.checkOut) && endTime > new Date(b.checkIn));
+                    });
+                    if (isBooked) {
+                        alert('В выбранном диапазоне есть занятое время!');
+                        state.saunaHours = [];
+                        renderCal();
+                        return;
                     }
-                    state.saunaHours = range;
+                    range.push(i);
                 }
+
+                if (range.length < 2) {
+                    alert('Минимальное бронирование — 2 часа');
+                    return;
+                }
+
+                state.saunaHours = range;
             }
             renderCal(); calcTotal();
         }
