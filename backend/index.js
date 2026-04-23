@@ -98,7 +98,7 @@ async function sendMaxMessage(chatId, text, debugContext = "Notification") {
     const options = {
         hostname: 'platform-api.max.ru',
         port: 443,
-        path: `/messages?user_id=${chatId}`,
+        path: `/messages?chat_id=${chatId}`,
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -175,10 +175,19 @@ db.serialize(() => {
         prepayment INTEGER
     )`);
 
+    // Broadcasts table — always ensure it exists (fix for servers with older DB versions)
+    db.run(`CREATE TABLE IF NOT EXISTS broadcasts (
+        id TEXT PRIMARY KEY,
+        message TEXT,
+        type TEXT,
+        recipientCount INTEGER,
+        createdAt TEXT
+    )`);
+
     // Check if initialization is already done using PRAGMA user_version as a marker
     db.get("PRAGMA user_version", (err, row) => {
         const currentVersion = row ? row.user_version : 0;
-        const TARGET_VERSION = 11; // Incremented for indexing
+        const TARGET_VERSION = 12; // Incremented for broadcast fix
 
         if (currentVersion < TARGET_VERSION) {
             console.log(`[DB Migration] Current version ${currentVersion} < ${TARGET_VERSION}. Running migrations...`);

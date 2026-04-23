@@ -808,6 +808,7 @@
             // Robust ID detection for Max Messenger / Telegram
             booking.clientChatId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id || 
                                  window.Max?.WebApp?.initDataUnsafe?.user?.id ||
+                                 new URLSearchParams(window.location.search).get('chat_id') ||
                                  new URLSearchParams(window.location.search).get('user_id');
 
             const btn = document.getElementById('m-modal-submit');
@@ -1298,6 +1299,7 @@
             // Robust ID detection for Max Messenger / Telegram
             const clientChatId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id || 
                                window.Max?.WebApp?.initDataUnsafe?.user?.id ||
+                               new URLSearchParams(window.location.search).get('chat_id') ||
                                new URLSearchParams(window.location.search).get('user_id');
 
             pkt.clientChatId = clientChatId;
