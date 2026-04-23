@@ -230,6 +230,14 @@ db.serialize(() => {
                     if (!err) db.run("UPDATE admins SET department = 'all' WHERE department IS NULL");
                 });
 
+                // Broadcasts table
+                db.run(`CREATE TABLE IF NOT EXISTS broadcasts (
+                    id TEXT PRIMARY KEY,
+                    message TEXT,
+                    type TEXT,
+                    recipientCount INTEGER,
+                    createdAt TEXT
+                )`);
                 // Initial Room Seeding
                 const seedRooms = [
                     ['sauna', 'Сауна Отеля', 'Почасовая аренда · Вместимость до 6 человек · 2000₽/час', 2000, 2000],
@@ -606,6 +614,76 @@ app.delete('/api/internal/admins/:chatId', (req, res) => {
     db.run("DELETE FROM admins WHERE chatId = ?", [chatId], function(err) {
         if (err) return res.status(500).json({ error: err.message });
         res.json({ success: true, changes: this.changes });
+    });
+});
+
+// ===== BROADCAST / MAILING =====
+
+// Get unique recipients count
+app.get('/api/admin/broadcast/recipients', (req, res) => {
+    const type = req.query.type || 'all';
+    let sql = "SELECT DISTINCT clientChatId, guest, phone, type FROM bookings WHERE clientChatId IS NOT NULL AND clientChatId != ''";
+    if (type !== 'all') sql += ` AND type = '${type}'`;
+    
+    db.all(sql, [], (err, rows) => {
+        if (err) return res.status(500).json({ error: err.message });
+        // Deduplicate by clientChatId
+        const unique = {};
+        rows.forEach(r => {
+            if (!unique[r.clientChatId]) {
+                unique[r.clientChatId] = { chatId: r.clientChatId, guest: r.guest, phone: r.phone, type: r.type };
+            }
+        });
+        res.json({ count: Object.keys(unique).length, recipients: Object.values(unique) });
+    });
+});
+
+// Send broadcast
+app.post('/api/admin/broadcast', (req, res) => {
+    const { message, type } = req.body;
+    if (!message || !message.trim()) return res.status(400).json({ error: 'Пустое сообщение' });
+
+    let sql = "SELECT DISTINCT clientChatId FROM bookings WHERE clientChatId IS NOT NULL AND clientChatId != ''";
+    if (type && type !== 'all') sql += ` AND type = '${type}'`;
+
+    db.all(sql, [], (err, rows) => {
+        if (err) return res.status(500).json({ error: err.message });
+
+        const uniqueIds = [...new Set(rows.map(r => r.clientChatId))];
+        if (uniqueIds.length === 0) return res.json({ success: true, sent: 0, message: 'Нет получателей' });
+
+        const formattedMsg = `📢 <b>ООО «ЧАЛАМА»</b>\n\n${message}`;
+
+        let sent = 0;
+        let failed = 0;
+
+        uniqueIds.forEach(chatId => {
+            try {
+                sendMaxMessage(chatId, formattedMsg, 'Broadcast');
+                sent++;
+            } catch (e) {
+                failed++;
+                console.error(`[Broadcast Error] chatId=${chatId}: ${e.message}`);
+            }
+        });
+
+        // Save to history
+        const broadcastId = Date.now().toString(36) + Math.random().toString(36).substring(2, 6);
+        db.run(
+            "INSERT INTO broadcasts (id, message, type, recipientCount, createdAt) VALUES (?, ?, ?, ?, ?)",
+            [broadcastId, message, type || 'all', uniqueIds.length, new Date().toISOString()]
+        );
+
+        console.log(`[Broadcast] Sent to ${sent} recipients (${failed} failed), filter: ${type || 'all'}`);
+        res.json({ success: true, sent, failed, total: uniqueIds.length });
+    });
+});
+
+// Broadcast history
+app.get('/api/admin/broadcast/history', (req, res) => {
+    db.all("SELECT * FROM broadcasts ORDER BY createdAt DESC LIMIT 50", [], (err, rows) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json(rows || []);
     });
 });
 

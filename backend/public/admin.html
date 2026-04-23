@@ -445,6 +445,7 @@
             <button class="tab" onclick="switchTab('yurt')" id="tab-yurt">⛺ Юрты<span class="tab-count" id="cnt-yurt">0</span></button>
             <button class="tab" onclick="switchTab('sauna')" id="tab-sauna">🧖‍♂️ Сауна<span class="tab-count" id="cnt-sauna">0</span></button>
             <button class="tab" onclick="switchTab('photos')" id="tab-photos">🛏 Управление номерами</button>
+            <button class="tab" onclick="switchTab('broadcast')" id="tab-broadcast">📢 Рассылка</button>
         </div>
 
         <!-- Table (Bookings) -->
@@ -547,6 +548,52 @@
 
                     <div id="recSelectionSummary" style="margin-top:1.5rem; font-size:0.85rem; color:var(--gold-l); font-weight:600;">
                         Выберите даты на календаре
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Broadcast Section -->
+        <div id="broadcastSection" style="display:none">
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:2rem;">
+                <!-- Compose -->
+                <div style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:1.5rem;">
+                    <h3 style="margin-bottom:1rem; font-size:1.1rem;">📢 Новая рассылка</h3>
+                    
+                    <label style="font-size:.78rem; color:var(--muted); text-transform:uppercase; letter-spacing:1px; font-weight:600; display:block; margin-bottom:.5rem;">Категория получателей</label>
+                    <select id="broadcastType" onchange="loadRecipients()" style="width:100%; padding:.7rem 1rem; background:var(--surface2); border:1.5px solid var(--border); border-radius:10px; color:var(--text); font-size:.9rem; font-family:inherit; margin-bottom:1.2rem; outline:none;">
+                        <option value="all">Все клиенты</option>
+                        <option value="hotel">Только Отель</option>
+                        <option value="yurt">Только Юрты</option>
+                        <option value="sauna">Только Сауна</option>
+                        <option value="bath">Только Баня</option>
+                    </select>
+
+                    <div id="recipientInfo" style="background:var(--surface2); border-radius:10px; padding:.8rem 1rem; margin-bottom:1.2rem; display:flex; align-items:center; gap:.8rem;">
+                        <span style="font-size:1.5rem;">👥</span>
+                        <div>
+                            <div style="font-size:.82rem; color:var(--muted);">Получателей</div>
+                            <div id="recipientCount" style="font-size:1.2rem; font-weight:800; color:var(--gold-l);">—</div>
+                        </div>
+                    </div>
+
+                    <label style="font-size:.78rem; color:var(--muted); text-transform:uppercase; letter-spacing:1px; font-weight:600; display:block; margin-bottom:.5rem;">Текст сообщения</label>
+                    <textarea id="broadcastMessage" rows="6" placeholder="Введите текст рассылки...&#10;&#10;Поддерживается HTML: &lt;b&gt;жирный&lt;/b&gt;, &lt;i&gt;курсив&lt;/i&gt;" style="width:100%; padding:1rem; background:var(--surface2); border:1.5px solid var(--border); border-radius:12px; color:var(--text); font-size:.9rem; font-family:inherit; resize:vertical; outline:none; min-height:120px;"></textarea>
+
+                    <div style="margin-top:1rem; display:flex; gap:.8rem;">
+                        <button onclick="sendBroadcast()" id="btnSendBroadcast" style="flex:1; padding:.9rem; background:var(--gold); color:#fff; border:none; border-radius:12px; font-size:.88rem; font-weight:700; cursor:pointer; font-family:inherit; letter-spacing:.5px; transition:.3s;">
+                            📤 Отправить рассылку
+                        </button>
+                    </div>
+
+                    <div id="broadcastResult" style="display:none; margin-top:1rem; padding:1rem; border-radius:10px; font-size:.85rem;"></div>
+                </div>
+
+                <!-- History -->
+                <div style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:1.5rem;">
+                    <h3 style="margin-bottom:1rem; font-size:1.1rem;">📋 История рассылок</h3>
+                    <div id="broadcastHistory" style="max-height:500px; overflow-y:auto;">
+                        <div class="empty-state" style="padding:2rem"><div class="icon">📭</div><p>Рассылок пока не было</p></div>
                     </div>
                 </div>
             </div>
@@ -743,20 +790,24 @@ function switchTab(tab) {
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
     document.getElementById('tab-' + tab).classList.add('active');
     
+    // Hide all sections first
+    document.getElementById('bookingsSection').style.display = 'none';
+    document.getElementById('photosSection').style.display = 'none';
+    document.getElementById('receptionSection').style.display = 'none';
+    document.getElementById('broadcastSection').style.display = 'none';
+
     if (tab === 'photos') {
-        document.getElementById('bookingsSection').style.display = 'none';
         document.getElementById('photosSection').style.display = 'block';
-        document.getElementById('receptionSection').style.display = 'none';
         loadRoomsForPhotos();
     } else if (tab === 'reception') {
-        document.getElementById('bookingsSection').style.display = 'none';
-        document.getElementById('photosSection').style.display = 'none';
         document.getElementById('receptionSection').style.display = 'block';
         initReception();
+    } else if (tab === 'broadcast') {
+        document.getElementById('broadcastSection').style.display = 'block';
+        loadRecipients();
+        loadBroadcastHistory();
     } else {
         document.getElementById('bookingsSection').style.display = 'block';
-        document.getElementById('photosSection').style.display = 'none';
-        document.getElementById('receptionSection').style.display = 'none';
         const titles = { all:'Все бронирования', hotel:'Отель «Чалама»', yurt:'Юрточный отель «Хаан-Дыт»', sauna:'Сауна' };
         document.getElementById('tableTitle').textContent = titles[tab];
         renderTable();
@@ -1468,6 +1519,104 @@ async function createManualBooking() {
     } catch(err) {
         console.error(err);
         msg.textContent = 'Ошибка сети';
+    }
+}
+
+// ===== BROADCAST =====
+async function loadRecipients() {
+    const type = document.getElementById('broadcastType').value;
+    try {
+        const res = await fetch(`/api/admin/broadcast/recipients?type=${type}`);
+        const data = await res.json();
+        document.getElementById('recipientCount').textContent = data.count || 0;
+    } catch(e) {
+        document.getElementById('recipientCount').textContent = '—';
+    }
+}
+
+async function sendBroadcast() {
+    const message = document.getElementById('broadcastMessage').value.trim();
+    const type = document.getElementById('broadcastType').value;
+    const resultEl = document.getElementById('broadcastResult');
+    const btn = document.getElementById('btnSendBroadcast');
+
+    if (!message) {
+        resultEl.style.display = 'block';
+        resultEl.style.background = 'var(--red-bg)';
+        resultEl.style.color = 'var(--red)';
+        resultEl.textContent = '❌ Введите текст сообщения';
+        return;
+    }
+
+    const count = document.getElementById('recipientCount').textContent;
+    if (!confirm(`Отправить рассылку ${count} получателям?`)) return;
+
+    btn.disabled = true;
+    btn.textContent = '⏳ Отправка...';
+
+    try {
+        const res = await fetch('/api/admin/broadcast', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message, type })
+        });
+        const data = await res.json();
+
+        resultEl.style.display = 'block';
+        if (data.success) {
+            resultEl.style.background = 'var(--green-bg)';
+            resultEl.style.color = 'var(--green)';
+            resultEl.textContent = `✅ Рассылка отправлена! Получателей: ${data.sent}` + (data.failed ? `, ошибок: ${data.failed}` : '');
+            document.getElementById('broadcastMessage').value = '';
+            loadBroadcastHistory();
+        } else {
+            resultEl.style.background = 'var(--red-bg)';
+            resultEl.style.color = 'var(--red)';
+            resultEl.textContent = '❌ ' + (data.error || 'Ошибка отправки');
+        }
+    } catch(e) {
+        resultEl.style.display = 'block';
+        resultEl.style.background = 'var(--red-bg)';
+        resultEl.style.color = 'var(--red)';
+        resultEl.textContent = '❌ Ошибка сети';
+    }
+
+    btn.disabled = false;
+    btn.textContent = '📤 Отправить рассылку';
+}
+
+async function loadBroadcastHistory() {
+    try {
+        const res = await fetch('/api/admin/broadcast/history');
+        const data = await res.json();
+        const el = document.getElementById('broadcastHistory');
+
+        if (!data || data.length === 0) {
+            el.innerHTML = '<div class="empty-state" style="padding:2rem"><div class="icon">📭</div><p>Рассылок пока не было</p></div>';
+            return;
+        }
+
+        const typeLabels = { all: 'Все', hotel: 'Отель', yurt: 'Юрты', sauna: 'Сауна', bath: 'Баня' };
+
+        el.innerHTML = data.map(b => {
+            const date = new Date(b.createdAt);
+            const dateStr = date.toLocaleDateString('ru-RU', { day:'2-digit', month:'2-digit', year:'numeric' });
+            const timeStr = date.toLocaleTimeString('ru-RU', { hour:'2-digit', minute:'2-digit' });
+            const preview = b.message.length > 80 ? b.message.substring(0, 80) + '...' : b.message;
+
+            return `<div style="padding:.8rem; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:flex-start; gap:1rem;">
+                <div style="flex:1; min-width:0;">
+                    <div style="font-size:.82rem; color:var(--text); line-height:1.4; word-break:break-word;">${preview}</div>
+                    <div style="font-size:.7rem; color:var(--muted); margin-top:.3rem;">${dateStr} ${timeStr}</div>
+                </div>
+                <div style="text-align:right; flex-shrink:0;">
+                    <div style="font-size:.7rem; background:var(--blue-bg); color:var(--blue); padding:.15rem .5rem; border-radius:50px; font-weight:600;">${typeLabels[b.type] || b.type}</div>
+                    <div style="font-size:.78rem; color:var(--gold-l); font-weight:700; margin-top:.3rem;">👥 ${b.recipientCount}</div>
+                </div>
+            </div>`;
+        }).join('');
+    } catch(e) {
+        console.error('Broadcast history error:', e);
     }
 }
 
