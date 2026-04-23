@@ -92,6 +92,23 @@ class MaxBot:
                 logger.error(f"Error unregistering admin: {e}")
         return False
 
+    async def register_subscriber(self, chat_id, name):
+        """Регистрация подписчика для рассылки"""
+        payload = {
+            "chatId": str(chat_id),
+            "name": name or "Пользователь"
+        }
+        async with aiohttp.ClientSession() as session:
+            url = "http://localhost:5000/api/internal/subscribers"
+            try:
+                async with session.post(url, json=payload, timeout=5) as resp:
+                    if resp.status == 200:
+                        logger.info(f"Subscriber registered: {chat_id} ({name})")
+                        return True
+            except Exception as e:
+                logger.error(f"Error registering subscriber: {e}")
+        return False
+
     async def send_text(self, chat_id, text):
         """Отправка простого текста"""
         payload = {"text": text, "format": "html"}
@@ -143,6 +160,8 @@ class MaxBot:
 
                                             # Case 2: Welcome message
                                             elif update.get("update_type") in ["message_created", "bot_started"]:
+                                                # Register user as subscriber for broadcasts
+                                                await self.register_subscriber(chat_id, user_name)
                                                 await self.send_welcome(chat_id)
                         elif resp.status == 401:
                             logger.error("Invalid Token!")

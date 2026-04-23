@@ -184,6 +184,13 @@ db.serialize(() => {
         createdAt TEXT
     )`);
 
+    // Subscribers table — users who started the bot (for broadcast mailing)
+    db.run(`CREATE TABLE IF NOT EXISTS subscribers (
+        chatId TEXT PRIMARY KEY,
+        name TEXT,
+        createdAt TEXT
+    )`);
+
     // Check if initialization is already done using PRAGMA user_version as a marker
     db.get("PRAGMA user_version", (err, row) => {
         const currentVersion = row ? row.user_version : 0;
@@ -626,47 +633,60 @@ app.delete('/api/internal/admins/:chatId', (req, res) => {
     });
 });
 
-// ===== BROADCAST / MAILING =====
+// ===== SUBSCRIBERS (Bot Users) =====
 
-// Get unique recipients count
-app.get('/api/admin/broadcast/recipients', (req, res) => {
-    const type = req.query.type || 'all';
-    let sql = "SELECT DISTINCT clientChatId, guest, phone, type FROM bookings WHERE clientChatId IS NOT NULL AND clientChatId != ''";
-    if (type !== 'all') sql += ` AND type = '${type}'`;
-    
-    db.all(sql, [], (err, rows) => {
+// Register a subscriber (called by bot when user starts it)
+app.post('/api/internal/subscribers', (req, res) => {
+    const { chatId, name } = req.body;
+    if (!chatId) return res.status(400).json({ error: 'chatId required' });
+
+    db.run(
+        `INSERT INTO subscribers (chatId, name, createdAt) VALUES (?, ?, ?)
+         ON CONFLICT(chatId) DO UPDATE SET name = excluded.name`,
+        [String(chatId), name || 'Пользователь', new Date().toISOString()],
+        function(err) {
+            if (err) return res.status(500).json({ error: err.message });
+            console.log(`[Subscriber] Registered: ${chatId} (${name})`);
+            res.json({ success: true });
+        }
+    );
+});
+
+// List all subscribers
+app.get('/api/internal/subscribers', (req, res) => {
+    db.all("SELECT * FROM subscribers ORDER BY createdAt DESC", [], (err, rows) => {
         if (err) return res.status(500).json({ error: err.message });
-        // Deduplicate by clientChatId
-        const unique = {};
-        rows.forEach(r => {
-            if (!unique[r.clientChatId]) {
-                unique[r.clientChatId] = { chatId: r.clientChatId, guest: r.guest, phone: r.phone, type: r.type };
-            }
-        });
-        res.json({ count: Object.keys(unique).length, recipients: Object.values(unique) });
+        res.json(rows || []);
     });
 });
 
-// Send broadcast
+// ===== BROADCAST / MAILING =====
+
+// Get recipients count (from subscribers table)
+app.get('/api/admin/broadcast/recipients', (req, res) => {
+    db.all("SELECT chatId, name, createdAt FROM subscribers", [], (err, rows) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json({ count: (rows || []).length, recipients: rows || [] });
+    });
+});
+
+// Send broadcast (to all subscribers)
 app.post('/api/admin/broadcast', (req, res) => {
-    const { message, type } = req.body;
+    const { message } = req.body;
     if (!message || !message.trim()) return res.status(400).json({ error: 'Пустое сообщение' });
 
-    let sql = "SELECT DISTINCT clientChatId FROM bookings WHERE clientChatId IS NOT NULL AND clientChatId != ''";
-    if (type && type !== 'all') sql += ` AND type = '${type}'`;
-
-    db.all(sql, [], (err, rows) => {
+    db.all("SELECT chatId FROM subscribers", [], (err, rows) => {
         if (err) return res.status(500).json({ error: err.message });
 
-        const uniqueIds = [...new Set(rows.map(r => r.clientChatId))];
-        if (uniqueIds.length === 0) return res.json({ success: true, sent: 0, message: 'Нет получателей' });
+        const chatIds = (rows || []).map(r => r.chatId);
+        if (chatIds.length === 0) return res.json({ success: true, sent: 0, message: 'Нет подписчиков' });
 
         const formattedMsg = `📢 <b>ООО «ЧАЛАМА»</b>\n\n${message}`;
 
         let sent = 0;
         let failed = 0;
 
-        uniqueIds.forEach(chatId => {
+        chatIds.forEach(chatId => {
             try {
                 sendMaxMessage(chatId, formattedMsg, 'Broadcast');
                 sent++;
@@ -680,11 +700,11 @@ app.post('/api/admin/broadcast', (req, res) => {
         const broadcastId = Date.now().toString(36) + Math.random().toString(36).substring(2, 6);
         db.run(
             "INSERT INTO broadcasts (id, message, type, recipientCount, createdAt) VALUES (?, ?, ?, ?, ?)",
-            [broadcastId, message, type || 'all', uniqueIds.length, new Date().toISOString()]
+            [broadcastId, message, 'all', chatIds.length, new Date().toISOString()]
         );
 
-        console.log(`[Broadcast] Sent to ${sent} recipients (${failed} failed), filter: ${type || 'all'}`);
-        res.json({ success: true, sent, failed, total: uniqueIds.length });
+        console.log(`[Broadcast] Sent to ${sent} subscribers (${failed} failed)`);
+        res.json({ success: true, sent, failed, total: chatIds.length });
     });
 });
 
