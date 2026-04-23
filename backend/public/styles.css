@@ -363,8 +363,8 @@
         #sauna .room-gallery-inner img { width: 280px; height: 180px; object-fit: cover; border-radius: 12px; flex-shrink: 0; }
 
         /* Fix Bath Card — match sauna proportions */
-        #bath-booking-block .booking-layout { display: grid; grid-template-columns: 1.3fr .7fr; gap: 4rem; margin-top: 3rem; align-items: flex-start; }
-        #bath-booking-block .cal-wrap { position: sticky; top: 120px; margin-top: 0 !important; }
+        #bath-booking-block .booking-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; margin-top: 3rem; align-items: flex-start; }
+        #bath-booking-block .cal-wrap { position: sticky; top: 120px; margin-top: 0 !important; padding: 1.5rem; }
 
         /* Cart */
         .cart { margin-top: 1.5rem; padding: 1.2rem; background: #fefcf6; border-radius: 14px; border: 1px solid rgba(184,134,11,.15); }
