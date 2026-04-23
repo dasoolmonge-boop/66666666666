@@ -191,6 +191,15 @@ db.serialize(() => {
         createdAt TEXT
     )`);
 
+    // Menus table — menu images for restaurant, bar, cafe
+    db.run(`CREATE TABLE IF NOT EXISTS menus (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        category TEXT,
+        imgUrl TEXT,
+        sortOrder INTEGER DEFAULT 0,
+        createdAt TEXT
+    )`);
+
     // Check if initialization is already done using PRAGMA user_version as a marker
     db.get("PRAGMA user_version", (err, row) => {
         const currentVersion = row ? row.user_version : 0;
@@ -713,6 +722,62 @@ app.get('/api/admin/broadcast/history', (req, res) => {
     db.all("SELECT * FROM broadcasts ORDER BY createdAt DESC LIMIT 50", [], (err, rows) => {
         if (err) return res.status(500).json({ error: err.message });
         res.json(rows || []);
+    });
+});
+
+// ===== MENUS (Restaurant / Bar / Cafe) =====
+
+// Get menu images by category
+app.get('/api/menus', (req, res) => {
+    const category = req.query.category;
+    if (!category) {
+        return db.all("SELECT * FROM menus ORDER BY category, sortOrder, id", [], (err, rows) => {
+            if (err) return res.status(500).json({ error: err.message });
+            res.json(rows || []);
+        });
+    }
+    db.all("SELECT * FROM menus WHERE category = ? ORDER BY sortOrder, id", [category], (err, rows) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json(rows || []);
+    });
+});
+
+// Upload menu image
+app.post('/api/menus', upload.single('photo'), (req, res) => {
+    const category = req.body.category;
+    if (!req.file) return res.status(400).json({ error: 'Нет файла' });
+    if (!category) return res.status(400).json({ error: 'Не указана категория' });
+
+    const imgUrl = '/uploads/' + req.file.filename;
+    db.run(
+        "INSERT INTO menus (category, imgUrl, sortOrder, createdAt) VALUES (?, ?, (SELECT COALESCE(MAX(sortOrder),0)+1 FROM menus WHERE category=?), ?)",
+        [category, imgUrl, category, new Date().toISOString()],
+        function(err) {
+            if (err) return res.status(500).json({ error: err.message });
+            console.log(`[Menu] Uploaded ${category}: ${imgUrl}`);
+            res.json({ success: true, id: this.lastID, imgUrl });
+        }
+    );
+});
+
+// Delete menu image
+app.delete('/api/menus/:id', (req, res) => {
+    const { id } = req.params;
+    db.get("SELECT imgUrl FROM menus WHERE id = ?", [id], (err, row) => {
+        if (err) return res.status(500).json({ error: err.message });
+        if (!row) return res.status(404).json({ error: 'Не найдено' });
+
+        // Delete physical file
+        if (row.imgUrl && row.imgUrl.startsWith('/uploads/')) {
+            const filePath = path.join(__dirname, row.imgUrl);
+            if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+        }
+
+        db.run("DELETE FROM menus WHERE id = ?", [id], function(err) {
+            if (err) return res.status(500).json({ error: err.message });
+            console.log(`[Menu] Deleted id=${id}`);
+            res.json({ success: true });
+        });
     });
 });
 

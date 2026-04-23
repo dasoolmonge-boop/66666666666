@@ -446,6 +446,7 @@
             <button class="tab" onclick="switchTab('sauna')" id="tab-sauna">🧖‍♂️ Сауна<span class="tab-count" id="cnt-sauna">0</span></button>
             <button class="tab" onclick="switchTab('photos')" id="tab-photos">🛏 Управление номерами</button>
             <button class="tab" onclick="switchTab('broadcast')" id="tab-broadcast">📢 Рассылка</button>
+            <button class="tab" onclick="switchTab('menus')" id="tab-menus">🍽 Меню</button>
         </div>
 
         <!-- Table (Bookings) -->
@@ -591,6 +592,57 @@
                         <div class="empty-state" style="padding:2rem"><div class="icon">📭</div><p>Рассылок пока не было</p></div>
                     </div>
                 </div>
+            </div>
+        </div>
+
+        <!-- Menus Management Section -->
+        <div id="menusSection" style="display:none">
+            <h2 style="margin-bottom:1.5rem; font-size:1.3rem;">🍽 Управление меню заведений</h2>
+            <p style="color:var(--muted); font-size:.85rem; margin-bottom:2rem;">Загружайте фотографии меню. Клиенты увидят их по кнопке «Меню» в мобильном приложении.</p>
+
+            <!-- Restaurant -->
+            <div style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:1.5rem; margin-bottom:2rem; border-left:4px solid var(--gold);">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+                    <div>
+                        <h3 style="font-size:1.1rem; margin-bottom:.3rem;">🍽 Ресторан «Чалама»</h3>
+                        <p style="font-size:.78rem; color:var(--muted)">Паназиатская и национальная кухня</p>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:.5rem;">
+                        <input type="file" id="menu-file-restaurant" accept="image/*" style="display:none" onchange="uploadMenuImg('restaurant')">
+                        <button onclick="document.getElementById('menu-file-restaurant').click()" style="padding:.5rem 1rem; background:var(--gold); color:#fff; border:none; border-radius:8px; font-size:.8rem; font-weight:700; cursor:pointer; font-family:inherit;">+ Загрузить</button>
+                    </div>
+                </div>
+                <div id="menu-grid-restaurant" class="photo-grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(150px, 1fr)); gap:1rem;"></div>
+            </div>
+
+            <!-- Bar -->
+            <div style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:1.5rem; margin-bottom:2rem; border-left:4px solid #a855f7;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+                    <div>
+                        <h3 style="font-size:1.1rem; margin-bottom:.3rem;">🍸 Бар «Скала»</h3>
+                        <p style="font-size:.78rem; color:var(--muted)">Лаунж-бар и коктейли</p>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:.5rem;">
+                        <input type="file" id="menu-file-bar" accept="image/*" style="display:none" onchange="uploadMenuImg('bar')">
+                        <button onclick="document.getElementById('menu-file-bar').click()" style="padding:.5rem 1rem; background:#a855f7; color:#fff; border:none; border-radius:8px; font-size:.8rem; font-weight:700; cursor:pointer; font-family:inherit;">+ Загрузить</button>
+                    </div>
+                </div>
+                <div id="menu-grid-bar" class="photo-grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(150px, 1fr)); gap:1rem;"></div>
+            </div>
+
+            <!-- Cafe Khaan-Dyt -->
+            <div style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:1.5rem; margin-bottom:2rem; border-left:4px solid #32cd32;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+                    <div>
+                        <h3 style="font-size:1.1rem; margin-bottom:.3rem;">☕ Кафе «Хаан-Дыт»</h3>
+                        <p style="font-size:.78rem; color:var(--muted)">При юрточном комплексе</p>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:.5rem;">
+                        <input type="file" id="menu-file-cafe_kd" accept="image/*" style="display:none" onchange="uploadMenuImg('cafe_kd')">
+                        <button onclick="document.getElementById('menu-file-cafe_kd').click()" style="padding:.5rem 1rem; background:#32cd32; color:#fff; border:none; border-radius:8px; font-size:.8rem; font-weight:700; cursor:pointer; font-family:inherit;">+ Загрузить</button>
+                    </div>
+                </div>
+                <div id="menu-grid-cafe_kd" class="photo-grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(150px, 1fr)); gap:1rem;"></div>
             </div>
         </div>
 
@@ -790,6 +842,7 @@ function switchTab(tab) {
     document.getElementById('photosSection').style.display = 'none';
     document.getElementById('receptionSection').style.display = 'none';
     document.getElementById('broadcastSection').style.display = 'none';
+    document.getElementById('menusSection').style.display = 'none';
 
     if (tab === 'photos') {
         document.getElementById('photosSection').style.display = 'block';
@@ -801,6 +854,9 @@ function switchTab(tab) {
         document.getElementById('broadcastSection').style.display = 'block';
         loadRecipients();
         loadBroadcastHistory();
+    } else if (tab === 'menus') {
+        document.getElementById('menusSection').style.display = 'block';
+        loadAllMenus();
     } else {
         document.getElementById('bookingsSection').style.display = 'block';
         const titles = { all:'Все бронирования', hotel:'Отель «Чалама»', yurt:'Юрточный отель «Хаан-Дыт»', sauna:'Сауна' };
@@ -1611,6 +1667,59 @@ async function loadBroadcastHistory() {
     } catch(e) {
         console.error('Broadcast history error:', e);
     }
+}
+
+// ===== MENUS MANAGEMENT =====
+async function loadAllMenus() {
+    await loadMenuCategory('restaurant');
+    await loadMenuCategory('bar');
+    await loadMenuCategory('cafe_kd');
+}
+
+async function loadMenuCategory(category) {
+    try {
+        const res = await fetch(`/api/menus?category=${category}`);
+        const items = await res.json();
+        const grid = document.getElementById('menu-grid-' + category);
+        if (!items || items.length === 0) {
+            grid.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:1.5rem; color:var(--muted); font-size:.85rem;">Меню ещё не загружено. Нажмите «+ Загрузить»</div>';
+            return;
+        }
+        grid.innerHTML = items.map(item => `
+            <div style="position:relative; border-radius:10px; overflow:hidden; border:1px solid var(--border); background:var(--surface2);">
+                <img src="${item.imgUrl}" style="width:100%; height:200px; object-fit:cover; display:block; cursor:pointer;" onclick="window.open('${item.imgUrl}','_blank')">
+                <button onclick="deleteMenuImg(${item.id}, '${category}')" style="position:absolute; top:6px; right:6px; width:28px; height:28px; border-radius:50%; background:rgba(255,50,50,0.9); color:#fff; border:none; font-size:1rem; cursor:pointer; display:flex; align-items:center; justify-content:center; font-weight:700;">×</button>
+            </div>
+        `).join('');
+    } catch(e) { console.error('Menu load error:', e); }
+}
+
+async function uploadMenuImg(category) {
+    const input = document.getElementById('menu-file-' + category);
+    if (!input.files.length) return;
+
+    const formData = new FormData();
+    formData.append('photo', input.files[0]);
+    formData.append('category', category);
+
+    try {
+        const res = await fetch('/api/menus', { method: 'POST', body: formData });
+        if (res.ok) {
+            input.value = '';
+            loadMenuCategory(category);
+        } else {
+            alert('Ошибка при загрузке');
+        }
+    } catch(e) { console.error(e); }
+}
+
+async function deleteMenuImg(id, category) {
+    if (!confirm('Удалить эту страницу меню?')) return;
+    try {
+        const res = await fetch('/api/menus/' + id, { method: 'DELETE' });
+        if (res.ok) loadMenuCategory(category);
+        else alert('Ошибка при удалении');
+    } catch(e) { console.error(e); }
 }
 
 // Init
