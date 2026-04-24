@@ -157,6 +157,11 @@ app.get('/', (req, res) => {
     }
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
+
+// Legal pages routes
+app.get('/privacy-policy', (req, res) => res.sendFile(path.join(__dirname, 'public', 'privacy-policy.html')));
+app.get('/terms', (req, res) => res.sendFile(path.join(__dirname, 'public', 'terms.html')));
+app.get('/offer', (req, res) => res.sendFile(path.join(__dirname, 'public', 'offer.html')));
 // Ensure Database Schema & Initial Data
 db.serialize(() => {
     // Rooms table
