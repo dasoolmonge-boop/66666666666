@@ -421,9 +421,11 @@ app.get('/api/rooms/available', (req, res) => {
                             tariff: r.tariff || null, prepayment: r.prepayment || null,
                         };
 
-                        // Robust busy check using SUBSTR comparison in query above, now filter results
+                        // Robust busy check: check by roomTypeId (new) OR room name (old compatibility)
                         const overlappingBookings = (busyRows || []).filter(br => 
-                            br.room === r.name || br.unitNumber === r.name
+                            (br.roomTypeId && br.roomTypeId === r.id) || 
+                            (br.room === r.name) || 
+                            (br.unitNumber === r.name)
                         );
                         const isRoomBusy = overlappingBookings.length > 0;
 
@@ -587,9 +589,9 @@ app.post('/api/bookings', (req, res) => {
 
     function insertBooking(unitNumber) {
         db.run(
-            `INSERT INTO bookings (id, type, room, unitNumber, checkIn, checkOut, nights, guest, phone, addons, total, status, clientChatId, createdAt)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-            [id, b.type, b.room, unitNumber, b.checkIn, b.checkOut, b.nights, guestName, guestPhone, JSON.stringify(b.addons || []), b.total, status, b.clientChatId || null, createdAt],
+            `INSERT INTO bookings (id, type, room, roomTypeId, unitNumber, checkIn, checkOut, nights, guest, phone, addons, total, status, clientChatId, createdAt)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            [id, b.type, b.room, b.roomTypeId || null, unitNumber, b.checkIn, b.checkOut, b.nights, guestName, guestPhone, JSON.stringify(b.addons || []), b.total, status, b.clientChatId || null, createdAt],
             function (err) {
                 if (err) return res.status(500).json({ error: err.message });
 
@@ -710,18 +712,26 @@ app.post('/api/bookings', (req, res) => {
         });
     } else {
         // Yurt/Sauna/Bath: old 1:1 logic
-        db.get(
-            `SELECT id FROM bookings WHERE room = ? AND status != 'cancelled' AND status != 'completed' AND (SUBSTR(checkIn, 1, 10) < ? AND SUBSTR(checkOut, 1, 10) > ?)`,
-            [b.room, outD, inD],
-            (err, row) => {
-                if (err) return res.status(500).json({ error: err.message });
-                if (row) return res.status(400).json({ success: false, error: 'Даты уже заняты' });
-                
-                // For yurts, we save the unitNumber (which is the room name) so it shows in chess grid
-                const unitToSave = b.type === 'yurt' ? b.unitNumber : null;
-                insertBooking(unitToSave);
-            }
-        );
+        // Find roomTypeId first if not provided
+        const findQ = "SELECT id, name FROM rooms WHERE name = ? OR id = ?";
+        db.get(findQ, [b.room, b.roomTypeId], (err, roomRow) => {
+            if (err || !roomRow) return res.status(400).json({ error: 'Объект не найден' });
+            
+            b.room = roomRow.name;
+            b.roomTypeId = roomRow.id;
+
+            db.get(
+                `SELECT id FROM bookings WHERE (roomTypeId = ? OR room = ?) AND status != 'cancelled' AND status != 'completed' AND (SUBSTR(checkIn, 1, 10) < ? AND SUBSTR(checkOut, 1, 10) > ?)`,
+                [b.roomTypeId, b.room, outD, inD],
+                (err, row) => {
+                    if (err) return res.status(500).json({ error: err.message });
+                    if (row) return res.status(400).json({ success: false, error: 'Даты уже заняты' });
+                    
+                    const unitToSave = b.type === 'yurt' ? (b.unitNumber || b.room) : null;
+                    insertBooking(unitToSave);
+                }
+            );
+        });
     }
 });
 
