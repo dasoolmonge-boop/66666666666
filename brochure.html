@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Рекламный Буклет - ООО ЧАЛАМА</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1a1a1a;
+            --secondary: #c9a050;
+            --text: #333;
+            --light: #f9f9f9;
+            --white: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-print-color-adjust: exact;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #ddd;
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        /* Page setup for A4 */
+        .page {
+            width: 210mm;
+            height: 297mm;
+            padding: 15mm;
+            margin: 10mm auto;
+            background: var(--white);
+            box-shadow: 0 0 20px rgba(0,0,0,0.2);
+            position: relative;
+            overflow: hidden;
+            page-break-after: always;
+        }
+
+        @media print {
+            body {
+                background: none;
+            }
+            .page {
+                margin: 0;
+                box-shadow: none;
+            }
+            .no-print {
+                display: none;
+            }
+        }
+
+        /* Helper Classes */
+        .gold { color: var(--secondary); }
+        .bg-dark { background-color: var(--primary); color: var(--white); }
+        .text-center { textAlign: center; }
+
+        /* Branding */
+        .logo-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: 800;
+            letter-spacing: -1px;
+            text-transform: uppercase;
+        }
+
+        .logo-accent {
+            font-weight: 300;
+            color: var(--secondary);
+        }
+
+        /* Front Page Styles */
+        .hero-image {
+            width: 100%;
+            height: 140mm;
+            object-fit: cover;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 48px;
+            line-height: 1.1;
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+
+        .tagline {
+            font-size: 18px;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            color: var(--secondary);
+            font-weight: 300;
+            margin-bottom: 40px;
+        }
+
+        .hero-desc {
+            font-size: 16px;
+            max-width: 80%;
+            margin: 0 auto 40px;
+        }
+
+        /* Section Styles */
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10mm;
+            margin-top: 20px;
+        }
+
+        .card {
+            background: var(--light);
+            border-radius: 8px;
+            overflow: hidden;
+            border-bottom: 4px solid var(--secondary);
+        }
+
+        .card-img {
+            width: 100%;
+            height: 50mm;
+            object-fit: cover;
+        }
+
+        .card-content {
+            padding: 15px;
+        }
+
+        .card-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 22px;
+            margin-bottom: 8px;
+            color: var(--primary);
+        }
+
+        .card-text {
+            font-size: 13px;
+            color: #666;
+        }
+
+        /* QR Section */
+        .footer-qr {
+            position: absolute;
+            bottom: 15mm;
+            left: 15mm;
+            right: 15mm;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-top: 1px solid #eee;
+            padding-top: 15mm;
+        }
+
+        .qr-code {
+            width: 40mm;
+            height: 40mm;
+        }
+
+        .contact-info {
+            text-align: right;
+        }
+
+        .contact-info p {
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .contact-info .phone {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        /* Floating Print Button */
+        .print-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--secondary);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 50px;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            z-index: 1000;
+        }
+
+        .print-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 25px rgba(0,0,0,0.3);
+        }
+
+    </style>
+</head>
+<body>
+
+    <button class="print-btn no-print" onclick="window.print()">🖨️ ПЕЧАТАТЬ БУКЛЕТ</button>
+
+    <!-- PAGE 1: COVER -->
+    <div class="page text-center">
+        <div class="logo-container">
+            <span class="logo-text">ООО <span class="logo-accent">ЧАЛАМА</span></span>
+        </div>
+
+        <img src="https://www.chalamahotel.ru/upload/iblock/c38/z9p9f5b2b2b2b2b2b2b2b2b2b2b2b2b2.jpg" alt="Chalama Hotel" class="hero-image">
+        
+        <h1>Искусство Тувинского Гостеприимства</h1>
+        <p class="tagline">Премиальный отдых в Кызыле</p>
+        
+        <p class="hero-desc">
+            Добро пожаловать в мир комфорта и традиций. ООО «Чалама» объединяет лучшие направления для отдыха, бизнеса и гастрономических открытий в самом сердце Тывы.
+        </p>
+
+        <div style="margin-top: 50px;">
+            <div style="display: inline-block; padding: 10px 20px; border: 1px solid var(--secondary); border-radius: 4px; font-weight: 600; letter-spacing: 2px;">
+                2024 • ПУТЕВОДИТЕЛЬ ПО КОМПЛЕКСУ
+            </div>
+        </div>
+    </div>
+
+    <!-- PAGE 2: SERVICES & QR -->
+    <div class="page">
+        <h2 style="font-family: 'Playfair Display', serif; font-size: 32px; margin-bottom: 20px; border-bottom: 2px solid var(--secondary); padding-bottom: 10px;">Наши Направления</h2>
+
+        <div class="grid">
+            <div class="card">
+                <img src="https://www.chalamahotel.ru/upload/iblock/c38/z9p9f5b2b2b2b2b2b2b2b2b2b2b2b2b2.jpg" alt="Hotel" class="card-img">
+                <div class="card-content">
+                    <h3 class="card-title">Отель «Чалама»</h3>
+                    <p class="card-text">Элегантные номера, высокий уровень сервиса и уютная атмосфера в центре города. Идеально для бизнеса и отдыха.</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <img src="https://www.chalamahotel.ru/upload/iblock/831/94827eb0-880c-43f1-9ade-b39f1595166f.jpg" alt="Haan-Dyt" class="card-img">
+                <div class="card-content">
+                    <h3 class="card-title">Хаан-Дыт</h3>
+                    <p class="card-text">Уникальный этно-комплекс. Погружение в культуру кочевников в традиционных юртах с современным комфортом.</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <img src="https://www.chalamahotel.ru/upload/iblock/2c1/1c7f4e91-c67d-41a4-9783-c75c88b22e1c.jpg" alt="Restaurant" class="card-img">
+                <div class="card-content">
+                    <h3 class="card-title">Ресторан «Чалама»</h3>
+                    <p class="card-text">Авторское меню: паназиатская кухня и национальные тувинские деликатесы в изысканном интерьере.</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <img src="https://www.chalamahotel.ru/upload/iblock/34b/34bde57e-3ef1-4d1a-8c7a-563b7c93e3e1.jpg" alt="Bar" class="card-img">
+                <div class="card-content">
+                    <h3 class="card-title">Бар «Скала»</h3>
+                    <p class="card-text">Стильное место для вечернего отдыха. Широкая карта напитков, авторские коктейли и живая атмосфера.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-qr">
+            <div>
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=https://chalamahotel.ru" alt="QR Code" class="qr-code">
+                <p style="font-size: 10px; margin-top: 5px; font-weight: 600; color: #888;">СКАНИРУЙТЕ ДЛЯ ПЕРЕХОДА НА САЙТ</p>
+            </div>
+            <div class="contact-info">
+                <p class="gold" style="font-weight: 800; text-transform: uppercase; letter-spacing: 2px;">Контакты</p>
+                <p class="phone">+7 (394) 222-10-82</p>
+                <p>г. Кызыл, ул. Титова, д. 36</p>
+                <p>www.chalamahotel.ru</p>
+                <p style="margin-top: 20px; font-style: italic; color: #999;">Добро пожаловать домой!</p>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
