@@ -26,124 +26,79 @@
         * { margin:0; padding:0; box-sizing:border-box; }
         body { font-family:'Inter',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
         
-        /* LOGIN */
-        .login-wrap {
-            min-height:100vh; display:flex; align-items:center; justify-content:center;
-            background: radial-gradient(ellipse at top, #1a1d27 0%, #0f1117 70%);
-        }
-        .login-card {
-            background:var(--surface); border:1px solid var(--border); border-radius:24px;
-            padding:3rem; width:90%; max-width:420px; text-align:center;
-        }
+        .login-wrap { min-height:100vh; display:flex; align-items:center; justify-content:center; background: radial-gradient(ellipse at top, #1a1d27 0%, #0f1117 70%); }
+        .login-card { background:var(--surface); border:1px solid var(--border); border-radius:24px; padding:3rem; width:90%; max-width:420px; text-align:center; }
         .login-logo { font-size:1.5rem; font-weight:900; letter-spacing:4px; margin-bottom:.5rem; }
         .login-logo em { color:var(--gold); font-style:normal; }
-        .login-sub { color:var(--muted); font-size:.82rem; margin-bottom:2.5rem; }
-        .login-input {
-            width:100%; padding:1rem 1.2rem; background:var(--surface2); border:1.5px solid var(--border);
-            border-radius:12px; color:var(--text); font-size:.95rem; font-family:inherit;
-            outline:none; transition:.3s; margin-bottom:1rem;
-        }
-        .login-input:focus { border-color:var(--gold); }
-        .login-btn {
-            width:100%; padding:1rem; background:var(--gold); color:#fff; border:none;
-            border-radius:12px; font-size:.9rem; font-weight:700; cursor:pointer;
-            font-family:inherit; letter-spacing:1px; text-transform:uppercase; transition:.3s;
-        }
-        .login-btn:hover { background:var(--gold-l); }
-        .login-error { color:var(--red); font-size:.8rem; margin-top:1rem; display:none; }
+        .login-input { width:100%; padding:1rem 1.2rem; background:var(--surface2); border:1.5px solid var(--border); border-radius:12px; color:var(--text); margin-bottom:1rem; outline:none; }
+        .login-btn { width:100%; padding:1rem; background:var(--gold); color:#fff; border:none; border-radius:12px; font-weight:700; cursor:pointer; text-transform:uppercase; transition:.3s; }
 
-        /* DASHBOARD */
         .dashboard { display:none; }
-        .topbar {
-            background:var(--surface); border-bottom:1px solid var(--border);
-            padding:1rem 2rem; display:flex; justify-content:space-between; align-items:center;
-            position:sticky; top:0; z-index:100;
-        }
-        .topbar-logo { font-weight:800; font-size:1rem; letter-spacing:3px; }
-        .topbar-logo em { color:var(--gold); font-style:normal; }
-        .btn-logout {
-            padding:.5rem 1.2rem; background:var(--surface2); border:1px solid var(--border);
-            border-radius:10px; color:var(--muted); font-size:.78rem; cursor:pointer;
-            transition:.3s;
-        }
-        .btn-logout:hover { border-color:var(--red); color:var(--red); }
+        .topbar { background:var(--surface); border-bottom:1px solid var(--border); padding:1rem 2rem; display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; z-index:100; }
+        .main { max-width:1400px; margin:0 auto; padding:2rem; }
 
-        .main { max-width:1280px; margin:0 auto; padding:2rem; }
+        .stats { display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:1.2rem; margin-bottom:2.5rem; }
+        .stat-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:1.5rem; }
+        .stat-value { font-size:1.8rem; font-weight:900; margin-bottom:.2rem; }
+        .stat-label { font-size:.7rem; color:var(--muted); text-transform:uppercase; letter-spacing:1px; }
 
-        /* Stats */
-        .stats { display:grid; grid-template-columns:repeat(4,1fr); gap:1.2rem; margin-bottom:2.5rem; }
-        .stat-card {
-            background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
-            padding:1.5rem; transition:.3s;
-        }
-        .stat-value { font-size:2rem; font-weight:900; margin-bottom:.2rem; }
-        .stat-label { font-size:.75rem; color:var(--muted); text-transform:uppercase; letter-spacing:1.5px; font-weight:600; }
-
-        /* Tabs */
         .tabs { display:flex; gap:.5rem; margin-bottom:1.5rem; overflow-x:auto; padding-bottom:.5rem; }
-        .tab {
-            padding:.7rem 1.5rem; background:var(--surface); border:1.5px solid var(--border);
-            border-radius:10px; color:var(--muted); font-size:.82rem; font-weight:600;
-            cursor:pointer; transition:.3s; white-space:nowrap;
-        }
+        .tab { padding:.7rem 1.2rem; background:var(--surface); border:1.5px solid var(--border); border-radius:10px; color:var(--muted); font-size:.8rem; font-weight:600; cursor:pointer; white-space:nowrap; }
         .tab.active { background:var(--gold); border-color:var(--gold); color:#fff; }
-        .tab-count { background:rgba(255,255,255,.15); padding:.1rem .5rem; border-radius:50px; font-size:.68rem; margin-left:.5rem; }
+        .tab-count { background:rgba(255,255,255,.1); padding:2px 6px; border-radius:4px; margin-left:6px; font-size:.7rem; }
 
-        /* Table */
         .table-wrap { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); overflow:auto; }
-        <table> { width:100%; border-collapse:collapse; min-width:800px; }
-        thead th { text-align:left; padding:.8rem 1.2rem; font-size:.68rem; font-weight:700; color:var(--muted); text-transform:uppercase; border-bottom:1px solid var(--border); }
-        tbody td { padding:1rem 1.2rem; font-size:.88rem; border-bottom:1px solid var(--border); }
-        tbody tr:hover { background:var(--surface2); }
-        
-        .tag { display:inline-block; padding:.25rem .7rem; border-radius:50px; font-size:.68rem; font-weight:700; text-transform:uppercase; }
+        table { width:100%; border-collapse:collapse; min-width:1000px; }
+        th { text-align:left; padding:1rem; font-size:.7rem; color:var(--muted); text-transform:uppercase; border-bottom:1px solid var(--border); }
+        td { padding:1rem; font-size:.85rem; border-bottom:1px solid var(--border); }
+        tr:hover { background:var(--surface2); }
+
+        .tag { padding:4px 10px; border-radius:50px; font-size:.65rem; font-weight:700; text-transform:uppercase; }
+        .tag-new { background:var(--gold-l); color:#000; }
         .tag-confirmed { background:var(--green-bg); color:var(--green); }
         .tag-cancelled { background:var(--red-bg); color:var(--red); }
-        .tag-hotel { background:var(--blue-bg); color:var(--blue); }
-        .tag-yurt { background:rgba(184,134,11,.15); color:var(--gold-l); }
-        .tag-sauna { background:rgba(168,85,247,.15); color:#a855f7; }
-        .tag-bath { background:rgba(59,130,246,.15); color:var(--blue); }
 
-        /* Chess Grid */
-        .chess-wrapper { position: relative; overflow: auto; max-height: 75vh; border-radius: var(--radius); border: 1px solid var(--border); background: #11141d; }
+        /* Chess */
+        .chess-wrapper { position: relative; overflow: auto; max-height: 70vh; border-radius: var(--radius); border: 1px solid var(--border); background: #11141d; }
         .chess-table { border-collapse: separate; border-spacing: 0; width: 100%; }
-        .chess-table thead th { position: sticky; top: 0; z-index: 20; background: #1a1f2e; border-bottom: 2px solid var(--border); padding: 0.5rem; min-width: 50px; }
-        .chess-table thead th:first-child { position: sticky; left: 0; z-index: 30; background: #1a1f2e; min-width: 190px; text-align: left; border-right: 2px solid var(--border); }
-        .chess-table tbody td:first-child { position: sticky; left: 0; z-index: 10; background: #1a1f2e; border-right: 2px solid var(--border); font-weight: 700; }
-        .chess-cell { border: 0.5px solid #2a2d3a; height: 45px; position: relative; cursor: cell; transition: .2s; }
-        .chess-cell:hover:not(.occupied) { background: rgba(184,134,11,0.1); }
+        .chess-table th { position: sticky; top: 0; z-index: 20; background: #1a1f2e; border-bottom: 2px solid var(--border); text-align: center; }
+        .chess-table th:first-child { position: sticky; left: 0; z-index: 30; background: #1a1f2e; min-width: 200px; text-align: left; border-right: 2px solid var(--border); }
+        .chess-table td:first-child { position: sticky; left: 0; z-index: 10; background: #1a1f2e; border-right: 2px solid var(--border); font-weight: 700; }
+        .chess-cell { border: 0.5px solid #2a2d3a; height: 50px; position: relative; cursor: cell; min-width: 50px; }
         .chess-cell.selected { background: var(--gold) !important; }
-        .chess-booking { height: 100%; width: 100%; display: flex; align-items: center; padding: 0 0.5rem; font-size: 0.65rem; color: #fff; cursor: pointer; }
+        .chess-booking { height: 100%; width: 100%; display: flex; align-items: center; padding: 0 5px; font-size: 0.6rem; color: #fff; overflow: hidden; }
         .chess-split { width: 100%; height: 100%; position: relative; }
-        .chess-split-out { position: absolute; top: 0; left: 0; width: 100%; height: 100%; clip-path: polygon(0 0, 100% 0, 0 100%); }
-        .chess-split-in { position: absolute; top: 0; left: 0; width: 100%; height: 100%; clip-path: polygon(100% 0, 100% 100%, 0 100%); }
+        .chess-split-out { position: absolute; top:0; left:0; width:100%; height:100%; clip-path: polygon(0 0, 100% 0, 0 100%); }
+        .chess-split-in { position: absolute; top:0; left:0; width:100%; height:100%; clip-path: polygon(100% 0, 100% 100%, 0 100%); }
 
-        /* Hourly Grid */
-        .hourly-section { margin-top: 2rem; padding: 1.5rem; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); }
-        .hour-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)); gap: 0.5rem; margin-top: 1rem; }
-        .hour-btn { padding: 0.7rem 0.5rem; background: var(--surface2); border: 1.5px solid var(--border); border-radius: 10px; font-size: 0.82rem; font-weight: 600; color: var(--text); cursor: pointer; text-align: center; transition: .2s; }
-        .hour-btn:hover:not(.booked) { border-color: var(--gold); background: var(--surface); }
-        .hour-btn.booked { opacity: 0.3; cursor: not-allowed; background: var(--red-bg); color: var(--red); border-color: transparent; }
-        .hour-btn.selected { background: var(--gold); border-color: var(--gold); color: #fff; box-shadow: 0 4px 12px rgba(184,134,11,0.3); }
-        .btn-book-hourly { margin-top: 1.5rem; padding: 0.8rem 2rem; background: var(--gold); color: #fff; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; display: none; transition: .3s; }
-        .btn-book-hourly:hover { background: var(--gold-l); transform: translateY(-2px); }
+        /* Calendar Reception */
+        .adm-cal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+        .adm-cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+        .adm-cal-day { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; background: var(--surface2); border-radius: 8px; cursor: pointer; font-size: .8rem; font-weight: 600; border: 1.5px solid transparent; }
+        .adm-cal-day.selected { background: var(--gold); border-color: var(--gold); color: #fff; }
+        .adm-cal-day.booked { background: var(--red-bg); color: var(--red); cursor: not-allowed; opacity: 0.5; }
+        .adm-cal-day.booked-in { background: linear-gradient(135deg, var(--surface2) 50%, var(--red-bg) 50%); }
+        .adm-cal-day.booked-out { background: linear-gradient(135deg, var(--red-bg) 50%, var(--surface2) 50%); }
 
-        /* Modal */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 1000; }
-        .modal-card { background: var(--surface); border: 1px solid var(--border); border-radius: 24px; width: 90%; max-width: 500px; padding: 2rem; }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
-        .modal-title { font-size: 1.2rem; font-weight: 800; color: var(--gold-l); }
-        .modal-close { cursor: pointer; font-size: 1.5rem; color: var(--muted); }
-        .form-group { margin-bottom: 1.2rem; }
-        .form-group label { display: block; font-size: 0.7rem; color: var(--muted); text-transform: uppercase; font-weight: 700; margin-bottom: 0.4rem; }
-        .form-input { width: 100%; padding: 0.8rem 1rem; background: var(--surface2); border: 1.5px solid var(--border); border-radius: 12px; color: var(--text); outline: none; }
+        .hour-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)); gap: 6px; margin-top: 1rem; }
+        .hour-btn { padding: 8px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; font-size: .75rem; text-align: center; cursor: pointer; }
+        .hour-btn.selected { background: var(--gold); border-color: var(--gold); color: #fff; }
+        .hour-btn.booked { background: var(--red-bg); color: var(--red); opacity: 0.3; cursor: not-allowed; }
+
+        /* Modals */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); display: none; align-items: center; justify-content: center; z-index: 1000; }
+        .modal-card { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; width: 90%; max-width: 500px; padding: 2rem; }
+        .form-input { width: 100%; padding: .8rem; background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; color: var(--text); margin-bottom: 1rem; outline: none; }
         .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-
-        @media (max-width: 768px) {
-            .stats { grid-template-columns: 1fr 1fr; }
-            .main { padding: 1rem; }
-            .topbar { padding: 0.8rem 1rem; }
-        }
+        
+        .btn-action { padding: .6rem 1.2rem; border-radius: 8px; font-weight: 700; cursor: pointer; border: 1px solid var(--border); background: var(--surface2); color: var(--text); }
+        .btn-gold { background: var(--gold); border-color: var(--gold); color: #fff; }
+        
+        .room-mgmt-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 1.5rem; margin-bottom: 1.5rem; }
+        .photo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; margin: 1rem 0; }
+        .photo-item { position: relative; border-radius: 10px; overflow: hidden; aspect-ratio: 1.5; border: 1px solid var(--border); }
+        .photo-item img { width: 100%; height: 100%; object-fit: cover; }
+        .btn-del-photo { position: absolute; top: 4px; right: 4px; background: rgba(255,0,0,0.7); border: none; color: #fff; width: 20px; height: 20px; border-radius: 50%; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -151,31 +106,28 @@
 <div class="login-wrap" id="loginWrap">
     <div class="login-card">
         <div class="login-logo">ООО <em>ЧАЛАМА</em></div>
-        <p class="login-sub">Панель управления бронированиями</p>
-        <input class="login-input" type="password" id="loginPass" placeholder="Пароль администратора">
+        <input class="login-input" type="password" id="loginPass" placeholder="Пароль">
         <button class="login-btn" onclick="doLogin()">Войти</button>
-        <p class="login-error" id="loginError">Неверный пароль.</p>
     </div>
 </div>
 
 <div class="dashboard" id="dashboard">
     <div class="topbar">
         <div class="topbar-logo">ЧАЛАМА <em>ADMIN</em></div>
-        <div class="topbar-right">
-            <button class="btn-logout" onclick="doLogout()">Выйти</button>
-        </div>
+        <button class="btn-action" onclick="doLogout()">Выйти</button>
     </div>
 
     <div class="main">
         <div class="stats">
             <div class="stat-card"><div class="stat-value" id="stat-total">0</div><div class="stat-label">Всего</div></div>
             <div class="stat-card"><div class="stat-value" id="stat-active" style="color:var(--green)">0</div><div class="stat-label">Активных</div></div>
-            <div class="stat-card"><div class="stat-value" id="stat-cancelled" style="color:var(--red)">0</div><div class="stat-label">Отменённых</div></div>
+            <div class="stat-card"><div class="stat-value" id="stat-cancelled" style="color:var(--red)">0</div><div class="stat-label">Отмена</div></div>
             <div class="stat-card"><div class="stat-value" id="stat-revenue" style="color:var(--gold-l)">0 ₽</div><div class="stat-label">Доход</div></div>
         </div>
 
         <div class="tabs">
             <button class="tab active" onclick="switchTab('all')" id="tab-all">Все брони <span class="tab-count" id="cnt-all">0</span></button>
+            <button class="tab" onclick="switchTab('reception')" id="tab-reception">🔑 Ресепшн</button>
             <button class="tab" onclick="switchTab('hotel')" id="tab-hotel">🏨 Отель и Сауна</button>
             <button class="tab" onclick="switchTab('yurt')" id="tab-yurt">⛺ Юрты и Баня</button>
             <button class="tab" onclick="switchTab('photos')" id="tab-photos">🖼 Галерея</button>
@@ -183,88 +135,162 @@
             <button class="tab" onclick="switchTab('menus')" id="tab-menus">🍽 Меню</button>
         </div>
 
+        <!-- Section: All Bookings -->
         <div id="bookingsSection">
-            <div style="display:flex; gap:1rem; margin-bottom:1.5rem;">
-                <input class="form-input" type="text" placeholder="🔍 Поиск по гостю, номеру или телефону..." id="searchInput" oninput="renderTable()">
+            <div style="display:flex; justify-content:space-between; margin-bottom:1.5rem; align-items:center;">
+                <input class="form-input" style="width:400px; margin:0" type="text" placeholder="Поиск по гостю или телефону..." id="searchInput" oninput="renderTable()">
+                <button class="btn-action" onclick="clearArchive()" style="border-color:var(--red); color:var(--red)">Очистить архив</button>
             </div>
             <div class="table-wrap">
-                <table id="mainTable">
-                    <thead><tr><th>ID</th><th>Объект</th><th>Гость</th><th>Даты</th><th>Сумма</th><th>Статус</th></tr></thead>
+                <table>
+                    <thead><tr><th>ID</th><th>Тип</th><th>Объект</th><th>Гость</th><th>Даты</th><th>Сумма</th><th>Статус</th></tr></thead>
                     <tbody id="bodyAll"></tbody>
                 </table>
             </div>
         </div>
 
+        <!-- Section: Reception -->
+        <div id="receptionSection" style="display:none">
+            <div style="display:grid; grid-template-columns: 1fr 350px; gap: 2rem;">
+                <div class="stat-card">
+                    <div class="adm-cal-header">
+                        <button class="btn-action" onclick="changeRecMonth(-1)">◄</button>
+                        <h3 id="recCalTitle">Апрель 2026</h3>
+                        <button class="btn-action" onclick="changeRecMonth(1)">►</button>
+                    </div>
+                    <div class="adm-cal-grid" id="recCalGrid"></div>
+                    <div id="recHourPanel" style="display:none; margin-top:2rem;">
+                        <h4>Выберите часы</h4>
+                        <div class="hour-grid" id="recHourGrid"></div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <h3>Новая бронь</h3>
+                    <label style="font-size:.7rem; color:var(--muted)">ТИП ОБЪЕКТА</label>
+                    <select id="recTypeSelect" class="form-input" onchange="selectRecType(this.value)">
+                        <option value="hotel">Отель</option>
+                        <option value="sauna">Сауна</option>
+                        <option value="yurt">Юрты</option>
+                        <option value="bath">Баня</option>
+                    </select>
+                    <label style="font-size:.7rem; color:var(--muted)">ВЫБЕРИТЕ НОМЕР / ЗАЛ</label>
+                    <select id="recRoomSelect" class="form-input" onchange="onRecRoomChange()"></select>
+                    <div id="recSelectionSummary" style="padding:1rem; background:var(--surface2); border-radius:10px; margin-bottom:1rem; font-size:.85rem; color:var(--gold-l)"></div>
+                    <input type="text" id="recGuestName" class="form-input" placeholder="Имя гостя">
+                    <input type="text" id="recGuestPhone" class="form-input" placeholder="Телефон">
+                    <input type="number" id="recTotal" class="form-input" placeholder="Итоговая сумма">
+                    <button class="login-btn" onclick="createManualBooking()">Создать бронь</button>
+                    <p id="recStatusMsg" style="margin-top:1rem; font-size:.85rem"></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section: Hotel & Chess -->
         <div id="hotelSection" style="display:none">
             <div style="display:flex; justify-content:space-between; margin-bottom:1.2rem; align-items:center;">
-                <h3 style="color:var(--gold-l); margin:0;">🏨 Отель (Шахматка)</h3>
+                <h3 style="color:var(--gold-l)">🏨 Отель (Шахматка)</h3>
                 <div>
-                    <button onclick="chessNav(-7)" class="btn-logout">◄ 7д</button>
-                    <button onclick="chessToday()" class="btn-logout" style="color:var(--gold); border-color:var(--gold)">Сегодня</button>
-                    <button onclick="chessNav(7)" class="btn-logout">7д ►</button>
+                    <button onclick="chessNav(-7)" class="btn-action">◄ 7д</button>
+                    <button onclick="chessToday()" class="btn-action" style="color:var(--gold)">Сегодня</button>
+                    <button onclick="chessNav(7)" class="btn-action">7д ►</button>
                 </div>
             </div>
             <div id="hotelGrid" class="chess-wrapper"></div>
-            <div class="hourly-section">
-                <h3 style="color:var(--gold-l); margin-bottom:1rem;">🧖‍♂️ Бронирование Сауны (Чалама)</h3>
-                <input type="date" id="saunaDate" onchange="loadHourly('sauna')" class="form-input" style="width:auto; margin-bottom:1rem;">
+            <div class="stat-card" style="margin-top:2rem">
+                <div style="display:flex; justify-content:space-between; align-items:center">
+                    <h4>🧖‍♂️ Сауна (Чалама)</h4>
+                    <input type="date" id="saunaDate" onchange="loadHourly('sauna')" class="form-input" style="width:auto; margin:0">
+                </div>
                 <div id="saunaGrid" class="hour-grid"></div>
-                <button id="saunaBookBtn" class="btn-book-hourly" onclick="bookHourly('sauna')">Забронировать выбранные часы</button>
+                <button id="saunaBookBtn" class="login-btn" style="width:auto; margin-top:1rem; display:none" onclick="bookHourly('sauna')">Забронировать выбранные часы</button>
             </div>
         </div>
 
+        <!-- Section: Yurt & Bath -->
         <div id="yurtSection" style="display:none">
             <div style="display:flex; justify-content:space-between; margin-bottom:1.2rem; align-items:center;">
-                <h3 style="color:var(--gold-l); margin:0;">⛺ Юрты (Шахматка)</h3>
+                <h3 style="color:var(--gold-l)">⛺ Юрты (Шахматка)</h3>
                 <div>
-                    <button onclick="chessNav(-7)" class="btn-logout">◄ 7д</button>
-                    <button onclick="chessToday()" class="btn-logout" style="color:var(--gold); border-color:var(--gold)">Сегодня</button>
-                    <button onclick="chessNav(7)" class="btn-logout">7д ►</button>
+                    <button onclick="chessNav(-7)" class="btn-action">◄ 7д</button>
+                    <button onclick="chessToday()" class="btn-action" style="color:var(--gold)">Сегодня</button>
+                    <button onclick="chessNav(7)" class="btn-action">7д ►</button>
                 </div>
             </div>
             <div id="yurtGrid" class="chess-wrapper"></div>
-            <div class="hourly-section">
-                <h3 style="color:var(--gold-l); margin-bottom:1rem;">🪵 Бронирование Бани (ХААН-ДЫТ)</h3>
-                <input type="date" id="bathDate" onchange="loadHourly('bath')" class="form-input" style="width:auto; margin-bottom:1rem;">
+            <div class="stat-card" style="margin-top:2rem">
+                <div style="display:flex; justify-content:space-between; align-items:center">
+                    <h4>🪵 Баня (ХААН-ДЫТ)</h4>
+                    <input type="date" id="bathDate" onchange="loadHourly('bath')" class="form-input" style="width:auto; margin:0">
+                </div>
                 <div id="bathGrid" class="hour-grid"></div>
-                <button id="bathBookBtn" class="btn-book-hourly" onclick="bookHourly('bath')">Забронировать выбранные часы</button>
+                <button id="bathBookBtn" class="login-btn" style="width:auto; margin-top:1rem; display:none" onclick="bookHourly('bath')">Забронировать выбранные часы</button>
             </div>
         </div>
 
+        <!-- Section: Photos / Room Management -->
         <div id="photosSection" style="display:none">
             <div id="roomsPhotoList"></div>
         </div>
 
+        <!-- Section: Broadcast -->
         <div id="broadcastSection" style="display:none">
             <div class="stat-card">
-                <p>Подписчиков в Telegram: <span id="recipientCount" style="font-weight:800; color:var(--gold-l)">0</span></p>
-                <textarea id="broadcastMessage" class="form-input" style="height:120px; margin-top:1rem; resize:none" placeholder="Текст сообщения для всех гостей..."></textarea>
-                <button class="login-btn" style="margin-top:1rem" onclick="sendBroadcast()">📢 Отправить рассылку</button>
-                <div style="margin-top:2rem;">
-                    <h4 style="margin-bottom:1rem; font-size:.8rem; text-transform:uppercase; color:var(--muted)">История рассылок</h4>
-                    <div id="broadcastHistory"></div>
-                </div>
+                <p>Получателей: <span id="recipientCount" style="color:var(--gold-l); font-weight:800">0</span></p>
+                <textarea id="broadcastMessage" class="form-input" style="height:150px; margin-top:1rem; resize:none" placeholder="Текст сообщения..."></textarea>
+                <button class="login-btn" onclick="sendBroadcast()">📢 Отправить рассылку</button>
+                <div id="broadcastHistory" style="margin-top:2rem; border-top:1px solid var(--border)"></div>
             </div>
         </div>
 
+        <!-- Section: Menus -->
         <div id="menusSection" style="display:none">
             <div style="display:grid; gap:2rem">
-                <div><h4 style="margin-bottom:.5rem">🍴 Ресторан</h4><input type="file" id="menu-file-restaurant" onchange="uploadMenuImg('restaurant')"><div id="menu-grid-restaurant" class="photo-grid"></div></div>
-                <div><h4 style="margin-bottom:.5rem">🍷 Бар</h4><input type="file" id="menu-file-bar" onchange="uploadMenuImg('bar')"><div id="menu-grid-bar" class="photo-grid"></div></div>
-                <div><h4 style="margin-bottom:.5rem">☕ Кафе КД</h4><input type="file" id="menu-file-cafe_kd" onchange="uploadMenuImg('cafe_kd')"><div id="menu-grid-cafe_kd" class="photo-grid"></div></div>
+                <div class="stat-card"><h4>Ресторан</h4><input type="file" id="menu-file-restaurant" onchange="uploadMenuImg('restaurant')"><div id="menu-grid-restaurant" class="photo-grid"></div></div>
+                <div class="stat-card"><h4>Бар</h4><input type="file" id="menu-file-bar" onchange="uploadMenuImg('bar')"><div id="menu-grid-bar" class="photo-grid"></div></div>
+                <div class="stat-card"><h4>Кафе КД</h4><input type="file" id="menu-file-cafe_kd" onchange="uploadMenuImg('cafe_kd')"><div id="menu-grid-cafe_kd" class="photo-grid"></div></div>
             </div>
         </div>
     </div>
 </div>
 
+<!-- Booking Modal (Chess) -->
 <div class="modal-overlay" id="modalOverlay">
     <div class="modal-card">
-        <div class="modal-header"><div class="modal-title">Новое бронирование</div><div class="modal-close" onclick="closeModal()">×</div></div>
-        <div class="form-group"><label>Объект</label><input type="text" id="m_room" class="form-input" readonly style="background:var(--surface2)"></div>
-        <div class="form-row"><div class="form-group"><label>Заезд</label><input type="date" id="m_checkIn" class="form-input"></div><div class="form-group"><label>Выезд</label><input type="date" id="m_checkOut" class="form-input"></div></div>
-        <div class="form-row"><div class="form-group"><label>Имя гостя</label><input type="text" id="m_guest" class="form-input" placeholder="Имя"></div><div class="form-group"><label>Телефон</label><input type="text" id="m_phone" class="form-input" placeholder="+7..."></div></div>
-        <div class="form-row"><div class="form-group"><label>Ночи / Часы</label><input type="number" id="m_nights" class="form-input" readonly></div><div class="form-group"><label>Итого (₽)</label><input type="number" id="m_total" class="form-input"></div></div>
-        <button class="login-btn" onclick="submitModalBooking()" style="margin-top:1rem">Подтвердить бронь</button>
+        <div class="modal-header" style="display:flex; justify-content:space-between; margin-bottom:1.5rem">
+            <h3 style="color:var(--gold-l)">Новое бронирование</h3>
+            <span style="cursor:pointer; font-size:1.5rem" onclick="closeModal()">×</span>
+        </div>
+        <div class="form-group"><label style="font-size:.7rem; color:var(--muted)">ОБЪЕКТ</label><input type="text" id="m_room" class="form-input" readonly style="background:var(--surface2)"></div>
+        <div class="form-row"><div class="form-group"><label style="font-size:.7rem; color:var(--muted)">ЗАЕЗД</label><input type="date" id="m_checkIn" class="form-input"></div><div class="form-group"><label style="font-size:.7rem; color:var(--muted)">ВЫЕЗД</label><input type="date" id="m_checkOut" class="form-input"></div></div>
+        <div class="form-row"><div class="form-group"><label style="font-size:.7rem; color:var(--muted)">ИМЯ</label><input type="text" id="m_guest" class="form-input"></div><div class="form-group"><label style="font-size:.7rem; color:var(--muted)">ТЕЛЕФОН</label><input type="text" id="m_phone" class="form-input"></div></div>
+        <div class="form-row"><div class="form-group"><label style="font-size:.7rem; color:var(--muted)">ДНИ/ЧАСЫ</label><input type="number" id="m_nights" class="form-input" readonly></div><div class="form-group"><label style="font-size:.7rem; color:var(--muted)">ИТОГО (₽)</label><input type="number" id="m_total" class="form-input"></div></div>
+        <button class="login-btn" onclick="submitModalBooking()" style="margin-top:1rem">Забронировать</button>
+    </div>
+</div>
+
+<!-- Room Management Modal -->
+<div class="modal-overlay" id="roomModalOverlay">
+    <div class="modal-card" style="max-width:600px">
+        <h3 id="roomModalTitle" style="margin-bottom:1.5rem; color:var(--gold-l)">Редактировать номер</h3>
+        <input type="hidden" id="r_id">
+        <div class="form-row">
+            <div class="form-group"><label>ТИП</label><select id="r_type" class="form-input"><option value="hotel">Отель</option><option value="yurt">Юрты</option><option value="sauna">Сауна</option><option value="bath">Баня</option></select></div>
+            <div class="form-group"><label>НАЗВАНИЕ</label><input type="text" id="r_name" class="form-input"></div>
+        </div>
+        <div class="form-group"><label>ОПИСАНИЕ</label><textarea id="r_desc" class="form-input" style="height:80px; resize:none"></textarea></div>
+        <div class="form-row">
+            <div class="form-group"><label>ЦЕНА (БУДНИ)</label><input type="number" id="r_price" class="form-input"></div>
+            <div class="form-group"><label>ЦЕНА (ВЫХОДНЫЕ)</label><input type="number" id="r_priceWeekend" class="form-input"></div>
+        </div>
+        <div class="form-row">
+            <div class="form-group"><label>ПЛОЩАДЬ</label><input type="text" id="r_area" class="form-input"></div>
+            <div class="form-group"><label>ВМЕСТИМОСТЬ</label><input type="number" id="r_capacity" class="form-input"></div>
+        </div>
+        <div class="form-group"><label>УДОБСТВА (через запятую)</label><input type="text" id="r_amenities" class="form-input"></div>
+        <div style="display:flex; gap:1rem; margin-top:1rem">
+            <button class="login-btn" onclick="saveRoom()">Сохранить</button>
+            <button class="btn-action" onclick="closeRoomModal()">Отмена</button>
+        </div>
     </div>
 </div>
 
@@ -276,7 +302,7 @@ const months = ['янв','фев','мар','апр','май','июн','июл','
 
 function doLogin() {
     if(document.getElementById('loginPass').value === ADMIN_PASS) { sessionStorage.setItem('chalama_admin','1'); showDashboard(); }
-    else { document.getElementById('loginError').style.display='block'; }
+    else alert("Неверный пароль");
 }
 function doLogout() { sessionStorage.removeItem('chalama_admin'); location.reload(); }
 
@@ -298,16 +324,17 @@ async function renderAll() {
         document.getElementById('stat-revenue').textContent = active.reduce((s,b)=>s+(b.total||0),0).toLocaleString() + ' ₽';
         document.getElementById('cnt-all').textContent = globalBookings.filter(b=>b.status==='new').length;
         renderTable();
-    } catch(e) { console.error("Render error", e); }
+    } catch(e) { console.error(e); }
 }
 
 function switchTab(tab) {
     currentTab = tab;
     document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.id === 'tab-'+tab));
-    ['bookingsSection','hotelSection','yurtSection','photosSection','broadcastSection','menusSection'].forEach(s => {
+    ['bookingsSection','receptionSection','hotelSection','yurtSection','photosSection','broadcastSection','menusSection'].forEach(s => {
         const el = document.getElementById(s); if(el) el.style.display = (tab==='all' && s==='bookingsSection') || s.startsWith(tab) ? 'block' : 'none';
     });
-    if(tab==='hotel' || tab==='yurt') { chessDate = new Date(); chessDate.setHours(0,0,0,0); loadChessGrid(tab); loadHourly(tab==='hotel'?'sauna':'bath'); }
+    if(tab==='hotel' || tab==='yurt') loadChessGrid(tab);
+    if(tab==='reception') initReception();
     if(tab==='photos') loadRoomsForPhotos();
     if(tab==='broadcast') { loadRecipients(); loadBroadcastHistory(); }
     if(tab==='menus') loadAllMenus();
@@ -319,16 +346,17 @@ function renderTable() {
     document.getElementById('bodyAll').innerHTML = filtered.map(b => `
         <tr>
             <td><small>${b.id.slice(0,6)}</small></td>
-            <td><span class="tag tag-${b.type}">${b.room}</span> ${b.unitNumber ? '<b>№'+b.unitNumber+'</b>':''}</td>
+            <td><span class="tag tag-${b.type}">${b.type}</span></td>
+            <td>${b.room} ${b.unitNumber?'<b>№'+b.unitNumber+'</b>':''}</td>
             <td>${b.guest}<br><small>${b.phone}</small></td>
             <td>${new Date(b.checkIn).toLocaleDateString()}</td>
             <td>${(b.total||0).toLocaleString()} ₽</td>
             <td>
-                <select onchange="updateStatus('${b.id}',this.value)" style="background:var(--surface2);color:#fff;border:1px solid var(--border);border-radius:6px;padding:4px;font-size:.8rem">
-                    <option value="new" ${b.status==='new'?'selected':''}>🆕 Новая</option>
-                    <option value="confirmed" ${b.status==='confirmed'?'selected':''}>✅ Подтверждена</option>
-                    <option value="completed" ${b.status==='completed'?'selected':''}>🏁 Завершена</option>
-                    <option value="cancelled" ${b.status==='cancelled'?'selected':''}>❌ Отменена</option>
+                <select onchange="updateStatus('${b.id}',this.value)" style="background:var(--surface2);color:#fff;border:1px solid var(--border);border-radius:6px;padding:3px">
+                    <option value="new" ${b.status==='new'?'selected':''}>Новая</option>
+                    <option value="confirmed" ${b.status==='confirmed'?'selected':''}>Ок</option>
+                    <option value="completed" ${b.status==='completed'?'selected':''}>🏁</option>
+                    <option value="cancelled" ${b.status==='cancelled'?'selected':''}>❌</option>
                 </select>
             </td>
         </tr>
@@ -340,6 +368,13 @@ async function updateStatus(id, status) {
     renderAll();
 }
 
+async function clearArchive() {
+    if(!confirm("Удалить все завершенные и отмененные бронирования навсегда?")) return;
+    await fetch('/api/admin/bookings/archive', { method:'DELETE' });
+    renderAll();
+}
+
+// ===== NEW CHESS GRID LOGIC =====
 async function loadChessGrid(type) {
     const ds = chessDate.toISOString().split('T')[0];
     const res = await fetch(`/api/admin/chess?startDate=${ds}&days=14&type=${type}`);
@@ -387,20 +422,17 @@ function onCellClick(rtId, rtName, u, date, type, price, priceW) {
     selRow = { roomTypeId:rtId, roomName:rtName, unitNumber:u, type, price, priceW };
     loadChessGrid(currentTab);
 }
-
 function chessNav(d) { chessDate.setDate(chessDate.getDate()+d); loadChessGrid(currentTab); }
 function chessToday() { chessDate = new Date(); chessDate.setHours(0,0,0,0); loadChessGrid(currentTab); }
 
+// ===== HOURLY =====
 async function loadHourly(type) {
     const d = document.getElementById(type+'Date').value || new Date().toISOString().split('T')[0];
     document.getElementById(type+'Date').value = d;
     const res = await fetch('/api/admin/bookings'); const all = await res.json();
     const busy = all.filter(b => b.type===type && b.status!=='cancelled' && b.checkIn.startsWith(d)).map(b => new Date(b.checkIn).getHours());
-    const grid = document.getElementById(type+'Grid');
-    if(!grid) return;
-    grid.innerHTML = Array.from({length:15},(_,i)=>i+9).map(h => `
-        <div class="hour-btn ${busy.includes(h)?'booked':''} ${selectedHours.includes(h)?'selected':''}" onclick="toggleHour('${type}',${h},${busy.includes(h)})">${h}:00</div>
-    `).join('');
+    const grid = document.getElementById(type+'Grid'); if(!grid) return;
+    grid.innerHTML = Array.from({length:15},(_,i)=>i+9).map(h => `<div class="hour-btn ${busy.includes(h)?'booked':''} ${selectedHours.includes(h)?'selected':''}" onclick="toggleHour('${type}',${h},${busy.includes(h)})">${h}:00</div>`).join('');
 }
 function toggleHour(type, h, isB) {
     if(isB) return;
@@ -417,86 +449,124 @@ function bookHourly(type) {
     openBookingModal();
 }
 
+// ===== RECEPTION LOGIC (OLD UI) =====
+let recState = { type:'hotel', month:new Date().getMonth(), year:new Date().getFullYear(), checkIn:null, checkOut:null, hours:[] };
+function initReception() {
+    document.getElementById('recTypeSelect').value = recState.type;
+    selectRecType(recState.type);
+}
+function selectRecType(t) {
+    recState.type = t; recState.checkIn = null; recState.checkOut = null; recState.hours = [];
+    const filtered = globalRooms.filter(r => r.type === t);
+    document.getElementById('recRoomSelect').innerHTML = filtered.map(r => `<option value="${r.id}">${r.name}</option>`).join('');
+    document.getElementById('recHourPanel').style.display = (t==='sauna' || t==='bath') ? 'block' : 'none';
+    onRecRoomChange();
+}
+function onRecRoomChange() { renderRecCalendar(); updateRecSummary(); if(recState.type==='sauna' || recState.type==='bath') renderRecHours(); }
+function changeRecMonth(d) { recState.month += d; if(recState.month<0){recState.month=11; recState.year--;} if(recState.month>11){recState.month=0; recState.year++;} renderRecCalendar(); }
+function renderRecCalendar() {
+    const s = recState; const grid = document.getElementById('recCalGrid');
+    document.getElementById('recCalTitle').textContent = months[s.month] + ' ' + s.year;
+    let html = ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'].map(d => `<div style="font-size:.6rem; text-align:center; color:var(--muted)">${d}</div>`).join('');
+    const first = new Date(s.year, s.month, 1).getDay(); const shift = first===0?6:first-1;
+    const total = new Date(s.year, s.month+1, 0).getDate();
+    for(let i=0; i<shift; i++) html += '<div></div>';
+    for(let d=1; d<=total; d++) {
+        const dt = new Date(s.year, s.month, d); dt.setHours(0,0,0,0);
+        const isSel = (s.checkIn && dt.getTime()===s.checkIn.getTime()) || (s.checkOut && dt.getTime()===s.checkOut.getTime()) || (s.checkIn && s.checkOut && dt>s.checkIn && dt<s.checkOut);
+        html += `<div class="adm-cal-day ${isSel?'selected':''}" onclick="selectRecDate(${dt.getTime()})">${d}</div>`;
+    }
+    grid.innerHTML = html;
+}
+function selectRecDate(ts) {
+    const dt = new Date(ts);
+    if(recState.type==='sauna' || recState.type==='bath') { recState.checkIn = dt; recState.checkOut = dt; renderRecHours(); }
+    else { if(!recState.checkIn || (recState.checkIn && recState.checkOut)) { recState.checkIn = dt; recState.checkOut = null; } else if(dt > recState.checkIn) recState.checkOut = dt; else recState.checkIn = dt; }
+    renderRecCalendar(); updateRecSummary();
+}
+function renderRecHours() {
+    const busy = globalBookings.filter(b => b.room === globalRooms.find(r=>r.id==parseInt(document.getElementById('recRoomSelect').value))?.name && b.status!=='cancelled' && new Date(b.checkIn).toDateString() === recState.checkIn.toDateString()).map(b => new Date(b.checkIn).getHours());
+    document.getElementById('recHourGrid').innerHTML = Array.from({length:15},(_,i)=>i+9).map(h => `<div class="hour-btn ${busy.includes(h)?'booked':''} ${recState.hours.includes(h)?'selected':''}" onclick="toggleRecHour(${h},${busy.includes(h)})">${h}:00</div>`).join('');
+}
+function toggleRecHour(h, isB) { if(isB) return; if(recState.hours.includes(h)) recState.hours = recState.hours.filter(x=>x!==h); else recState.hours.push(h); renderRecHours(); updateRecSummary(); }
+function updateRecSummary() {
+    const s = recState; const el = document.getElementById('recSelectionSummary');
+    if(!s.checkIn) el.textContent = "Выберите дату";
+    else if((s.type==='sauna'||s.type==='bath') && !s.hours.length) el.textContent = "Выберите часы";
+    else if(s.type!=='sauna' && s.type!=='bath' && !s.checkOut) el.textContent = "Выберите дату выезда";
+    else el.textContent = s.checkIn.toLocaleDateString() + (s.checkOut && s.checkOut!==s.checkIn ? ' — ' + s.checkOut.toLocaleDateString() : '') + (s.hours.length ? ' ('+s.hours.length+' ч.)' : '');
+}
+async function createManualBooking() {
+    const guest = document.getElementById('recGuestName').value, phone = document.getElementById('recGuestPhone').value, total = parseInt(document.getElementById('recTotal').value);
+    if(!guest || !phone || !recState.checkIn) return alert("Заполните данные");
+    const r = globalRooms.find(x => x.id === parseInt(document.getElementById('recRoomSelect').value));
+    let start = recState.checkIn.toISOString().split('T')[0], end = (recState.checkOut||recState.checkIn).toISOString().split('T')[0];
+    if(recState.type==='sauna' || recState.type==='bath') {
+        const sH = Math.min(...recState.hours), eH = Math.max(...recState.hours)+1;
+        start += `T${String(sH).padStart(2,'0')}:00:00`; end += `T${String(eH).padStart(2,'0')}:00:00`;
+    } else { start += 'T14:00:00'; end += 'T12:00:00'; }
+    const b = { type:recState.type, room:r.name, roomTypeId:r.id, checkIn:start, checkOut:end, guest, phone, total, nights:recState.type.includes('sauna')?recState.hours.length:Math.ceil((recState.checkOut-recState.checkIn)/86400000), status:'confirmed' };
+    await fetch('/api/bookings', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(b) });
+    renderAll(); alert("Готово");
+}
+
+// ===== ROOM MANAGEMENT =====
+async function loadRoomsForPhotos() {
+    const res = await fetch('/api/rooms'); globalRooms = await res.json();
+    document.getElementById('roomsPhotoList').innerHTML = globalRooms.map(r => `
+        <div class="room-mgmt-card">
+            <div style="display:flex; justify-content:space-between">
+                <div><strong>${r.name}</strong> <span class="tag">${r.type}</span></div>
+                <button class="btn-action" onclick="openRoomModal(${r.id})">✎ Изменить данные</button>
+            </div>
+            <div class="photo-grid">${r.imgs.map(img => `<div class="photo-item"><img src="${img}"><button class="btn-del-photo" onclick="deletePhoto(${r.id},'${img}')">×</button></div>`).join('')}</div>
+            <div style="display:flex; gap:.5rem"><input type="file" id="file-${r.id}" class="form-input" style="margin:0"><button class="btn-action btn-gold" onclick="uploadPhoto(${r.id})">Загрузить</button></div>
+        </div>
+    `).join('');
+}
+function openRoomModal(id) {
+    const r = globalRooms.find(x => x.id === id); if(!r) return;
+    document.getElementById('r_id').value = r.id; document.getElementById('r_type').value = r.type; document.getElementById('r_name').value = r.name;
+    document.getElementById('r_desc').value = r.desc; document.getElementById('r_price').value = r.price; document.getElementById('r_priceWeekend').value = r.priceWeekend || '';
+    document.getElementById('r_area').value = r.area || ''; document.getElementById('r_capacity').value = r.capacity || ''; document.getElementById('r_amenities').value = r.amenities.join(', ');
+    document.getElementById('roomModalOverlay').style.display='flex';
+}
+function closeRoomModal() { document.getElementById('roomModalOverlay').style.display='none'; }
+async function saveRoom() {
+    const id = document.getElementById('r_id').value;
+    const b = { type:document.getElementById('r_type').value, name:document.getElementById('r_name').value, desc:document.getElementById('r_desc').value, price:Number(document.getElementById('r_price').value), priceWeekend:Number(document.getElementById('r_priceWeekend').value), area:document.getElementById('r_area').value, capacity:Number(document.getElementById('r_capacity').value), amenities:document.getElementById('r_amenities').value.split(',').map(s=>s.trim()) };
+    await fetch('/api/rooms/'+id, { method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify(b) });
+    closeRoomModal(); loadRoomsForPhotos();
+}
+async function uploadPhoto(id) { const fd = new FormData(); fd.append('photo', document.getElementById('file-'+id).files[0]); await fetch(`/api/rooms/${id}/photo`, {method:'POST', body:fd}); loadRoomsForPhotos(); }
+async function deletePhoto(id, url) { if(confirm('Удалить?')) { await fetch(`/api/rooms/${id}/photo/delete`, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({imgUrl:url})}); loadRoomsForPhotos(); } }
+
+// ===== OTHERS =====
+async function loadAllMenus() { ['restaurant','bar','cafe_kd'].forEach(loadMenuCategory); }
+async function loadMenuCategory(cat) { const res = await fetch(`/api/menus?category=${cat}`); const items = await res.json(); document.getElementById('menu-grid-'+cat).innerHTML = items.map(i => `<div class="photo-item"><img src="${i.imgUrl}"><button class="btn-del-photo" onclick="deleteMenuImg(${i.id},'${cat}')">×</button></div>`).join(''); }
+async function uploadMenuImg(cat) { const fd = new FormData(); fd.append('photo', document.getElementById('menu-file-'+cat).files[0]); fd.append('category', cat); await fetch('/api/menus', {method:'POST', body:fd}); loadMenuCategory(cat); }
+async function deleteMenuImg(id, cat) { if(confirm('Удалить?')) { await fetch('/api/menus/'+id, {method:'DELETE'}); loadMenuCategory(cat); } }
+async function loadRecipients() { const res = await fetch('/api/admin/broadcast/recipients'); document.getElementById('recipientCount').textContent = (await res.json()).count; }
+async function sendBroadcast() { const m = document.getElementById('broadcastMessage').value; if(!m) return; await fetch('/api/admin/broadcast', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({message:m})}); alert("Отправлено"); }
+async function loadBroadcastHistory() { const res = await fetch('/api/admin/broadcast/history'); const data = await res.json(); document.getElementById('broadcastHistory').innerHTML = data.map(h => `<div style="padding:1rem; border-bottom:1px solid var(--border)">${h.message}<br><small>${new Date(h.createdAt).toLocaleString()}</small></div>`).join(''); }
+
 function openBookingModal() {
     document.getElementById('modalOverlay').style.display = 'flex';
     document.getElementById('m_room').value = selRow.roomName + (selRow.unitNumber ? ` (№${selRow.unitNumber})` : '');
     document.getElementById('m_checkIn').value = selStart.split('T')[0];
     document.getElementById('m_checkOut').value = selEnd.split('T')[0];
     const s = new Date(selStart), e = new Date(selEnd);
-    if(selRow.type === 'sauna' || selRow.type === 'bath') {
-        const h = (e-s)/3600000; document.getElementById('m_nights').value = h; document.getElementById('m_total').value = h*selRow.price;
-    } else {
-        const n = Math.ceil((e-s)/86400000); let t = 0;
-        for(let i=0; i<n; i++) { let c=new Date(s); c.setDate(c.getDate()+i); t += (c.getDay()===0||c.getDay()===5||c.getDay()===6) ? (selRow.priceW||selRow.price) : selRow.price; }
-        document.getElementById('m_nights').value = n; document.getElementById('m_total').value = t;
-    }
+    if(selRow.type === 'sauna' || selRow.type === 'bath') { const h = (e-s)/3600000; document.getElementById('m_nights').value = h; document.getElementById('m_total').value = h*selRow.price; }
+    else { const n = Math.ceil((e-s)/86400000); let t = 0; for(let i=0; i<n; i++) { let c=new Date(s); c.setDate(c.getDate()+i); t += (c.getDay()===0||c.getDay()===5||c.getDay()===6) ? (selRow.priceW||selRow.price) : selRow.price; } document.getElementById('m_nights').value = n; document.getElementById('m_total').value = t; }
 }
 function closeModal() { document.getElementById('modalOverlay').style.display='none'; selectedHours=[]; selStart=null; selEnd=null; document.querySelectorAll('.btn-book-hourly').forEach(b=>b.style.display='none'); }
-
 async function submitModalBooking() {
-    const guest = document.getElementById('m_guest').value, phone = document.getElementById('m_phone').value;
-    if(!guest || !phone) return alert("Введите имя и телефон");
-    const b = {
-        type:selRow.type, room:selRow.roomName, roomTypeId:selRow.roomTypeId, forceUnitNumber:selRow.unitNumber,
-        checkIn:document.getElementById('m_checkIn').value + (selRow.type==='hotel'?'T14:00:00':selStart.includes('T')?selStart.split('T')[1]:'T14:00:00'),
-        checkOut:document.getElementById('m_checkOut').value + (selRow.type==='hotel'?'T12:00:00':selEnd.includes('T')?selEnd.split('T')[1]:'T12:00:00'),
-        guest, phone, total:parseInt(document.getElementById('m_total').value), nights:parseInt(document.getElementById('m_nights').value), status:'confirmed'
-    };
-    const res = await fetch('/api/bookings', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(b) });
-    if((await res.json()).success) { closeModal(); renderAll(); } else alert('Ошибка');
+    const g = document.getElementById('m_guest').value, p = document.getElementById('m_phone').value; if(!g || !p) return alert("Заполните имя и телефон");
+    const b = { type:selRow.type, room:selRow.roomName, roomTypeId:selRow.roomTypeId, forceUnitNumber:selRow.unitNumber, checkIn:document.getElementById('m_checkIn').value + (selRow.type==='hotel'?'T14:00:00':selStart.includes('T')?selStart.split('T')[1]:'T14:00:00'), checkOut:document.getElementById('m_checkOut').value + (selRow.type==='hotel'?'T12:00:00':selEnd.includes('T')?selEnd.split('T')[1]:'T12:00:00'), guest:g, phone:p, total:parseInt(document.getElementById('m_total').value), nights:parseInt(document.getElementById('m_nights').value), status:'confirmed' };
+    await fetch('/api/bookings', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(b) }); closeModal(); renderAll();
 }
 
-async function loadRoomsForPhotos() {
-    const res = await fetch('/api/rooms'); globalRooms = await res.json();
-    document.getElementById('roomsPhotoList').innerHTML = globalRooms.map(r => `
-        <div class="stat-card" style="margin-bottom:1rem">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
-                <span style="font-weight:800;color:var(--gold-l)">${r.name}</span>
-                <span style="font-size:.8rem">${r.price}₽</span>
-            </div>
-            <div class="photo-grid">${r.imgs.map(img => `<div class="photo-item"><img src="${img}"><button class="btn-del-photo" onclick="deletePhoto(${r.id},'${img}')">×</button></div>`).join('')}</div>
-            <div style="margin-top:1rem;display:flex;gap:.5rem">
-                <input type="file" id="file-${r.id}" class="form-input" style="padding:.4rem">
-                <button class="login-btn" style="width:auto;padding:.4rem 1rem" onclick="uploadPhoto(${r.id})">Загрузить</button>
-            </div>
-        </div>
-    `).join('');
-}
-async function uploadPhoto(id) { 
-    const input = document.getElementById('file-'+id); if(!input.files.length) return;
-    const fd = new FormData(); fd.append('photo', input.files[0]);
-    await fetch(`/api/rooms/${id}/photo`, { method:'POST', body:fd }); loadRoomsForPhotos();
-}
-async function deletePhoto(id, url) { if(confirm('Удалить фото?')) { await fetch(`/api/rooms/${id}/photo/delete`, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({imgUrl:url}) }); loadRoomsForPhotos(); } }
-
-async function loadAllMenus() { ['restaurant','bar','cafe_kd'].forEach(loadMenuCategory); }
-async function loadMenuCategory(cat) {
-    const res = await fetch(`/api/menus?category=${cat}`); const items = await res.json();
-    document.getElementById('menu-grid-'+cat).innerHTML = items.map(i => `<div class="photo-item"><img src="${i.imgUrl}"><button class="btn-del-photo" onclick="deleteMenuImg(${i.id},'${cat}')">×</button></div>`).join('');
-}
-async function uploadMenuImg(cat) {
-    const input = document.getElementById('menu-file-'+cat); if(!input.files.length) return;
-    const fd = new FormData(); fd.append('photo', input.files[0]); fd.append('category', cat);
-    await fetch('/api/menus', { method:'POST', body:fd }); loadMenuCategory(cat);
-}
-async function deleteMenuImg(id, cat) { if(confirm('Удалить?')) { await fetch('/api/menus/'+id, {method:'DELETE'}); loadMenuCategory(cat); } }
-
-async function loadRecipients() { const res = await fetch('/api/admin/broadcast/recipients'); document.getElementById('recipientCount').textContent = (await res.json()).count; }
-async function sendBroadcast() {
-    const m = document.getElementById('broadcastMessage').value; if(!m) return;
-    if(!confirm("Отправить рассылку?")) return;
-    await fetch('/api/admin/broadcast', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({message:m}) });
-    document.getElementById('broadcastMessage').value = ''; loadBroadcastHistory();
-}
-async function loadBroadcastHistory() {
-    const res = await fetch('/api/admin/broadcast/history'); const data = await res.json();
-    document.getElementById('broadcastHistory').innerHTML = data.map(h => `<div style="padding:.8rem;border-bottom:1px solid var(--border);font-size:.85rem">${h.message} <br><small style="color:var(--muted)">${new Date(h.createdAt).toLocaleString()}</small></div>`).join('');
-}
-
-async function init() {
-    const res = await fetch('/api/rooms'); globalRooms = await res.json();
-    if(sessionStorage.getItem('chalama_admin')) showDashboard();
-}
+async function init() { const res = await fetch('/api/rooms'); globalRooms = await res.json(); if(sessionStorage.getItem('chalama_admin')) showDashboard(); }
 init();
 </script>
 </body>
