@@ -420,6 +420,12 @@ app.get('/api/rooms/available', (req, res) => {
                             tariff: r.tariff || null, prepayment: r.prepayment || null,
                         };
 
+                        // Robust busy check: check if any booking overlaps and matches by room name or unit number
+                        const overlappingBookings = (busyRows || []).filter(br => 
+                            br.room === r.name || br.unitNumber === r.name
+                        );
+                        const isRoomBusy = overlappingBookings.length > 0;
+
                         if (r.type === 'hotel') {
                             const roomUnits = units.filter(u => u.roomTypeId === r.id);
                             if (roomUnits.length > 0) {
@@ -428,12 +434,13 @@ app.get('/api/rooms/available', (req, res) => {
                                 data.freeCount = freeUnits.length;
                                 data.totalCount = roomUnits.length;
                             } else {
-                                data.available = !busyNames.has(r.name);
+                                data.available = !isRoomBusy;
                                 data.freeCount = data.available ? 1 : 0;
                                 data.totalCount = 1;
                             }
                         } else {
-                            data.available = !busyNames.has(r.name);
+                            // Yurts, Sauna, Bath are 1:1 objects
+                            data.available = !isRoomBusy;
                         }
                         return data;
                     });
