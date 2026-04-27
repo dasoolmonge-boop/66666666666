@@ -2134,8 +2134,11 @@ async function submitChessBooking() {
     if(!guest) return alert('Введите имя гостя');
     
     const d1 = new Date(cbState.start);
-    const d2 = new Date(cbState.end);
-    d2.setDate(d2.getDate() + 1); // Check-out is the day AFTER the last selected cell
+    const d2 = new Date(cbState.end || cbState.start);
+    
+    if (d1.getTime() === d2.getTime()) {
+        return alert('Для бронирования выберите две разные даты: дату заезда и дату выезда.');
+    }
     
     const room = globalRooms.find(r => r.id === cbState.rtId || r.name === cbState.rtName);
     let total = 0;
