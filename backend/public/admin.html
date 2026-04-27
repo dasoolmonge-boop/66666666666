@@ -283,6 +283,8 @@
             #admin-grid { grid-template-columns: 1fr !important; }
             .broadcast-preview { min-width: 100% !important; }
             [id^="menu-grid-"] { grid-template-columns: repeat(2, 1fr) !important; }
+            .broadcast-grid { grid-template-columns: 1fr; }
+            .reception-grid { grid-template-columns: repeat(2, 1fr); gap: .8rem; }
         }
         @media (max-width:480px) {
             .stats { grid-template-columns: 1fr; }
@@ -291,10 +293,16 @@
             .tab { padding: .5rem .8rem; }
             .login-card { padding:2rem 1.5rem; }
             .form-grid { grid-template-columns: 1fr; }
+            .reception-grid { grid-template-columns: 1fr; }
+            .admin-add-row { flex-direction: column; }
+            .admin-add-row input, .admin-add-row select, .btn-add { width: 100%; min-width: 0; box-sizing: border-box; }
+            .btn-logout { padding: .4rem .8rem; font-size: .7rem; }
+            .topbar-logo { font-size: .75rem; }
         }
 
         .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
         .form-group.full { grid-column: span 2; }
+        .broadcast-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
         @media (max-width: 600px) { .form-grid { grid-template-columns: 1fr; } .form-group.full { grid-column: span 1; } }
 
         /* Admin management */
@@ -569,7 +577,7 @@
 
         <!-- Broadcast Section -->
         <div id="broadcastSection" style="display:none">
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:2rem;">
+            <div class="broadcast-grid">
                 <!-- Compose -->
                 <div style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:1.5rem;">
                     <h3 style="margin-bottom:1rem; font-size:1.1rem;">📢 Новая рассылка</h3>
