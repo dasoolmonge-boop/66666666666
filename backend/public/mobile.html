@@ -512,7 +512,7 @@
                 ? `<a href="${r.type === 'hotel' ? '#m-date-search' : '#m-yurt-search'}" class="${btnClass}" style="text-decoration:none;text-align:center;">Проверить даты</a>`
                 : (isAvail 
                     ? ((r.type === 'hotel' || r.type.startsWith('yurt')) && nights
-                        ? `<button class="${btnClass}" onclick="${r.type === 'hotel' ? 'mSelectRoom' : 'mSelectYurt'}(${r.id}, '${r.name.replace(/'/g,"\\'")}', ${totalPrice}, ${nights}, ${r.price})">Выбрать</button>`
+                        ? `<button class="${btnClass}" onclick="${r.type === 'hotel' ? 'mSelectRoom' : 'mSelectYurt'}(${r.id}, '${r.name.replace(/'/g,"\\'").replace(/"/g, "&quot;")}', ${totalPrice}, ${nights}, ${r.price})">Выбрать</button>`
                         : `<button class="${btnClass}" id="btn-toggle-${uid}" onclick="openBook(${r.id}, event)">Свободные даты</button>`)
                     : '');
 

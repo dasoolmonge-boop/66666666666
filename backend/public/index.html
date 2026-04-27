@@ -67,16 +67,13 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
     <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
-    <link rel="preconnect" href="https://www.chalamahotel.ru">
-    <link rel="preconnect" href="https://i4.photo.2gis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Syne:wght@800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Playfair+Display:wght@400;700&family=Syne:wght@800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" media="print" onload="this.media='all'">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" media="print" onload="this.media='all'">
     <link rel="stylesheet" href="styles.css">
     
     <!-- Preload Critical Assets -->
     <link rel="preload" href="uploads/chalama_logo.png" as="image">
-    <link rel="preload" href="https://www.chalamahotel.ru/upload/iblock/e5b/niub7dn3irklicps1kyxhyj06gull6fp.jpeg" as="image">
     <script>
         (function() {
             // Passive bot/app detection
@@ -140,7 +137,7 @@
         </div>
         <div class="e-grid">
             <a href="#hotel" class="e-card" data-r>
-                <img src="https://www.chalamahotel.ru/upload/resize_cache/iblock/8ca/900_600_2/867g21cm3hqw7a1b49alaa3f01og2er8.jpg" alt="Отель Чалама" loading="lazy">
+                <img src="https://www.chalamahotel.ru/upload/resize_cache/iblock/8ca/900_600_2/867g21cm3hqw7a1b49alaa3f01og2er8.jpg" alt="Отель Чалама" loading="lazy" decoding="async">
                 <div class="e-card-overlay">
                     <span class="e-badge">Отель</span>
                     <div class="e-arrow">→</div>
@@ -184,7 +181,7 @@
     <div class="container">
         <div class="about-grid">
             <div class="about-img" data-r>
-                <img src="https://www.chalamahotel.ru/upload/iblock/e5b/niub7dn3irklicps1kyxhyj06gull6fp.jpeg" alt="Об отеле" loading="lazy">
+                <img src="https://www.chalamahotel.ru/upload/iblock/e5b/niub7dn3irklicps1kyxhyj06gull6fp.jpeg" alt="Об отеле" loading="lazy" decoding="async">
             </div>
             <div data-r>
                 <p class="section-label">О компании</p>
@@ -210,7 +207,7 @@
     <div class="hotel-hero-bg"></div>
     <div class="container" style="position:relative; z-index:2;">
         <div data-r style="text-align: center; margin-bottom: 2.5rem;">
-            <img src="uploads/chalama_logo.png" style="width: 100px; margin: 0 auto 1.2rem; filter: drop-shadow(0 4px 12px rgba(0,0,0,.15));" alt="Отель Чалама Лого">
+            <img src="uploads/chalama_logo.png" style="width: 100px; margin: 0 auto 1.2rem; filter: drop-shadow(0 4px 12px rgba(0,0,0,.15));" alt="Отель Чалама Лого" fetchpriority="high">
             <p class="section-label" style="text-align: center; letter-spacing: 6px; color: var(--gold);">Гостиничный комплекс</p>
             <h2 class="section-title" style="color: var(--dark);">ОТЕЛЬ «ЧАЛАМА»</h2>
             <p class="section-desc" style="margin: 0 auto; max-width: 600px; font-size: 1.05rem;">
@@ -475,16 +472,16 @@
 
         <div class="rest-gallery" data-r>
             <div class="rest-gallery-item" onclick="openLightbox('uploads/rest_1.jpg')">
-                <img src="uploads/rest_1.jpg" alt="Лаунж-зона" loading="lazy">
+                <img src="uploads/rest_1.jpg" alt="Лаунж-зона" loading="lazy" decoding="async">
             </div>
             <div class="rest-gallery-item" onclick="openLightbox('uploads/rest_2.jpg')">
-                <img src="uploads/rest_2.jpg" alt="Основной зал" loading="lazy">
+                <img src="uploads/rest_2.jpg" alt="Основной зал" loading="lazy" decoding="async">
             </div>
             <div class="rest-gallery-item" onclick="openLightbox('uploads/rest_3.jpg')">
-                <img src="uploads/rest_3.jpg" alt="VIP-зона" loading="lazy">
+                <img src="uploads/rest_3.jpg" alt="VIP-зона" loading="lazy" decoding="async">
             </div>
             <div class="rest-gallery-item" onclick="openLightbox('uploads/rest_4.jpg')">
-                <img src="uploads/rest_4.jpg" alt="Терраса" loading="lazy">
+                <img src="uploads/rest_4.jpg" alt="Терраса" loading="lazy" decoding="async">
             </div>
         </div>
 
@@ -1663,7 +1660,7 @@ function buildYurtCard(r, nights, guests, isAvail, showPrice) {
     const totalPrice = r.price * nights;
     const nightsLabel = nights === 1 ? 'ночь' : nights < 5 ? 'ночи' : 'ночей';
     
-    const escapedName = r.name.replace(/'/g, "\\'");
+    const escapedName = r.name.replace(/'/g, "\\'").replace(/"/g, "&quot;");
     
     let imgsHtml = '';
     let sliderDots = '';
@@ -1815,7 +1812,7 @@ function buildHotelCard(r, nights, guests, isAvail, showPrice) {
     const firstImg = r.imgs && r.imgs.length ? r.imgs[0] : '';
     const totalPrice = r.price * nights;
     const nightsLabel = nights === 1 ? 'ночь' : nights < 5 ? 'ночи' : 'ночей';
-    const escapedName = r.name.replace(/'/g, "\\'");
+    const escapedName = r.name.replace(/'/g, "\\'").replace(/"/g, "&quot;");
     
     // Determine specific meta based on room name matching screenshots
     let isStudio = r.name.toLowerCase().includes('студия');
