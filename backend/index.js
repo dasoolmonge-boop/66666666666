@@ -966,23 +966,42 @@ app.get('/api/admin/chess', (req, res) => {
                 (err, bookings) => {
                     if (err) return res.status(500).json({ error: err.message });
 
-                    const result = (roomTypes || []).map(rt => {
-                        const rtUnits = (units || []).filter(u => u.roomTypeId === rt.id);
-                        const unitNums = rtUnits.map(u => u.unitNumber);
-
-                        const rtBookings = (bookings || []).filter(b =>
-                            unitNums.includes(b.unitNumber) || (b.room === rt.name && !b.unitNumber)
-                        );
-
-                        return {
-                            id: rt.id, name: rt.name, type: rt.type,
-                            units: unitNums,
-                            bookings: rtBookings.map(b => ({
-                                id: b.id, unitNumber: b.unitNumber, checkIn: b.checkIn,
-                                checkOut: b.checkOut, guest: b.guest, status: b.status
+                    let result = [];
+                    if (requestedType === 'yurt') {
+                        // Group all yurts into one section
+                        result = [{
+                            id: 'yurt-all',
+                            name: 'Юрточный отель «Хаан-Дыт»',
+                            type: 'yurt',
+                            units: (roomTypes || []).map(rt => rt.name),
+                            bookings: (bookings || []).map(b => ({
+                                id: b.id,
+                                unitNumber: b.room, // Use room name as unit identifier for yurts
+                                checkIn: b.checkIn,
+                                checkOut: b.checkOut,
+                                guest: b.guest,
+                                status: b.status
                             }))
-                        };
-                    });
+                        }];
+                    } else {
+                        result = (roomTypes || []).map(rt => {
+                            const rtUnits = (units || []).filter(u => u.roomTypeId === rt.id);
+                            const unitNums = rtUnits.map(u => u.unitNumber);
+
+                            const rtBookings = (bookings || []).filter(b =>
+                                unitNums.includes(b.unitNumber) || (b.room === rt.name && !b.unitNumber)
+                            );
+
+                            return {
+                                id: rt.id, name: rt.name, type: rt.type,
+                                units: unitNums,
+                                bookings: rtBookings.map(b => ({
+                                    id: b.id, unitNumber: b.unitNumber, checkIn: b.checkIn,
+                                    checkOut: b.checkOut, guest: b.guest, status: b.status
+                                }))
+                            };
+                        });
+                    }
 
                     res.json({ roomTypes: result, startDate, days: numDays });
                 }

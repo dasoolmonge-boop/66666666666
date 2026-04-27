@@ -2057,6 +2057,11 @@ let cbState = { unit: null, rtId: null, rtName: null, rtType: null, start: null,
 function handleChessCellClick(unit, dateStr, isMid, isIn, isOut, rtId, rtName, rtType) {
     if (isMid || (isIn && isOut)) return;
 
+    // Fix for yurt-all grouping
+    if (rtId === 'yurt-all') {
+        rtName = unit; 
+    }
+
     if (!cbState.start) {
         if (isIn) return;
         cbState = { unit, rtId, rtName, rtType, start: dateStr, end: null };
@@ -2122,7 +2127,7 @@ async function submitChessBooking() {
     const phone = document.getElementById('cbPhone').value.trim();
     if(!guest) return alert('Введите имя гостя');
     
-    const room = globalRooms.find(r => r.id === cbState.rtId);
+    const room = globalRooms.find(r => r.id === cbState.rtId || r.name === cbState.rtName);
     let total = 0;
     let nights = 0;
     if(room) {
