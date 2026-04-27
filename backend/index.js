@@ -668,25 +668,41 @@ app.post('/api/bookings', (req, res) => {
                     const unitNums = units.map(u => u.unitNumber);
                     const placeholders = unitNums.map(() => '?').join(',');
 
+                    // Debug log
+                    console.log(`[Booking Request] ${roomType.name}, In: ${b.checkIn}, Out: ${b.checkOut}`);
+
                     db.all(
                         `SELECT DISTINCT unitNumber FROM bookings
-                         WHERE unitNumber IN (${placeholders})
-                         AND status != 'cancelled' AND status != 'completed'
-                         AND checkIn < ? AND checkOut > ?`,
-                        [...unitNums, b.checkOut, b.checkIn],
+                         WHERE status != 'cancelled' AND status != 'completed'
+                         AND checkIn < ? AND checkOut > ?
+                         AND (unitNumber IN (${placeholders}) OR (room = ? AND unitNumber IS NULL))`,
+                        [b.checkOut, b.checkIn, ...unitNums, roomType.name],
                         (err, busyRows) => {
-                            if (err) { db.run("ROLLBACK"); return res.status(500).json({ error: err.message }); }
+                            if (err) { 
+                                console.error("[DB Error]", err.message);
+                                db.run("ROLLBACK"); 
+                                return res.status(500).json({ error: err.message }); 
+                            }
 
-                            const busySet = new Set((busyRows || []).map(r => r.unitNumber));
-                            const freeUnit = unitNums.find(u => !busySet.has(u));
+                            const busySet = new Set((busyRows || []).map(r => r.unitNumber).filter(Boolean));
+                            // Also count how many unassigned bookings overlap
+                            const unassignedCount = (busyRows || []).filter(r => !r.unitNumber).length;
+                            
+                            console.log(`[Occupancy] Busy units: ${[...busySet].join(', ')}, Unassigned: ${unassignedCount}`);
 
-                            if (!freeUnit) {
+                            // For auto-assignment, we need to skip occupied units AND account for unassigned slots
+                            const freeUnits = unitNums.filter(u => !busySet.has(u));
+                            const actualFreeUnit = freeUnits.length > unassignedCount ? freeUnits[unassignedCount] : null;
+
+                            if (!actualFreeUnit) {
+                                console.log(`[Result] DENIED - No free units found`);
                                 db.run("ROLLBACK");
                                 return res.status(400).json({ success: false, error: 'Все номера этого типа заняты на выбранные даты' });
                             }
 
+                            console.log(`[Result] ALLOWED - Assigning unit: ${actualFreeUnit}`);
                             b.room = roomType.name;
-                            db.run("COMMIT", () => insertBooking(freeUnit));
+                            db.run("COMMIT", () => insertBooking(actualFreeUnit));
                         }
                     );
                 });
