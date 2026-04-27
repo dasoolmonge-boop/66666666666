@@ -548,7 +548,8 @@
             <button class="tab" onclick="switchTab('yurt')" id="tab-yurt">⛺ Юрты<span class="tab-count" id="cnt-yurt">0</span></button>
             <button class="tab" onclick="switchTab('sauna')" id="tab-sauna">🧖‍♂️ Сауна<span class="tab-count" id="cnt-sauna">0</span></button>
             <button class="tab" onclick="switchTab('photos')" id="tab-photos">🛏 Управление номерами</button>
-            <button class="tab" onclick="switchTab('chess')" id="tab-chess">🏁 Шахматка</button>
+            <button class="tab" onclick="switchTab('chess_hotel')" id="tab-chess_hotel">🏁 Шахматка Отель</button>
+            <button class="tab" onclick="switchTab('chess_yurt')" id="tab-chess_yurt">⛺ Шахматка Юрты</button>
             <button class="tab" onclick="switchTab('broadcast')" id="tab-broadcast">📢 Рассылка</button>
             <button class="tab" onclick="switchTab('menus')" id="tab-menus">🍽 Меню</button>
         </div>
@@ -658,19 +659,30 @@
             </div>
         </div>
 
-        <!-- Chess Grid Section (Шахматка) -->
-        <div id="chessSection" style="display:none">
+        <!-- Chess Hotel Section -->
+        <div id="chess_hotelSection" style="display:none">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; gap:1rem;">
-                <h3 style="margin:0; font-size:1.1rem;">🏁 Шахматка — загрузка номеров отеля</h3>
+                <h3 style="margin:0; font-size:1.1rem;">🏁 Шахматка — Отель</h3>
                 <div style="display:flex; align-items:center; gap:.5rem;">
-                    <button onclick="chessNav(-7)" style="padding:.4rem .8rem; background:var(--surface2); border:1px solid var(--border); border-radius:8px; color:var(--text); cursor:pointer; font-size:.9rem;">◄ 7д</button>
-                    <button onclick="chessNav(-1)" style="padding:.4rem .6rem; background:var(--surface2); border:1px solid var(--border); border-radius:8px; color:var(--text); cursor:pointer; font-size:.9rem;">◄</button>
-                    <button onclick="chessToday()" style="padding:.4rem .8rem; background:var(--gold); border:none; border-radius:8px; color:#fff; cursor:pointer; font-size:.8rem; font-weight:700;">Сегодня</button>
-                    <button onclick="chessNav(1)" style="padding:.4rem .6rem; background:var(--surface2); border:1px solid var(--border); border-radius:8px; color:var(--text); cursor:pointer; font-size:.9rem;">►</button>
-                    <button onclick="chessNav(7)" style="padding:.4rem .8rem; background:var(--surface2); border:1px solid var(--border); border-radius:8px; color:var(--text); cursor:pointer; font-size:.9rem;">7д ►</button>
+                    <button onclick="chessNav(-7, 'hotel')" class="btn-logout">◄ 7д</button>
+                    <button onclick="chessToday('hotel')" class="btn-logout" style="color:var(--gold); border-color:var(--gold)">Сегодня</button>
+                    <button onclick="chessNav(7, 'hotel')" class="btn-logout">7д ►</button>
                 </div>
             </div>
-            <div id="chessGrid" class="chess-wrapper"></div>
+            <div id="chessGrid_hotel" class="chess-wrapper"></div>
+        </div>
+
+        <!-- Chess Yurt Section -->
+        <div id="chess_yurtSection" style="display:none">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; gap:1rem;">
+                <h3 style="margin:0; font-size:1.1rem;">⛺ Шахматка — Юрты и Баня</h3>
+                <div style="display:flex; align-items:center; gap:.5rem;">
+                    <button onclick="chessNav(-7, 'yurt')" class="btn-logout">◄ 7д</button>
+                    <button onclick="chessToday('yurt')" class="btn-logout" style="color:var(--gold); border-color:var(--gold)">Сегодня</button>
+                    <button onclick="chessNav(7, 'yurt')" class="btn-logout">7д ►</button>
+                </div>
+            </div>
+            <div id="chessGrid_yurt" class="chess-wrapper"></div>
         </div>
 
         <!-- Broadcast Section -->
@@ -956,13 +968,11 @@ function switchTab(tab) {
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
     document.getElementById('tab-' + tab).classList.add('active');
     
-    // Hide all sections first
-    document.getElementById('bookingsSection').style.display = 'none';
-    document.getElementById('photosSection').style.display = 'none';
-    document.getElementById('receptionSection').style.display = 'none';
-    document.getElementById('broadcastSection').style.display = 'none';
-    document.getElementById('menusSection').style.display = 'none';
-    document.getElementById('chessSection').style.display = 'none';
+    const sections = ['bookingsSection', 'photosSection', 'receptionSection', 'broadcastSection', 'menusSection', 'chess_hotelSection', 'chess_yurtSection'];
+    sections.forEach(id => {
+        const el = document.getElementById(id);
+        if(el) el.style.display = 'none';
+    });
 
     if (tab === 'photos') {
         document.getElementById('photosSection').style.display = 'block';
@@ -970,6 +980,12 @@ function switchTab(tab) {
     } else if (tab === 'reception') {
         document.getElementById('receptionSection').style.display = 'block';
         initReception();
+    } else if (tab === 'chess_hotel') {
+        document.getElementById('chess_hotelSection').style.display = 'block';
+        loadChessGrid('hotel');
+    } else if (tab === 'chess_yurt') {
+        document.getElementById('chess_yurtSection').style.display = 'block';
+        loadChessGrid('yurt');
     } else if (tab === 'broadcast') {
         document.getElementById('broadcastSection').style.display = 'block';
         loadRecipients();
@@ -1849,33 +1865,35 @@ async function deleteMenuImg(id, category) {
 let chessStartDate = new Date().toISOString().split('T')[0];
 const CHESS_DAYS = 14;
 
-function chessNav(delta) {
+function chessNav(delta, type) {
     const d = new Date(chessStartDate);
     d.setDate(d.getDate() + delta);
     chessStartDate = d.toISOString().split('T')[0];
-    loadChessGrid();
+    loadChessGrid(type);
 }
 
-function chessToday() {
+function chessToday(type) {
     chessStartDate = new Date().toISOString().split('T')[0];
-    loadChessGrid();
+    loadChessGrid(type);
 }
 
-async function loadChessGrid() {
-    const el = document.getElementById('chessGrid');
+async function loadChessGrid(type) {
+    const el = document.getElementById('chessGrid_' + type);
+    if(!el) return;
     el.innerHTML = '<div style="padding:2rem;text-align:center;color:var(--muted)">Загрузка...</div>';
 
     try {
-        const res = await fetch(`/api/admin/chess?startDate=${chessStartDate}&days=${CHESS_DAYS}`);
+        const res = await fetch(`/api/admin/chess?startDate=${chessStartDate}&days=${CHESS_DAYS}&type=${type}`);
         const data = await res.json();
-        renderChessGrid(data);
+        renderChessGrid(data, type);
     } catch(e) {
         el.innerHTML = '<div style="padding:2rem;text-align:center;color:var(--red)">Ошибка загрузки</div>';
     }
 }
 
-function renderChessGrid(data) {
-    const el = document.getElementById('chessGrid');
+function renderChessGrid(data, type) {
+    const el = document.getElementById('chessGrid_' + type);
+    if(!el) return;
     const start = new Date(data.startDate);
     const days = data.days;
     const mNames = ['янв','фев','мар','апр','май','июн','июл','авг','сен','окт','ноя','дек'];
