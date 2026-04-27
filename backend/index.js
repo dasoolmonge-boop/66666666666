@@ -35,6 +35,10 @@ const ADMIN_ID = process.env.ADMIN_ID || '207553732';
 
 // 🔍 Проверка токена при запуске
 async function checkToken() {
+    if (!MAX_TOKEN || MAX_TOKEN === 'undefined') {
+        console.warn("[MAX Auth] MAX_TOKEN is missing or undefined. Skipping validation.");
+        return;
+    }
     const options = {
         hostname: 'platform-api.max.ru',
         port: 443,
@@ -309,11 +313,11 @@ db.serialize(() => {
                     { pattern: 'Стандарт одноместный/двухместный', units: ['202'] },
                     { pattern: '%омфорт%одно%', units: ['203','309'] },
                     { pattern: '%омфорт%дву%', units: ['206','305'] },
-                    { pattern: 'Стандарт двуместный', units: ['205','209','211','304','307','308'] },
+                    { pattern: '%Стандарт%двуместный%', units: ['303', '304', '306', '307', '308'] },
                     { pattern: 'Студия%', units: ['301','302'] },
                     { pattern: 'Делюкс одно%', units: ['401','404','405','406','409'] },
                     { pattern: 'Делюкс дву%', units: ['402','403','407','408'] },
-                    { pattern: '%юниор%юит%', units: ['204','303'] },
+                    { pattern: '%юниор%юит%', units: ['201', '202', '204', '205', '209'] },
                 ];
 
                 UNIT_SEED.forEach(mapping => {
