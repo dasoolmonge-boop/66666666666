@@ -680,7 +680,6 @@
                 <h3 style="color:var(--gold-l); margin-top:0; margin-bottom:1.5rem;">🧖‍♂️ Бронирование Сауны</h3>
                 <input type="date" id="saunaDate" onchange="loadHourly('sauna')" style="padding:.6rem; background:var(--surface2); border:1px solid var(--border); border-radius:8px; color:var(--text); margin-bottom:1.5rem; outline:none;">
                 <div id="saunaGrid" class="hour-grid"></div>
-                <button id="saunaBookBtn" class="btn-submit" style="width:auto; display:none; margin-top:1.5rem;" onclick="bookHourly('sauna')">Забронировать выбранные часы</button>
             </div>
         </div>
 
@@ -901,6 +900,28 @@
     <div style="display:flex; justify-content:space-between; align-items:center; margin-top:1.5rem;">
         <div style="font-size:0.9rem; color:var(--muted); font-weight:600;" id="cbDates">...</div>
         <button class="btn-submit" style="width:auto; margin:0;" onclick="submitChessBooking()">Забронировать</button>
+    </div>
+</div>
+
+<!-- ===== SAUNA BOOKING PANEL ===== -->
+<div id="saunaBookPanel" style="display:none; position:fixed; bottom:2rem; left:50%; transform:translateX(-50%); background:var(--surface); border:1px solid var(--gold); border-radius:var(--radius); padding:1.5rem; box-shadow:0 10px 30px rgba(0,0,0,0.8); z-index:1000; width:90%; max-width:600px;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+        <h3 style="margin:0; color:var(--gold-l);" id="sbTitle">Бронирование Сауны</h3>
+        <button onclick="closeSaunaBooking()" style="background:none; border:none; color:var(--muted); font-size:1.5rem; cursor:pointer;">&times;</button>
+    </div>
+    <div style="display:flex; gap:1rem; flex-wrap:wrap;">
+        <div class="form-group" style="flex:1; min-width:200px; margin-bottom:0;">
+            <label>Имя гостя</label>
+            <input type="text" id="sbGuest" placeholder="Иван Иванов">
+        </div>
+        <div class="form-group" style="flex:1; min-width:200px; margin-bottom:0;">
+            <label>Телефон</label>
+            <input type="text" id="sbPhone" placeholder="+7...">
+        </div>
+    </div>
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:1.5rem;">
+        <div style="font-size:0.9rem; color:var(--muted); font-weight:600;" id="sbDates">...</div>
+        <button class="btn-submit" style="width:auto; margin:0;" onclick="submitSaunaBooking('sauna')">Забронировать</button>
     </div>
 </div>
 
@@ -2112,6 +2133,8 @@ async function submitChessBooking() {
 }
 
 // ===== HOURLY BOOKING (Sauna / Bath) =====
+let saunaStart = null;
+let saunaEnd = null;
 let selectedHours = [];
 
 async function loadHourly(type) {
@@ -2123,7 +2146,8 @@ async function loadHourly(type) {
     try {
         const res = await fetch('/api/admin/bookings');
         const all = await res.json();
-        const busy = all.filter(b => b.type === type && b.status !== 'cancelled' && b.checkIn.startsWith(d)).map(b => new Date(b.checkIn).getHours());
+        
+        const busy = all.filter(b => (b.type === type || b.type === 'bath') && b.status !== 'cancelled' && b.checkIn.startsWith(d)).map(b => new Date(b.checkIn).getHours());
         
         const grid = document.getElementById(type + 'Grid');
         if(!grid) return;
@@ -2135,39 +2159,73 @@ async function loadHourly(type) {
             html += `<div class="hour-btn ${isBusy?'booked':''} ${isSel?'selected':''}" onclick="toggleHour('${type}', ${h}, ${isBusy})">${h}:00</div>`;
         }
         grid.innerHTML = html;
-        
-        const btn = document.getElementById(type + 'BookBtn');
-        if(btn) btn.style.display = selectedHours.length ? 'block' : 'none';
     } catch(e) { console.error(e); }
 }
 
 function toggleHour(type, h, isBusy) {
     if(isBusy) return;
-    if(selectedHours.includes(h)) {
-        selectedHours = selectedHours.filter(x => x !== h);
+    
+    if (saunaStart === null) {
+        saunaStart = h;
+        saunaEnd = null;
+    } else if (saunaEnd === null) {
+        if (h < saunaStart) {
+            saunaStart = h; // restart if clicking earlier hour
+        } else {
+            saunaEnd = h;
+        }
     } else {
-        selectedHours.push(h);
+        saunaStart = h;
+        saunaEnd = null;
+    }
+
+    selectedHours = [];
+    if (saunaStart !== null) {
+        let end = saunaEnd !== null ? saunaEnd : saunaStart;
+        for (let i = saunaStart; i <= end; i++) {
+            selectedHours.push(i);
+        }
     }
     loadHourly(type);
+    
+    if (saunaStart !== null && saunaEnd !== null) {
+        openSaunaBookingPanel();
+    }
 }
 
-async function bookHourly(type) {
-    if(!selectedHours.length) return;
-    const guest = prompt("Имя гостя:"); if(!guest) return;
-    const phone = prompt("Телефон:"); if(!phone) return;
+function openSaunaBookingPanel() {
+    document.getElementById('saunaBookPanel').style.display = 'block';
+    const d = document.getElementById('saunaDate').value;
+    document.getElementById('sbDates').textContent = `${d} с ${saunaStart}:00 до ${saunaEnd+1}:00`;
+}
+
+function closeSaunaBooking() {
+    document.getElementById('saunaBookPanel').style.display = 'none';
+    saunaStart = null;
+    saunaEnd = null;
+    selectedHours = [];
+    loadHourly('sauna');
+}
+
+async function submitSaunaBooking(type) {
+    const guest = document.getElementById('sbGuest').value.trim();
+    const phone = document.getElementById('sbPhone').value.trim();
+    if(!guest) return alert("Введите имя гостя");
     
-    const d = document.getElementById(type + 'Date').value;
+    const d = document.getElementById('saunaDate').value;
+    
+    let room = globalRooms.find(r => r.type === type || r.type === 'bath');
+    if(!room) return alert("Объект сауны не найден в базе данных");
+    
     const startH = Math.min(...selectedHours);
     const endH = Math.max(...selectedHours) + 1;
-    
-    const room = globalRooms.find(r => r.type === type);
-    if(!room) return alert("Объект не найден");
     
     const checkIn = `${d}T${String(startH).padStart(2,'0')}:00:00`;
     const checkOut = `${d}T${String(endH).padStart(2,'0')}:00:00`;
     
     const b = {
-        type, room: room.name, roomTypeId: room.id,
+        type: room.type,
+        room: room.name, roomTypeId: room.id,
         checkIn, checkOut, guest, phone,
         total: selectedHours.length * room.price,
         nights: selectedHours.length,
@@ -2181,10 +2239,15 @@ async function bookHourly(type) {
             body: JSON.stringify(b)
         });
         if(res.ok) {
+            closeSaunaBooking();
+            document.getElementById('sbGuest').value = '';
+            document.getElementById('sbPhone').value = '';
             alert("Забронировано!");
-            selectedHours = [];
-            loadHourly(type);
             renderAll();
+            loadHourly('sauna');
+        } else {
+            const err = await res.json();
+            alert("Ошибка: " + (err.error || "Не удалось забронировать"));
         }
     } catch(e) { console.error(e); }
 }
