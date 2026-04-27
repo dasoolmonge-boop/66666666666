@@ -2313,8 +2313,30 @@ async function submitSaunaBooking(type) {
     } catch(e) { console.error(e); }
 }
 
+// ===== AUTO REFRESH =====
+function autoRefresh() {
+    // Don't refresh if any booking panel is open
+    const p1 = document.getElementById('chessBookPanel');
+    const p2 = document.getElementById('saunaBookPanel');
+    const p3 = document.getElementById('bathBookPanel');
+    if ((p1 && p1.style.display === 'block') || 
+        (p2 && p2.style.display === 'block') || 
+        (p3 && p3.style.display === 'block')) return;
+
+    // Don't refresh if selecting dates in chess grid
+    if (typeof cbState !== 'undefined' && cbState.start) return;
+
+    // Refresh data
+    renderAll().then(() => {
+        if (currentTab === 'chess_hotel') loadChessGrid('hotel');
+        if (currentTab === 'chess_yurt') loadChessGrid('yurt');
+    });
+}
+setInterval(autoRefresh, 30000); // Every 30 seconds
+
 // Init
 renderAdmins();
+renderAll();
 </script>
 </body>
 </html>
