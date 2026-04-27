@@ -547,13 +547,11 @@
         <!-- Tabs -->
         <div class="tabs">
             <button class="tab active" onclick="switchTab('all')" id="tab-all">Все<span class="tab-count" id="cnt-all">0</span></button>
-            <button class="tab" onclick="switchTab('reception')" id="tab-reception">🛎 Ресепшн</button>
-            <button class="tab" onclick="switchTab('hotel')" id="tab-hotel">🏨 Отель<span class="tab-count" id="cnt-hotel">0</span></button>
-            <button class="tab" onclick="switchTab('yurt')" id="tab-yurt">⛺ Юрты<span class="tab-count" id="cnt-yurt">0</span></button>
-            <button class="tab" onclick="switchTab('sauna')" id="tab-sauna">🧖‍♂️ Сауна<span class="tab-count" id="cnt-sauna">0</span></button>
-            <button class="tab" onclick="switchTab('photos')" id="tab-photos">🛏 Управление номерами</button>
             <button class="tab" onclick="switchTab('chess_hotel')" id="tab-chess_hotel">🏁 Шахматка Отель</button>
+            <button class="tab" onclick="switchTab('hotel')" id="tab-hotel">🏨 Отель<span class="tab-count" id="cnt-hotel">0</span></button>
             <button class="tab" onclick="switchTab('chess_yurt')" id="tab-chess_yurt">⛺ Шахматка Юрты</button>
+            <button class="tab" onclick="switchTab('yurt')" id="tab-yurt">⛺ Юрты<span class="tab-count" id="cnt-yurt">0</span></button>
+            <button class="tab" onclick="switchTab('photos')" id="tab-photos">🛏 Управление номерами</button>
             <button class="tab" onclick="switchTab('broadcast')" id="tab-broadcast">📢 Рассылка</button>
             <button class="tab" onclick="switchTab('menus')" id="tab-menus">🍽 Меню</button>
         </div>
@@ -1064,8 +1062,12 @@ function switchTab(tab) {
         loadHourly('bath');
     } else {
         document.getElementById('bookingsSection').style.display = 'block';
-        const titles = { all:'Все бронирования', hotel:'Отель «Чалама»', yurt:'Юрточный отель «Хаан-Дыт»', sauna:'Сауна' };
-        document.getElementById('tableTitle').textContent = titles[tab];
+        const titles = { 
+            all: 'Все бронирования', 
+            hotel: 'Отель и Сауна', 
+            yurt: 'Юрты и Баня'
+        };
+        document.getElementById('tableTitle').textContent = titles[tab] || 'Бронирования';
         renderTable();
     }
 }
@@ -1076,9 +1078,8 @@ async function renderAll(soft = false) {
     const bookings = globalBookings;
     const active = bookings.filter(b => b.status === 'confirmed' || b.status === 'new');
     const cancelled = bookings.filter(b => b.status === 'cancelled');
-    const hotel = bookings.filter(b => b.type === 'hotel' && b.status === 'new');
-    const yurt = bookings.filter(b => b.type === 'yurt' && b.status === 'new');
-    const sauna = bookings.filter(b => b.type === 'sauna' && b.status === 'new');
+    const hotel = bookings.filter(b => (b.type === 'hotel' || b.type === 'sauna') && b.status === 'new');
+    const yurt = bookings.filter(b => (b.type === 'yurt' || b.type === 'bath') && b.status === 'new');
     const revenue = active.reduce((s, b) => s + (b.total || 0), 0);
 
     document.getElementById('stat-total').textContent = bookings.length;
@@ -1089,7 +1090,6 @@ async function renderAll(soft = false) {
     document.getElementById('cnt-all').textContent = bookings.filter(b => b.status === 'new').length;
     document.getElementById('cnt-hotel').textContent = hotel.length;
     document.getElementById('cnt-yurt').textContent = yurt.length;
-    document.getElementById('cnt-sauna').textContent = sauna.length;
 
     if(currentTab !== 'photos') renderTable();
 }
@@ -1148,7 +1148,13 @@ function renderTable() {
     const search = document.getElementById('searchInput').value.toLowerCase();
     let filtered = globalBookings;
 
-    if (currentTab !== 'all') filtered = filtered.filter(b => b.type === currentTab);
+    if (currentTab !== 'all') {
+        filtered = filtered.filter(b => {
+            if (currentTab === 'hotel') return b.type === 'hotel' || b.type === 'sauna';
+            if (currentTab === 'yurt') return b.type === 'yurt' || b.type === 'bath';
+            return b.type === currentTab;
+        });
+    }
     if (search) filtered = filtered.filter(b =>
         (b.guest || '').toLowerCase().includes(search) ||
         (b.phone || '').includes(search) ||
