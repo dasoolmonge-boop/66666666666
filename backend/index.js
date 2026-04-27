@@ -607,14 +607,11 @@ app.post('/api/bookings', (req, res) => {
         );
     }
 
-    if (b.type === 'hotel' || b.type === 'yurt' || b.type === 'sauna' || b.type === 'bath') {
-        // Handle direct unit assignment (from Chess Grid) or auto-assignment
+        if (b.type === 'hotel' || b.type === 'yurt' || b.type === 'sauna' || b.type === 'bath') {
         db.run("BEGIN EXCLUSIVE", (err) => {
             if (err) return res.status(500).json({ error: 'Transaction error' });
 
-            const findQ = b.roomTypeId
-                ? "SELECT id, name, type FROM rooms WHERE id = ?"
-                : "SELECT id, name, type FROM rooms WHERE name = ?";
+            const findQ = b.roomTypeId ? "SELECT id, name, type FROM rooms WHERE id = ?" : "SELECT id, name, type FROM rooms WHERE name = ?";
             const findP = b.roomTypeId ? [b.roomTypeId] : [b.room];
 
             db.get(findQ, findP, (err, roomType) => {
@@ -626,7 +623,6 @@ app.post('/api/bookings', (req, res) => {
                 const forceUnit = b.forceUnitNumber || b.unitNumber;
 
                 if (forceUnit) {
-                    // Manual assignment check
                     db.get(
                         `SELECT id FROM bookings 
                          WHERE room = ? AND unitNumber = ? AND status != 'cancelled' AND status != 'completed'
@@ -637,14 +633,13 @@ app.post('/api/bookings', (req, res) => {
                                 db.run("ROLLBACK");
                                 return res.status(400).json({ success: false, error: `Номер ${forceUnit} уже занят на эти даты` });
                             }
+                            b.room = roomType.name;
                             db.run("COMMIT", () => insertBooking(forceUnit));
                         }
                     );
-                } else if (roomType.type === 'hotel') {
-                    // Auto-assign hotel unit
+                } else {
                     db.all("SELECT unitNumber FROM room_units WHERE roomTypeId = ? AND isActive = 1", [roomType.id], (err, units) => {
                         if (err || !units || !units.length) {
-                            // No units defined, check availability by room name (legacy)
                             db.get(
                                 `SELECT id FROM bookings WHERE room = ? AND status != 'cancelled' AND status != 'completed' AND checkIn < ? AND checkOut > ?`,
                                 [roomType.name, b.checkOut, b.checkIn],
@@ -653,6 +648,7 @@ app.post('/api/bookings', (req, res) => {
                                         db.run("ROLLBACK");
                                         return res.status(400).json({ success: false, error: 'Даты уже заняты' });
                                     }
+                                    b.room = roomType.name;
                                     db.run("COMMIT", () => insertBooking(null));
                                 }
                             );
@@ -661,7 +657,6 @@ app.post('/api/bookings', (req, res) => {
 
                         const unitNums = units.map(u => u.unitNumber);
                         const placeholders = unitNums.map(() => '?').join(',');
-
                         db.all(
                             `SELECT DISTINCT unitNumber FROM bookings
                              WHERE unitNumber IN (${placeholders})
@@ -670,48 +665,22 @@ app.post('/api/bookings', (req, res) => {
                             [...unitNums, b.checkOut, b.checkIn],
                             (err, busyRows) => {
                                 if (err) { db.run("ROLLBACK"); return res.status(500).json({ error: err.message }); }
-
                                 const busySet = new Set((busyRows || []).map(r => r.unitNumber));
                                 const freeUnit = unitNums.find(u => !busySet.has(u));
-
                                 if (!freeUnit) {
                                     db.run("ROLLBACK");
-                                    return res.status(400).json({ success: false, error: 'Все номера данной категории заняты' });
+                                    return res.status(400).json({ success: false, error: 'Все номера этого типа заняты на выбранные даты' });
                                 }
+                                b.room = roomType.name;
                                 db.run("COMMIT", () => insertBooking(freeUnit));
                             }
                         );
-                         AND checkIn < ? AND checkOut > ?`,
-                        [...unitNums, b.checkOut, b.checkIn],
-                        (err, busyRows) => {
-                            if (err) { db.run("ROLLBACK"); return res.status(500).json({ error: err.message }); }
-
-                            const busySet = new Set((busyRows || []).map(r => r.unitNumber));
-                            const freeUnit = unitNums.find(u => !busySet.has(u));
-
-                            if (!freeUnit) {
-                                db.run("ROLLBACK");
-                                return res.status(400).json({ success: false, error: 'Все номера этого типа заняты на выбранные даты' });
-                            }
-
-                            b.room = roomType.name;
-                            db.run("COMMIT", () => insertBooking(freeUnit));
-                        }
-                    );
-                });
+                    });
+                }
             });
         });
     } else {
-        // Yurt/Sauna/Bath: old 1:1 logic
-        db.get(
-            `SELECT id FROM bookings WHERE room = ? AND status != 'cancelled' AND status != 'completed' AND (checkIn < ? AND checkOut > ?)`,
-            [b.room, b.checkOut, b.checkIn],
-            (err, row) => {
-                if (err) return res.status(500).json({ error: err.message });
-                if (row) return res.status(400).json({ success: false, error: 'Даты уже заняты' });
-                insertBooking(null);
-            }
-        );
+        insertBooking(null);
     }
 });
 
