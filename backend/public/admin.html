@@ -544,9 +544,11 @@
         <div class="tabs">
             <button class="tab active" onclick="switchTab('all')" id="tab-all">Все<span class="tab-count" id="cnt-all">0</span></button>
             <button class="tab" onclick="switchTab('reception')" id="tab-reception">🛎 Ресепшн</button>
-            <button class="tab" onclick="switchTab('hotel_sauna')" id="tab-hotel_sauna">🏨 Отель и Сауна</button>
-            <button class="tab" onclick="switchTab('yurt_bath')" id="tab-yurt_bath">⛺ Юрты и Баня</button>
+            <button class="tab" onclick="switchTab('hotel')" id="tab-hotel">🏨 Отель<span class="tab-count" id="cnt-hotel">0</span></button>
+            <button class="tab" onclick="switchTab('yurt')" id="tab-yurt">⛺ Юрты<span class="tab-count" id="cnt-yurt">0</span></button>
+            <button class="tab" onclick="switchTab('sauna')" id="tab-sauna">🧖‍♂️ Сауна<span class="tab-count" id="cnt-sauna">0</span></button>
             <button class="tab" onclick="switchTab('photos')" id="tab-photos">🛏 Управление номерами</button>
+            <button class="tab" onclick="switchTab('chess')" id="tab-chess">🏁 Шахматка</button>
             <button class="tab" onclick="switchTab('broadcast')" id="tab-broadcast">📢 Рассылка</button>
             <button class="tab" onclick="switchTab('menus')" id="tab-menus">🍽 Меню</button>
         </div>
@@ -656,44 +658,19 @@
             </div>
         </div>
 
-        <!-- Hotel & Sauna Section -->
-        <div id="hotel_saunaSection" style="display:none">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.2rem;">
-                <h3 style="color:var(--gold-l); margin:0;">🏨 Отель (Шахматка)</h3>
+        <!-- Chess Grid Section (Шахматка) -->
+        <div id="chessSection" style="display:none">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; gap:1rem;">
+                <h3 style="margin:0; font-size:1.1rem;">🏁 Шахматка — загрузка номеров отеля</h3>
                 <div style="display:flex; align-items:center; gap:.5rem;">
-                    <button onclick="chessNav(-7, 'hotel')" class="btn-logout">◄ 7д</button>
-                    <button onclick="chessToday('hotel')" class="btn-logout" style="color:var(--gold); border-color:var(--gold)">Сегодня</button>
-                    <button onclick="chessNav(7, 'hotel')" class="btn-logout">7д ►</button>
+                    <button onclick="chessNav(-7)" style="padding:.4rem .8rem; background:var(--surface2); border:1px solid var(--border); border-radius:8px; color:var(--text); cursor:pointer; font-size:.9rem;">◄ 7д</button>
+                    <button onclick="chessNav(-1)" style="padding:.4rem .6rem; background:var(--surface2); border:1px solid var(--border); border-radius:8px; color:var(--text); cursor:pointer; font-size:.9rem;">◄</button>
+                    <button onclick="chessToday()" style="padding:.4rem .8rem; background:var(--gold); border:none; border-radius:8px; color:#fff; cursor:pointer; font-size:.8rem; font-weight:700;">Сегодня</button>
+                    <button onclick="chessNav(1)" style="padding:.4rem .6rem; background:var(--surface2); border:1px solid var(--border); border-radius:8px; color:var(--text); cursor:pointer; font-size:.9rem;">►</button>
+                    <button onclick="chessNav(7)" style="padding:.4rem .8rem; background:var(--surface2); border:1px solid var(--border); border-radius:8px; color:var(--text); cursor:pointer; font-size:.9rem;">7д ►</button>
                 </div>
             </div>
-            <div id="hotelChessGrid" class="chess-wrapper"></div>
-            
-            <div class="stat-card" style="margin-top:2rem; border-left: 4px solid var(--gold);">
-                <h3 style="color:var(--gold-l); margin-bottom:1.5rem;">🧖‍♂️ Бронирование Сауны (Чалама)</h3>
-                <input type="date" id="saunaDate" onchange="loadHourly('sauna')" class="login-input" style="width:auto; margin-bottom:1.5rem;">
-                <div id="saunaGrid" class="hour-grid"></div>
-                <button id="saunaBookBtn" class="btn-submit" style="width:auto; display:none; margin-top:1.5rem;" onclick="bookHourly('sauna')">Забронировать выбранные часы</button>
-            </div>
-        </div>
-
-        <!-- Yurt & Bath Section -->
-        <div id="yurt_bathSection" style="display:none">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.2rem;">
-                <h3 style="color:var(--gold-l); margin:0;">⛺ Юрты (Шахматка)</h3>
-                <div style="display:flex; align-items:center; gap:.5rem;">
-                    <button onclick="chessNav(-7, 'yurt')" class="btn-logout">◄ 7д</button>
-                    <button onclick="chessToday('yurt')" class="btn-logout" style="color:var(--gold); border-color:var(--gold)">Сегодня</button>
-                    <button onclick="chessNav(7, 'yurt')" class="btn-logout">7д ►</button>
-                </div>
-            </div>
-            <div id="yurtChessGrid" class="chess-wrapper"></div>
-            
-            <div class="stat-card" style="margin-top:2rem; border-left: 4px solid var(--blue);">
-                <h3 style="color:var(--blue); margin-bottom:1.5rem;">🪵 Бронирование Бани (ХААН-ДЫТ)</h3>
-                <input type="date" id="bathDate" onchange="loadHourly('bath')" class="login-input" style="width:auto; margin-bottom:1.5rem;">
-                <div id="bathGrid" class="hour-grid"></div>
-                <button id="bathBookBtn" class="btn-submit" style="width:auto; display:none; margin-top:1.5rem;" onclick="bookHourly('bath')">Забронировать выбранные часы</button>
-            </div>
+            <div id="chessGrid" class="chess-wrapper"></div>
         </div>
 
         <!-- Broadcast Section -->
@@ -1028,8 +1005,11 @@ async function renderAll(soft = false) {
     document.getElementById('stat-revenue').textContent = fmtP(revenue);
 
     document.getElementById('cnt-all').textContent = bookings.filter(b => b.status === 'new').length;
+    document.getElementById('cnt-hotel').textContent = hotel.length;
+    document.getElementById('cnt-yurt').textContent = yurt.length;
+    document.getElementById('cnt-sauna').textContent = sauna.length;
 
-    if(currentTab === 'all') renderTable();
+    if(currentTab !== 'photos') renderTable();
 }
 
 function renderRows(arr) {
@@ -1869,35 +1849,33 @@ async function deleteMenuImg(id, category) {
 let chessStartDate = new Date().toISOString().split('T')[0];
 const CHESS_DAYS = 14;
 
-function chessNav(delta, type) {
+function chessNav(delta) {
     const d = new Date(chessStartDate);
     d.setDate(d.getDate() + delta);
     chessStartDate = d.toISOString().split('T')[0];
-    loadChessGrid(type);
+    loadChessGrid();
 }
 
-function chessToday(type) {
+function chessToday() {
     chessStartDate = new Date().toISOString().split('T')[0];
-    loadChessGrid(type);
+    loadChessGrid();
 }
 
-async function loadChessGrid(type) {
-    const el = document.getElementById(type + 'ChessGrid');
-    if(!el) return;
+async function loadChessGrid() {
+    const el = document.getElementById('chessGrid');
     el.innerHTML = '<div style="padding:2rem;text-align:center;color:var(--muted)">Загрузка...</div>';
 
     try {
-        const res = await fetch(`/api/admin/chess?startDate=${chessStartDate}&days=${CHESS_DAYS}&type=${type}`);
+        const res = await fetch(`/api/admin/chess?startDate=${chessStartDate}&days=${CHESS_DAYS}`);
         const data = await res.json();
-        renderChessGrid(data, type);
+        renderChessGrid(data);
     } catch(e) {
         el.innerHTML = '<div style="padding:2rem;text-align:center;color:var(--red)">Ошибка загрузки</div>';
     }
 }
 
-function renderChessGrid(data, type) {
-    const el = document.getElementById(type + 'ChessGrid');
-    if(!el) return;
+function renderChessGrid(data) {
+    const el = document.getElementById('chessGrid');
     const start = new Date(data.startDate);
     const days = data.days;
     const mNames = ['янв','фев','мар','апр','май','июн','июл','авг','сен','окт','ноя','дек'];
@@ -2007,91 +1985,8 @@ function renderChessGrid(data, type) {
     el.innerHTML = html;
 }
 
-// ===== HOURLY BOOKING (Sauna / Bath) =====
-let selectedHours = [];
-
-async function loadHourly(type) {
-    const dateInput = document.getElementById(type + 'Date');
-    const d = dateInput.value || new Date().toISOString().split('T')[0];
-    dateInput.value = d;
-    
-    try {
-        const res = await fetch('/api/admin/bookings');
-        const all = await res.json();
-        const busy = all.filter(b => b.type === type && b.status !== 'cancelled' && b.checkIn.startsWith(d)).map(b => new Date(b.checkIn).getHours());
-        
-        const grid = document.getElementById(type + 'Grid');
-        if(!grid) return;
-        
-        let html = '';
-        for(let h = 9; h <= 23; h++) {
-            const isBusy = busy.includes(h);
-            const isSel = selectedHours.includes(h);
-            html += `<div class="hour-btn ${isBusy?'booked':''} ${isSel?'selected':''}" onclick="toggleHour('${type}', ${h}, ${isBusy})">${h}:00</div>`;
-        }
-        grid.innerHTML = html;
-        
-        document.getElementById(type + 'BookBtn').style.display = selectedHours.length ? 'block' : 'none';
-    } catch(e) { console.error(e); }
-}
-
-function toggleHour(type, h, isBusy) {
-    if(isBusy) return;
-    if(selectedHours.includes(h)) {
-        selectedHours = selectedHours.filter(x => x !== h);
-    } else {
-        selectedHours.push(h);
-    }
-    loadHourly(type);
-}
-
-async function bookHourly(type) {
-    if(!selectedHours.length) return;
-    const guest = prompt("Имя гостя:"); if(!guest) return;
-    const phone = prompt("Телефон:"); if(!phone) return;
-    
-    const d = document.getElementById(type + 'Date').value;
-    const startH = Math.min(...selectedHours);
-    const endH = Math.max(...selectedHours) + 1;
-    
-    const room = globalRooms.find(r => r.type === type);
-    if(!room) return alert("Объект не найден");
-    
-    const checkIn = `${d}T${String(startH).padStart(2,'0')}:00:00`;
-    const checkOut = `${d}T${String(endH).padStart(2,'0')}:00:00`;
-    
-    const b = {
-        type, room: room.name, roomTypeId: room.id,
-        checkIn, checkOut, guest, phone,
-        total: selectedHours.length * room.price,
-        nights: selectedHours.length,
-        status: 'confirmed'
-    };
-    
-    try {
-        const res = await fetch('/api/bookings', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(b)
-        });
-        if(res.ok) {
-            alert("Забронировано!");
-            selectedHours = [];
-            loadHourly(type);
-            renderAll();
-        }
-    } catch(e) { console.error(e); }
-}
-
 // Init
-async function init() {
-    await getBookings();
-    const res = await fetch('/api/rooms');
-    globalRooms = await res.json();
-    if (sessionStorage.getItem('chalama_admin')) showDashboard();
-    renderAdmins();
-}
-init();
+renderAdmins();
 </script>
 </body>
 </html>
