@@ -947,7 +947,10 @@ app.get('/api/admin/chess', (req, res) => {
     endDate.setDate(endDate.getDate() + numDays);
     const endStr = endDate.toISOString().split('T')[0];
 
-    db.all("SELECT * FROM rooms WHERE type = 'hotel' ORDER BY name", [], (err, roomTypes) => {
+    const requestedType = req.query.type || 'hotel';
+    const typeFilter = requestedType === 'yurt' ? " type LIKE 'yurt%' " : " type = 'hotel' ";
+
+    db.all(`SELECT * FROM rooms WHERE ${typeFilter} ORDER BY name`, [], (err, roomTypes) => {
         if (err) return res.status(500).json({ error: err.message });
 
         db.all("SELECT * FROM room_units WHERE isActive = 1 ORDER BY roomTypeId, unitNumber", [], (err, units) => {
@@ -955,7 +958,7 @@ app.get('/api/admin/chess', (req, res) => {
 
             db.all(
                 `SELECT id, type, room, unitNumber, checkIn, checkOut, guest, phone, status
-                 FROM bookings WHERE type = 'hotel'
+                 FROM bookings WHERE ${typeFilter}
                  AND status != 'cancelled'
                  AND date(checkIn) < date(?) AND date(checkOut) > date(?)
                  ORDER BY checkIn`,
