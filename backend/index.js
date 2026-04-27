@@ -684,24 +684,18 @@ app.post('/api/bookings', (req, res) => {
                                 return res.status(500).json({ error: err.message }); 
                             }
 
-                            const busySet = new Set((busyRows || []).map(r => r.unitNumber ? String(r.unitNumber) : null).filter(Boolean));
+                            const busySet = new Set((busyRows || []).map(r => r.unitNumber).filter(Boolean));
                             // Also count how many unassigned bookings overlap
-                            const unassignedBookings = (busyRows || []).filter(r => !r.unitNumber);
-                            const unassignedCount = unassignedBookings.length;
+                            const unassignedCount = (busyRows || []).filter(r => !r.unitNumber).length;
                             
-                            console.log(`[Occupancy] Room Category: ${roomType.name}`);
-                            console.log(`[Occupancy] Total units in DB: ${unitNums.join(', ')}`);
-                            console.log(`[Occupancy] Busy specific units: ${[...busySet].join(', ')}`);
-                            console.log(`[Occupancy] Unassigned overlapping bookings count: ${unassignedCount}`);
+                            console.log(`[Occupancy] Busy units: ${[...busySet].join(', ')}, Unassigned: ${unassignedCount}`);
 
                             // For auto-assignment, we need to skip occupied units AND account for unassigned slots
-                            const freeUnits = unitNums.filter(u => !busySet.has(String(u)));
-                            console.log(`[Occupancy] Candidates (not in busySet): ${freeUnits.join(', ')}`);
-                            
+                            const freeUnits = unitNums.filter(u => !busySet.has(u));
                             const actualFreeUnit = freeUnits.length > unassignedCount ? freeUnits[unassignedCount] : null;
 
                             if (!actualFreeUnit) {
-                                console.log(`[Result] DENIED - No free units found (Free units left: ${freeUnits.length}, Unassigned tasks: ${unassignedCount})`);
+                                console.log(`[Result] DENIED - No free units found`);
                                 db.run("ROLLBACK");
                                 return res.status(400).json({ success: false, error: 'Все номера этого типа заняты на выбранные даты' });
                             }
