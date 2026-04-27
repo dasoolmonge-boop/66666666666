@@ -269,7 +269,11 @@
             position: relative;
             padding: 0;
             min-width: 50px;
+            cursor: crosshair;
+            transition: background 0.2s;
         }
+        .chess-cell:hover { background: rgba(255,255,255,0.05); }
+        .chess-cell.chess-selected { background: rgba(212, 160, 23, 0.4) !important; }
         .chess-booking {
             height: 100%;
             width: 100%;
@@ -868,6 +872,28 @@
 
             <button type="submit" class="btn-submit" style="margin-top: 1rem;">Сохранить изменения</button>
         </form>
+    </div>
+</div>
+
+<!-- ===== CHESS BOOKING PANEL ===== -->
+<div id="chessBookPanel" style="display:none; position:fixed; bottom:2rem; left:50%; transform:translateX(-50%); background:var(--surface); border:1px solid var(--gold); border-radius:var(--radius); padding:1.5rem; box-shadow:0 10px 30px rgba(0,0,0,0.8); z-index:1000; width:90%; max-width:600px;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+        <h3 style="margin:0; color:var(--gold-l);" id="cbTitle">Бронирование</h3>
+        <button onclick="closeChessBooking()" style="background:none; border:none; color:var(--muted); font-size:1.5rem; cursor:pointer;">&times;</button>
+    </div>
+    <div style="display:flex; gap:1rem; flex-wrap:wrap;">
+        <div class="form-group" style="flex:1; min-width:200px; margin-bottom:0;">
+            <label>Имя гостя</label>
+            <input type="text" id="cbGuest" placeholder="Иван Иванов">
+        </div>
+        <div class="form-group" style="flex:1; min-width:200px; margin-bottom:0;">
+            <label>Телефон</label>
+            <input type="text" id="cbPhone" placeholder="+7...">
+        </div>
+    </div>
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:1.5rem;">
+        <div style="font-size:0.9rem; color:var(--muted); font-weight:600;" id="cbDates">...</div>
+        <button class="btn-submit" style="width:auto; margin:0;" onclick="submitChessBooking()">Забронировать</button>
     </div>
 </div>
 
@@ -1951,7 +1977,7 @@ function renderChessGrid(data) {
                 const checkInBooking = unitBookings.find(b => b.checkIn.split('T')[0] === ds);
                 const midBooking = unitBookings.find(b => ds > b.checkIn.split('T')[0] && ds < b.checkOut.split('T')[0]);
 
-                html += `<td class="chess-cell">`;
+                html += `<td class="chess-cell" data-unit="${unitNum}" data-date="${ds}" onclick="handleChessCellClick('${unitNum}', '${ds}', ${!!midBooking}, ${!!checkInBooking}, ${!!checkOutBooking}, ${rt.id}, '${rt.name}', '${rt.type || ''}')">`;
                 
                 if (midBooking) {
                     // Full day occupied
@@ -1983,6 +2009,115 @@ function renderChessGrid(data) {
 
     html += '</tbody></table>';
     el.innerHTML = html;
+}
+
+// ===== CHESS BOOKING LOGIC =====
+let cbState = { unit: null, rtId: null, rtName: null, rtType: null, start: null, end: null };
+
+function handleChessCellClick(unit, dateStr, isMid, isIn, isOut, rtId, rtName, rtType) {
+    if (isMid || (isIn && isOut)) return;
+
+    if (!cbState.start) {
+        if (isIn) return;
+        cbState = { unit, rtId, rtName, rtType, start: dateStr, end: null };
+        highlightChessSelection();
+        return;
+    }
+
+    if (cbState.unit !== unit) {
+        if (isIn) return;
+        cbState = { unit, rtId, rtName, rtType, start: dateStr, end: null };
+        highlightChessSelection();
+        return;
+    }
+
+    const startObj = new Date(cbState.start);
+    const clickObj = new Date(dateStr);
+
+    if (clickObj <= startObj) {
+        if (isIn) return;
+        cbState = { unit, rtId, rtName, rtType, start: dateStr, end: null };
+        highlightChessSelection();
+        return;
+    }
+
+    cbState.end = dateStr;
+    highlightChessSelection();
+    openChessBookingPanel();
+}
+
+function highlightChessSelection() {
+    document.querySelectorAll('.chess-cell').forEach(c => c.classList.remove('chess-selected'));
+    if (!cbState.start) return;
+    
+    document.querySelectorAll('.chess-cell').forEach(c => {
+        if (c.dataset.unit === cbState.unit) {
+            const d = c.dataset.date;
+            if (cbState.end) {
+                if (d >= cbState.start && d <= cbState.end) c.classList.add('chess-selected');
+            } else {
+                if (d === cbState.start) c.classList.add('chess-selected');
+            }
+        }
+    });
+}
+
+function openChessBookingPanel() {
+    if(!cbState.start || !cbState.end) return;
+    document.getElementById('chessBookPanel').style.display = 'block';
+    document.getElementById('cbTitle').textContent = `Бронь: ${cbState.rtName} (№ ${cbState.unit})`;
+    document.getElementById('cbDates').textContent = `${cbState.start}  —  ${cbState.end}`;
+}
+
+function closeChessBooking() {
+    document.getElementById('chessBookPanel').style.display = 'none';
+    cbState = { unit: null, rtId: null, rtName: null, rtType: null, start: null, end: null };
+    highlightChessSelection();
+}
+
+async function submitChessBooking() {
+    const guest = document.getElementById('cbGuest').value.trim();
+    const phone = document.getElementById('cbPhone').value.trim();
+    if(!guest) return alert('Введите имя гостя');
+    
+    const room = globalRooms.find(r => r.id === cbState.rtId);
+    let total = 0;
+    let nights = 0;
+    if(room) {
+        const d1 = new Date(cbState.start);
+        const d2 = new Date(cbState.end);
+        nights = Math.round((d2-d1)/86400000);
+        total = nights * room.price;
+    }
+
+    const payload = {
+        type: cbState.rtType || 'hotel',
+        room: cbState.rtName,
+        roomTypeId: cbState.rtId,
+        unitNumber: cbState.unit,
+        checkIn: cbState.start + 'T14:00:00',
+        checkOut: cbState.end + 'T12:00:00',
+        guest, phone, total, nights, status: 'confirmed'
+    };
+
+    try {
+        const res = await fetch('/api/bookings', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(payload)
+        });
+        if(res.ok) {
+            closeChessBooking();
+            document.getElementById('cbGuest').value = '';
+            document.getElementById('cbPhone').value = '';
+            loadChessGrid();
+            renderAll();
+            alert('Успешно забронировано!');
+        } else {
+            const err = await res.json();
+            alert('Ошибка: ' + (err.error || 'Не удалось забронировать'));
+        }
+    } catch(e) { console.error(e); }
 }
 
 // Init

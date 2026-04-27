@@ -972,7 +972,7 @@ app.get('/api/admin/chess', (req, res) => {
                         );
 
                         return {
-                            id: rt.id, name: rt.name,
+                            id: rt.id, name: rt.name, type: rt.type,
                             units: unitNums,
                             bookings: rtBookings.map(b => ({
                                 id: b.id, unitNumber: b.unitNumber, checkIn: b.checkIn,
