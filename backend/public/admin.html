@@ -2148,9 +2148,16 @@ async function loadHourly(type) {
     try {
         const res = await fetch('/api/admin/bookings');
         const all = await res.json();
-        
-        const busy = all.filter(b => (b.type === type || b.type === 'bath') && b.status !== 'cancelled' && b.checkIn.startsWith(d)).map(b => new Date(b.checkIn).getHours());
-        
+        const busy = [];
+        all.filter(b => (b.type === type || b.type === 'bath') && b.status !== 'cancelled' && b.checkIn.startsWith(d))
+           .forEach(b => {
+               const startH = new Date(b.checkIn).getHours();
+               const endH = new Date(b.checkOut).getHours();
+               for (let h = startH; h < endH; h++) {
+                   busy.push(h);
+               }
+           });
+
         const grid = document.getElementById(type + 'Grid');
         if(!grid) return;
         
