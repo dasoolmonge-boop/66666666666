@@ -408,9 +408,6 @@ app.get('/api/rooms/available', (req, res) => {
                 (err, busyRows) => {
                     if (err) return res.status(500).json({ error: err.message });
 
-                    const busyUnits = new Set((busyRows || []).filter(r => r.unitNumber).map(r => r.unitNumber));
-                    const busyNames = new Set((busyRows || []).filter(r => !r.unitNumber).map(r => r.room));
-
                     const result = rooms.map(r => {
                         const data = {
                             id: r.id, type: r.type, name: r.name, desc: r.desc,
@@ -429,9 +426,16 @@ app.get('/api/rooms/available', (req, res) => {
                         if (r.type === 'hotel') {
                             const roomUnits = units.filter(u => u.roomTypeId === r.id);
                             if (roomUnits.length > 0) {
-                                const freeUnits = roomUnits.filter(u => !busyUnits.has(u.unitNumber));
-                                data.available = freeUnits.length > 0;
-                                data.freeCount = freeUnits.length;
+                                // Busy specific units
+                                const categoryBusyUnits = (busyRows || []).filter(br => br.unitNumber && roomUnits.some(u => u.unitNumber === br.unitNumber));
+                                // Bookings of this type WITHOUT unit assigned yet
+                                const categoryBookingsNoUnit = (busyRows || []).filter(br => !br.unitNumber && br.room === r.name);
+                                
+                                const occupiedUnitNums = new Set(categoryBusyUnits.map(br => br.unitNumber));
+                                const freeUnitsCount = roomUnits.length - occupiedUnitNums.size - categoryBookingsNoUnit.length;
+                                
+                                data.available = freeUnitsCount > 0;
+                                data.freeCount = Math.max(0, freeUnitsCount);
                                 data.totalCount = roomUnits.length;
                             } else {
                                 data.available = !isRoomBusy;
