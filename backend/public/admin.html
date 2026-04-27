@@ -675,6 +675,13 @@
                 </div>
             </div>
             <div id="chessGrid" class="chess-wrapper"></div>
+            
+            <div class="stat-card" style="margin-top:2.5rem; border-left: 4px solid var(--gold); padding:1.5rem; background:var(--surface); border-radius:var(--radius);">
+                <h3 style="color:var(--gold-l); margin-top:0; margin-bottom:1.5rem;">🧖‍♂️ Бронирование Сауны</h3>
+                <input type="date" id="saunaDate" onchange="loadHourly('sauna')" style="padding:.6rem; background:var(--surface2); border:1px solid var(--border); border-radius:8px; color:var(--text); margin-bottom:1.5rem; outline:none;">
+                <div id="saunaGrid" class="hour-grid"></div>
+                <button id="saunaBookBtn" class="btn-submit" style="width:auto; display:none; margin-top:1.5rem;" onclick="bookHourly('sauna')">Забронировать выбранные часы</button>
+            </div>
         </div>
 
         <!-- Broadcast Section -->
@@ -1006,6 +1013,7 @@ function switchTab(tab) {
     } else if (tab === 'chess') {
         document.getElementById('chessSection').style.display = 'block';
         loadChessGrid();
+        loadHourly('sauna');
     } else {
         document.getElementById('bookingsSection').style.display = 'block';
         const titles = { all:'Все бронирования', hotel:'Отель «Чалама»', yurt:'Юрточный отель «Хаан-Дыт»', sauna:'Сауна' };
@@ -2099,6 +2107,84 @@ async function submitChessBooking() {
         } else {
             const err = await res.json();
             alert('Ошибка: ' + (err.error || 'Не удалось забронировать'));
+        }
+    } catch(e) { console.error(e); }
+}
+
+// ===== HOURLY BOOKING (Sauna / Bath) =====
+let selectedHours = [];
+
+async function loadHourly(type) {
+    const dateInput = document.getElementById(type + 'Date');
+    if(!dateInput) return;
+    const d = dateInput.value || new Date().toISOString().split('T')[0];
+    dateInput.value = d;
+    
+    try {
+        const res = await fetch('/api/admin/bookings');
+        const all = await res.json();
+        const busy = all.filter(b => b.type === type && b.status !== 'cancelled' && b.checkIn.startsWith(d)).map(b => new Date(b.checkIn).getHours());
+        
+        const grid = document.getElementById(type + 'Grid');
+        if(!grid) return;
+        
+        let html = '';
+        for(let h = 9; h <= 23; h++) {
+            const isBusy = busy.includes(h);
+            const isSel = selectedHours.includes(h);
+            html += `<div class="hour-btn ${isBusy?'booked':''} ${isSel?'selected':''}" onclick="toggleHour('${type}', ${h}, ${isBusy})">${h}:00</div>`;
+        }
+        grid.innerHTML = html;
+        
+        const btn = document.getElementById(type + 'BookBtn');
+        if(btn) btn.style.display = selectedHours.length ? 'block' : 'none';
+    } catch(e) { console.error(e); }
+}
+
+function toggleHour(type, h, isBusy) {
+    if(isBusy) return;
+    if(selectedHours.includes(h)) {
+        selectedHours = selectedHours.filter(x => x !== h);
+    } else {
+        selectedHours.push(h);
+    }
+    loadHourly(type);
+}
+
+async function bookHourly(type) {
+    if(!selectedHours.length) return;
+    const guest = prompt("Имя гостя:"); if(!guest) return;
+    const phone = prompt("Телефон:"); if(!phone) return;
+    
+    const d = document.getElementById(type + 'Date').value;
+    const startH = Math.min(...selectedHours);
+    const endH = Math.max(...selectedHours) + 1;
+    
+    const room = globalRooms.find(r => r.type === type);
+    if(!room) return alert("Объект не найден");
+    
+    const checkIn = `${d}T${String(startH).padStart(2,'0')}:00:00`;
+    const checkOut = `${d}T${String(endH).padStart(2,'0')}:00:00`;
+    
+    const b = {
+        type, room: room.name, roomTypeId: room.id,
+        checkIn, checkOut, guest, phone,
+        total: selectedHours.length * room.price,
+        nights: selectedHours.length,
+        status: 'confirmed'
+    };
+    
+    try {
+        const res = await fetch('/api/bookings', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(b)
+        });
+        if(res.ok) {
+            alert("Забронировано!");
+            selectedHours = [];
+            loadHourly(type);
+            renderAll();
         }
     } catch(e) { console.error(e); }
 }
