@@ -1931,33 +1931,34 @@ async function deleteMenuImg(id, category) {
 let chessStartDate = new Date().toISOString().split('T')[0];
 const CHESS_DAYS = 14;
 
-function chessNav(delta) {
+function chessNav(delta, type='hotel') {
     const d = new Date(chessStartDate);
     d.setDate(d.getDate() + delta);
     chessStartDate = d.toISOString().split('T')[0];
-    loadChessGrid();
+    loadChessGrid(type);
 }
 
-function chessToday() {
+function chessToday(type='hotel') {
     chessStartDate = new Date().toISOString().split('T')[0];
-    loadChessGrid();
+    loadChessGrid(type);
 }
 
-async function loadChessGrid() {
-    const el = document.getElementById('chessGrid');
+async function loadChessGrid(type='hotel') {
+    const el = document.getElementById('chessGrid_' + type);
+    if (!el) return;
     el.innerHTML = '<div style="padding:2rem;text-align:center;color:var(--muted)">Загрузка...</div>';
 
     try {
-        const res = await fetch(`/api/admin/chess?startDate=${chessStartDate}&days=${CHESS_DAYS}`);
+        const res = await fetch(`/api/admin/chess?startDate=${chessStartDate}&days=${CHESS_DAYS}&type=${type}`);
         const data = await res.json();
-        renderChessGrid(data);
+        renderChessGrid(data, type);
     } catch(e) {
         el.innerHTML = '<div style="padding:2rem;text-align:center;color:var(--red)">Ошибка загрузки</div>';
     }
 }
 
-function renderChessGrid(data) {
-    const el = document.getElementById('chessGrid');
+function renderChessGrid(data, type='hotel') {
+    const el = document.getElementById('chessGrid_' + type);
     const start = new Date(data.startDate);
     const days = data.days;
     const mNames = ['янв','фев','мар','апр','май','июн','июл','авг','сен','окт','ноя','дек'];
