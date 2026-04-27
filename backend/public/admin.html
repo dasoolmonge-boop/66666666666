@@ -2023,7 +2023,7 @@ function renderChessGrid(data, type='hotel') {
                 const checkInBooking = unitBookings.find(b => b.checkIn.split('T')[0] === ds);
                 const midBooking = unitBookings.find(b => ds > b.checkIn.split('T')[0] && ds < b.checkOut.split('T')[0]);
 
-                html += `<td class="chess-cell" data-unit="${unitNum}" data-date="${ds}" onclick="handleChessCellClick('${unitNum}', '${ds}', ${!!midBooking}, ${!!checkInBooking}, ${!!checkOutBooking}, ${rt.id}, '${rt.name}', '${rt.type || ''}')">`;
+                html += `<td class="chess-cell" data-unit="${unitNum}" data-date="${ds}" onclick="handleChessCellClick('${unitNum}', '${ds}', ${!!midBooking}, ${!!checkInBooking}, ${!!checkOutBooking}, '${rt.id}', '${rt.name}', '${rt.type || ''}')">`;
                 
                 if (midBooking) {
                     // Full day occupied
