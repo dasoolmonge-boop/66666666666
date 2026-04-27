@@ -948,7 +948,7 @@ app.get('/api/admin/chess', (req, res) => {
     const endStr = endDate.toISOString().split('T')[0];
 
     const requestedType = req.query.type || 'hotel';
-    const typeFilter = requestedType === 'yurt' ? " (type = 'yurt' OR type = 'bath') " : " type = 'hotel' ";
+    const typeFilter = requestedType === 'yurt' ? " (type LIKE 'yurt%' OR type = 'bath') " : " type = 'hotel' ";
 
     db.all(`SELECT * FROM rooms WHERE ${typeFilter} ORDER BY name`, [], (err, roomTypes) => {
         if (err) return res.status(500).json({ error: err.message });
