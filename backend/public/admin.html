@@ -2088,6 +2088,8 @@ function closeChessBooking() {
 }
 
 async function submitChessBooking() {
+    if (!globalRooms.length) await loadRoomsForPhotos();
+    
     const guest = document.getElementById('cbGuest').value.trim();
     const phone = document.getElementById('cbPhone').value.trim();
     if(!guest) return alert('Введите имя гостя');
@@ -2208,6 +2210,8 @@ function closeSaunaBooking() {
 }
 
 async function submitSaunaBooking(type) {
+    if (!globalRooms.length) await loadRoomsForPhotos();
+    
     const guest = document.getElementById('sbGuest').value.trim();
     const phone = document.getElementById('sbPhone').value.trim();
     if(!guest) return alert("Введите имя гостя");
