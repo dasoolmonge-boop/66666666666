@@ -2063,6 +2063,7 @@ async function submitBookingModal() {
             body: JSON.stringify({
                 type: d.type,
                 room: d.roomName,
+                roomTypeId: d.roomId || null,
                 checkIn,
                 checkOut,
                 nights: d.nights,

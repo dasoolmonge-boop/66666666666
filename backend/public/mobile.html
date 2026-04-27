@@ -833,6 +833,7 @@
             const booking = {
                 type: typeLabel,
                 room: selected.name,
+                roomTypeId: selected.id || null,
                 checkIn: new Date(dates.checkIn).toISOString(),
                 checkOut: new Date(dates.checkOut).toISOString(),
                 nights: selected.nights,

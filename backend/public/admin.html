@@ -466,6 +466,7 @@
             <button class="tab" onclick="switchTab('yurt')" id="tab-yurt">⛺ Юрты<span class="tab-count" id="cnt-yurt">0</span></button>
             <button class="tab" onclick="switchTab('sauna')" id="tab-sauna">🧖‍♂️ Сауна<span class="tab-count" id="cnt-sauna">0</span></button>
             <button class="tab" onclick="switchTab('photos')" id="tab-photos">🛏 Управление номерами</button>
+            <button class="tab" onclick="switchTab('chess')" id="tab-chess">🏁 Шахматка</button>
             <button class="tab" onclick="switchTab('broadcast')" id="tab-broadcast">📢 Рассылка</button>
             <button class="tab" onclick="switchTab('menus')" id="tab-menus">🍽 Меню</button>
         </div>
@@ -573,6 +574,21 @@
                     </div>
                 </div>
             </div>
+        </div>
+
+        <!-- Chess Grid Section (Шахматка) -->
+        <div id="chessSection" style="display:none">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; gap:1rem;">
+                <h3 style="margin:0; font-size:1.1rem;">🏁 Шахматка — загрузка номеров отеля</h3>
+                <div style="display:flex; align-items:center; gap:.5rem;">
+                    <button onclick="chessNav(-7)" style="padding:.4rem .8rem; background:var(--surface2); border:1px solid var(--border); border-radius:8px; color:var(--text); cursor:pointer; font-size:.9rem;">◄ 7д</button>
+                    <button onclick="chessNav(-1)" style="padding:.4rem .6rem; background:var(--surface2); border:1px solid var(--border); border-radius:8px; color:var(--text); cursor:pointer; font-size:.9rem;">◄</button>
+                    <button onclick="chessToday()" style="padding:.4rem .8rem; background:var(--gold); border:none; border-radius:8px; color:#fff; cursor:pointer; font-size:.8rem; font-weight:700;">Сегодня</button>
+                    <button onclick="chessNav(1)" style="padding:.4rem .6rem; background:var(--surface2); border:1px solid var(--border); border-radius:8px; color:var(--text); cursor:pointer; font-size:.9rem;">►</button>
+                    <button onclick="chessNav(7)" style="padding:.4rem .8rem; background:var(--surface2); border:1px solid var(--border); border-radius:8px; color:var(--text); cursor:pointer; font-size:.9rem;">7д ►</button>
+                </div>
+            </div>
+            <div id="chessGrid" style="overflow-x:auto; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);"></div>
         </div>
 
         <!-- Broadcast Section -->
@@ -864,6 +880,7 @@ function switchTab(tab) {
     document.getElementById('receptionSection').style.display = 'none';
     document.getElementById('broadcastSection').style.display = 'none';
     document.getElementById('menusSection').style.display = 'none';
+    document.getElementById('chessSection').style.display = 'none';
 
     if (tab === 'photos') {
         document.getElementById('photosSection').style.display = 'block';
@@ -878,6 +895,9 @@ function switchTab(tab) {
     } else if (tab === 'menus') {
         document.getElementById('menusSection').style.display = 'block';
         loadAllMenus();
+    } else if (tab === 'chess') {
+        document.getElementById('chessSection').style.display = 'block';
+        loadChessGrid();
     } else {
         document.getElementById('bookingsSection').style.display = 'block';
         const titles = { all:'Все бронирования', hotel:'Отель «Чалама»', yurt:'Юрточный отель «Хаан-Дыт»', sauna:'Сауна' };
@@ -950,7 +970,7 @@ function renderRows(arr) {
         return `<tr>
             <td data-label="ID"><code style="color:var(--muted);font-size:.75rem">${(b.id || '—').slice(0,8)}</code></td>
             <td data-label="Тип">${typeTag}</td>
-            <td data-label="Номер"><strong>${b.room || '—'}</strong>${addonsHtml}</td>
+            <td data-label="Номер"><strong>${b.room || '—'}</strong>${b.unitNumber ? ' <span style="color:var(--gold-l);font-size:.75rem">№' + b.unitNumber + '</span>' : ''}${addonsHtml}</td>
             <td data-label="Гость"><div class="guest-name">${b.guest || '—'}</div><div class="guest-phone">${b.phone || ''}</div></td>
             <td data-label="Даты">${dateRange}</td>
             <td data-label="Ночи/Часы">${b.nights || '—'}</td>
@@ -1741,6 +1761,143 @@ async function deleteMenuImg(id, category) {
         if (res.ok) loadMenuCategory(category);
         else alert('Ошибка при удалении');
     } catch(e) { console.error(e); }
+}
+
+// ===== CHESS GRID (Шахматка) =====
+let chessStartDate = new Date().toISOString().split('T')[0];
+const CHESS_DAYS = 14;
+
+function chessNav(delta) {
+    const d = new Date(chessStartDate);
+    d.setDate(d.getDate() + delta);
+    chessStartDate = d.toISOString().split('T')[0];
+    loadChessGrid();
+}
+
+function chessToday() {
+    chessStartDate = new Date().toISOString().split('T')[0];
+    loadChessGrid();
+}
+
+async function loadChessGrid() {
+    const el = document.getElementById('chessGrid');
+    el.innerHTML = '<div style="padding:2rem;text-align:center;color:var(--muted)">Загрузка...</div>';
+
+    try {
+        const res = await fetch(`/api/admin/chess?startDate=${chessStartDate}&days=${CHESS_DAYS}`);
+        const data = await res.json();
+        renderChessGrid(data);
+    } catch(e) {
+        el.innerHTML = '<div style="padding:2rem;text-align:center;color:var(--red)">Ошибка загрузки</div>';
+    }
+}
+
+function renderChessGrid(data) {
+    const el = document.getElementById('chessGrid');
+    const start = new Date(data.startDate);
+    const days = data.days;
+    const months = ['янв','фев','мар','апр','май','июн','июл','авг','сен','окт','ноя','дек'];
+    const weekdays = ['Вс','Пн','Вт','Ср','Чт','Пт','Сб'];
+
+    // Build dates array
+    const dates = [];
+    for (let i = 0; i < days; i++) {
+        const d = new Date(start);
+        d.setDate(d.getDate() + i);
+        dates.push(d);
+    }
+
+    const todayStr = new Date().toISOString().split('T')[0];
+
+    // Status colors
+    const statusColors = {
+        new: '#e6a817',
+        confirmed: '#38a169',
+        completed: '#4299e1'
+    };
+
+    let html = '<table style="width:100%;border-collapse:collapse;font-size:.75rem;min-width:' + (180 + days * 48) + 'px">';
+
+    // Header row with dates
+    html += '<thead><tr><th style="position:sticky;left:0;z-index:2;background:var(--bg);padding:.5rem;border:1px solid var(--border);min-width:170px;text-align:left;">Тип / Номер</th>';
+    dates.forEach(d => {
+        const dateStr = d.toISOString().split('T')[0];
+        const isToday = dateStr === todayStr;
+        const isWeekend = d.getDay() === 0 || d.getDay() === 6;
+        const bg = isToday ? 'var(--gold)' : isWeekend ? 'rgba(255,255,255,0.05)' : 'var(--bg)';
+        const color = isToday ? '#fff' : 'var(--text)';
+        html += `<th style="padding:.3rem .2rem;border:1px solid var(--border);background:${bg};color:${color};text-align:center;min-width:44px;">
+            <div style="font-size:.6rem;color:${isToday ? '#fff' : 'var(--muted)'}">${weekdays[d.getDay()]}</div>
+            <div>${d.getDate()}</div>
+            <div style="font-size:.55rem;color:${isToday ? '#ffd' : 'var(--muted)'}">${months[d.getMonth()]}</div>
+        </th>`;
+    });
+    html += '</tr></thead><tbody>';
+
+    // Render each room type
+    data.roomTypes.forEach(rt => {
+        if (!rt.units || rt.units.length === 0) return;
+
+        // Count occupied/free for this type across all dates
+        const occupied = rt.bookings.length;
+        const totalUnits = rt.units.length;
+
+        // Room type header row
+        html += `<tr style="background:var(--surface2)">
+            <td style="position:sticky;left:0;z-index:1;background:var(--surface2);padding:.5rem;border:1px solid var(--border);font-weight:700;font-size:.8rem;" colspan="${days + 1}">
+                ${rt.name} <span style="color:var(--muted);font-weight:400;font-size:.7rem;">(${totalUnits} ном.)</span>
+            </td>
+        </tr>`;
+
+        // Row for each unit
+        rt.units.forEach(unitNum => {
+            html += `<tr>`;
+            html += `<td style="position:sticky;left:0;z-index:1;background:var(--bg);padding:.4rem .5rem;border:1px solid var(--border);font-weight:600;text-align:center;font-size:.85rem;">${unitNum}</td>`;
+
+            // Find bookings for this unit
+            const unitBookings = rt.bookings.filter(b => b.unitNumber === unitNum);
+
+            dates.forEach(d => {
+                const dateStr = d.toISOString().split('T')[0];
+                const isWeekend = d.getDay() === 0 || d.getDay() === 6;
+
+                // Check if any booking covers this date
+                const booking = unitBookings.find(b => {
+                    const ci = b.checkIn.split('T')[0];
+                    const co = b.checkOut.split('T')[0];
+                    return dateStr >= ci && dateStr < co;
+                });
+
+                if (booking) {
+                    const ci = booking.checkIn.split('T')[0];
+                    const co = booking.checkOut.split('T')[0];
+                    const isFirst = dateStr === ci;
+                    const color = statusColors[booking.status] || '#888';
+                    const guestShort = (booking.guest || '').split(' ').map(w => w.charAt(0).toUpperCase() + '.').join('');
+                    const guestName = (booking.guest || '').split(' ')[0];
+
+                    html += `<td style="padding:0;border:1px solid var(--border);position:relative;background:${color}22;" title="${booking.guest} | ${ci} → ${co} | ${booking.status}">
+                        <div style="background:${color};color:#fff;padding:.2rem .3rem;font-size:.6rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;height:100%;display:flex;align-items:center;border-radius:${isFirst ? '4px 0 0 4px' : '0'};">
+                            ${isFirst ? guestName : ''}
+                        </div>
+                    </td>`;
+                } else {
+                    const bg = isWeekend ? 'rgba(255,255,255,0.03)' : 'transparent';
+                    html += `<td style="padding:.2rem;border:1px solid var(--border);background:${bg};"></td>`;
+                }
+            });
+
+            html += `</tr>`;
+        });
+    });
+
+    html += '</tbody></table>';
+
+    if (!data.roomTypes || data.roomTypes.length === 0 || data.roomTypes.every(rt => !rt.units || rt.units.length === 0)) {
+        html = '<div style="padding:3rem;text-align:center;color:var(--muted)"><div style="font-size:2rem;margin-bottom:1rem;">📭</div>Нет номеров с назначенными физическими единицами.<br>Добавьте номера через «Управление номерами».</div>';
+    }
+
+    el.innerHTML = html;
 }
 
 // Init
