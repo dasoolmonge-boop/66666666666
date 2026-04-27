@@ -198,8 +198,55 @@
         .room-modal-bg.open { display: flex; }
         .room-modal {
             background: var(--surface); border: 1px solid var(--border);
-            border-radius: var(--radius); padding: 2rem; width: 95%; max-width: 800px;
+            border-radius: 20px; padding: 2rem; width: 95%; max-width: 800px;
             max-height: 90vh; overflow-y: auto; overflow-x: hidden; position: relative;
+        }
+
+        /* ===== MOBILE ADAPTIVITY ===== */
+        @media (max-width: 1024px) {
+            .stats { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 768px) {
+            .main { padding: 1rem; }
+            .topbar { padding: 1rem; }
+            .topbar-logo { font-size: .85rem; letter-spacing: 1.5px; }
+            .topbar-user { display: none; }
+            
+            .stats { grid-template-columns: repeat(2, 1fr); gap: .8rem; }
+            .stat-card { padding: 1rem; }
+            .stat-value { font-size: 1.5rem; }
+            .stat-label { font-size: .65rem; }
+            
+            .tabs { 
+                overflow-x: auto; 
+                padding-bottom: .5rem;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: none;
+            }
+            .tabs::-webkit-scrollbar { display: none; }
+            .tab { white-space: nowrap; padding: .6rem 1.1rem; font-size: .78rem; }
+            
+            .table-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
+            .search-input { width: 100%; }
+            .table-wrap { overflow-x: auto; border-radius: 8px; }
+            table { min-width: 800px; }
+            
+            .photo-grid { grid-template-columns: repeat(2, 1fr); }
+            .room-mgmt-card { padding: 1rem; }
+            .room-mgmt-header { flex-direction: column; gap: .5rem; }
+            
+            #admin-grid { grid-template-columns: 1fr !important; }
+            .broadcast-preview { min-width: 100% !important; }
+            [id^="menu-grid-"] { grid-template-columns: repeat(2, 1fr) !important; }
+        }
+
+        @media (max-width: 480px) {
+            .stats { grid-template-columns: 1fr; }
+            .stat-card { display: flex; align-items: center; gap: 1rem; text-align: left; }
+            .stat-icon { margin-bottom: 0; font-size: 1.5rem; }
+            .tab { padding: .5rem .8rem; }
+        }
         }
         .room-modal-close {
             position: absolute; top: 1rem; right: 1rem; background: transparent;
