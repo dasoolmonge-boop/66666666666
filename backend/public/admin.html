@@ -2085,7 +2085,7 @@ function handleChessCellClick(unit, dateStr, isMid, isIn, isOut, rtId, rtName, r
     const startObj = new Date(cbState.start);
     const clickObj = new Date(dateStr);
 
-    if (clickObj <= startObj) {
+    if (clickObj < startObj) {
         if (isIn) return;
         cbState = { unit, rtId, rtName, rtType, start: dateStr, end: null };
         highlightChessSelection();
@@ -2133,13 +2133,14 @@ async function submitChessBooking() {
     const phone = document.getElementById('cbPhone').value.trim();
     if(!guest) return alert('Введите имя гостя');
     
+    const d1 = new Date(cbState.start);
+    const d2 = new Date(cbState.end);
+    d2.setDate(d2.getDate() + 1); // Check-out is the day AFTER the last selected cell
+    
     const room = globalRooms.find(r => r.id === cbState.rtId || r.name === cbState.rtName);
     let total = 0;
-    let nights = 0;
+    let nights = Math.round((d2-d1)/86400000);
     if(room) {
-        const d1 = new Date(cbState.start);
-        const d2 = new Date(cbState.end);
-        nights = Math.round((d2-d1)/86400000);
         total = nights * room.price;
     }
 
@@ -2149,7 +2150,7 @@ async function submitChessBooking() {
         roomTypeId: cbState.rtId,
         unitNumber: cbState.unit,
         checkIn: cbState.start + 'T14:00:00',
-        checkOut: cbState.end + 'T12:00:00',
+        checkOut: d2.toISOString().split('T')[0] + 'T12:00:00',
         guest, phone, total, nights, status: 'confirmed'
     };
 
