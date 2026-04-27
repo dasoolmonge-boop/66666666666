@@ -393,9 +393,9 @@ app.get('/api/rooms/available', (req, res) => {
     let { checkIn, checkOut } = req.query;
     if (!checkIn || !checkOut) return res.status(400).json({ error: 'checkIn and checkOut required' });
 
-    // Normalize dates to include standard hotel times for proper lexicographical comparison
-    if (!checkIn.includes('T')) checkIn = checkIn.split('T')[0] + 'T14:00:00';
-    if (!checkOut.includes('T')) checkOut = checkOut.split('T')[0] + 'T12:00:00';
+    // Clean dates to YYYY-MM-DD format
+    const inD = checkIn.split('T')[0];
+    const outD = checkOut.split('T')[0];
 
     db.all("SELECT * FROM rooms", [], (err, rooms) => {
         if (err) return res.status(500).json({ error: err.message });
@@ -407,8 +407,8 @@ app.get('/api/rooms/available', (req, res) => {
             db.all(
                 `SELECT DISTINCT room, unitNumber FROM bookings
                  WHERE status != 'cancelled' AND status != 'completed'
-                 AND checkIn < ? AND checkOut > ?`,
-                [checkOut, checkIn],
+                 AND SUBSTR(checkIn, 1, 10) < ? AND SUBSTR(checkOut, 1, 10) > ?`,
+                [outD, inD],
                 (err, busyRows) => {
                     if (err) return res.status(500).json({ error: err.message });
 
@@ -421,7 +421,7 @@ app.get('/api/rooms/available', (req, res) => {
                             tariff: r.tariff || null, prepayment: r.prepayment || null,
                         };
 
-                        // Robust busy check: check if any booking overlaps and matches by room name or unit number
+                        // Robust busy check using SUBSTR comparison in query above, now filter results
                         const overlappingBookings = (busyRows || []).filter(br => 
                             br.room === r.name || br.unitNumber === r.name
                         );
@@ -430,10 +430,10 @@ app.get('/api/rooms/available', (req, res) => {
                         if (r.type === 'hotel') {
                             const roomUnits = units.filter(u => u.roomTypeId === r.id);
                             if (roomUnits.length > 0) {
-                                // Busy specific units
-                                const categoryBusyUnits = (busyRows || []).filter(br => br.unitNumber && roomUnits.some(u => u.unitNumber === br.unitNumber));
+                                // Busy specific units (already filtered by overlap in SQL)
+                                const categoryBusyUnits = overlappingBookings.filter(br => br.unitNumber && roomUnits.some(u => u.unitNumber === br.unitNumber));
                                 // Bookings of this type WITHOUT unit assigned yet
-                                const categoryBookingsNoUnit = (busyRows || []).filter(br => !br.unitNumber && br.room === r.name);
+                                const categoryBookingsNoUnit = overlappingBookings.filter(br => !br.unitNumber && br.room === r.name);
                                 
                                 const occupiedUnitNums = new Set(categoryBusyUnits.map(br => br.unitNumber));
                                 const freeUnitsCount = roomUnits.length - occupiedUnitNums.size - categoryBookingsNoUnit.length;
@@ -567,11 +567,11 @@ app.post('/api/bookings', (req, res) => {
         return res.status(400).json({ success: false, error: 'Даты проживания обязательны' });
     }
 
-    // Normalize dates to include standard hotel times for proper lexicographical comparison
-    if (!b.checkIn.includes('T')) b.checkIn = b.checkIn.split('T')[0] + 'T14:00:00';
-    if (!b.checkOut.includes('T')) b.checkOut = b.checkOut.split('T')[0] + 'T12:00:00';
+    // Clean dates to YYYY-MM-DD format
+    const inD = b.checkIn.split('T')[0];
+    const outD = b.checkOut.split('T')[0];
 
-    if (new Date(b.checkIn) >= new Date(b.checkOut)) {
+    if (new Date(inD) >= new Date(outD)) {
         return res.status(400).json({ success: false, error: 'Дата выезда должна быть позже даты заезда' });
     }
 
@@ -651,8 +651,8 @@ app.post('/api/bookings', (req, res) => {
                     if (err || !units || !units.length) {
                         // Fallback: no units defined
                         db.get(
-                            `SELECT id FROM bookings WHERE room = ? AND status != 'cancelled' AND status != 'completed' AND checkIn < ? AND checkOut > ?`,
-                            [roomType.name, b.checkOut, b.checkIn],
+                            `SELECT id FROM bookings WHERE room = ? AND status != 'cancelled' AND status != 'completed' AND SUBSTR(checkIn, 1, 10) < ? AND SUBSTR(checkOut, 1, 10) > ?`,
+                            [roomType.name, outD, inD],
                             (err, conflict) => {
                                 if (conflict) {
                                     db.run("ROLLBACK");
@@ -674,9 +674,9 @@ app.post('/api/bookings', (req, res) => {
                     db.all(
                         `SELECT DISTINCT unitNumber FROM bookings
                          WHERE status != 'cancelled' AND status != 'completed'
-                         AND checkIn < ? AND checkOut > ?
+                         AND SUBSTR(checkIn, 1, 10) < ? AND SUBSTR(checkOut, 1, 10) > ?
                          AND (unitNumber IN (${placeholders}) OR (room = ? AND unitNumber IS NULL))`,
-                        [b.checkOut, b.checkIn, ...unitNums, roomType.name],
+                        [outD, inD, ...unitNums, roomType.name],
                         (err, busyRows) => {
                             if (err) { 
                                 console.error("[DB Error]", err.message);
@@ -711,8 +711,8 @@ app.post('/api/bookings', (req, res) => {
     } else {
         // Yurt/Sauna/Bath: old 1:1 logic
         db.get(
-            `SELECT id FROM bookings WHERE room = ? AND status != 'cancelled' AND status != 'completed' AND (checkIn < ? AND checkOut > ?)`,
-            [b.room, b.checkOut, b.checkIn],
+            `SELECT id FROM bookings WHERE room = ? AND status != 'cancelled' AND status != 'completed' AND (SUBSTR(checkIn, 1, 10) < ? AND SUBSTR(checkOut, 1, 10) > ?)`,
+            [b.room, outD, inD],
             (err, row) => {
                 if (err) return res.status(500).json({ error: err.message });
                 if (row) return res.status(400).json({ success: false, error: 'Даты уже заняты' });
