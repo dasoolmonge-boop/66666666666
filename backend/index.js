@@ -607,16 +607,16 @@ app.post('/api/bookings', (req, res) => {
         );
     }
 
-    if (b.type === 'hotel' || b.type === 'yurt' || b.type === 'sauna' || b.type === 'bath') {
+    if (b.type === 'hotel') {
         // Hotel: auto-assign a free unit using exclusive transaction
         db.run("BEGIN EXCLUSIVE", (err) => {
             if (err) return res.status(500).json({ error: 'Transaction error' });
 
-            // Find room type by name or ID
-            const findQ = b.roomTypeId
+            const isNumericId = b.roomTypeId && !isNaN(parseInt(b.roomTypeId));
+            const findQ = isNumericId
                 ? "SELECT id, name FROM rooms WHERE id = ?"
                 : "SELECT id, name FROM rooms WHERE name = ?";
-            const findP = b.roomTypeId ? [b.roomTypeId] : [b.room];
+            const findP = isNumericId ? [b.roomTypeId] : [b.room];
 
             db.get(findQ, findP, (err, roomType) => {
                 if (err || !roomType) {
@@ -626,7 +626,7 @@ app.post('/api/bookings', (req, res) => {
 
                 db.all("SELECT unitNumber FROM room_units WHERE roomTypeId = ? AND isActive = 1", [roomType.id], (err, units) => {
                     if (err || !units || !units.length) {
-                        // Fallback: no units defined, use old behavior
+                        // Fallback: no units defined
                         db.get(
                             `SELECT id FROM bookings WHERE room = ? AND status != 'cancelled' AND status != 'completed' AND checkIn < ? AND checkOut > ?`,
                             [roomType.name, b.checkOut, b.checkIn],
@@ -677,7 +677,10 @@ app.post('/api/bookings', (req, res) => {
             (err, row) => {
                 if (err) return res.status(500).json({ error: err.message });
                 if (row) return res.status(400).json({ success: false, error: 'Даты уже заняты' });
-                insertBooking(null);
+                
+                // For yurts, we save the unitNumber (which is the room name) so it shows in chess grid
+                const unitToSave = b.type === 'yurt' ? b.unitNumber : null;
+                insertBooking(unitToSave);
             }
         );
     }
