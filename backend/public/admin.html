@@ -1945,23 +1945,6 @@ function renderChessGrid(data) {
         html += `<td style="position:sticky;left:0;z-index:15;background:#252a3a;padding:.6rem .8rem;border:1px solid var(--border);font-weight:700;font-size:.82rem;" colspan="${days+1}">`;
         html += `<span style="margin-right:.4rem">◈</span> ${rt.name} <span style="color:#888;font-weight:400;font-size:.7rem;">(${rt.units.length})</span></td></tr>`;
 
-        // Summary rows
-        const busyMap = dates.map(d => {
-            const ds = d.toISOString().split('T')[0];
-            return rt.units.filter(u => rt.bookings.some(b => b.unitNumber === u && ds >= b.checkIn.split('T')[0] && ds < b.checkOut.split('T')[0])).length;
-        });
-
-        ['Занято', 'Свободно'].forEach((label, idx) => {
-            html += '<tr style="background:#1a1d27;height:25px;">';
-            html += `<td style="position:sticky;left:0;z-index:11;background:#1a1d27;padding:.1rem .8rem;border:1px solid var(--border);font-size:.62rem;font-weight:700;color:${idx===0?'#e53e3e':'#38a169'}">${label}</td>`;
-            busyMap.forEach(count => {
-                const val = idx === 0 ? count : rt.units.length - count;
-                const color = idx === 0 ? (val > 0 ? '#e53e3e' : '#444') : (val > 0 ? '#38a169' : '#e53e3e');
-                html += `<td style="text-align:center;border:1px solid var(--border);font-size:.65rem;font-weight:700;color:${color}">${val||(idx===0?'':0)}</td>`;
-            });
-            html += '</tr>';
-        });
-
         // Unit rows
         rt.units.forEach(unitNum => {
             html += '<tr>';
