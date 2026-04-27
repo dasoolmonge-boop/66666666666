@@ -390,8 +390,12 @@ app.get('/api/rooms', (req, res) => {
 
 // Get available rooms for a date range
 app.get('/api/rooms/available', (req, res) => {
-    const { checkIn, checkOut } = req.query;
+    let { checkIn, checkOut } = req.query;
     if (!checkIn || !checkOut) return res.status(400).json({ error: 'checkIn and checkOut required' });
+
+    // Normalize dates to include standard hotel times for proper lexicographical comparison
+    if (!checkIn.includes('T')) checkIn = checkIn.split('T')[0] + 'T14:00:00';
+    if (!checkOut.includes('T')) checkOut = checkOut.split('T')[0] + 'T12:00:00';
 
     db.all("SELECT * FROM rooms", [], (err, rooms) => {
         if (err) return res.status(500).json({ error: err.message });
