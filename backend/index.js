@@ -607,80 +607,79 @@ app.post('/api/bookings', (req, res) => {
         );
     }
 
-        if (b.type === 'hotel' || b.type === 'yurt' || b.type === 'sauna' || b.type === 'bath') {
+    if (b.type === 'hotel' || b.type === 'yurt' || b.type === 'sauna' || b.type === 'bath') {
+        // Hotel: auto-assign a free unit using exclusive transaction
         db.run("BEGIN EXCLUSIVE", (err) => {
             if (err) return res.status(500).json({ error: 'Transaction error' });
 
-            const findQ = b.roomTypeId ? "SELECT id, name, type FROM rooms WHERE id = ?" : "SELECT id, name, type FROM rooms WHERE name = ?";
+            // Find room type by name or ID
+            const findQ = b.roomTypeId
+                ? "SELECT id, name FROM rooms WHERE id = ?"
+                : "SELECT id, name FROM rooms WHERE name = ?";
             const findP = b.roomTypeId ? [b.roomTypeId] : [b.room];
 
             db.get(findQ, findP, (err, roomType) => {
                 if (err || !roomType) {
                     db.run("ROLLBACK");
-                    return res.status(400).json({ success: false, error: 'Объект не найден' });
+                    return res.status(400).json({ success: false, error: 'Тип номера не найден' });
                 }
 
-                const forceUnit = b.forceUnitNumber || b.unitNumber;
-
-                if (forceUnit) {
-                    db.get(
-                        `SELECT id FROM bookings 
-                         WHERE room = ? AND unitNumber = ? AND status != 'cancelled' AND status != 'completed'
-                         AND checkIn < ? AND checkOut > ?`,
-                        [roomType.name, forceUnit, b.checkOut, b.checkIn],
-                        (err, conflict) => {
-                            if (conflict) {
-                                db.run("ROLLBACK");
-                                return res.status(400).json({ success: false, error: `Номер ${forceUnit} уже занят на эти даты` });
-                            }
-                            b.room = roomType.name;
-                            db.run("COMMIT", () => insertBooking(forceUnit));
-                        }
-                    );
-                } else {
-                    db.all("SELECT unitNumber FROM room_units WHERE roomTypeId = ? AND isActive = 1", [roomType.id], (err, units) => {
-                        if (err || !units || !units.length) {
-                            db.get(
-                                `SELECT id FROM bookings WHERE room = ? AND status != 'cancelled' AND status != 'completed' AND checkIn < ? AND checkOut > ?`,
-                                [roomType.name, b.checkOut, b.checkIn],
-                                (err, conflict) => {
-                                    if (conflict) {
-                                        db.run("ROLLBACK");
-                                        return res.status(400).json({ success: false, error: 'Даты уже заняты' });
-                                    }
-                                    b.room = roomType.name;
-                                    db.run("COMMIT", () => insertBooking(null));
-                                }
-                            );
-                            return;
-                        }
-
-                        const unitNums = units.map(u => u.unitNumber);
-                        const placeholders = unitNums.map(() => '?').join(',');
-                        db.all(
-                            `SELECT DISTINCT unitNumber FROM bookings
-                             WHERE unitNumber IN (${placeholders})
-                             AND status != 'cancelled' AND status != 'completed'
-                             AND checkIn < ? AND checkOut > ?`,
-                            [...unitNums, b.checkOut, b.checkIn],
-                            (err, busyRows) => {
-                                if (err) { db.run("ROLLBACK"); return res.status(500).json({ error: err.message }); }
-                                const busySet = new Set((busyRows || []).map(r => r.unitNumber));
-                                const freeUnit = unitNums.find(u => !busySet.has(u));
-                                if (!freeUnit) {
+                db.all("SELECT unitNumber FROM room_units WHERE roomTypeId = ? AND isActive = 1", [roomType.id], (err, units) => {
+                    if (err || !units || !units.length) {
+                        // Fallback: no units defined, use old behavior
+                        db.get(
+                            `SELECT id FROM bookings WHERE room = ? AND status != 'cancelled' AND status != 'completed' AND checkIn < ? AND checkOut > ?`,
+                            [roomType.name, b.checkOut, b.checkIn],
+                            (err, conflict) => {
+                                if (conflict) {
                                     db.run("ROLLBACK");
-                                    return res.status(400).json({ success: false, error: 'Все номера этого типа заняты на выбранные даты' });
+                                    return res.status(400).json({ success: false, error: 'Даты уже заняты' });
                                 }
                                 b.room = roomType.name;
-                                db.run("COMMIT", () => insertBooking(freeUnit));
+                                db.run("COMMIT", () => insertBooking(null));
                             }
                         );
-                    });
-                }
+                        return;
+                    }
+
+                    const unitNums = units.map(u => u.unitNumber);
+                    const placeholders = unitNums.map(() => '?').join(',');
+
+                    db.all(
+                        `SELECT DISTINCT unitNumber FROM bookings
+                         WHERE unitNumber IN (${placeholders})
+                         AND status != 'cancelled' AND status != 'completed'
+                         AND checkIn < ? AND checkOut > ?`,
+                        [...unitNums, b.checkOut, b.checkIn],
+                        (err, busyRows) => {
+                            if (err) { db.run("ROLLBACK"); return res.status(500).json({ error: err.message }); }
+
+                            const busySet = new Set((busyRows || []).map(r => r.unitNumber));
+                            const freeUnit = unitNums.find(u => !busySet.has(u));
+
+                            if (!freeUnit) {
+                                db.run("ROLLBACK");
+                                return res.status(400).json({ success: false, error: 'Все номера этого типа заняты на выбранные даты' });
+                            }
+
+                            b.room = roomType.name;
+                            db.run("COMMIT", () => insertBooking(freeUnit));
+                        }
+                    );
+                });
             });
         });
     } else {
-        insertBooking(null);
+        // Yurt/Sauna/Bath: old 1:1 logic
+        db.get(
+            `SELECT id FROM bookings WHERE room = ? AND status != 'cancelled' AND status != 'completed' AND (checkIn < ? AND checkOut > ?)`,
+            [b.room, b.checkOut, b.checkIn],
+            (err, row) => {
+                if (err) return res.status(500).json({ error: err.message });
+                if (row) return res.status(400).json({ success: false, error: 'Даты уже заняты' });
+                insertBooking(null);
+            }
+        );
     }
 });
 
@@ -944,54 +943,45 @@ app.delete('/api/room-units/:id', (req, res) => {
 app.get('/api/admin/chess', (req, res) => {
     const startDate = req.query.startDate || new Date().toISOString().split('T')[0];
     const numDays = parseInt(req.query.days) || 14;
-    const filterType = req.query.type || 'hotel'; // hotel, yurt, sauna, bath
     const endDate = new Date(startDate);
     endDate.setDate(endDate.getDate() + numDays);
     const endStr = endDate.toISOString().split('T')[0];
 
-    // Build the query to fetch rooms based on type
-    let roomsQ = "SELECT * FROM rooms WHERE type = ? ORDER BY name";
-    let roomsP = [filterType];
-
-    db.all(roomsQ, roomsP, (err, roomTypes) => {
+    db.all("SELECT * FROM rooms WHERE type = 'hotel' ORDER BY name", [], (err, roomTypes) => {
         if (err) return res.status(500).json({ error: err.message });
 
         db.all("SELECT * FROM room_units WHERE isActive = 1 ORDER BY roomTypeId, unitNumber", [], (err, units) => {
             if (err) return res.status(500).json({ error: err.message });
 
             db.all(
-                `SELECT id, type, room, unitNumber, checkIn, checkOut, guest, phone, status, total
-                 FROM bookings WHERE status != 'cancelled'
+                `SELECT id, type, room, unitNumber, checkIn, checkOut, guest, phone, status
+                 FROM bookings WHERE type = 'hotel'
+                 AND status != 'cancelled'
                  AND date(checkIn) < date(?) AND date(checkOut) > date(?)
                  ORDER BY checkIn`,
                 [endStr, startDate],
-                (err, allBookings) => {
+                (err, bookings) => {
                     if (err) return res.status(500).json({ error: err.message });
 
                     const result = (roomTypes || []).map(rt => {
-                        let unitNums = [];
-                        if (rt.type === 'hotel') {
-                            unitNums = (units || []).filter(u => u.roomTypeId === rt.id).map(u => u.unitNumber);
-                        } else {
-                            // For yurts, sauna, bath: each room entry is its own unit
-                            unitNums = [rt.name]; 
-                        }
+                        const rtUnits = (units || []).filter(u => u.roomTypeId === rt.id);
+                        const unitNums = rtUnits.map(u => u.unitNumber);
 
-                        const rtBookings = (allBookings || []).filter(b => 
-                            (b.room === rt.name) && (unitNums.includes(b.unitNumber) || !b.unitNumber)
+                        const rtBookings = (bookings || []).filter(b =>
+                            unitNums.includes(b.unitNumber) || (b.room === rt.name && !b.unitNumber)
                         );
 
                         return {
-                            id: rt.id, name: rt.name, type: rt.type, price: rt.price, priceWeekend: rt.priceWeekend,
+                            id: rt.id, name: rt.name,
                             units: unitNums,
                             bookings: rtBookings.map(b => ({
-                                id: b.id, unitNumber: b.unitNumber || rt.name, checkIn: b.checkIn,
-                                checkOut: b.checkOut, guest: b.guest, status: b.status, total: b.total
+                                id: b.id, unitNumber: b.unitNumber, checkIn: b.checkIn,
+                                checkOut: b.checkOut, guest: b.guest, status: b.status
                             }))
                         };
                     });
 
-                    res.json({ roomTypes: result, startDate, days: numDays, filterType });
+                    res.json({ roomTypes: result, startDate, days: numDays });
                 }
             );
         });

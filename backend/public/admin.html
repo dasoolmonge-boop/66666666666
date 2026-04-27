@@ -25,549 +25,1968 @@
         }
         * { margin:0; padding:0; box-sizing:border-box; }
         body { font-family:'Inter',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
-        
-        .login-wrap { min-height:100vh; display:flex; align-items:center; justify-content:center; background: radial-gradient(ellipse at top, #1a1d27 0%, #0f1117 70%); }
-        .login-card { background:var(--surface); border:1px solid var(--border); border-radius:24px; padding:3rem; width:90%; max-width:420px; text-align:center; }
+        a { color: var(--gold); text-decoration: none; }
+
+        /* ===== LOGIN ===== */
+        .login-wrap {
+            min-height:100vh; display:flex; align-items:center; justify-content:center;
+            background: radial-gradient(ellipse at top, #1a1d27 0%, #0f1117 70%);
+        }
+        .login-card {
+            background:var(--surface); border:1px solid var(--border); border-radius:24px;
+            padding:3rem; width:90%; max-width:420px; text-align:center;
+        }
         .login-logo { font-size:1.5rem; font-weight:900; letter-spacing:4px; margin-bottom:.5rem; }
         .login-logo em { color:var(--gold); font-style:normal; }
-        .login-input { width:100%; padding:1rem 1.2rem; background:var(--surface2); border:1.5px solid var(--border); border-radius:12px; color:var(--text); margin-bottom:1rem; outline:none; }
-        .login-btn { width:100%; padding:1rem; background:var(--gold); color:#fff; border:none; border-radius:12px; font-weight:700; cursor:pointer; text-transform:uppercase; transition:.3s; }
+        .login-sub { color:var(--muted); font-size:.82rem; margin-bottom:2.5rem; }
+        .login-input {
+            width:100%; padding:1rem 1.2rem; background:var(--surface2); border:1.5px solid var(--border);
+            border-radius:12px; color:var(--text); font-size:.95rem; font-family:inherit;
+            outline:none; transition:.3s; margin-bottom:1rem;
+        }
+        .login-input:focus { border-color:var(--gold); }
+        .login-input::placeholder { color:var(--muted); }
+        .login-btn {
+            width:100%; padding:1rem; background:var(--gold); color:#fff; border:none;
+            border-radius:12px; font-size:.9rem; font-weight:700; cursor:pointer;
+            font-family:inherit; letter-spacing:1px; text-transform:uppercase; transition:.3s;
+        }
+        .login-btn:hover { background:var(--gold-l); transform:translateY(-1px); }
+        .login-error { color:var(--red); font-size:.8rem; margin-top:1rem; display:none; }
 
+        /* ===== DASHBOARD ===== */
         .dashboard { display:none; }
-        .topbar { background:var(--surface); border-bottom:1px solid var(--border); padding:1rem 2rem; display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; z-index:100; }
-        .main { max-width:1400px; margin:0 auto; padding:2rem; }
+        .topbar {
+            background:var(--surface); border-bottom:1px solid var(--border);
+            padding:1rem 2rem; display:flex; justify-content:space-between; align-items:center;
+            position:sticky; top:0; z-index:50;
+        }
+        .topbar-logo { font-weight:800; font-size:1rem; letter-spacing:3px; }
+        .topbar-logo em { color:var(--gold); font-style:normal; }
+        .topbar-badge {
+            font-size:.6rem; background:var(--gold); color:#fff; padding:.2rem .6rem;
+            border-radius:50px; font-weight:700; margin-left:.6rem; vertical-align:middle;
+        }
+        .topbar-right { display:flex; align-items:center; gap:1rem; }
+        .topbar-user { font-size:.82rem; color:var(--muted); }
+        .btn-logout {
+            padding:.5rem 1.2rem; background:var(--surface2); border:1px solid var(--border);
+            border-radius:10px; color:var(--muted); font-size:.78rem; cursor:pointer;
+            font-family:inherit; transition:.3s;
+        }
+        .btn-logout:hover { border-color:var(--red); color:var(--red); }
 
-        .stats { display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:1.2rem; margin-bottom:2.5rem; }
-        .stat-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:1.5rem; }
-        .stat-value { font-size:1.8rem; font-weight:900; margin-bottom:.2rem; }
-        .stat-label { font-size:.7rem; color:var(--muted); text-transform:uppercase; letter-spacing:1px; }
+        .main { max-width:1280px; margin:0 auto; padding:2rem; }
 
-        .tabs { display:flex; gap:.5rem; margin-bottom:1.5rem; overflow-x:auto; padding-bottom:.5rem; }
-        .tab { padding:.7rem 1.2rem; background:var(--surface); border:1.5px solid var(--border); border-radius:10px; color:var(--muted); font-size:.8rem; font-weight:600; cursor:pointer; white-space:nowrap; }
+        /* Stats */
+        .stats { display:grid; grid-template-columns:repeat(4,1fr); gap:1.2rem; margin-bottom:2.5rem; }
+        .stat-card {
+            background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+            padding:1.5rem; transition:.3s;
+        }
+        .stat-card:hover { border-color:var(--gold); transform:translateY(-2px); }
+        .stat-icon { font-size:1.8rem; margin-bottom:.8rem; }
+        .stat-value { font-size:2rem; font-weight:900; margin-bottom:.2rem; }
+        .stat-label { font-size:.75rem; color:var(--muted); text-transform:uppercase; letter-spacing:1.5px; font-weight:600; }
+
+        /* Tabs */
+        .tabs { display:flex; gap:.5rem; margin-bottom:1.5rem; }
+        .tab {
+            padding:.7rem 1.5rem; background:var(--surface); border:1.5px solid var(--border);
+            border-radius:10px; color:var(--muted); font-size:.82rem; font-weight:600;
+            cursor:pointer; font-family:inherit; transition:.3s; letter-spacing:.5px;
+        }
+        .tab:hover { border-color:var(--gold); color:var(--text); }
         .tab.active { background:var(--gold); border-color:var(--gold); color:#fff; }
-        .tab-count { background:rgba(255,255,255,.1); padding:2px 6px; border-radius:4px; margin-left:6px; font-size:.7rem; }
+        .tab-scroll-hint { position: sticky; right: 0; top: 0; bottom: 0; width: 30px; background: linear-gradient(to right, transparent, var(--bg)); pointer-events: none; display: none; }
+        .tab-count {
+            background:rgba(255,255,255,.15); padding:.1rem .5rem; border-radius:50px;
+            font-size:.68rem; margin-left:.5rem;
+        }
+        .tab.active .tab-count { background:rgba(255,255,255,.25); }
 
-        .table-wrap { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); overflow:auto; }
-        table { width:100%; border-collapse:collapse; min-width:1000px; }
-        th { text-align:left; padding:1rem; font-size:.7rem; color:var(--muted); text-transform:uppercase; border-bottom:1px solid var(--border); }
-        td { padding:1rem; font-size:.85rem; border-bottom:1px solid var(--border); }
-        tr:hover { background:var(--surface2); }
-
-        .tag { padding:4px 10px; border-radius:50px; font-size:.65rem; font-weight:700; text-transform:uppercase; }
-        .tag-new { background:var(--gold-l); color:#000; }
+        /* Table */
+        .table-wrap {
+            background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+            overflow:hidden;
+        }
+        .table-header {
+            display:flex; justify-content:space-between; align-items:center;
+            padding:1.2rem 1.5rem; border-bottom:1px solid var(--border);
+        }
+        .table-title { font-weight:700; font-size:1rem; }
+        .search-input {
+            padding:.5rem 1rem; background:var(--surface2); border:1px solid var(--border);
+            border-radius:8px; color:var(--text); font-size:.82rem; font-family:inherit;
+            outline:none; width:260px; transition:.3s;
+        }
+        .search-input:focus { border-color:var(--gold); }
+        .search-input::placeholder { color:var(--muted); }
+        table { width:100%; border-collapse:collapse; }
+        thead th {
+            text-align:left; padding:.8rem 1.2rem; font-size:.68rem; font-weight:700;
+            color:var(--muted); text-transform:uppercase; letter-spacing:1.5px;
+            border-bottom:1px solid var(--border); white-space:nowrap;
+        }
+        tbody td { padding:1rem 1.2rem; font-size:.88rem; border-bottom:1px solid var(--border); vertical-align:middle; }
+        tbody tr { transition:.15s; }
+        tbody tr:hover { background:var(--surface2); }
+        tbody tr:last-child td { border-bottom:none; }
+        .guest-name { font-weight:600; }
+        .guest-phone { font-size:.78rem; color:var(--muted); margin-top:.15rem; }
+        .tag {
+            display:inline-block; padding:.25rem .7rem; border-radius:50px; font-size:.68rem;
+            font-weight:700; text-transform:uppercase; letter-spacing:.5px;
+        }
         .tag-confirmed { background:var(--green-bg); color:var(--green); }
         .tag-cancelled { background:var(--red-bg); color:var(--red); }
+        .tag-hotel { background:var(--blue-bg); color:var(--blue); }
+        .tag-yurt { background:rgba(184,134,11,.15); color:var(--gold-l); }
+        .tag-sauna { background:rgba(168,85,247,.15); color:#a855f7; }
+        .btn-action {
+            padding:.4rem .9rem; border-radius:8px; font-size:.72rem; font-weight:600;
+            cursor:pointer; font-family:inherit; border:1.5px solid; transition:.2s;
+        }
+        .btn-cancel { background:transparent; border-color:var(--red); color:var(--red); }
+        .btn-cancel:hover { background:var(--red); color:#fff; }
+        .btn-restore { background:transparent; border-color:var(--green); color:var(--green); }
+        .btn-restore:hover { background:var(--green); color:#fff; }
+        .actions { display:flex; gap:.4rem; }
+        .empty-state {
+            text-align:center; padding:4rem 2rem; color:var(--muted);
+        }
+        .empty-state .icon { font-size:3rem; margin-bottom:1rem; }
+        .empty-state p { font-size:.9rem; }
+        .addons-list { font-size:.75rem; color:var(--gold-l); margin-top:.2rem; }
 
-        /* Chess */
-        .chess-wrapper { position: relative; overflow: auto; max-height: 70vh; border-radius: var(--radius); border: 1px solid var(--border); background: #11141d; }
-        .chess-table { border-collapse: separate; border-spacing: 0; width: 100%; }
-        .chess-table th { position: sticky; top: 0; z-index: 20; background: #1a1f2e; border-bottom: 2px solid var(--border); text-align: center; }
-        .chess-table th:first-child { position: sticky; left: 0; z-index: 30; background: #1a1f2e; min-width: 200px; text-align: left; border-right: 2px solid var(--border); }
-        .chess-table td:first-child { position: sticky; left: 0; z-index: 10; background: #1a1f2e; border-right: 2px solid var(--border); font-weight: 700; }
-        .chess-cell { border: 0.5px solid #2a2d3a; height: 50px; position: relative; cursor: cell; min-width: 50px; }
-        .chess-cell.selected { background: var(--gold) !important; }
-        .chess-booking { height: 100%; width: 100%; display: flex; align-items: center; padding: 0 5px; font-size: 0.6rem; color: #fff; overflow: hidden; }
-        .chess-split { width: 100%; height: 100%; position: relative; }
-        .chess-split-out { position: absolute; top:0; left:0; width:100%; height:100%; clip-path: polygon(0 0, 100% 0, 0 100%); }
-        .chess-split-in { position: absolute; top:0; left:0; width:100%; height:100%; clip-path: polygon(100% 0, 100% 100%, 0 100%); }
-
-        /* Calendar Reception */
-        .adm-cal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
-        .adm-cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
-        .adm-cal-day { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; background: var(--surface2); border-radius: 8px; cursor: pointer; font-size: .8rem; font-weight: 600; border: 1.5px solid transparent; }
-        .adm-cal-day.selected { background: var(--gold); border-color: var(--gold); color: #fff; }
-        .adm-cal-day.booked { background: var(--red-bg); color: var(--red); cursor: not-allowed; opacity: 0.5; }
-        .adm-cal-day.booked-in { background: linear-gradient(135deg, var(--surface2) 50%, var(--red-bg) 50%); }
-        .adm-cal-day.booked-out { background: linear-gradient(135deg, var(--red-bg) 50%, var(--surface2) 50%); }
-
-        .hour-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)); gap: 6px; margin-top: 1rem; }
-        .hour-btn { padding: 8px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; font-size: .75rem; text-align: center; cursor: pointer; }
-        .hour-btn.selected { background: var(--gold); border-color: var(--gold); color: #fff; }
-        .hour-btn.booked { background: var(--red-bg); color: var(--red); opacity: 0.3; cursor: not-allowed; }
-
-        /* Modals */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); display: none; align-items: center; justify-content: center; z-index: 1000; }
-        .modal-card { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; width: 90%; max-width: 500px; padding: 2rem; }
-        .form-input { width: 100%; padding: .8rem; background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; color: var(--text); margin-bottom: 1rem; outline: none; }
-        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-        
-        .btn-action { padding: .6rem 1.2rem; border-radius: 8px; font-weight: 700; cursor: pointer; border: 1px solid var(--border); background: var(--surface2); color: var(--text); }
-        .btn-gold { background: var(--gold); border-color: var(--gold); color: #fff; }
-        
-        .room-mgmt-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 1.5rem; margin-bottom: 1.5rem; }
-        .photo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; margin: 1rem 0; }
-        .photo-item { position: relative; border-radius: 10px; overflow: hidden; aspect-ratio: 1.5; border: 1px solid var(--border); }
+        /* Photos Management */
+        .photo-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 1rem;
+            margin-top: 1rem;
+        }
+        .photo-item {
+            position: relative; border-radius: 12px; overflow: hidden; height: 100px;
+            border: 1px solid var(--border);
+        }
         .photo-item img { width: 100%; height: 100%; object-fit: cover; }
-        .btn-del-photo { position: absolute; top: 4px; right: 4px; background: rgba(255,0,0,0.7); border: none; color: #fff; width: 20px; height: 20px; border-radius: 50%; cursor: pointer; }
+        .btn-del-photo {
+            position: absolute; top: 4px; right: 4px; width: 24px; height: 24px;
+            background: rgba(0,0,0,.6); border: none; border-radius: 50%;
+            color: #fff; font-size: 14px; display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: .2s;
+        }
+        .btn-del-photo:hover { background: var(--red); }
+        .room-mgmt-card {
+            background: var(--surface2); border: 1px solid var(--border);
+            border-radius: var(--radius); padding: 1.5rem; margin-bottom: 1rem;
+        }
+        .room-mgmt-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem; }
+        .room-mgmt-title { font-size: 1.1rem; font-weight: 700; color: var(--gold-l); }
+        .upload-section { margin-top: 1rem; display: flex; gap: .5rem; }
+        .upload-input {
+            width: 100%; padding: .5rem; background: var(--surface);
+            border: 1px dashed var(--gold); border-radius: 8px; font-size: .8rem;
+            color: var(--muted); cursor: pointer;
+        }
+
+        /* Room Modal */
+        .room-modal-bg {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,.8); backdrop-filter: blur(4px);
+            z-index: 999; display: none; align-items: center; justify-content: center;
+        }
+        .room-modal-bg.open { display: flex; }
+        .room-modal {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 20px; padding: 2rem; width: 95%; max-width: 800px;
+            max-height: 90vh; overflow-y: auto; overflow-x: hidden; position: relative;
+        }
+
+        /* Mobile adaptivity removed from here to fix syntax errors and conflicts. Consolidated below. */
+        .room-modal-close {
+            position: absolute; top: 1rem; right: 1rem; background: transparent;
+            border: none; color: var(--muted); font-size: 1.5rem; cursor: pointer;
+        }
+        .room-modal-close:hover { color: #fff; }
+        .form-group { margin-bottom: 1.2rem; display: flex; flex-direction: column; gap: .4rem; }
+        .form-group label { font-size: .8rem; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+        .form-group input, .form-group select, .form-group textarea {
+            padding: .8rem 1rem; background: var(--surface2); border: 1.5px solid var(--border);
+            border-radius: 10px; color: var(--text); font-size: .9rem; font-family: inherit;
+        }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--gold); outline: none; }
+        .btn-submit {
+            width: 100%; padding: 1rem; background: var(--gold); color: #fff; border: none;
+            border-radius: 12px; font-size: .9rem; font-weight: 700; cursor: pointer;
+            text-transform: uppercase; letter-spacing: 1px; margin-top: 1rem;
+        }
+        .btn-submit:hover { background: var(--gold-l); }
+        .room-actions { display: flex; gap: .5rem; }
+
+        /* ===== CHESS GRID (ШАХМАТКА) ===== */
+        .chess-wrapper {
+            position: relative;
+            overflow: auto;
+            max-height: 70vh;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            background: #11141d;
+        }
+        .chess-table {
+            border-collapse: separate;
+            border-spacing: 0;
+            width: 100%;
+        }
+        .chess-table thead th {
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            background: #1a1f2e;
+            border-bottom: 2px solid var(--border);
+            padding: 0.5rem;
+            min-width: 50px;
+            text-align: center;
+        }
+        .chess-table thead th:first-child {
+            left: 0;
+            z-index: 30;
+            background: #1a1f2e;
+            min-width: 190px;
+            text-align: left;
+        }
+        .chess-table tbody td:first-child {
+            position: sticky;
+            left: 0;
+            z-index: 10;
+            background: #1a1f2e;
+            border-right: 1px solid var(--border);
+            font-weight: 700;
+            color: #ccc;
+        }
+        .chess-cell {
+            border: 0.5px solid #2a2d3a;
+            height: 40px;
+            position: relative;
+            padding: 0;
+            min-width: 50px;
+        }
+        .chess-booking {
+            height: 100%;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            padding: 0 0.5rem;
+            font-size: 0.65rem;
+            font-weight: 600;
+            color: #fff;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .chess-booking:hover { filter: brightness(1.1); z-index: 5; }
+        
+        /* Половинки дней */
+        .chess-split {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            background: transparent;
+        }
+        .chess-split-out {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            clip-path: polygon(0 0, 100% 0, 0 100%);
+        }
+        .chess-split-in {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            clip-path: polygon(100% 0, 100% 100%, 0 100%);
+        }
+
+        /* Responsive */
+        @media (max-width:1024px) {
+            .stats { grid-template-columns: repeat(2,1fr); }
+        }
+        @media (max-width:768px) {
+            .main { padding:1rem; }
+            .stats { grid-template-columns: 1fr 1fr; gap:.8rem; margin-bottom: 2rem; }
+            .stat-card { padding:1rem; min-height: 100px; display: flex; flex-direction: column; justify-content: center; }
+            .stat-icon { font-size: 1.4rem; margin-bottom: .4rem; }
+            .stat-value { font-size:1.3rem; }
+            .stat-label { font-size: .6rem; }
+            .tabs { 
+                overflow-x:auto; scrollbar-width:none; padding-bottom: .5rem;
+                mask-image: linear-gradient(to right, black 85%, transparent 100%);
+            }
+            .tabs::-webkit-scrollbar { display:none; }
+            .tab { white-space:nowrap; padding: .6rem 1rem; font-size: .75rem; }
+            .table-header { flex-direction:column; gap:.8rem; align-items:stretch; padding: 1rem; }
+            .search-input { width:100%; font-size: .9rem; }
+            .topbar { padding:.8rem 1rem; }
+            .topbar-logo { font-size: .85rem; }
+            .topbar-user { display:none; }
+            /* Mobile table: card layout */
+            table, thead, tbody, th, td, tr { display:block; }
+            thead { display:none; }
+            tbody tr {
+                background:var(--surface2); border:1px solid var(--border); border-radius:12px;
+                margin-bottom:.8rem; padding:1.2rem; position:relative;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            }
+            tbody td { 
+                border:none; padding:.4rem 0; font-size:.88rem; 
+                display: flex; justify-content: space-between; align-items: center;
+                text-align: right;
+            }
+            tbody td::before {
+                content:attr(data-label); display:block; font-size:.65rem; color:var(--muted);
+                text-transform:uppercase; letter-spacing:1px; font-weight:700; 
+                text-align: left;
+            }
+            tbody td:last-child { 
+                display:flex; gap:.6rem; margin-top:1rem; padding-top: 1rem;
+                border-top: 1px solid var(--border); justify-content: stretch;
+            }
+            .btn-action { flex: 1; text-align: center; padding: .6rem; font-size: .8rem; }
+            .guest-name { font-size: .9rem; }
+            .guest-phone { font-size: .8rem; }
+            .room-modal { padding: 1.2rem; }
+            .room-modal h2 { font-size: 1.2rem; }
+            .form-group input, .form-group select, .form-group textarea { padding: .7rem; font-size: 1rem; }
+            .btn-submit { padding: .8rem; }
+            .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+            
+            /* Unique rules ported from old block */
+            .photo-grid { grid-template-columns: repeat(2, 1fr); }
+            .room-mgmt-card { padding: 1rem; }
+            .room-mgmt-header { flex-direction: column; gap: .5rem; }
+            #admin-grid { grid-template-columns: 1fr !important; }
+            .broadcast-preview { min-width: 100% !important; }
+            [id^="menu-grid-"] { grid-template-columns: repeat(2, 1fr) !important; }
+            .broadcast-grid { grid-template-columns: 1fr; }
+            .reception-grid { grid-template-columns: repeat(2, 1fr); gap: .8rem; }
+        }
+        @media (max-width:480px) {
+            .stats { grid-template-columns: 1fr; }
+            .stat-card { display: flex; align-items: center; gap: 1rem; text-align: left; min-height: auto; }
+            .stat-icon { margin-bottom: 0; font-size: 1.5rem; }
+            .tab { padding: .5rem .8rem; }
+            .login-card { padding:2rem 1.5rem; }
+            .form-grid { grid-template-columns: 1fr; }
+            .reception-grid { grid-template-columns: 1fr; }
+            .admin-add-row { flex-direction: column; }
+            .admin-add-row input, .admin-add-row select, .btn-add { width: 100%; min-width: 0; box-sizing: border-box; }
+            .btn-logout { padding: .4rem .8rem; font-size: .7rem; }
+            .topbar-logo { font-size: .75rem; }
+        }
+
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        .form-group.full { grid-column: span 2; }
+        .broadcast-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+        @media (max-width: 600px) { .form-grid { grid-template-columns: 1fr; } .form-group.full { grid-column: span 1; } }
+
+        /* Admin management */
+        .admin-section {
+            margin-top:2.5rem; background:var(--surface); border:1px solid var(--border);
+            border-radius:var(--radius); padding:1.5rem;
+        }
+        .admin-section-title {
+            font-weight:700; font-size:1rem; margin-bottom:1.2rem;
+            display:flex; align-items:center; gap:.6rem;
+        }
+        .admin-add-row {
+            display:flex; gap:.6rem; margin-bottom:1.2rem; flex-wrap:wrap;
+        }
+        .admin-add-row input {
+            flex:1; min-width:140px; padding:.6rem 1rem; background:var(--surface2);
+            border:1.5px solid var(--border); border-radius:10px; color:var(--text);
+            font-size:.85rem; font-family:inherit; outline:none; transition:.3s;
+        }
+        .admin-add-row input:focus { border-color:var(--gold); }
+        .admin-add-row input::placeholder { color:var(--muted); }
+        .btn-add {
+            padding:.6rem 1.4rem; background:var(--gold); color:#fff; border:none;
+            border-radius:10px; font-size:.82rem; font-weight:700; cursor:pointer;
+            font-family:inherit; transition:.3s; white-space:nowrap;
+        }
+        .btn-add:hover { background:var(--gold-l); }
+        .btn-test {
+            padding:.6rem 1.2rem; background:transparent; border:1.5px solid var(--blue);
+            color:var(--blue); border-radius:10px; font-size:.78rem; font-weight:600;
+            cursor:pointer; font-family:inherit; transition:.2s; white-space:nowrap;
+        }
+        .btn-test:hover { background:var(--blue); color:#fff; }
+        .admin-list { display:grid; gap:.5rem; }
+        .admin-item {
+            display:flex; align-items:center; justify-content:space-between;
+            padding:.8rem 1rem; background:var(--surface2); border-radius:10px;
+            border:1px solid var(--border);
+        }
+        .admin-item-info { display:flex; align-items:center; gap:.8rem; }
+        .admin-item-avatar {
+            width:36px; height:36px; border-radius:10px; background:var(--gold);
+            display:flex; align-items:center; justify-content:center; font-size:1rem;
+        }
+        .admin-item-name { font-weight:600; font-size:.88rem; }
+        .admin-item-id { font-size:.72rem; color:var(--muted); margin-top:.1rem; }
+        .btn-remove {
+            padding:.35rem .8rem; background:transparent; border:1.5px solid var(--red);
+            color:var(--red); border-radius:8px; font-size:.7rem; font-weight:600;
+            cursor:pointer; font-family:inherit; transition:.2s;
+        }
+        .btn-remove:hover { background:var(--red); color:#fff; }
+        .admin-hint {
+            font-size:.75rem; color:var(--muted); margin-top:1rem; line-height:1.6;
+        }
+        .admin-hint code { background:var(--surface2); padding:.15rem .5rem; border-radius:4px; color:var(--gold-l); }
+        .tg-status {
+            margin-top:.6rem; font-size:.78rem; padding:.5rem 1rem;
+            border-radius:8px; display:none;
+        }
+        .tg-status.success { display:block; background:var(--green-bg); color:var(--green); }
+        .tg-status.error { display:block; background:var(--red-bg); color:var(--red); }
+        
+        /* ===== RECEPTION / MANUAL BOOKING ===== */
+        .reception-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 2rem; }
+        .reception-card {
+            background: var(--surface); border: 2px solid var(--border); border-radius: var(--radius);
+            padding: 1.5rem; cursor: pointer; transition: .3s; text-align: center;
+        }
+        .reception-card:hover { border-color: var(--gold); background: var(--surface2); }
+        .reception-card.active { border-color: var(--gold); background: var(--surface2); box-shadow: 0 0 15px rgba(184,134,11,0.2); }
+        .reception-card-icon { font-size: 2rem; margin-bottom: 0.5rem; }
+        .reception-card-title { font-weight: 700; font-size: 0.9rem; }
+        
+        #receptionBookingPanel {
+            display: grid; grid-template-columns: 350px 1fr; gap: 2rem;
+            background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+            padding: 2rem; margin-top: 1.5rem;
+        }
+        @media (max-width: 900px) { #receptionBookingPanel { grid-template-columns: 1fr; } }
+        
+        .reception-form { display: flex; flex-direction: column; gap: 1.2rem; }
+        
+        /* Compact Admin Calendar */
+        .adm-cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; background: var(--border); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+        .adm-cal-day { background: var(--surface2); padding: 10px 5px; text-align: center; font-size: 0.8rem; cursor: pointer; transition: 0.2s; position: relative; }
+        .adm-cal-day:hover:not(.disabled) { background: var(--surface); }
+        .adm-cal-day.disabled { color: var(--muted); opacity: 0.5; cursor: not-allowed; }
+        .adm-cal-day.today { color: var(--gold); font-weight: 800; }
+        .adm-cal-day.booked { background: var(--red-bg); color: var(--red); cursor: not-allowed; }
+        .adm-cal-day.booked-out { background: linear-gradient(135deg, var(--red-bg) 50%, var(--surface2) 50%); cursor: pointer; }
+        .adm-cal-day.booked-in { background: linear-gradient(135deg, var(--surface2) 50%, var(--red-bg) 50%); cursor: pointer; }
+        .adm-cal-day.selected { background: var(--gold) !important; color: #fff; }
+        .adm-cal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+        .adm-cal-header button { background: none; border: 1px solid var(--border); color: #fff; border-radius: 4px; padding: 2px 8px; cursor: pointer; }
+        .adm-cal-day-name { text-align: center; font-size: 0.65rem; color: var(--muted); padding-bottom: 5px; font-weight: 700; }
+        
+        .hour-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem; margin-top: 1rem; }
+        .hour-btn { padding: 0.5rem; background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; font-size: 0.75rem; color: #fff; cursor: pointer; text-align: center; }
+        .hour-btn.booked { opacity: 0.3; cursor: not-allowed; background: var(--red-bg); }
+        .hour-btn.selected { background: var(--gold); border-color: var(--gold); }
     </style>
 </head>
 <body>
 
+<!-- ===== LOGIN ===== -->
 <div class="login-wrap" id="loginWrap">
     <div class="login-card">
         <div class="login-logo">ООО <em>ЧАЛАМА</em></div>
-        <input class="login-input" type="password" id="loginPass" placeholder="Пароль">
+        <p class="login-sub">Панель управления бронированиями</p>
+        <input class="login-input" type="password" id="loginPass" placeholder="Введите пароль администратора" onkeydown="if(event.key==='Enter')doLogin()">
         <button class="login-btn" onclick="doLogin()">Войти</button>
+        <p class="login-error" id="loginError">Неверный пароль. Попробуйте снова.</p>
     </div>
 </div>
 
+<!-- ===== DASHBOARD ===== -->
 <div class="dashboard" id="dashboard">
     <div class="topbar">
-        <div class="topbar-logo">ЧАЛАМА <em>ADMIN</em></div>
-        <button class="btn-action" onclick="doLogout()">Выйти</button>
+        <div>
+            <span class="topbar-logo">ЧАЛАМА <em>ADMIN</em></span>
+            <span class="topbar-badge">v1.0</span>
+        </div>
+        <div class="topbar-right">
+            <span class="topbar-user">👤 Администратор</span>
+            <a href="/" class="btn-logout" style="border-color:var(--blue);color:var(--blue)">← На сайт</a>
+            <button class="btn-logout" onclick="doLogout()">Выйти</button>
+        </div>
     </div>
 
     <div class="main">
+        <!-- Stats -->
         <div class="stats">
-            <div class="stat-card"><div class="stat-value" id="stat-total">0</div><div class="stat-label">Всего</div></div>
-            <div class="stat-card"><div class="stat-value" id="stat-active" style="color:var(--green)">0</div><div class="stat-label">Активных</div></div>
-            <div class="stat-card"><div class="stat-value" id="stat-cancelled" style="color:var(--red)">0</div><div class="stat-label">Отмена</div></div>
-            <div class="stat-card"><div class="stat-value" id="stat-revenue" style="color:var(--gold-l)">0 ₽</div><div class="stat-label">Доход</div></div>
+            <div class="stat-card">
+                <div class="stat-icon">📊</div>
+                <div class="stat-value" id="stat-total">0</div>
+                <div class="stat-label">Всего бронирований</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">✅</div>
+                <div class="stat-value" id="stat-active" style="color:var(--green)">0</div>
+                <div class="stat-label">Активных</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">❌</div>
+                <div class="stat-value" id="stat-cancelled" style="color:var(--red)">0</div>
+                <div class="stat-label">Отменённых</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">💰</div>
+                <div class="stat-value" id="stat-revenue" style="color:var(--gold-l)">0 ₽</div>
+                <div class="stat-label">Сумма активных</div>
+            </div>
         </div>
 
+        <!-- Tabs -->
         <div class="tabs">
-            <button class="tab active" onclick="switchTab('all')" id="tab-all">Все брони <span class="tab-count" id="cnt-all">0</span></button>
-            <button class="tab" onclick="switchTab('reception')" id="tab-reception">🔑 Ресепшн</button>
-            <button class="tab" onclick="switchTab('hotel')" id="tab-hotel">🏨 Отель и Сауна</button>
-            <button class="tab" onclick="switchTab('yurt')" id="tab-yurt">⛺ Юрты и Баня</button>
-            <button class="tab" onclick="switchTab('photos')" id="tab-photos">🖼 Галерея</button>
+            <button class="tab active" onclick="switchTab('all')" id="tab-all">Все<span class="tab-count" id="cnt-all">0</span></button>
+            <button class="tab" onclick="switchTab('reception')" id="tab-reception">🛎 Ресепшн</button>
+            <button class="tab" onclick="switchTab('hotel')" id="tab-hotel">🏨 Отель<span class="tab-count" id="cnt-hotel">0</span></button>
+            <button class="tab" onclick="switchTab('yurt')" id="tab-yurt">⛺ Юрты<span class="tab-count" id="cnt-yurt">0</span></button>
+            <button class="tab" onclick="switchTab('sauna')" id="tab-sauna">🧖‍♂️ Сауна<span class="tab-count" id="cnt-sauna">0</span></button>
+            <button class="tab" onclick="switchTab('photos')" id="tab-photos">🛏 Управление номерами</button>
+            <button class="tab" onclick="switchTab('chess')" id="tab-chess">🏁 Шахматка</button>
             <button class="tab" onclick="switchTab('broadcast')" id="tab-broadcast">📢 Рассылка</button>
             <button class="tab" onclick="switchTab('menus')" id="tab-menus">🍽 Меню</button>
         </div>
 
-        <!-- Section: All Bookings -->
+        <!-- Table (Bookings) -->
         <div id="bookingsSection">
-            <div style="display:flex; justify-content:space-between; margin-bottom:1.5rem; align-items:center;">
-                <input class="form-input" style="width:400px; margin:0" type="text" placeholder="Поиск по гостю или телефону..." id="searchInput" oninput="renderTable()">
-                <button class="btn-action" onclick="clearArchive()" style="border-color:var(--red); color:var(--red)">Очистить архив</button>
+            <div class="table-header" style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); margin-bottom:1.5rem;">
+                <div class="table-title" id="tableTitle">Управление бронированиями</div>
+                <input class="search-input" type="text" placeholder="🔍 Поиск по имени, тел, номеру..." id="searchInput" oninput="renderTable()">
             </div>
-            <div class="table-wrap">
+            
+            <h3 style="margin-bottom: 1rem; color: var(--gold-l); display: flex; align-items: center; gap: .5rem; font-size: 1.1rem;">🆕 Новые заявки <span class="tab-count" id="countNew" style="background:var(--surface2)">0</span></h3>
+            <div class="table-wrap" style="margin-bottom: 2.5rem;">
                 <table>
-                    <thead><tr><th>ID</th><th>Тип</th><th>Объект</th><th>Гость</th><th>Даты</th><th>Сумма</th><th>Статус</th></tr></thead>
-                    <tbody id="bodyAll"></tbody>
+                    <thead><tr><th>ID</th><th>Тип</th><th>Номер</th><th>Гость</th><th>Даты</th><th>Ночи</th><th>Сумма</th><th>Статус</th></tr></thead>
+                    <tbody id="bodyNew"></tbody>
+                </table>
+            </div>
+
+            <h3 style="margin-bottom: 1rem; color: var(--green); display: flex; align-items: center; gap: .5rem; font-size: 1.1rem;">✅ Активные (Ожидаются / Проживают) <span class="tab-count" id="countActive" style="background:var(--surface2)">0</span></h3>
+            <div class="table-wrap" style="margin-bottom: 2.5rem;">
+                <table>
+                    <thead><tr><th>ID</th><th>Тип</th><th>Номер</th><th>Гость</th><th>Даты</th><th>Ночи</th><th>Сумма</th><th>Статус</th></tr></thead>
+                    <tbody id="bodyActive"></tbody>
+                </table>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <h3 style="color: var(--muted); display: flex; align-items: center; gap: .5rem; font-size: 1.1rem; margin: 0;">🗄 Архив (Завершенные и Отмененные) <span class="tab-count" id="countArchive" style="background:var(--surface2)">0</span></h3>
+                <button class="btn-remove" onclick="clearArchive()" style="font-size: .75rem; padding: .5rem 1rem;">🗑 Очистить архив</button>
+            </div>
+            <div class="table-wrap" style="margin-bottom: 2.5rem; opacity: 0.85;">
+                <table>
+                    <thead><tr><th>ID</th><th>Тип</th><th>Номер</th><th>Гость</th><th>Даты</th><th>Ночи</th><th>Сумма</th><th>Статус</th></tr></thead>
+                    <tbody id="bodyArchive"></tbody>
                 </table>
             </div>
         </div>
 
-        <!-- Section: Reception -->
+        <!-- Reception Section -->
         <div id="receptionSection" style="display:none">
-            <div style="display:grid; grid-template-columns: 1fr 350px; gap: 2rem;">
-                <div class="stat-card">
-                    <div class="adm-cal-header">
-                        <button class="btn-action" onclick="changeRecMonth(-1)">◄</button>
-                        <h3 id="recCalTitle">Апрель 2026</h3>
-                        <button class="btn-action" onclick="changeRecMonth(1)">►</button>
+            <div class="reception-grid">
+                <div class="reception-card" id="card-rec-hotel" onclick="selectRecType('hotel')">
+                    <div class="reception-card-icon">🏨</div>
+                    <div class="reception-card-title">Отель</div>
+                </div>
+                <div class="reception-card" id="card-rec-yurt" onclick="selectRecType('yurt')">
+                    <div class="reception-card-icon">⛺</div>
+                    <div class="reception-card-title">Юрты</div>
+                </div>
+                <div class="reception-card" id="card-rec-sauna" onclick="selectRecType('sauna')">
+                    <div class="reception-card-icon">🧖‍♂️</div>
+                    <div class="reception-card-title">Сауна</div>
+                </div>
+                <div class="reception-card" id="card-rec-bath" onclick="selectRecType('bath')">
+                    <div class="reception-card-icon">🚿</div>
+                    <div class="reception-card-title">Баня</div>
+                </div>
+            </div>
+
+            <div id="receptionBookingPanel" style="display:none">
+                <div class="reception-form">
+                    <h3 id="recPanelTitle">Бронирование</h3>
+                    
+                    <div class="form-group">
+                        <label>Номер / Объект</label>
+                        <select id="recRoomSelect" onchange="onRecRoomChange()"></select>
                     </div>
-                    <div class="adm-cal-grid" id="recCalGrid"></div>
-                    <div id="recHourPanel" style="display:none; margin-top:2rem;">
-                        <h4>Выберите часы</h4>
+
+                    <div class="form-group">
+                        <label>Имя гостя</label>
+                        <input type="text" id="recGuestName" placeholder="Иван Иванов">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Телефон</label>
+                        <input type="text" id="recGuestPhone" placeholder="+7 (___) ___-__-__">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Итоговая сумма (₽)</label>
+                        <input type="number" id="recTotal" placeholder="0">
+                    </div>
+
+                    <button class="btn-submit" onclick="createManualBooking()">Создать бронирование</button>
+                    <div id="recStatusMsg" style="font-size:0.8rem; text-align:center;"></div>
+                </div>
+
+                <div class="reception-calendar">
+                    <div class="adm-cal-header">
+                        <button onclick="changeRecMonth(-1)">‹</button>
+                        <h4 id="recCalTitle">Месяц 202X</h4>
+                        <button onclick="changeRecMonth(1)">›</button>
+                    </div>
+                    <div id="recCalGrid" class="adm-cal-grid"></div>
+                    
+                    <!-- Hourly selection for Sauna/Bath -->
+                    <div id="recHourPanel" style="display:none; margin-top:1.5rem; border-top:1px solid var(--border); padding-top:1.5rem;">
+                        <label style="font-size:0.7rem; color:var(--muted); font-weight:700; text-transform:uppercase;">Выберите часы (по 1 час)</label>
                         <div class="hour-grid" id="recHourGrid"></div>
                     </div>
-                </div>
-                <div class="stat-card">
-                    <h3>Новая бронь</h3>
-                    <label style="font-size:.7rem; color:var(--muted)">ТИП ОБЪЕКТА</label>
-                    <select id="recTypeSelect" class="form-input" onchange="selectRecType(this.value)">
-                        <option value="hotel">Отель</option>
-                        <option value="sauna">Сауна</option>
-                        <option value="yurt">Юрты</option>
-                        <option value="bath">Баня</option>
-                    </select>
-                    <label style="font-size:.7rem; color:var(--muted)">ВЫБЕРИТЕ НОМЕР / ЗАЛ</label>
-                    <select id="recRoomSelect" class="form-input" onchange="onRecRoomChange()"></select>
-                    <div id="recSelectionSummary" style="padding:1rem; background:var(--surface2); border-radius:10px; margin-bottom:1rem; font-size:.85rem; color:var(--gold-l)"></div>
-                    <input type="text" id="recGuestName" class="form-input" placeholder="Имя гостя">
-                    <input type="text" id="recGuestPhone" class="form-input" placeholder="Телефон">
-                    <input type="number" id="recTotal" class="form-input" placeholder="Итоговая сумма">
-                    <button class="login-btn" onclick="createManualBooking()">Создать бронь</button>
-                    <p id="recStatusMsg" style="margin-top:1rem; font-size:.85rem"></p>
+
+                    <div id="recSelectionSummary" style="margin-top:1.5rem; font-size:0.85rem; color:var(--gold-l); font-weight:600;">
+                        Выберите даты на календаре
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Section: Hotel & Chess -->
-        <div id="hotelSection" style="display:none">
-            <div style="display:flex; justify-content:space-between; margin-bottom:1.2rem; align-items:center;">
-                <h3 style="color:var(--gold-l)">🏨 Отель (Шахматка)</h3>
-                <div>
-                    <button onclick="chessNav(-7)" class="btn-action">◄ 7д</button>
-                    <button onclick="chessToday()" class="btn-action" style="color:var(--gold)">Сегодня</button>
-                    <button onclick="chessNav(7)" class="btn-action">7д ►</button>
+        <!-- Chess Grid Section (Шахматка) -->
+        <div id="chessSection" style="display:none">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; gap:1rem;">
+                <h3 style="margin:0; font-size:1.1rem;">🏁 Шахматка — загрузка номеров отеля</h3>
+                <div style="display:flex; align-items:center; gap:.5rem;">
+                    <button onclick="chessNav(-7)" style="padding:.4rem .8rem; background:var(--surface2); border:1px solid var(--border); border-radius:8px; color:var(--text); cursor:pointer; font-size:.9rem;">◄ 7д</button>
+                    <button onclick="chessNav(-1)" style="padding:.4rem .6rem; background:var(--surface2); border:1px solid var(--border); border-radius:8px; color:var(--text); cursor:pointer; font-size:.9rem;">◄</button>
+                    <button onclick="chessToday()" style="padding:.4rem .8rem; background:var(--gold); border:none; border-radius:8px; color:#fff; cursor:pointer; font-size:.8rem; font-weight:700;">Сегодня</button>
+                    <button onclick="chessNav(1)" style="padding:.4rem .6rem; background:var(--surface2); border:1px solid var(--border); border-radius:8px; color:var(--text); cursor:pointer; font-size:.9rem;">►</button>
+                    <button onclick="chessNav(7)" style="padding:.4rem .8rem; background:var(--surface2); border:1px solid var(--border); border-radius:8px; color:var(--text); cursor:pointer; font-size:.9rem;">7д ►</button>
                 </div>
             </div>
-            <div id="hotelGrid" class="chess-wrapper"></div>
-            <div class="stat-card" style="margin-top:2rem">
-                <div style="display:flex; justify-content:space-between; align-items:center">
-                    <h4>🧖‍♂️ Сауна (Чалама)</h4>
-                    <input type="date" id="saunaDate" onchange="loadHourly('sauna')" class="form-input" style="width:auto; margin:0">
+            <div id="chessGrid" class="chess-wrapper"></div>
+        </div>
+
+        <!-- Broadcast Section -->
+        <div id="broadcastSection" style="display:none">
+            <div class="broadcast-grid">
+                <!-- Compose -->
+                <div style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:1.5rem;">
+                    <h3 style="margin-bottom:1rem; font-size:1.1rem;">📢 Новая рассылка</h3>
+                    
+                    <div style="font-size:.82rem; color:var(--muted); background:var(--surface2); padding:.7rem 1rem; border-radius:10px; margin-bottom:1.2rem; border:1px solid var(--border);">
+                        📱 Рассылка отправляется <strong style="color:var(--gold-l)">всем подписчикам бота MAX</strong>
+                    </div>
+
+                    <div id="recipientInfo" style="background:var(--surface2); border-radius:10px; padding:.8rem 1rem; margin-bottom:1.2rem; display:flex; align-items:center; gap:.8rem;">
+                        <span style="font-size:1.5rem;">👥</span>
+                        <div>
+                            <div style="font-size:.82rem; color:var(--muted);">Получателей</div>
+                            <div id="recipientCount" style="font-size:1.2rem; font-weight:800; color:var(--gold-l);">—</div>
+                        </div>
+                    </div>
+
+                    <label style="font-size:.78rem; color:var(--muted); text-transform:uppercase; letter-spacing:1px; font-weight:600; display:block; margin-bottom:.5rem;">Текст сообщения</label>
+                    <textarea id="broadcastMessage" rows="6" placeholder="Введите текст рассылки...&#10;&#10;Поддерживается HTML: &lt;b&gt;жирный&lt;/b&gt;, &lt;i&gt;курсив&lt;/i&gt;" style="width:100%; padding:1rem; background:var(--surface2); border:1.5px solid var(--border); border-radius:12px; color:var(--text); font-size:.9rem; font-family:inherit; resize:vertical; outline:none; min-height:120px;"></textarea>
+
+                    <div style="margin-top:1rem; display:flex; gap:.8rem;">
+                        <button onclick="sendBroadcast()" id="btnSendBroadcast" style="flex:1; padding:.9rem; background:var(--gold); color:#fff; border:none; border-radius:12px; font-size:.88rem; font-weight:700; cursor:pointer; font-family:inherit; letter-spacing:.5px; transition:.3s;">
+                            📤 Отправить рассылку
+                        </button>
+                    </div>
+
+                    <div id="broadcastResult" style="display:none; margin-top:1rem; padding:1rem; border-radius:10px; font-size:.85rem;"></div>
                 </div>
-                <div id="saunaGrid" class="hour-grid"></div>
-                <button id="saunaBookBtn" class="login-btn" style="width:auto; margin-top:1rem; display:none" onclick="bookHourly('sauna')">Забронировать выбранные часы</button>
+
+                <!-- History -->
+                <div style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:1.5rem;">
+                    <h3 style="margin-bottom:1rem; font-size:1.1rem;">📋 История рассылок</h3>
+                    <div id="broadcastHistory" style="max-height:500px; overflow-y:auto;">
+                        <div class="empty-state" style="padding:2rem"><div class="icon">📭</div><p>Рассылок пока не было</p></div>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <!-- Section: Yurt & Bath -->
-        <div id="yurtSection" style="display:none">
-            <div style="display:flex; justify-content:space-between; margin-bottom:1.2rem; align-items:center;">
-                <h3 style="color:var(--gold-l)">⛺ Юрты (Шахматка)</h3>
-                <div>
-                    <button onclick="chessNav(-7)" class="btn-action">◄ 7д</button>
-                    <button onclick="chessToday()" class="btn-action" style="color:var(--gold)">Сегодня</button>
-                    <button onclick="chessNav(7)" class="btn-action">7д ►</button>
+        <!-- Menus Management Section -->
+        <div id="menusSection" style="display:none">
+            <h2 style="margin-bottom:1.5rem; font-size:1.3rem;">🍽 Управление меню заведений</h2>
+            <p style="color:var(--muted); font-size:.85rem; margin-bottom:2rem;">Загружайте фотографии меню. Клиенты увидят их по кнопке «Меню» в мобильном приложении.</p>
+
+            <!-- Restaurant -->
+            <div style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:1.5rem; margin-bottom:2rem; border-left:4px solid var(--gold);">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+                    <div>
+                        <h3 style="font-size:1.1rem; margin-bottom:.3rem;">🍽 Ресторан «Чалама»</h3>
+                        <p style="font-size:.78rem; color:var(--muted)">Паназиатская и национальная кухня</p>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:.5rem;">
+                        <input type="file" id="menu-file-restaurant" accept="image/*" style="display:none" onchange="uploadMenuImg('restaurant')">
+                        <button onclick="document.getElementById('menu-file-restaurant').click()" style="padding:.5rem 1rem; background:var(--gold); color:#fff; border:none; border-radius:8px; font-size:.8rem; font-weight:700; cursor:pointer; font-family:inherit;">+ Загрузить</button>
+                    </div>
                 </div>
+                <div id="menu-grid-restaurant" class="photo-grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(150px, 1fr)); gap:1rem;"></div>
             </div>
-            <div id="yurtGrid" class="chess-wrapper"></div>
-            <div class="stat-card" style="margin-top:2rem">
-                <div style="display:flex; justify-content:space-between; align-items:center">
-                    <h4>🪵 Баня (ХААН-ДЫТ)</h4>
-                    <input type="date" id="bathDate" onchange="loadHourly('bath')" class="form-input" style="width:auto; margin:0">
+
+            <!-- Bar -->
+            <div style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:1.5rem; margin-bottom:2rem; border-left:4px solid #a855f7;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+                    <div>
+                        <h3 style="font-size:1.1rem; margin-bottom:.3rem;">🍸 Бар «Скала»</h3>
+                        <p style="font-size:.78rem; color:var(--muted)">Лаунж-бар и коктейли</p>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:.5rem;">
+                        <input type="file" id="menu-file-bar" accept="image/*" style="display:none" onchange="uploadMenuImg('bar')">
+                        <button onclick="document.getElementById('menu-file-bar').click()" style="padding:.5rem 1rem; background:#a855f7; color:#fff; border:none; border-radius:8px; font-size:.8rem; font-weight:700; cursor:pointer; font-family:inherit;">+ Загрузить</button>
+                    </div>
                 </div>
-                <div id="bathGrid" class="hour-grid"></div>
-                <button id="bathBookBtn" class="login-btn" style="width:auto; margin-top:1rem; display:none" onclick="bookHourly('bath')">Забронировать выбранные часы</button>
+                <div id="menu-grid-bar" class="photo-grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(150px, 1fr)); gap:1rem;"></div>
+            </div>
+
+            <!-- Cafe Khaan-Dyt -->
+            <div style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:1.5rem; margin-bottom:2rem; border-left:4px solid #32cd32;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+                    <div>
+                        <h3 style="font-size:1.1rem; margin-bottom:.3rem;">☕ Кафе «Хаан-Дыт»</h3>
+                        <p style="font-size:.78rem; color:var(--muted)">При юрточном комплексе</p>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:.5rem;">
+                        <input type="file" id="menu-file-cafe_kd" accept="image/*" style="display:none" onchange="uploadMenuImg('cafe_kd')">
+                        <button onclick="document.getElementById('menu-file-cafe_kd').click()" style="padding:.5rem 1rem; background:#32cd32; color:#fff; border:none; border-radius:8px; font-size:.8rem; font-weight:700; cursor:pointer; font-family:inherit;">+ Загрузить</button>
+                    </div>
+                </div>
+                <div id="menu-grid-cafe_kd" class="photo-grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(150px, 1fr)); gap:1rem;"></div>
             </div>
         </div>
 
-        <!-- Section: Photos / Room Management -->
+        <!-- Photos Management Section -->
         <div id="photosSection" style="display:none">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem">
+                <p style="color:var(--muted); font-size:.9rem; max-width:600px">Настройка номерного фонда. Вы можете создавать карточки для новых номеров и юрт, удалять старые, а также загружать к ним фотографии с компьютера.</p>
+                <button class="btn-add" onclick="openRoomModal()" style="font-size:.9rem; padding:.8rem 1.5rem">+ Добавить номер</button>
+            </div>
             <div id="roomsPhotoList"></div>
         </div>
 
-        <!-- Section: Broadcast -->
-        <div id="broadcastSection" style="display:none">
-            <div class="stat-card">
-                <p>Получателей: <span id="recipientCount" style="color:var(--gold-l); font-weight:800">0</span></p>
-                <textarea id="broadcastMessage" class="form-input" style="height:150px; margin-top:1rem; resize:none" placeholder="Текст сообщения..."></textarea>
-                <button class="login-btn" onclick="sendBroadcast()">📢 Отправить рассылку</button>
-                <div id="broadcastHistory" style="margin-top:2rem; border-top:1px solid var(--border)"></div>
+        <div class="admin-section">
+            <div class="admin-section-title">📬 MAX-уведомления <span class="tag tag-confirmed" id="tg-status-badge">Активно</span></div>
+            <div id="tgStatusMsg" class="tg-status"></div>
+            
+            <div class="admin-add-row" style="margin-top: 1rem;">
+                <input type="text" id="newAdminName" placeholder="Имя (напр. Иван)">
+                <input type="text" id="newAdminId" placeholder="ID в MAX (напр. 12345)">
+                <select id="newAdminDept" style="padding:.6rem 1rem; background:var(--surface2); border:1.5px solid var(--border); border-radius:10px; color:var(--text); font-size:.85rem; outline:none; cursor:pointer;">
+                    <option value="all">Все уведомления</option>
+                    <option value="hotel_chalama">Отель Чалама + Сауна</option>
+                    <option value="haan_dyt">Хаан-Дыт + Баня</option>
+                </select>
+                <button class="btn-add" onclick="addAdmin()">Добавить админа</button>
             </div>
-        </div>
 
-        <!-- Section: Menus -->
-        <div id="menusSection" style="display:none">
-            <div style="display:grid; gap:2rem">
-                <div class="stat-card"><h4>Ресторан</h4><input type="file" id="menu-file-restaurant" onchange="uploadMenuImg('restaurant')"><div id="menu-grid-restaurant" class="photo-grid"></div></div>
-                <div class="stat-card"><h4>Бар</h4><input type="file" id="menu-file-bar" onchange="uploadMenuImg('bar')"><div id="menu-grid-bar" class="photo-grid"></div></div>
-                <div class="stat-card"><h4>Кафе КД</h4><input type="file" id="menu-file-cafe_kd" onchange="uploadMenuImg('cafe_kd')"><div id="menu-grid-cafe_kd" class="photo-grid"></div></div>
+            <div class="admin-list" id="adminList" style="margin-top: 1.5rem;"></div>
+            <div class="admin-hint">
+                <p>💡 <strong>Как добавить администратора:</strong></p>
+                <ol style="margin-left: 1.5rem; margin-top: 0.5rem;">
+                    <li>Узнайте свой ID в мессенджере MAX (с помощью бота <b>«Узнай ID»</b>).</li>
+                    <li>Введите имя и ID в форму выше и нажмите «Добавить».</li>
+                    <li>Или используйте нашего бота: <a href="https://t.me/Khaan_dyt_bot" target="_blank" style="color:var(--gold-l)">@Khaan_dyt_bot</a> (отправьте команду <code>/admin_auth Ваше_Пароль</code>).</li>
+                </ol>
+                <p style="margin-top: 1rem;">📤 При каждом бронировании все активные администраторы получают уведомление.</p>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Booking Modal (Chess) -->
-<div class="modal-overlay" id="modalOverlay">
-    <div class="modal-card">
-        <div class="modal-header" style="display:flex; justify-content:space-between; margin-bottom:1.5rem">
-            <h3 style="color:var(--gold-l)">Новое бронирование</h3>
-            <span style="cursor:pointer; font-size:1.5rem" onclick="closeModal()">×</span>
-        </div>
-        <div class="form-group"><label style="font-size:.7rem; color:var(--muted)">ОБЪЕКТ</label><input type="text" id="m_room" class="form-input" readonly style="background:var(--surface2)"></div>
-        <div class="form-row"><div class="form-group"><label style="font-size:.7rem; color:var(--muted)">ЗАЕЗД</label><input type="date" id="m_checkIn" class="form-input"></div><div class="form-group"><label style="font-size:.7rem; color:var(--muted)">ВЫЕЗД</label><input type="date" id="m_checkOut" class="form-input"></div></div>
-        <div class="form-row"><div class="form-group"><label style="font-size:.7rem; color:var(--muted)">ИМЯ</label><input type="text" id="m_guest" class="form-input"></div><div class="form-group"><label style="font-size:.7rem; color:var(--muted)">ТЕЛЕФОН</label><input type="text" id="m_phone" class="form-input"></div></div>
-        <div class="form-row"><div class="form-group"><label style="font-size:.7rem; color:var(--muted)">ДНИ/ЧАСЫ</label><input type="number" id="m_nights" class="form-input" readonly></div><div class="form-group"><label style="font-size:.7rem; color:var(--muted)">ИТОГО (₽)</label><input type="number" id="m_total" class="form-input"></div></div>
-        <button class="login-btn" onclick="submitModalBooking()" style="margin-top:1rem">Забронировать</button>
-    </div>
-</div>
+<!-- ===== ROOM FORM MODAL ===== -->
+<div class="room-modal-bg" id="roomModalBg" onclick="if(event.target===this)closeRoomModal()">
+    <div class="room-modal">
+        <button class="room-modal-close" onclick="closeRoomModal()">×</button>
+        <h2 style="margin-bottom:1.5rem" id="roomModalTitle">Создать номер</h2>
+        <form id="roomForm" onsubmit="saveRoom(event)">
+            <input type="hidden" id="r_id" value="">
+            
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Тип</label>
+                    <select id="r_type" required>
+                        <option value="hotel">Отель</option>
+                        <option value="yurt">Юрта</option>
+                        <option value="sauna">Сауна</option>
+                        <option value="bath">Баня</option>
+                    </select>
+                </div>
+    
+                <div class="form-group">
+                    <label>Название</label>
+                    <input type="text" id="r_name" required placeholder="Например: Стандарт">
+                </div>
+    
+                <div class="form-group full">
+                    <label>Описание</label>
+                    <textarea id="r_desc" required placeholder="Например: Односпальная кровать · 15 м²" rows="2"></textarea>
+                </div>
+    
+                <div class="form-group">
+                    <label>Цена (Будни)</label>
+                    <input type="number" id="r_price" required placeholder="6950">
+                </div>
+                <div class="form-group">
+                    <label>Цена (Пт-Сб)</label>
+                    <input type="number" id="r_priceweekend" placeholder="Не обязательно">
+                </div>
+    
+                <div class="form-group full">
+                    <label>Удобства (через запятую)</label>
+                    <input type="text" id="r_amenities" placeholder="Кондиционер, ТВ, Фен" required>
+                </div>
+    
+                <div class="form-group">
+                    <label>Площадь</label>
+                    <input type="text" id="r_area" placeholder="19 м²">
+                </div>
+                <div class="form-group">
+                    <label>Вместимость</label>
+                    <input type="number" id="r_capacity" placeholder="2">
+                </div>
+    
+                <div class="form-group">
+                    <label>Тариф</label>
+                    <input type="text" id="r_tariff" placeholder="тариф без завтрака">
+                </div>
+    
+                <div class="form-group">
+                    <label>Предоплата (₽)</label>
+                    <input type="number" id="r_prepayment" placeholder="6950">
+                </div>
+            </div>
 
-<!-- Room Management Modal -->
-<div class="modal-overlay" id="roomModalOverlay">
-    <div class="modal-card" style="max-width:600px">
-        <h3 id="roomModalTitle" style="margin-bottom:1.5rem; color:var(--gold-l)">Редактировать номер</h3>
-        <input type="hidden" id="r_id">
-        <div class="form-row">
-            <div class="form-group"><label>ТИП</label><select id="r_type" class="form-input"><option value="hotel">Отель</option><option value="yurt">Юрты</option><option value="sauna">Сауна</option><option value="bath">Баня</option></select></div>
-            <div class="form-group"><label>НАЗВАНИЕ</label><input type="text" id="r_name" class="form-input"></div>
-        </div>
-        <div class="form-group"><label>ОПИСАНИЕ</label><textarea id="r_desc" class="form-input" style="height:80px; resize:none"></textarea></div>
-        <div class="form-row">
-            <div class="form-group"><label>ЦЕНА (БУДНИ)</label><input type="number" id="r_price" class="form-input"></div>
-            <div class="form-group"><label>ЦЕНА (ВЫХОДНЫЕ)</label><input type="number" id="r_priceWeekend" class="form-input"></div>
-        </div>
-        <div class="form-row">
-            <div class="form-group"><label>ПЛОЩАДЬ</label><input type="text" id="r_area" class="form-input"></div>
-            <div class="form-group"><label>ВМЕСТИМОСТЬ</label><input type="number" id="r_capacity" class="form-input"></div>
-        </div>
-        <div class="form-group"><label>УДОБСТВА (через запятую)</label><input type="text" id="r_amenities" class="form-input"></div>
-        <div style="display:flex; gap:1rem; margin-top:1rem">
-            <button class="login-btn" onclick="saveRoom()">Сохранить</button>
-            <button class="btn-action" onclick="closeRoomModal()">Отмена</button>
-        </div>
+            <button type="submit" class="btn-submit" style="margin-top: 1rem;">Сохранить изменения</button>
+        </form>
     </div>
 </div>
 
 <script>
-const ADMIN_PASS = 'chalama2026';
-let currentTab = 'all', globalBookings = [], globalRooms = [], chessDate = new Date(); chessDate.setHours(0,0,0,0);
-let selStart = null, selEnd = null, selRow = null, selectedHours = [];
-const months = ['янв','фев','мар','апр','май','июн','июл','авг','сен','окт','ноя','дек'];
+// ===== AUTH =====
+const ADMIN_HASH = '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8'; // SHA-256 of "password"
+const ADMIN_PASS = 'chalama2026'; // simple password check (for demo)
 
 function doLogin() {
-    if(document.getElementById('loginPass').value === ADMIN_PASS) { sessionStorage.setItem('chalama_admin','1'); showDashboard(); }
-    else alert("Неверный пароль");
+    const pass = document.getElementById('loginPass').value;
+    if (pass === ADMIN_PASS) {
+        sessionStorage.setItem('chalama_admin', '1');
+        showDashboard();
+    } else {
+        document.getElementById('loginError').style.display = 'block';
+        document.getElementById('loginPass').style.borderColor = 'var(--red)';
+        setTimeout(() => {
+            document.getElementById('loginError').style.display = 'none';
+            document.getElementById('loginPass').style.borderColor = 'var(--border)';
+        }, 3000);
+    }
 }
-function doLogout() { sessionStorage.removeItem('chalama_admin'); location.reload(); }
+
+function doLogout() {
+    sessionStorage.removeItem('chalama_admin');
+    document.getElementById('dashboard').style.display = 'none';
+    document.getElementById('loginWrap').style.display = 'flex';
+    document.getElementById('loginPass').value = '';
+}
 
 function showDashboard() {
-    document.getElementById('loginWrap').style.display='none';
-    document.getElementById('dashboard').style.display='block';
+    document.getElementById('loginWrap').style.display = 'none';
+    document.getElementById('dashboard').style.display = 'block';
     renderAll();
-    setInterval(renderAll, 30000);
+    startPolling();
 }
 
-async function renderAll() {
+// Auto-login if session active
+let pollInterval = null;
+if (sessionStorage.getItem('chalama_admin')) showDashboard();
+
+function startPolling() {
+    if(pollInterval) clearInterval(pollInterval);
+    pollInterval = setInterval(async () => {
+        if(document.getElementById('dashboard').style.display !== 'block') return;
+        if(currentTab === 'photos') return;
+        const oldDat = JSON.stringify(globalBookings);
+        await getBookings();
+        if(oldDat !== JSON.stringify(globalBookings)) {
+            renderAll(true); // Soft render
+        }
+    }, 5000);
+}
+
+// ===== DATA =====
+let currentTab = 'all';
+const months = ['янв','фев','мар','апр','май','июн','июл','авг','сен','окт','ноя','дек'];
+let globalBookings = [];
+let globalRooms = [];
+
+async function getBookings() {
     try {
         const res = await fetch('/api/admin/bookings');
         globalBookings = await res.json();
-        const active = globalBookings.filter(b => b.status === 'confirmed' || b.status === 'new');
-        document.getElementById('stat-total').textContent = globalBookings.length;
-        document.getElementById('stat-active').textContent = active.length;
-        document.getElementById('stat-cancelled').textContent = globalBookings.filter(b => b.status === 'cancelled').length;
-        document.getElementById('stat-revenue').textContent = active.reduce((s,b)=>s+(b.total||0),0).toLocaleString() + ' ₽';
-        document.getElementById('cnt-all').textContent = globalBookings.filter(b=>b.status==='new').length;
-        renderTable();
-    } catch(e) { console.error(e); }
+    } catch(err) { console.error(err); }
+    return globalBookings;
+}
+function saveBookings(b) {
+    localStorage.setItem('chalama_bookings', JSON.stringify(b));
 }
 
+function fmtDT(iso, type) {
+    const d = new Date(iso);
+    if (type === 'sauna') {
+        const h = String(d.getHours()).padStart(2, '0');
+        const m = String(d.getMinutes()).padStart(2, '0');
+        return d.getDate() + ' ' + months[d.getMonth()] + ' ' + h + ':' + m;
+    }
+    return d.getDate() + ' ' + months[d.getMonth()] + ' ' + d.getFullYear();
+}
+function fmtP(n) { return n.toLocaleString('ru') + ' ₽'; }
+
+// ===== TABS =====
 function switchTab(tab) {
     currentTab = tab;
-    document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.id === 'tab-'+tab));
-    ['bookingsSection','receptionSection','hotelSection','yurtSection','photosSection','broadcastSection','menusSection'].forEach(s => {
-        const el = document.getElementById(s); if(el) el.style.display = (tab==='all' && s==='bookingsSection') || s.startsWith(tab) ? 'block' : 'none';
-    });
-    if(tab==='hotel' || tab==='yurt') loadChessGrid(tab);
-    if(tab==='reception') initReception();
-    if(tab==='photos') loadRoomsForPhotos();
-    if(tab==='broadcast') { loadRecipients(); loadBroadcastHistory(); }
-    if(tab==='menus') loadAllMenus();
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('tab-' + tab).classList.add('active');
+    
+    // Hide all sections first
+    document.getElementById('bookingsSection').style.display = 'none';
+    document.getElementById('photosSection').style.display = 'none';
+    document.getElementById('receptionSection').style.display = 'none';
+    document.getElementById('broadcastSection').style.display = 'none';
+    document.getElementById('menusSection').style.display = 'none';
+    document.getElementById('chessSection').style.display = 'none';
+
+    if (tab === 'photos') {
+        document.getElementById('photosSection').style.display = 'block';
+        loadRoomsForPhotos();
+    } else if (tab === 'reception') {
+        document.getElementById('receptionSection').style.display = 'block';
+        initReception();
+    } else if (tab === 'broadcast') {
+        document.getElementById('broadcastSection').style.display = 'block';
+        loadRecipients();
+        loadBroadcastHistory();
+    } else if (tab === 'menus') {
+        document.getElementById('menusSection').style.display = 'block';
+        loadAllMenus();
+    } else if (tab === 'chess') {
+        document.getElementById('chessSection').style.display = 'block';
+        loadChessGrid();
+    } else {
+        document.getElementById('bookingsSection').style.display = 'block';
+        const titles = { all:'Все бронирования', hotel:'Отель «Чалама»', yurt:'Юрточный отель «Хаан-Дыт»', sauna:'Сауна' };
+        document.getElementById('tableTitle').textContent = titles[tab];
+        renderTable();
+    }
+}
+
+// ===== RENDER =====
+async function renderAll(soft = false) {
+    if(!soft) await getBookings();
+    const bookings = globalBookings;
+    const active = bookings.filter(b => b.status === 'confirmed' || b.status === 'new');
+    const cancelled = bookings.filter(b => b.status === 'cancelled');
+    const hotel = bookings.filter(b => b.type === 'hotel' && b.status === 'new');
+    const yurt = bookings.filter(b => b.type === 'yurt' && b.status === 'new');
+    const sauna = bookings.filter(b => b.type === 'sauna' && b.status === 'new');
+    const revenue = active.reduce((s, b) => s + (b.total || 0), 0);
+
+    document.getElementById('stat-total').textContent = bookings.length;
+    document.getElementById('stat-active').textContent = active.length;
+    document.getElementById('stat-cancelled').textContent = cancelled.length;
+    document.getElementById('stat-revenue').textContent = fmtP(revenue);
+
+    document.getElementById('cnt-all').textContent = bookings.filter(b => b.status === 'new').length;
+    document.getElementById('cnt-hotel').textContent = hotel.length;
+    document.getElementById('cnt-yurt').textContent = yurt.length;
+    document.getElementById('cnt-sauna').textContent = sauna.length;
+
+    if(currentTab !== 'photos') renderTable();
+}
+
+function renderRows(arr) {
+    if (arr.length === 0) {
+        return `<tr><td colspan="8">
+            <div class="empty-state" style="padding: 2.5rem 1rem;">
+                <div class="icon" style="font-size: 2rem;">📭</div>
+                <p>В этой категории пока пусто</p>
+            </div>
+        </td></tr>`;
+    }
+    return arr.map(b => {
+        const typeTag = b.type === 'hotel' ? '<span class="tag tag-hotel">Отель</span>' :
+                      b.type === 'yurt' ? '<span class="tag tag-yurt">Юрты</span>' :
+                      '<span class="tag tag-sauna">Сауна</span>';
+        
+        const addonsHtml = (b.addons && b.addons.length)
+            ? `<div class="addons-list">+ ${b.addons.join(', ')}</div>` : '';
+
+        // Determine border color for the select box based on status
+        let selColor = 'var(--border)';
+        if(b.status === 'new') selColor = 'var(--gold)';
+        else if(b.status === 'confirmed') selColor = 'var(--green)';
+        else if(b.status === 'completed') selColor = 'var(--blue)';
+        else if(b.status === 'cancelled') selColor = 'var(--red)';
+
+        const statusSelect = `
+            <select onchange="updateStatus('${b.id}', this.value)" style="padding:.4rem .6rem; border-radius:8px; border:1px solid ${selColor}; background:var(--surface2); color:white; font-size:.78rem; font-weight:600; outline:none; cursor:pointer;">
+                <option value="new" ${b.status==='new'?'selected':''}>🆕 Новая</option>
+                <option value="confirmed" ${b.status==='confirmed'?'selected':''}>✅ Подтверждено</option>
+                <option value="completed" ${b.status==='completed'?'selected':''}>🏁 Завершено</option>
+                <option value="cancelled" ${b.status==='cancelled'?'selected':''}>❌ Отменено</option>
+            </select>
+        `;
+
+        const dateRange = (b.type === 'sauna') 
+            ? `${fmtDT(b.checkIn, 'sauna')} — ${new Date(b.checkOut).getHours()}:00`
+            : `${fmtDT(b.checkIn)} — ${fmtDT(b.checkOut)}`;
+
+        return `<tr>
+            <td data-label="ID"><code style="color:var(--muted);font-size:.75rem">${(b.id || '—').slice(0,8)}</code></td>
+            <td data-label="Тип">${typeTag}</td>
+            <td data-label="Номер"><strong>${b.room || '—'}</strong>${b.unitNumber ? ' <span style="color:var(--gold-l);font-size:.75rem">№' + b.unitNumber + '</span>' : ''}${addonsHtml}</td>
+            <td data-label="Гость"><div class="guest-name">${b.guest || '—'}</div><div class="guest-phone">${b.phone || ''}</div></td>
+            <td data-label="Даты">${dateRange}</td>
+            <td data-label="Ночи/Часы">${b.nights || '—'}</td>
+            <td data-label="Сумма"><strong style="color:var(--gold-l)">${b.total ? fmtP(b.total) : '—'}</strong></td>
+            <td data-label="Статус">${statusSelect}</td>
+        </tr>`;
+    }).join('');
 }
 
 function renderTable() {
-    const q = document.getElementById('searchInput').value.toLowerCase();
-    const filtered = globalBookings.filter(b => b.guest?.toLowerCase().includes(q) || b.phone?.includes(q) || (b.room||'').toLowerCase().includes(q));
-    document.getElementById('bodyAll').innerHTML = filtered.map(b => `
-        <tr>
-            <td><small>${b.id.slice(0,6)}</small></td>
-            <td><span class="tag tag-${b.type}">${b.type}</span></td>
-            <td>${b.room} ${b.unitNumber?'<b>№'+b.unitNumber+'</b>':''}</td>
-            <td>${b.guest}<br><small>${b.phone}</small></td>
-            <td>${new Date(b.checkIn).toLocaleDateString()}</td>
-            <td>${(b.total||0).toLocaleString()} ₽</td>
-            <td>
-                <select onchange="updateStatus('${b.id}',this.value)" style="background:var(--surface2);color:#fff;border:1px solid var(--border);border-radius:6px;padding:3px">
-                    <option value="new" ${b.status==='new'?'selected':''}>Новая</option>
-                    <option value="confirmed" ${b.status==='confirmed'?'selected':''}>Ок</option>
-                    <option value="completed" ${b.status==='completed'?'selected':''}>🏁</option>
-                    <option value="cancelled" ${b.status==='cancelled'?'selected':''}>❌</option>
-                </select>
-            </td>
-        </tr>
-    `).join('');
+    const search = document.getElementById('searchInput').value.toLowerCase();
+    let filtered = globalBookings;
+
+    if (currentTab !== 'all') filtered = filtered.filter(b => b.type === currentTab);
+    if (search) filtered = filtered.filter(b =>
+        (b.guest || '').toLowerCase().includes(search) ||
+        (b.phone || '').includes(search) ||
+        (b.room || '').toLowerCase().includes(search)
+    );
+
+    // Sort by creation date, newest first
+    filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+    const arrNew = filtered.filter(b => b.status === 'new');
+    const arrActive = filtered.filter(b => b.status === 'confirmed');
+    const arrArchive = filtered.filter(b => b.status === 'completed' || b.status === 'cancelled');
+
+    document.getElementById('countNew').textContent = arrNew.length;
+    document.getElementById('countActive').textContent = arrActive.length;
+    document.getElementById('countArchive').textContent = arrArchive.length;
+
+    document.getElementById('bodyNew').innerHTML = renderRows(arrNew);
+    document.getElementById('bodyActive').innerHTML = renderRows(arrActive);
+    document.getElementById('bodyArchive').innerHTML = renderRows(arrArchive);
 }
 
+// ===== ACTIONS =====
 async function updateStatus(id, status) {
-    await fetch(`/api/admin/bookings/${id}/status`, { method:'PATCH', headers:{'Content-Type':'application/json'}, body:JSON.stringify({status}) });
+    await fetch('/api/admin/bookings/' + id + '/status', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status })
+    });
     renderAll();
+}
+
+function cancelBooking(id) {
+    if (!confirm('Отменить эту бронь?')) return;
+    updateStatus(id, 'cancelled');
+}
+
+function restoreBooking(id) {
+    updateStatus(id, 'confirmed');
 }
 
 async function clearArchive() {
-    if(!confirm("Удалить все завершенные и отмененные бронирования навсегда?")) return;
-    await fetch('/api/admin/bookings/archive', { method:'DELETE' });
-    renderAll();
+    const count = parseInt(document.getElementById('countArchive').textContent);
+    if (count === 0) return alert('Архив уже пуст');
+
+    if (!confirm(`Вы уверены, что хотите навсегда удалить все записи из архива (${count} шт.)? Это действие нельзя отменить.`)) return;
+    
+    try {
+        const res = await fetch('/api/admin/bookings/archive', { method: 'DELETE' });
+        if (res.ok) {
+            const data = await res.json();
+            alert(`Архив очищен. Удалено записей: ${data.count}`);
+            renderAll();
+        } else {
+            alert('Ошибка при очистке архива');
+        }
+    } catch(err) { console.error(err); }
 }
 
-// ===== NEW CHESS GRID LOGIC =====
-async function loadChessGrid(type) {
-    const ds = chessDate.toISOString().split('T')[0];
-    const res = await fetch(`/api/admin/chess?startDate=${ds}&days=14&type=${type}`);
-    const data = await res.json();
-    const el = document.getElementById(type+'Grid');
-    if(!el) return;
-    const dates = []; for(let i=0; i<14; i++) { let d=new Date(data.startDate); d.setDate(d.getDate()+i); dates.push(d); }
+// ===== PHOTOS MANAGEMENT =====
+async function loadRoomsForPhotos() {
+    try {
+        const res = await fetch('/api/rooms');
+        globalRooms = await res.json();
+        renderRoomsPhotoList();
+    } catch(err) { console.error(err); }
+}
+
+function renderRoomsPhotoList() {
+    const list = document.getElementById('roomsPhotoList');
+    list.innerHTML = globalRooms.map(r => {
+        const photosHtml = r.imgs.map(url => `
+            <div class="photo-item">
+                <img src="${url}">
+                <button class="btn-del-photo" onclick="deletePhoto(${r.id}, '${url}')">×</button>
+            </div>
+        `).join('');
+
+        return `
+            <div class="room-mgmt-card" style="margin-bottom: 2rem; border-left: 4px solid ${r.type==='hotel'?'#c2b080':r.type==='yurt'?'#32cd32':r.type==='sauna'?'#ffa500':'#00bfff'}">
+                <div class="room-mgmt-header" style="margin-bottom: 1rem;">
+                    <div style="flex: 1;">
+                        <div style="display: flex; align-items: center; gap: 0.8rem; margin-bottom: 0.3rem;">
+                            <div class="room-mgmt-title" style="margin:0">${r.name}</div>
+                            <span class="tag" style="font-size: 0.65rem; padding: 2px 8px; background: var(--surface2);">${r.type === 'hotel' ? '🏨 Отель' : r.type === 'yurt' ? '⛺ Юрты' : r.type === 'sauna' ? '🧖‍♂️ Сауна' : '🚿 Баня'}</span>
+                        </div>
+                        <div style="font-size: .85rem; color: var(--gold-l); font-weight: 700; margin-bottom: 0.4rem;">${r.price.toLocaleString()} ₽ ${r.priceWeekend ? `/ ${r.priceWeekend.toLocaleString()} ₽` : ''}</div>
+                        <div style="font-size: .78rem; color: var(--muted); line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-bottom: 0.5rem;">${r.desc}</div>
+                        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                            ${r.area ? `<span style="font-size: 0.7rem; color: #ddd; background: rgba(255,255,255,0.05); padding: 2px 6px; border-radius: 4px;">📐 ${r.area}</span>` : ''}
+                            ${r.capacity ? `<span style="font-size: 0.7rem; color: #ddd; background: rgba(255,255,255,0.05); padding: 2px 6px; border-radius: 4px;">👤 ${r.capacity}</span>` : ''}
+                        </div>
+                    </div>
+                    <div class="room-actions" style="display: flex; flex-direction: column; gap: 0.5rem;">
+                        <button class="btn-restore btn-action" onclick="openRoomModal(${r.id})" style="width: 100%; white-space: nowrap;">✎ Изменить данные</button>
+                        <button class="btn-cancel btn-action" onclick="deleteRoom(${r.id})" style="width: 100%; white-space: nowrap; border-color: rgba(255,100,100,0.3); color: #ff6464;">🗑 Удалить</button>
+                    </div>
+                </div>
+                <div class="photo-grid">${photosHtml}</div>
+                <div class="upload-section">
+                    <input type="file" id="file-${r.id}" class="upload-input" accept="image/*">
+                    <button class="btn-add" onclick="uploadPhoto(${r.id})">Загрузить</button>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+// === Room Modal & CRUD ===
+function openRoomModal(id = null) {
+    document.getElementById('roomForm').reset();
+    document.getElementById('r_id').value = '';
+    document.getElementById('roomModalTitle').textContent = 'Создать новый номер';
+
+    if (id) {
+        const r = globalRooms.find(x => x.id === id);
+        if (r) {
+            document.getElementById('roomModalTitle').textContent = 'Редактировать номер';
+            document.getElementById('r_id').value = r.id;
+            document.getElementById('r_type').value = r.type;
+            document.getElementById('r_name').value = r.name;
+            document.getElementById('r_desc').value = r.desc;
+            document.getElementById('r_price').value = r.price;
+            document.getElementById('r_priceweekend').value = r.priceWeekend || '';
+            document.getElementById('r_amenities').value = r.amenities.join(', ');
+            document.getElementById('r_area').value = r.area || '';
+            document.getElementById('r_capacity').value = r.capacity || '';
+            document.getElementById('r_tariff').value = r.tariff || '';
+            document.getElementById('r_prepayment').value = r.prepayment || '';
+        }
+    }
+    document.getElementById('roomModalBg').classList.add('open');
+}
+
+function closeRoomModal() {
+    document.getElementById('roomModalBg').classList.remove('open');
+}
+
+async function saveRoom(e) {
+    e.preventDefault();
+    const id = document.getElementById('r_id').value;
+    const body = {
+        type: document.getElementById('r_type').value,
+        name: document.getElementById('r_name').value,
+        desc: document.getElementById('r_desc').value,
+        price: Number(document.getElementById('r_price').value),
+        priceWeekend: document.getElementById('r_priceweekend').value ? Number(document.getElementById('r_priceweekend').value) : null,
+        amenities: document.getElementById('r_amenities').value.split(',').map(s => s.trim()).filter(Boolean),
+        area: document.getElementById('r_area').value || null,
+        capacity: document.getElementById('r_capacity').value ? Number(document.getElementById('r_capacity').value) : null,
+        tariff: document.getElementById('r_tariff').value || null,
+        prepayment: document.getElementById('r_prepayment').value ? Number(document.getElementById('r_prepayment').value) : null
+    };
+
+    const method = id ? 'PUT' : 'POST';
+    const endpoint = id ? '/api/rooms/' + id : '/api/rooms';
+
+    try {
+        const res = await fetch(endpoint, {
+            method: method,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body)
+        });
+        if (res.ok) {
+            closeRoomModal();
+            loadRoomsForPhotos();
+        } else {
+            alert('Ошибка при сохранении');
+        }
+    } catch(err) { console.error(err); }
+}
+
+async function deleteRoom(id) {
+    if(!confirm('Вы уверены, что хотите удалить этот номер со всеми фотографиями? Это действие нельзя отменить.')) return;
+    try {
+        const res = await fetch('/api/rooms/' + id, { method: 'DELETE' });
+        if (res.ok) loadRoomsForPhotos();
+        else alert('Ошибка при удалении');
+    } catch(err) { console.error(err); }
+}
+
+async function uploadPhoto(roomId) {
+    const fileInput = document.getElementById('file-' + roomId);
+    if (!fileInput.files.length) return alert('Выберите файл');
     
-    let html = `<table class="chess-table"><thead><tr><th>Объект / №</th>`;
-    dates.forEach(d => html += `<th><div style="font-size:.65rem">${d.getDate()} ${months[d.getMonth()]}</div><div style="font-size:.5rem;color:#666">${['Вс','Пн','Вт','Ср','Чт','Пт','Сб'][d.getDay()]}</div></th>`);
-    html += '</tr></thead><tbody>';
+    const formData = new FormData();
+    formData.append('photo', fileInput.files[0]);
+
+    const btn = fileInput.nextElementSibling;
+    btn.textContent = '...';
+    btn.disabled = true;
+
+    try {
+        const res = await fetch('/api/rooms/' + roomId + '/photo', {
+            method: 'POST',
+            body: formData
+        });
+        if(res.ok) await loadRoomsForPhotos();
+        else alert('Ошибка при загрузке');
+    } catch(err) { console.error(err); }
+}
+
+async function deletePhoto(roomId, imgUrl) {
+    if(!confirm('Удалить эту картинку?')) return;
+    try {
+        await fetch('/api/rooms/' + roomId + '/photo/delete', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ imgUrl })
+        });
+        await loadRoomsForPhotos();
+    } catch(err) { console.error(err); }
+}
+
+// ===== TELEGRAM / MAX ADMIN MANAGEMENT =====
+async function renderAdmins() {
+    try {
+        const res = await fetch('/api/internal/admins');
+        const adminIds = await res.json();
+        const el = document.getElementById('adminList');
+        
+        if (!adminIds.length) {
+            el.innerHTML = '<div style="text-align:center;padding:1.5rem;color:var(--muted);font-size:.85rem">Нет администраторов. Добавьте по ID выше.</div>';
+            return;
+        }
+
+        el.innerHTML = adminIds.map((admin) => {
+            const depts = {
+                'all': 'Все уведомления',
+                'hotel_chalama': 'Отель + Сауна',
+                'haan_dyt': 'Хаан-Дыт + Баня'
+            };
+            const deptName = depts[admin.department] || 'Все уведомления';
+            const chatId = admin.chatId;
+
+            return `
+            <div class="admin-item">
+                <div class="admin-item-info">
+                    <div class="admin-item-avatar">👤</div>
+                    <div>
+                        <div class="admin-item-name">${admin.username || 'Администратор'}</div>
+                        <div class="admin-item-id">MAX ID: ${chatId} <span style="margin-left:8px; color:var(--gold-l); font-weight:700;">[${deptName}]</span></div>
+                    </div>
+                </div>
+                <button class="btn-remove" onclick="deleteAdmin('${chatId}')">Удалить</button>
+            </div>
+            `;
+        }).join('');
+    } catch (err) { console.error(err); }
+}
+
+async function addAdmin() {
+    const name = document.getElementById('newAdminName').value;
+    const id = document.getElementById('newAdminId').value;
+    const dept = document.getElementById('newAdminDept').value;
+    if (!id) return alert('Введите ID!');
+
+    try {
+        const res = await fetch('/api/internal/admins', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                chatId: id, 
+                username: name || 'Администратор',
+                department: dept
+            })
+        });
+        if (res.ok) {
+            document.getElementById('newAdminName').value = '';
+            document.getElementById('newAdminId').value = '';
+            showTgStatus('success', 'Администратор успешно добавлен!');
+            renderAdmins();
+        } else {
+            const errData = await res.json();
+            showTgStatus('error', errData.error || 'Ошибка при добавлении.');
+        }
+    } catch(err) { console.error(err); }
+}
+
+async function deleteAdmin(chatId) {
+    if (!confirm('Удалить этого администратора из списка рассылки?')) return;
+    try {
+        const res = await fetch('/api/internal/admins/' + chatId, { method: 'DELETE' });
+        if (res.ok) {
+            showTgStatus('success', 'Администратор удален.');
+            renderAdmins();
+        } else {
+            showTgStatus('error', 'Ошибка при удалении.');
+        }
+    } catch(err) { console.error(err); }
+}
+
+function showTgStatus(type, msg) {
+    const el = document.getElementById('tgStatusMsg');
+    el.className = 'tg-status ' + type;
+    el.textContent = msg;
+    setTimeout(() => { el.className = 'tg-status'; }, 5000);
+}
+
+// ===== RECEPTION LOGIC =====
+let recState = {
+    type: null,
+    roomId: null,
+    roomName: '',
+    month: new Date().getMonth(),
+    year: new Date().getFullYear(),
+    checkIn: null,
+    checkOut: null,
+    hours: []
+};
+
+async function initReception() {
+    if(!globalRooms.length) await loadRoomsForPhotos();
+    selectRecType('hotel'); // default
+}
+
+function selectRecType(type) {
+    recState.type = type;
+    recState.checkIn = null;
+    recState.checkOut = null;
+    recState.hours = [];
     
-    data.roomTypes.forEach(rt => {
-        html += `<tr style="background:#1a1d27"><td colspan="15" style="padding:.6rem;color:var(--gold-l);font-weight:800;font-size:.75rem">◈ ${rt.name.toUpperCase()}</td></tr>`;
-        rt.units.forEach(u => {
-            html += `<tr><td style="padding-left:1.5rem">${u}</td>`;
-            dates.forEach(d => {
-                const dayStr = d.toISOString().split('T')[0];
-                const bOut = rt.bookings.find(b => b.checkOut.startsWith(dayStr) && b.unitNumber == u);
-                const bIn = rt.bookings.find(b => b.checkIn.startsWith(dayStr) && b.unitNumber == u);
-                const bMid = rt.bookings.find(b => dayStr > b.checkIn.split('T')[0] && dayStr < b.checkOut.split('T')[0] && b.unitNumber == u);
-                const isSel = selRow?.unitNumber == u && selRow?.roomTypeId == rt.id && ((dayStr === selStart) || (selEnd && dayStr >= selStart && dayStr <= selEnd));
+    document.querySelectorAll('.reception-card').forEach(c => c.classList.remove('active'));
+    document.getElementById('card-rec-' + type).classList.add('active');
+    
+    const rooms = globalRooms.filter(r => {
+        if (type === 'hotel') return r.type === 'hotel';
+        if (type === 'yurt') return r.type === 'yurt' || r.type.startsWith('yurt');
+        return r.type === type;
+    });
+    
+    const select = document.getElementById('recRoomSelect');
+    select.innerHTML = rooms.map(r => `<option value="${r.id}">${r.name}</option>`).join('');
+    
+    document.getElementById('receptionBookingPanel').style.display = 'grid';
+    document.getElementById('recPanelTitle').textContent = 'Бронирование: ' + (type==='hotel'?'Отель':type==='yurt'?'Юрты':type==='sauna'?'Сауна':'Баня');
+    
+    onRecRoomChange();
+}
+
+function onRecRoomChange() {
+    const id = parseInt(document.getElementById('recRoomSelect').value);
+    const r = globalRooms.find(x => x.id === id);
+    if(!r) return;
+    recState.roomId = r.id;
+    recState.roomName = r.name;
+    recState.checkIn = null;
+    recState.checkOut = null;
+    recState.hours = [];
+    
+    document.getElementById('recHourPanel').style.display = (recState.type === 'sauna' || recState.type === 'bath') ? 'block' : 'none';
+    
+    renderRecCalendar();
+    updateRecSummary();
+}
+
+function changeRecMonth(dir) {
+    recState.month += dir;
+    if (recState.month < 0) { recState.month = 11; recState.year--; }
+    if (recState.month > 11) { recState.month = 0; recState.year++; }
+    renderRecCalendar();
+}
+
+function renderRecCalendar() {
+    const s = recState;
+    const grid = document.getElementById('recCalGrid');
+    document.getElementById('recCalTitle').textContent = months[s.month] + ' ' + s.year;
+
+    let html = ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'].map(d => `<div class="adm-cal-day-name">${d}</div>`).join('');
+    const firstDay = new Date(s.year, s.month, 1).getDay();
+    const shift = firstDay === 0 ? 6 : firstDay - 1;
+    const totalDays = new Date(s.year, s.month + 1, 0).getDate();
+    const today = new Date(); today.setHours(0,0,0,0);
+
+    for (let i = 0; i < shift; i++) html += '<div class="adm-cal-day disabled"></div>';
+    
+    for (let d = 1; d <= totalDays; d++) {
+        const dt = new Date(s.year, s.month, d); dt.setHours(0,0,0,0);
+        const isPast = dt < today;
+        const isToday = dt.getTime() === today.getTime();
+        
+        // Availability check — for yurt/sauna/bath only (1:1 mapping)
+        // For hotel, server auto-assigns units, so we don't block dates in the calendar
+        let hasIn = false;
+        let hasOut = false;
+        let isMid = false;
+        if (s.type !== 'hotel') {
+            globalBookings.forEach(b => {
+                if(b.room !== s.roomName || b.status === 'cancelled') return;
+                const bin = new Date(b.checkIn); bin.setHours(0,0,0,0);
+                const bout = new Date(b.checkOut); bout.setHours(0,0,0,0);
                 
-                html += `<td class="chess-cell ${bMid?'occupied':''} ${isSel?'selected':''}" onclick="onCellClick('${rt.id}','${rt.name}','${u}','${dayStr}','${rt.type}',${rt.price},${rt.priceWeekend})">`;
-                if(bMid) html += `<div class="chess-booking" style="background:#38a169" title="${bMid.guest}"></div>`;
-                else if(bIn || bOut) {
-                    html += `<div class="chess-split">`;
-                    if(bOut) html += `<div class="chess-split-out" style="background:#38a169" title="Выезд: ${bOut.guest}"></div>`;
-                    if(bIn) html += `<div class="chess-split-in" style="background:#38a169" title="Заезд: ${bIn.guest}"></div>`;
-                    html += `</div>`;
+                if (dt.getTime() === bin.getTime()) hasIn = true;
+                else if (dt.getTime() === bout.getTime()) hasOut = true;
+                else if (dt.getTime() > bin.getTime() && dt.getTime() < bout.getTime()) isMid = true;
+            });
+        }
+
+        const isSel = (s.checkIn && dt.getTime() === s.checkIn.getTime()) || 
+                      (s.checkOut && dt.getTime() === s.checkOut.getTime()) ||
+                      (s.checkIn && s.checkOut && dt > s.checkIn && dt < s.checkOut);
+
+        const cls = ['adm-cal-day'];
+        if (isPast) cls.push('disabled');
+        if (isToday) cls.push('today');
+        
+        let dayBooked = false;
+        if (s.type !== 'sauna' && s.type !== 'bath' && s.type !== 'hotel') {
+            if (isMid || (hasIn && hasOut)) {
+                cls.push('booked');
+                dayBooked = true;
+            } else if (hasIn) {
+                cls.push('booked-in');
+            } else if (hasOut) {
+                cls.push('booked-out');
+            }
+        }
+
+        if (isSel) cls.push('selected');
+
+        html += `<div class="${cls.join(' ')}" onclick="selectRecDate(${dt.getTime()}, ${dayBooked})">${d}</div>`;
+    }
+    grid.innerHTML = html;
+    
+    if (s.type === 'sauna' || s.type === 'bath') renderRecHours();
+}
+
+function selectRecDate(ts, booked) {
+    if (booked) return;
+    const dt = new Date(ts);
+    const s = recState;
+
+    if (s.type === 'sauna' || s.type === 'bath') {
+        s.checkIn = dt;
+        s.checkOut = dt;
+        renderRecCalendar();
+        renderRecHours();
+    } else if (s.type === 'hotel') {
+        // Hotel: no client-side overlap check (server auto-assigns units)
+        if (!s.checkIn || (s.checkIn && s.checkOut)) {
+            s.checkIn = dt;
+            s.checkOut = null;
+        } else if (dt > s.checkIn) {
+            s.checkOut = dt;
+        } else {
+            s.checkIn = dt;
+            s.checkOut = null;
+        }
+        renderRecCalendar();
+    } else {
+        // Yurt: 1:1 overlap check
+        let hasIn = false;
+        let hasOut = false;
+        let isMid = false;
+        globalBookings.forEach(b => {
+             if(b.room !== s.roomName || b.status === 'cancelled') return;
+             const bin = new Date(b.checkIn); bin.setHours(0,0,0,0);
+             const bout = new Date(b.checkOut); bout.setHours(0,0,0,0);
+             if (dt.getTime() === bin.getTime()) hasIn = true;
+             else if (dt.getTime() === bout.getTime()) hasOut = true;
+             else if (dt.getTime() > bin.getTime() && dt.getTime() < bout.getTime()) isMid = true;
+        });
+
+        if (!s.checkIn || (s.checkIn && s.checkOut)) {
+            if (isMid || hasIn) return;
+            s.checkIn = dt;
+            s.checkOut = null;
+        } else if (dt > s.checkIn) {
+            let overlap = false;
+            globalBookings.forEach(b => {
+                if(b.room !== s.roomName || b.status === 'cancelled') return;
+                const bin = new Date(b.checkIn); bin.setHours(0,0,0,0);
+                const bout = new Date(b.checkOut); bout.setHours(0,0,0,0);
+                if (s.checkIn < bout && dt > bin) overlap = true;
+            });
+            if(overlap) {
+                alert("Эти даты частично заняты");
+                return;
+            }
+            s.checkOut = dt;
+        } else {
+            if (isMid || hasIn) return;
+            s.checkIn = dt;
+        }
+        renderRecCalendar();
+    }
+    updateRecSummary();
+}
+
+function renderRecHours() {
+    if (!recState.checkIn) {
+        document.getElementById('recHourGrid').innerHTML = '<p style="font-size:0.7rem; color:var(--muted)">Сначала выберите дату</p>';
+        return;
+    }
+    const grid = document.getElementById('recHourGrid');
+    let html = '';
+    const today = new Date();
+    
+    const dayBookings = globalBookings.filter(b => {
+        if(b.room !== recState.roomName || b.status === 'cancelled') return false;
+        const bin = new Date(b.checkIn);
+        return bin.toDateString() === recState.checkIn.toDateString();
+    });
+
+    for (let h = 8; h <= 23; h++) {
+        const isBooked = dayBookings.some(b => {
+            const bin = new Date(b.checkIn).getHours();
+            const bout = new Date(b.checkOut).getHours();
+            return h >= bin && h < bout;
+        });
+        const isPast = recState.checkIn.toDateString() === today.toDateString() && h <= today.getHours();
+        const isSel = recState.hours.includes(h);
+        
+        let cls = 'hour-btn';
+        if (isBooked || isPast) cls += ' booked';
+        if (isSel) cls += ' selected';
+        
+        html += `<div class="${cls}" onclick="toggleRecHour(${h}, ${isBooked || isPast})">${h}:00</div>`;
+    }
+    grid.innerHTML = html;
+}
+
+function toggleRecHour(h, disabled) {
+    if (disabled) return;
+    const idx = recState.hours.indexOf(h);
+    if (idx > -1) recState.hours.splice(idx, 1);
+    else recState.hours.push(h);
+    recState.hours.sort((a,b) => a-b);
+    renderRecHours();
+    updateRecSummary();
+}
+
+function updateRecSummary() {
+    const s = recState;
+    const el = document.getElementById('recSelectionSummary');
+    if (s.type === 'sauna' || s.type === 'bath') {
+        if (!s.checkIn || !s.hours.length) el.textContent = 'Выберите дату и часы';
+        else el.textContent = `${s.checkIn.toLocaleDateString()} | ${s.hours.length} ч. (${s.hours.join(', ')}:00)`;
+    } else {
+        if (!s.checkIn) el.textContent = 'Выберите дату заезда';
+        else if (!s.checkOut) el.textContent = 'Выберите дату выезда';
+        else {
+            const nights = Math.ceil((s.checkOut - s.checkIn) / 86400000);
+            el.textContent = `${s.checkIn.toLocaleDateString()} — ${s.checkOut.toLocaleDateString()} (${nights} н.)`;
+            
+            // Auto-calculate price if not set
+            const r = globalRooms.find(x => x.id === s.roomId);
+            if(r) {
+                let total = 0;
+                for(let i=0; i<nights; i++) {
+                    const d = new Date(s.checkIn); d.setDate(d.getDate() + i);
+                    const isWE = d.getDay() === 5 || d.getDay() === 6;
+                    total += (isWE && r.priceWeekend) ? r.priceWeekend : r.price;
                 }
+                document.getElementById('recTotal').value = total;
+            }
+        }
+    }
+}
+
+async function createManualBooking() {
+    const s = recState;
+    const guest = document.getElementById('recGuestName').value.trim();
+    const phone = document.getElementById('recGuestPhone').value.trim();
+    const total = parseInt(document.getElementById('recTotal').value) || 0;
+    const msg = document.getElementById('recStatusMsg');
+    
+    if (!guest || !phone) return alert('Введите имя и телефон гостя');
+    if (!s.checkIn || (s.type!=='sauna' && s.type!=='bath' && !s.checkOut)) return alert('Выберите даты');
+    if ((s.type === 'sauna' || s.type === 'bath') && !s.hours.length) return alert('Выберите часы');
+
+    let checkIn, checkOut, nights;
+    if (s.type === 'sauna' || s.type === 'bath') {
+        const startH = s.hours[0];
+        const endH = s.hours[s.hours.length - 1] + 1;
+        const dIn = new Date(s.checkIn); dIn.setHours(startH, 0, 0, 0);
+        const dOut = new Date(s.checkIn); dOut.setHours(endH, 0, 0, 0);
+        checkIn = dIn.toISOString();
+        checkOut = dOut.toISOString();
+        nights = s.hours.length;
+    } else {
+        checkIn = s.checkIn.toISOString();
+        checkOut = s.checkOut.toISOString();
+        nights = Math.ceil((s.checkOut - s.checkIn) / 86400000);
+    }
+
+    const body = {
+        type: s.type,
+        room: s.roomName,
+        roomTypeId: s.roomId || null,
+        checkIn,
+        checkOut,
+        nights,
+        guest,
+        phone,
+        total,
+        status: 'confirmed'
+    };
+
+    msg.textContent = 'Создание...';
+    try {
+        const res = await fetch('/api/bookings', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body)
+        });
+        const data = await res.json();
+        if (data.success) {
+            msg.style.color = 'var(--green)';
+            const unitLabel = data.unitNumber ? ` (Номер №${data.unitNumber})` : '';
+            msg.textContent = `✅ Бронирование создано!${unitLabel}`;
+            setTimeout(() => {
+                switchTab('all');
+                document.getElementById('recGuestName').value = '';
+                document.getElementById('recGuestPhone').value = '';
+                document.getElementById('recTotal').value = '';
+                msg.textContent = '';
+            }, 2500);
+            renderAll();
+        } else {
+            msg.style.color = 'var(--red)';
+            msg.textContent = '❌ Ошибка: ' + (data.error || 'неизвестно');
+        }
+    } catch(err) {
+        console.error(err);
+        msg.textContent = 'Ошибка сети';
+    }
+}
+
+// ===== BROADCAST =====
+async function loadRecipients() {
+    try {
+        const res = await fetch('/api/admin/broadcast/recipients');
+        const data = await res.json();
+        document.getElementById('recipientCount').textContent = data.count || 0;
+    } catch(e) {
+        document.getElementById('recipientCount').textContent = '—';
+    }
+}
+
+async function sendBroadcast() {
+    const message = document.getElementById('broadcastMessage').value.trim();
+    const resultEl = document.getElementById('broadcastResult');
+    const btn = document.getElementById('btnSendBroadcast');
+
+    if (!message) {
+        resultEl.style.display = 'block';
+        resultEl.style.background = 'var(--red-bg)';
+        resultEl.style.color = 'var(--red)';
+        resultEl.textContent = '❌ Введите текст сообщения';
+        return;
+    }
+
+    const count = document.getElementById('recipientCount').textContent;
+    if (!confirm(`Отправить рассылку ${count} подписчикам?`)) return;
+
+    btn.disabled = true;
+    btn.textContent = '⏳ Отправка...';
+
+    try {
+        const res = await fetch('/api/admin/broadcast', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message })
+        });
+        const data = await res.json();
+
+        resultEl.style.display = 'block';
+        if (data.success) {
+            resultEl.style.background = 'var(--green-bg)';
+            resultEl.style.color = 'var(--green)';
+            resultEl.textContent = `✅ Рассылка отправлена! Получателей: ${data.sent}` + (data.failed ? `, ошибок: ${data.failed}` : '');
+            document.getElementById('broadcastMessage').value = '';
+            loadBroadcastHistory();
+        } else {
+            resultEl.style.background = 'var(--red-bg)';
+            resultEl.style.color = 'var(--red)';
+            resultEl.textContent = '❌ ' + (data.error || 'Ошибка отправки');
+        }
+    } catch(e) {
+        resultEl.style.display = 'block';
+        resultEl.style.background = 'var(--red-bg)';
+        resultEl.style.color = 'var(--red)';
+        resultEl.textContent = '❌ Ошибка сети';
+    }
+
+    btn.disabled = false;
+    btn.textContent = '📤 Отправить рассылку';
+}
+
+async function loadBroadcastHistory() {
+    try {
+        const res = await fetch('/api/admin/broadcast/history');
+        const data = await res.json();
+        const el = document.getElementById('broadcastHistory');
+
+        if (!data || data.length === 0) {
+            el.innerHTML = '<div class="empty-state" style="padding:2rem"><div class="icon">📭</div><p>Рассылок пока не было</p></div>';
+            return;
+        }
+
+        const typeLabels = { all: 'Все', hotel: 'Отель', yurt: 'Юрты', sauna: 'Сауна', bath: 'Баня' };
+
+        el.innerHTML = data.map(b => {
+            const date = new Date(b.createdAt);
+            const dateStr = date.toLocaleDateString('ru-RU', { day:'2-digit', month:'2-digit', year:'numeric' });
+            const timeStr = date.toLocaleTimeString('ru-RU', { hour:'2-digit', minute:'2-digit' });
+            const preview = b.message.length > 80 ? b.message.substring(0, 80) + '...' : b.message;
+
+            return `<div style="padding:.8rem; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:flex-start; gap:1rem;">
+                <div style="flex:1; min-width:0;">
+                    <div style="font-size:.82rem; color:var(--text); line-height:1.4; word-break:break-word;">${preview}</div>
+                    <div style="font-size:.7rem; color:var(--muted); margin-top:.3rem;">${dateStr} ${timeStr}</div>
+                </div>
+                <div style="text-align:right; flex-shrink:0;">
+                    <div style="font-size:.7rem; background:var(--blue-bg); color:var(--blue); padding:.15rem .5rem; border-radius:50px; font-weight:600;">${typeLabels[b.type] || b.type}</div>
+                    <div style="font-size:.78rem; color:var(--gold-l); font-weight:700; margin-top:.3rem;">👥 ${b.recipientCount}</div>
+                </div>
+            </div>`;
+        }).join('');
+    } catch(e) {
+        console.error('Broadcast history error:', e);
+    }
+}
+
+// ===== MENUS MANAGEMENT =====
+async function loadAllMenus() {
+    await loadMenuCategory('restaurant');
+    await loadMenuCategory('bar');
+    await loadMenuCategory('cafe_kd');
+}
+
+async function loadMenuCategory(category) {
+    try {
+        const res = await fetch(`/api/menus?category=${category}`);
+        const items = await res.json();
+        const grid = document.getElementById('menu-grid-' + category);
+        if (!items || items.length === 0) {
+            grid.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:1.5rem; color:var(--muted); font-size:.85rem;">Меню ещё не загружено. Нажмите «+ Загрузить»</div>';
+            return;
+        }
+        grid.innerHTML = items.map(item => `
+            <div style="position:relative; border-radius:10px; overflow:hidden; border:1px solid var(--border); background:var(--surface2);">
+                <img src="${item.imgUrl}" style="width:100%; height:200px; object-fit:cover; display:block; cursor:pointer;" onclick="window.open('${item.imgUrl}','_blank')">
+                <button onclick="deleteMenuImg(${item.id}, '${category}')" style="position:absolute; top:6px; right:6px; width:28px; height:28px; border-radius:50%; background:rgba(255,50,50,0.9); color:#fff; border:none; font-size:1rem; cursor:pointer; display:flex; align-items:center; justify-content:center; font-weight:700;">×</button>
+            </div>
+        `).join('');
+    } catch(e) { console.error('Menu load error:', e); }
+}
+
+async function uploadMenuImg(category) {
+    const input = document.getElementById('menu-file-' + category);
+    if (!input.files.length) return;
+
+    const formData = new FormData();
+    formData.append('photo', input.files[0]);
+    formData.append('category', category);
+
+    try {
+        const res = await fetch('/api/menus', { method: 'POST', body: formData });
+        if (res.ok) {
+            input.value = '';
+            loadMenuCategory(category);
+        } else {
+            alert('Ошибка при загрузке');
+        }
+    } catch(e) { console.error(e); }
+}
+
+async function deleteMenuImg(id, category) {
+    if (!confirm('Удалить эту страницу меню?')) return;
+    try {
+        const res = await fetch('/api/menus/' + id, { method: 'DELETE' });
+        if (res.ok) loadMenuCategory(category);
+        else alert('Ошибка при удалении');
+    } catch(e) { console.error(e); }
+}
+
+// ===== CHESS GRID (Шахматка) =====
+let chessStartDate = new Date().toISOString().split('T')[0];
+const CHESS_DAYS = 14;
+
+function chessNav(delta) {
+    const d = new Date(chessStartDate);
+    d.setDate(d.getDate() + delta);
+    chessStartDate = d.toISOString().split('T')[0];
+    loadChessGrid();
+}
+
+function chessToday() {
+    chessStartDate = new Date().toISOString().split('T')[0];
+    loadChessGrid();
+}
+
+async function loadChessGrid() {
+    const el = document.getElementById('chessGrid');
+    el.innerHTML = '<div style="padding:2rem;text-align:center;color:var(--muted)">Загрузка...</div>';
+
+    try {
+        const res = await fetch(`/api/admin/chess?startDate=${chessStartDate}&days=${CHESS_DAYS}`);
+        const data = await res.json();
+        renderChessGrid(data);
+    } catch(e) {
+        el.innerHTML = '<div style="padding:2rem;text-align:center;color:var(--red)">Ошибка загрузки</div>';
+    }
+}
+
+function renderChessGrid(data) {
+    const el = document.getElementById('chessGrid');
+    const start = new Date(data.startDate);
+    const days = data.days;
+    const mNames = ['янв','фев','мар','апр','май','июн','июл','авг','сен','окт','ноя','дек'];
+    const wDays = ['Вс','Пн','Вт','Ср','Чт','Пт','Сб'];
+    const statusColors = { new:'#e6a817', confirmed:'#38a169', completed:'#4299e1' };
+
+    const dates = [];
+    for (let i = 0; i < days; i++) { 
+        const d = new Date(start); 
+        d.setDate(d.getDate() + i); 
+        dates.push(d); 
+    }
+    const todayStr = new Date().toISOString().split('T')[0];
+
+    let html = `<table class="chess-table">`;
+
+    // Header
+    html += '<thead><tr>';
+    html += `<th>Тип / №</th>`;
+    dates.forEach(d => {
+        const ds = d.toISOString().split('T')[0];
+        const isT = ds === todayStr, isWE = d.getDay()===0||d.getDay()===6;
+        const color = isT ? '#fff' : isWE ? '#ffab00' : '#888';
+        html += `<th style="background:${isT ? '#d4a017' : '#1a1f2e'}">`
+             + `<div style="font-size:.55rem;color:${isT?'#fff':'#666'}">${wDays[d.getDay()]}</div>`
+             + `<div style="font-size:.85rem;color:${color}">${d.getDate()}</div>`
+             + `<div style="font-size:.5rem;color:${isT?'#ffd':'#555'}">${mNames[d.getMonth()]}</div></th>`;
+    });
+    html += '</tr></thead><tbody>';
+
+    if (!data.roomTypes || !data.roomTypes.length) {
+        html += `<tr><td colspan="${days+1}" style="padding:3rem;text-align:center;color:var(--muted)">Нет данных для отображения.</td></tr></tbody></table>`;
+        el.innerHTML = html; return;
+    }
+
+    data.roomTypes.forEach(rt => {
+        if (!rt.units || !rt.units.length) return;
+
+        // Type Group Header
+        html += `<tr style="background:#252a3a;cursor:pointer" data-type-header="1" onclick="let s=this.nextElementSibling; while(s && !s.dataset.typeHeader){ s.style.display=s.style.display==='none'?'':'none'; s=s.nextElementSibling; }">`;
+        html += `<td style="position:sticky;left:0;z-index:15;background:#252a3a;padding:.6rem .8rem;border:1px solid var(--border);font-weight:700;font-size:.82rem;" colspan="${days+1}">`;
+        html += `<span style="margin-right:.4rem">◈</span> ${rt.name} <span style="color:#888;font-weight:400;font-size:.7rem;">(${rt.units.length})</span></td></tr>`;
+
+        // Summary rows
+        const busyMap = dates.map(d => {
+            const ds = d.toISOString().split('T')[0];
+            return rt.units.filter(u => rt.bookings.some(b => b.unitNumber === u && ds >= b.checkIn.split('T')[0] && ds < b.checkOut.split('T')[0])).length;
+        });
+
+        ['Занято', 'Свободно'].forEach((label, idx) => {
+            html += '<tr style="background:#1a1d27;height:25px;">';
+            html += `<td style="position:sticky;left:0;z-index:11;background:#1a1d27;padding:.1rem .8rem;border:1px solid var(--border);font-size:.62rem;font-weight:700;color:${idx===0?'#e53e3e':'#38a169'}">${label}</td>`;
+            busyMap.forEach(count => {
+                const val = idx === 0 ? count : rt.units.length - count;
+                const color = idx === 0 ? (val > 0 ? '#e53e3e' : '#444') : (val > 0 ? '#38a169' : '#e53e3e');
+                html += `<td style="text-align:center;border:1px solid var(--border);font-size:.65rem;font-weight:700;color:${color}">${val||(idx===0?'':0)}</td>`;
+            });
+            html += '</tr>';
+        });
+
+        // Unit rows
+        rt.units.forEach(unitNum => {
+            html += '<tr>';
+            html += `<td style="text-align:center;font-size:.85rem;border:1px solid var(--border);background:#1a1f2e;">${unitNum}</td>`;
+
+            const unitBookings = rt.bookings.filter(b => b.unitNumber === unitNum);
+
+            dates.forEach(d => {
+                const ds = d.toISOString().split('T')[0];
+                
+                // Find check-ins and check-outs on this specific day
+                const checkOutBooking = unitBookings.find(b => b.checkOut.split('T')[0] === ds);
+                const checkInBooking = unitBookings.find(b => b.checkIn.split('T')[0] === ds);
+                const midBooking = unitBookings.find(b => ds > b.checkIn.split('T')[0] && ds < b.checkOut.split('T')[0]);
+
+                html += `<td class="chess-cell">`;
+                
+                if (midBooking) {
+                    // Full day occupied
+                    const col = statusColors[midBooking.status] || '#888';
+                    html += `<div class="chess-booking" style="background:${col}" title="${midBooking.guest}"></div>`;
+                } else if (checkOutBooking && checkInBooking) {
+                    // SPLIT DAY: Someone leaves, someone arrives
+                    const colOut = statusColors[checkOutBooking.status] || '#888';
+                    const colIn = statusColors[checkInBooking.status] || '#888';
+                    html += `<div class="chess-split">
+                        <div class="chess-split-out" style="background:${colOut}" title="Выезд: ${checkOutBooking.guest}"></div>
+                        <div class="chess-split-in" style="background:${colIn}" title="Заезд: ${checkInBooking.guest}"></div>
+                    </div>`;
+                } else if (checkOutBooking) {
+                    // Only Check-out
+                    const col = statusColors[checkOutBooking.status] || '#888';
+                    html += `<div class="chess-split"><div class="chess-split-out" style="background:${col}" title="Выезд: ${checkOutBooking.guest}"></div></div>`;
+                } else if (checkInBooking) {
+                    // Only Check-in
+                    const col = statusColors[checkInBooking.status] || '#888';
+                    html += `<div class="chess-split"><div class="chess-split-in" style="background:${col}" title="Заезд: ${checkInBooking.guest}"></div></div>`;
+                }
+
                 html += `</td>`;
             });
             html += '</tr>';
         });
     });
-    el.innerHTML = html + '</tbody></table>';
+
+    html += '</tbody></table>';
+    el.innerHTML = html;
 }
 
-function onCellClick(rtId, rtName, u, date, type, price, priceW) {
-    if(!selStart || (selRow?.unitNumber != u || selRow?.roomTypeId != rtId)) { selStart = date; selEnd = null; }
-    else if(date === selStart) { selStart = null; selEnd = null; }
-    else if(new Date(date) < new Date(selStart)) { selStart = date; }
-    else { selEnd = date; openBookingModal(); }
-    selRow = { roomTypeId:rtId, roomName:rtName, unitNumber:u, type, price, priceW };
-    loadChessGrid(currentTab);
-}
-function chessNav(d) { chessDate.setDate(chessDate.getDate()+d); loadChessGrid(currentTab); }
-function chessToday() { chessDate = new Date(); chessDate.setHours(0,0,0,0); loadChessGrid(currentTab); }
-
-// ===== HOURLY =====
-async function loadHourly(type) {
-    const d = document.getElementById(type+'Date').value || new Date().toISOString().split('T')[0];
-    document.getElementById(type+'Date').value = d;
-    const res = await fetch('/api/admin/bookings'); const all = await res.json();
-    const busy = all.filter(b => b.type===type && b.status!=='cancelled' && b.checkIn.startsWith(d)).map(b => new Date(b.checkIn).getHours());
-    const grid = document.getElementById(type+'Grid'); if(!grid) return;
-    grid.innerHTML = Array.from({length:15},(_,i)=>i+9).map(h => `<div class="hour-btn ${busy.includes(h)?'booked':''} ${selectedHours.includes(h)?'selected':''}" onclick="toggleHour('${type}',${h},${busy.includes(h)})">${h}:00</div>`).join('');
-}
-function toggleHour(type, h, isB) {
-    if(isB) return;
-    if(selectedHours.includes(h)) selectedHours = selectedHours.filter(x=>x!==h); else selectedHours.push(h);
-    const btn = document.getElementById(type+'BookBtn'); if(btn) btn.style.display = selectedHours.length ? 'block' : 'none';
-    loadHourly(type);
-}
-function bookHourly(type) {
-    const d = document.getElementById(type+'Date').value;
-    const sH = Math.min(...selectedHours), eH = Math.max(...selectedHours)+1;
-    const rt = globalRooms.find(r => r.type === type);
-    selRow = { roomTypeId:rt.id, roomName:rt.name, type, price:rt.price, priceW:rt.priceWeekend };
-    selStart = `${d}T${String(sH).padStart(2,'0')}:00:00`; selEnd = `${d}T${String(eH).padStart(2,'0')}:00:00`;
-    openBookingModal();
-}
-
-// ===== RECEPTION LOGIC (OLD UI) =====
-let recState = { type:'hotel', month:new Date().getMonth(), year:new Date().getFullYear(), checkIn:null, checkOut:null, hours:[] };
-function initReception() {
-    document.getElementById('recTypeSelect').value = recState.type;
-    selectRecType(recState.type);
-}
-function selectRecType(t) {
-    recState.type = t; recState.checkIn = null; recState.checkOut = null; recState.hours = [];
-    const filtered = globalRooms.filter(r => r.type === t);
-    document.getElementById('recRoomSelect').innerHTML = filtered.map(r => `<option value="${r.id}">${r.name}</option>`).join('');
-    document.getElementById('recHourPanel').style.display = (t==='sauna' || t==='bath') ? 'block' : 'none';
-    onRecRoomChange();
-}
-function onRecRoomChange() { renderRecCalendar(); updateRecSummary(); if(recState.type==='sauna' || recState.type==='bath') renderRecHours(); }
-function changeRecMonth(d) { recState.month += d; if(recState.month<0){recState.month=11; recState.year--;} if(recState.month>11){recState.month=0; recState.year++;} renderRecCalendar(); }
-function renderRecCalendar() {
-    const s = recState; const grid = document.getElementById('recCalGrid');
-    document.getElementById('recCalTitle').textContent = months[s.month] + ' ' + s.year;
-    let html = ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'].map(d => `<div style="font-size:.6rem; text-align:center; color:var(--muted)">${d}</div>`).join('');
-    const first = new Date(s.year, s.month, 1).getDay(); const shift = first===0?6:first-1;
-    const total = new Date(s.year, s.month+1, 0).getDate();
-    for(let i=0; i<shift; i++) html += '<div></div>';
-    for(let d=1; d<=total; d++) {
-        const dt = new Date(s.year, s.month, d); dt.setHours(0,0,0,0);
-        const isSel = (s.checkIn && dt.getTime()===s.checkIn.getTime()) || (s.checkOut && dt.getTime()===s.checkOut.getTime()) || (s.checkIn && s.checkOut && dt>s.checkIn && dt<s.checkOut);
-        html += `<div class="adm-cal-day ${isSel?'selected':''}" onclick="selectRecDate(${dt.getTime()})">${d}</div>`;
-    }
-    grid.innerHTML = html;
-}
-function selectRecDate(ts) {
-    const dt = new Date(ts);
-    if(recState.type==='sauna' || recState.type==='bath') { recState.checkIn = dt; recState.checkOut = dt; renderRecHours(); }
-    else { if(!recState.checkIn || (recState.checkIn && recState.checkOut)) { recState.checkIn = dt; recState.checkOut = null; } else if(dt > recState.checkIn) recState.checkOut = dt; else recState.checkIn = dt; }
-    renderRecCalendar(); updateRecSummary();
-}
-function renderRecHours() {
-    const busy = globalBookings.filter(b => b.room === globalRooms.find(r=>r.id==parseInt(document.getElementById('recRoomSelect').value))?.name && b.status!=='cancelled' && new Date(b.checkIn).toDateString() === recState.checkIn.toDateString()).map(b => new Date(b.checkIn).getHours());
-    document.getElementById('recHourGrid').innerHTML = Array.from({length:15},(_,i)=>i+9).map(h => `<div class="hour-btn ${busy.includes(h)?'booked':''} ${recState.hours.includes(h)?'selected':''}" onclick="toggleRecHour(${h},${busy.includes(h)})">${h}:00</div>`).join('');
-}
-function toggleRecHour(h, isB) { if(isB) return; if(recState.hours.includes(h)) recState.hours = recState.hours.filter(x=>x!==h); else recState.hours.push(h); renderRecHours(); updateRecSummary(); }
-function updateRecSummary() {
-    const s = recState; const el = document.getElementById('recSelectionSummary');
-    if(!s.checkIn) el.textContent = "Выберите дату";
-    else if((s.type==='sauna'||s.type==='bath') && !s.hours.length) el.textContent = "Выберите часы";
-    else if(s.type!=='sauna' && s.type!=='bath' && !s.checkOut) el.textContent = "Выберите дату выезда";
-    else el.textContent = s.checkIn.toLocaleDateString() + (s.checkOut && s.checkOut!==s.checkIn ? ' — ' + s.checkOut.toLocaleDateString() : '') + (s.hours.length ? ' ('+s.hours.length+' ч.)' : '');
-}
-async function createManualBooking() {
-    const guest = document.getElementById('recGuestName').value, phone = document.getElementById('recGuestPhone').value, total = parseInt(document.getElementById('recTotal').value);
-    if(!guest || !phone || !recState.checkIn) return alert("Заполните данные");
-    const r = globalRooms.find(x => x.id === parseInt(document.getElementById('recRoomSelect').value));
-    let start = recState.checkIn.toISOString().split('T')[0], end = (recState.checkOut||recState.checkIn).toISOString().split('T')[0];
-    if(recState.type==='sauna' || recState.type==='bath') {
-        const sH = Math.min(...recState.hours), eH = Math.max(...recState.hours)+1;
-        start += `T${String(sH).padStart(2,'0')}:00:00`; end += `T${String(eH).padStart(2,'0')}:00:00`;
-    } else { start += 'T14:00:00'; end += 'T12:00:00'; }
-    const b = { type:recState.type, room:r.name, roomTypeId:r.id, checkIn:start, checkOut:end, guest, phone, total, nights:recState.type.includes('sauna')?recState.hours.length:Math.ceil((recState.checkOut-recState.checkIn)/86400000), status:'confirmed' };
-    await fetch('/api/bookings', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(b) });
-    renderAll(); alert("Готово");
-}
-
-// ===== ROOM MANAGEMENT =====
-async function loadRoomsForPhotos() {
-    const res = await fetch('/api/rooms'); globalRooms = await res.json();
-    document.getElementById('roomsPhotoList').innerHTML = globalRooms.map(r => `
-        <div class="room-mgmt-card">
-            <div style="display:flex; justify-content:space-between">
-                <div><strong>${r.name}</strong> <span class="tag">${r.type}</span></div>
-                <button class="btn-action" onclick="openRoomModal(${r.id})">✎ Изменить данные</button>
-            </div>
-            <div class="photo-grid">${r.imgs.map(img => `<div class="photo-item"><img src="${img}"><button class="btn-del-photo" onclick="deletePhoto(${r.id},'${img}')">×</button></div>`).join('')}</div>
-            <div style="display:flex; gap:.5rem"><input type="file" id="file-${r.id}" class="form-input" style="margin:0"><button class="btn-action btn-gold" onclick="uploadPhoto(${r.id})">Загрузить</button></div>
-        </div>
-    `).join('');
-}
-function openRoomModal(id) {
-    const r = globalRooms.find(x => x.id === id); if(!r) return;
-    document.getElementById('r_id').value = r.id; document.getElementById('r_type').value = r.type; document.getElementById('r_name').value = r.name;
-    document.getElementById('r_desc').value = r.desc; document.getElementById('r_price').value = r.price; document.getElementById('r_priceWeekend').value = r.priceWeekend || '';
-    document.getElementById('r_area').value = r.area || ''; document.getElementById('r_capacity').value = r.capacity || ''; document.getElementById('r_amenities').value = r.amenities.join(', ');
-    document.getElementById('roomModalOverlay').style.display='flex';
-}
-function closeRoomModal() { document.getElementById('roomModalOverlay').style.display='none'; }
-async function saveRoom() {
-    const id = document.getElementById('r_id').value;
-    const b = { type:document.getElementById('r_type').value, name:document.getElementById('r_name').value, desc:document.getElementById('r_desc').value, price:Number(document.getElementById('r_price').value), priceWeekend:Number(document.getElementById('r_priceWeekend').value), area:document.getElementById('r_area').value, capacity:Number(document.getElementById('r_capacity').value), amenities:document.getElementById('r_amenities').value.split(',').map(s=>s.trim()) };
-    await fetch('/api/rooms/'+id, { method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify(b) });
-    closeRoomModal(); loadRoomsForPhotos();
-}
-async function uploadPhoto(id) { const fd = new FormData(); fd.append('photo', document.getElementById('file-'+id).files[0]); await fetch(`/api/rooms/${id}/photo`, {method:'POST', body:fd}); loadRoomsForPhotos(); }
-async function deletePhoto(id, url) { if(confirm('Удалить?')) { await fetch(`/api/rooms/${id}/photo/delete`, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({imgUrl:url})}); loadRoomsForPhotos(); } }
-
-// ===== OTHERS =====
-async function loadAllMenus() { ['restaurant','bar','cafe_kd'].forEach(loadMenuCategory); }
-async function loadMenuCategory(cat) { const res = await fetch(`/api/menus?category=${cat}`); const items = await res.json(); document.getElementById('menu-grid-'+cat).innerHTML = items.map(i => `<div class="photo-item"><img src="${i.imgUrl}"><button class="btn-del-photo" onclick="deleteMenuImg(${i.id},'${cat}')">×</button></div>`).join(''); }
-async function uploadMenuImg(cat) { const fd = new FormData(); fd.append('photo', document.getElementById('menu-file-'+cat).files[0]); fd.append('category', cat); await fetch('/api/menus', {method:'POST', body:fd}); loadMenuCategory(cat); }
-async function deleteMenuImg(id, cat) { if(confirm('Удалить?')) { await fetch('/api/menus/'+id, {method:'DELETE'}); loadMenuCategory(cat); } }
-async function loadRecipients() { const res = await fetch('/api/admin/broadcast/recipients'); document.getElementById('recipientCount').textContent = (await res.json()).count; }
-async function sendBroadcast() { const m = document.getElementById('broadcastMessage').value; if(!m) return; await fetch('/api/admin/broadcast', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({message:m})}); alert("Отправлено"); }
-async function loadBroadcastHistory() { const res = await fetch('/api/admin/broadcast/history'); const data = await res.json(); document.getElementById('broadcastHistory').innerHTML = data.map(h => `<div style="padding:1rem; border-bottom:1px solid var(--border)">${h.message}<br><small>${new Date(h.createdAt).toLocaleString()}</small></div>`).join(''); }
-
-function openBookingModal() {
-    document.getElementById('modalOverlay').style.display = 'flex';
-    document.getElementById('m_room').value = selRow.roomName + (selRow.unitNumber ? ` (№${selRow.unitNumber})` : '');
-    document.getElementById('m_checkIn').value = selStart.split('T')[0];
-    document.getElementById('m_checkOut').value = selEnd.split('T')[0];
-    const s = new Date(selStart), e = new Date(selEnd);
-    if(selRow.type === 'sauna' || selRow.type === 'bath') { const h = (e-s)/3600000; document.getElementById('m_nights').value = h; document.getElementById('m_total').value = h*selRow.price; }
-    else { const n = Math.ceil((e-s)/86400000); let t = 0; for(let i=0; i<n; i++) { let c=new Date(s); c.setDate(c.getDate()+i); t += (c.getDay()===0||c.getDay()===5||c.getDay()===6) ? (selRow.priceW||selRow.price) : selRow.price; } document.getElementById('m_nights').value = n; document.getElementById('m_total').value = t; }
-}
-function closeModal() { document.getElementById('modalOverlay').style.display='none'; selectedHours=[]; selStart=null; selEnd=null; document.querySelectorAll('.btn-book-hourly').forEach(b=>b.style.display='none'); }
-async function submitModalBooking() {
-    const g = document.getElementById('m_guest').value, p = document.getElementById('m_phone').value; if(!g || !p) return alert("Заполните имя и телефон");
-    const b = { type:selRow.type, room:selRow.roomName, roomTypeId:selRow.roomTypeId, forceUnitNumber:selRow.unitNumber, checkIn:document.getElementById('m_checkIn').value + (selRow.type==='hotel'?'T14:00:00':selStart.includes('T')?selStart.split('T')[1]:'T14:00:00'), checkOut:document.getElementById('m_checkOut').value + (selRow.type==='hotel'?'T12:00:00':selEnd.includes('T')?selEnd.split('T')[1]:'T12:00:00'), guest:g, phone:p, total:parseInt(document.getElementById('m_total').value), nights:parseInt(document.getElementById('m_nights').value), status:'confirmed' };
-    await fetch('/api/bookings', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(b) }); closeModal(); renderAll();
-}
-
-async function init() { const res = await fetch('/api/rooms'); globalRooms = await res.json(); if(sessionStorage.getItem('chalama_admin')) showDashboard(); }
-init();
+// Init
+renderAdmins();
 </script>
 </body>
 </html>
