@@ -1963,13 +1963,27 @@ async function loadChessGrid(type='hotel') {
     }
 }
 
+function getBookingColor(b) {
+    if (!b) return '#888';
+    if (b.status === 'cancelled') return '#3a3f4b';
+    
+    // Generate a stable color based on booking ID
+    let hash = 0;
+    const idStr = String(b.id || b.guest || '');
+    for (let i = 0; i < idStr.length; i++) {
+        hash = idStr.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    const h = Math.abs(hash % 360);
+    // Return a nice HSL color (premium look: not too neon, not too dark)
+    return `hsl(${h}, 65%, 42%)`;
+}
+
 function renderChessGrid(data, type='hotel') {
     const el = document.getElementById('chessGrid_' + type);
     const start = new Date(data.startDate);
     const days = data.days;
     const mNames = ['янв','фев','мар','апр','май','июн','июл','авг','сен','окт','ноя','дек'];
     const wDays = ['Вс','Пн','Вт','Ср','Чт','Пт','Сб'];
-    const statusColors = { new:'#e6a817', confirmed:'#38a169', completed:'#4299e1' };
 
     const dates = [];
     for (let i = 0; i < days; i++) { 
@@ -2027,23 +2041,21 @@ function renderChessGrid(data, type='hotel') {
                 
                 if (midBooking) {
                     // Full day occupied
-                    const col = statusColors[midBooking.status] || '#888';
+                    const col = getBookingColor(midBooking);
                     html += `<div class="chess-booking" style="background:${col}" title="${midBooking.guest}"></div>`;
                 } else if (checkOutBooking && checkInBooking) {
                     // SPLIT DAY: Someone leaves, someone arrives
-                    const colOut = statusColors[checkOutBooking.status] || '#888';
-                    const colIn = statusColors[checkInBooking.status] || '#888';
+                    const colOut = getBookingColor(checkOutBooking);
+                    const colIn = getBookingColor(checkInBooking);
                     html += `<div class="chess-split">
                         <div class="chess-split-out" style="background:${colOut}" title="Выезд: ${checkOutBooking.guest}"></div>
                         <div class="chess-split-in" style="background:${colIn}" title="Заезд: ${checkInBooking.guest}"></div>
                     </div>`;
                 } else if (checkOutBooking) {
-                    // Only Check-out
-                    const col = statusColors[checkOutBooking.status] || '#888';
+                    const col = getBookingColor(checkOutBooking);
                     html += `<div class="chess-split"><div class="chess-split-out" style="background:${col}" title="Выезд: ${checkOutBooking.guest}"></div></div>`;
                 } else if (checkInBooking) {
-                    // Only Check-in
-                    const col = statusColors[checkInBooking.status] || '#888';
+                    const col = getBookingColor(checkInBooking);
                     html += `<div class="chess-split"><div class="chess-split-in" style="background:${col}" title="Заезд: ${checkInBooking.guest}"></div></div>`;
                 }
 
