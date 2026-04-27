@@ -563,8 +563,16 @@ function formatDate(isoString) {
 app.post('/api/bookings', (req, res) => {
     const b = req.body;
 
-    if (!b.checkIn || !b.checkOut || new Date(b.checkIn) >= new Date(b.checkOut)) {
-        return res.status(400).json({ success: false, error: 'Некорректные даты проживания' });
+    if (!b.checkIn || !b.checkOut) {
+        return res.status(400).json({ success: false, error: 'Даты проживания обязательны' });
+    }
+
+    // Normalize dates to include standard hotel times for proper lexicographical comparison
+    if (!b.checkIn.includes('T')) b.checkIn = b.checkIn.split('T')[0] + 'T14:00:00';
+    if (!b.checkOut.includes('T')) b.checkOut = b.checkOut.split('T')[0] + 'T12:00:00';
+
+    if (new Date(b.checkIn) >= new Date(b.checkOut)) {
+        return res.status(400).json({ success: false, error: 'Дата выезда должна быть позже даты заезда' });
     }
 
     const guestName = sanitize(b.guest || '').trim();
