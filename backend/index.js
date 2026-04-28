@@ -283,6 +283,7 @@ db.serialize(() => {
                 )`);
                 db.run("CREATE UNIQUE INDEX IF NOT EXISTS idx_unit_number ON room_units(unitNumber)");
                 db.run("ALTER TABLE bookings ADD COLUMN unitNumber TEXT", (err) => {});
+                db.run("ALTER TABLE bookings ADD COLUMN roomTypeId INTEGER", (err) => {});
                 db.run("CREATE INDEX IF NOT EXISTS idx_bookings_unit ON bookings(unitNumber)");
 
                 // Initial Room Seeding
@@ -572,9 +573,18 @@ app.post('/api/bookings', (req, res) => {
     // Clean dates to YYYY-MM-DD format
     const inD = b.checkIn.split('T')[0];
     const outD = b.checkOut.split('T')[0];
+    const isSaunaOrBath = b.type === 'sauna' || b.type === 'bath';
 
-    if (new Date(inD) >= new Date(outD)) {
-        return res.status(400).json({ success: false, error: 'Дата выезда должна быть позже даты заезда' });
+    // For sauna/bath: checkIn and checkOut can be same day (hourly booking like 10:00-14:00)
+    // so we compare full ISO strings instead of date-only
+    if (isSaunaOrBath) {
+        if (new Date(b.checkIn) >= new Date(b.checkOut)) {
+            return res.status(400).json({ success: false, error: 'Время окончания должно быть позже времени начала' });
+        }
+    } else {
+        if (new Date(inD) >= new Date(outD)) {
+            return res.status(400).json({ success: false, error: 'Дата выезда должна быть позже даты заезда' });
+        }
     }
 
     const guestName = sanitize(b.guest || '').trim();
@@ -670,8 +680,11 @@ app.post('/api/bookings', (req, res) => {
                     const unitNums = units.map(u => u.unitNumber);
                     const placeholders = unitNums.map(() => '?').join(',');
 
+                    // If admin specified a specific unit (from chess grid), try to use it
+                    const preferredUnit = b.unitNumber || null;
+
                     // Debug log
-                    console.log(`[Booking Request] ${roomType.name}, In: ${b.checkIn}, Out: ${b.checkOut}`);
+                    console.log(`[Booking Request] ${roomType.name}, In: ${b.checkIn}, Out: ${b.checkOut}${preferredUnit ? ', Preferred unit: ' + preferredUnit : ''}`);
 
                     db.all(
                         `SELECT DISTINCT unitNumber FROM bookings
@@ -694,7 +707,14 @@ app.post('/api/bookings', (req, res) => {
 
                             // For auto-assignment, we need to skip occupied units AND account for unassigned slots
                             const freeUnits = unitNums.filter(u => !busySet.has(u));
-                            const actualFreeUnit = freeUnits.length > unassignedCount ? freeUnits[unassignedCount] : null;
+
+                            let actualFreeUnit = null;
+                            // If admin requested a specific unit, check if it's free
+                            if (preferredUnit && freeUnits.includes(preferredUnit) && !busySet.has(preferredUnit)) {
+                                actualFreeUnit = preferredUnit;
+                            } else {
+                                actualFreeUnit = freeUnits.length > unassignedCount ? freeUnits[unassignedCount] : null;
+                            }
 
                             if (!actualFreeUnit) {
                                 console.log(`[Result] DENIED - No free units found`);
@@ -711,26 +731,43 @@ app.post('/api/bookings', (req, res) => {
             });
         });
     } else {
-        // Yurt/Sauna/Bath: old 1:1 logic
-        // Find roomTypeId first if not provided
-        const findQ = "SELECT id, name FROM rooms WHERE name = ? OR id = ?";
-        db.get(findQ, [b.room, b.roomTypeId], (err, roomRow) => {
-            if (err || !roomRow) return res.status(400).json({ error: 'Объект не найден' });
-            
-            b.room = roomRow.name;
-            b.roomTypeId = roomRow.id;
+        // Yurt/Sauna/Bath: 1:1 logic with exclusive transaction to prevent race conditions
+        db.run("BEGIN EXCLUSIVE", (txErr) => {
+            if (txErr) return res.status(500).json({ error: 'Transaction error' });
 
-            db.get(
-                `SELECT id FROM bookings WHERE (roomTypeId = ? OR room = ?) AND status != 'cancelled' AND status != 'completed' AND (SUBSTR(checkIn, 1, 10) < ? AND SUBSTR(checkOut, 1, 10) > ?)`,
-                [b.roomTypeId, b.room, outD, inD],
-                (err, row) => {
-                    if (err) return res.status(500).json({ error: err.message });
-                    if (row) return res.status(400).json({ success: false, error: 'Даты уже заняты' });
+            const findQ = "SELECT id, name FROM rooms WHERE name = ? OR id = ?";
+            db.get(findQ, [b.room, b.roomTypeId], (err, roomRow) => {
+                if (err || !roomRow) {
+                    db.run("ROLLBACK");
+                    return res.status(400).json({ error: 'Объект не найден' });
+                }
+                
+                b.room = roomRow.name;
+                b.roomTypeId = roomRow.id;
+
+                // For sauna/bath (hourly bookings): compare full ISO datetime to detect time overlaps
+                // For yurt (daily bookings): compare date-only (SUBSTR) as before
+                const overlapQuery = isSaunaOrBath
+                    ? `SELECT id FROM bookings WHERE (roomTypeId = ? OR room = ?) AND status != 'cancelled' AND status != 'completed' AND (checkIn < ? AND checkOut > ?)`
+                    : `SELECT id FROM bookings WHERE (roomTypeId = ? OR room = ?) AND status != 'cancelled' AND status != 'completed' AND (SUBSTR(checkIn, 1, 10) < ? AND SUBSTR(checkOut, 1, 10) > ?)`;
+                const overlapParams = isSaunaOrBath
+                    ? [b.roomTypeId, b.room, b.checkOut, b.checkIn]
+                    : [b.roomTypeId, b.room, outD, inD];
+
+                db.get(overlapQuery, overlapParams, (err, row) => {
+                    if (err) {
+                        db.run("ROLLBACK");
+                        return res.status(500).json({ error: err.message });
+                    }
+                    if (row) {
+                        db.run("ROLLBACK");
+                        return res.status(400).json({ success: false, error: isSaunaOrBath ? 'Выбранное время уже занято' : 'Даты уже заняты' });
+                    }
                     
                     const unitToSave = b.type === 'yurt' ? (b.unitNumber || b.room) : null;
-                    insertBooking(unitToSave);
-                }
-            );
+                    db.run("COMMIT", () => insertBooking(unitToSave));
+                });
+            });
         });
     }
 });

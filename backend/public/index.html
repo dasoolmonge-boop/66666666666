@@ -1365,39 +1365,6 @@ function renderCart(type) {
     el.innerHTML = `<div class="cart"><div class="cart-title">🛒 Ваш заказ</div>${rows}</div>`;
 }
 
-// === TELEGRAM ===
-const TG_TOKEN = '8772760363:AAEJzb-RqoMeQHkaEjoaSP61-Wqv5vPeby0';
-function sendTGNotification(booking) {
-    const admins = JSON.parse(localStorage.getItem('chalama_admins') || '[]');
-    if (!admins.length) return;
-    const typeLabel = booking.type === 'hotel' ? '🏨 Отель «Чалама»' : booking.type === 'yurt' ? '⛺ Юрты «Хаан-Дыт»' : '🧖‍♂️ Сауна';
-    const checkIn = new Date(booking.checkIn);
-    const checkOut = new Date(booking.checkOut);
-    const fD = d => d.getDate() + '.' + String(d.getMonth()+1).padStart(2,'0') + '.' + d.getFullYear();
-    let text = `📌 *Новая бронь!*\n\n`;
-    text += `${typeLabel}\n`;
-    text += `🛏 *${booking.room}*\n`;
-    if (booking.type === 'sauna' || booking.type === 'bath') {
-        const fH = d => String(d.getHours()).padStart(2, '0') + ':00';
-        text += `📅 ${fD(checkIn)}\n⏰ ${fH(checkIn)} — ${fH(checkOut)} (${booking.nights} ч.)\n`;
-    } else {
-        text += `📅 ${fD(checkIn)} — ${fD(checkOut)} (${booking.nights} ноч.)\n`;
-    }
-    text += `👤 ${booking.guest}\n`;
-    text += `📞 ${booking.phone}\n`;
-    if (booking.addons && booking.addons.length) text += `➕ ${booking.addons.join(', ')}\n`;
-    text += `\n💰 *Итого: ${booking.total.toLocaleString('ru')} ₽*`;
-    text += `\n\n🔖 ID: \`${booking.id}\``;
-
-    admins.forEach(admin => {
-        fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ chat_id: admin.chatId, text: text, parse_mode: 'Markdown' })
-        }).catch(() => {});
-    });
-}
-
 // === BOOKING ===
 function submitBooking(type) {
     const name = document.getElementById(type + '-name').value;

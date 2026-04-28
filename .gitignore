@@ -1,13 +1,8 @@
-# Node
 node_modules/
-npm-debug.log*
-
-# Database (CRITICAL: Do not track server data)
-backend/db/database.sqlite
-backend/db/*.sqlite-journal
-backend/db/*.sqlite-shm
-backend/db/*.sqlite-wal
-
-# Environment
-.env
 .DS_Store
+*.log
+db/*.sqlite
+db/*.sqlite-journal
+.env
+uploads/
+package-lock.json

@@ -1679,10 +1679,42 @@ function renderRecHours() {
 
 function toggleRecHour(h, disabled) {
     if (disabled) return;
-    const idx = recState.hours.indexOf(h);
-    if (idx > -1) recState.hours.splice(idx, 1);
-    else recState.hours.push(h);
-    recState.hours.sort((a,b) => a-b);
+    const s = recState;
+    if (!s.hours.length || s.hours.length > 1) {
+        s.hours = [h];
+    } else {
+        const start = s.hours[0];
+        if (h <= start) {
+            s.hours = [h];
+        } else {
+            // Проверка, нет ли забронированных часов внутри диапазона
+            const today = new Date();
+            const dayBookings = globalBookings.filter(b => {
+                if(b.room !== s.roomName || b.status === 'cancelled') return false;
+                return new Date(b.checkIn).toDateString() === s.checkIn.toDateString();
+            });
+
+            let hasOverlap = false;
+            let range = [];
+            for (let i = start; i <= h; i++) {
+                const isBooked = dayBookings.some(b => {
+                    const bin = new Date(b.checkIn).getHours();
+                    const bout = new Date(b.checkOut).getHours();
+                    return i >= bin && i < bout;
+                });
+                const isPast = s.checkIn.toDateString() === today.toDateString() && i <= today.getHours();
+                if (isBooked || isPast) hasOverlap = true;
+                range.push(i);
+            }
+
+            if (hasOverlap) {
+                alert("В выбранном диапазоне есть занятые часы");
+                s.hours = [h];
+            } else {
+                s.hours = range;
+            }
+        }
+    }
     renderRecHours();
     updateRecSummary();
 }
