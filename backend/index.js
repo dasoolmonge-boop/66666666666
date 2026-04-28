@@ -462,37 +462,85 @@ app.get('/api/rooms/available', (req, res) => {
     });
 });
 
+// Get units for a room type
+app.get('/api/rooms/:id/units', (req, res) => {
+    db.all("SELECT * FROM room_units WHERE roomTypeId = ?", [req.params.id], (err, rows) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json(rows || []);
+    });
+});
+
 // Create a new room
 app.post('/api/rooms', (req, res) => {
-    const { type, name, desc, price, priceWeekend, amenities, area, capacity, tariff, prepayment } = req.body;
+    const { type, name, desc, price, priceWeekend, amenities, area, capacity, tariff, prepayment, units } = req.body;
     db.run(
         `INSERT INTO rooms (type, name, desc, price, priceWeekend, amenities, imgs, area, capacity, tariff, prepayment) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [type, name, desc, price, priceWeekend || null, JSON.stringify(amenities || []), '[]', area || null, capacity || null, tariff || null, prepayment || null],
         function (err) {
             if (err) return res.status(500).json({ error: err.message });
-            res.json({ success: true, id: this.lastID });
+            const roomId = this.lastID;
+
+            // If units provided, add them
+            if (units && Array.isArray(units) && units.length > 0) {
+                const placeholders = units.map(() => '(?, ?, 1)').join(', ');
+                const params = [];
+                units.forEach(u => {
+                    params.push(roomId, String(u));
+                });
+                db.run(`INSERT OR IGNORE INTO room_units (roomTypeId, unitNumber, isActive) VALUES ${placeholders}`, params, (err) => {
+                    if (err) console.error("[DB Error] Units insert:", err.message);
+                    res.json({ success: true, id: roomId });
+                });
+            } else {
+                res.json({ success: true, id: roomId });
+            }
         }
     );
 });
 
 // Update an existing room
 app.put('/api/rooms/:id', (req, res) => {
-    const { type, name, desc, price, priceWeekend, amenities, area, capacity, tariff, prepayment } = req.body;
+    const { type, name, desc, price, priceWeekend, amenities, area, capacity, tariff, prepayment, units } = req.body;
+    const roomId = req.params.id;
+
     db.run(
         `UPDATE rooms SET type=?, name=?, desc=?, price=?, priceWeekend=?, amenities=?, area=?, capacity=?, tariff=?, prepayment=? WHERE id=?`,
-        [type, name, desc, price, priceWeekend || null, JSON.stringify(amenities || []), area || null, capacity || null, tariff || null, prepayment || null, req.params.id],
+        [type, name, desc, price, priceWeekend || null, JSON.stringify(amenities || []), area || null, capacity || null, tariff || null, prepayment || null, roomId],
         function (err) {
             if (err) return res.status(500).json({ error: err.message });
-            res.json({ success: true });
+            
+            // Sync units
+            if (units && Array.isArray(units)) {
+                db.serialize(() => {
+                    // 1. Delete units no longer in the list
+                    const placeholders = units.map(() => '?').join(',');
+                    if (units.length > 0) {
+                        db.run(`DELETE FROM room_units WHERE roomTypeId = ? AND unitNumber NOT IN (${placeholders})`, [roomId, ...units]);
+                        // 2. Add new units
+                        units.forEach(u => {
+                            db.run("INSERT OR IGNORE INTO room_units (roomTypeId, unitNumber, isActive) VALUES (?, ?, 1)", [roomId, String(u)]);
+                        });
+                    } else {
+                        db.run(`DELETE FROM room_units WHERE roomTypeId = ?`, [roomId]);
+                    }
+                    res.json({ success: true });
+                });
+            } else {
+                res.json({ success: true });
+            }
         }
     );
 });
 
 // Delete a room
 app.delete('/api/rooms/:id', (req, res) => {
-    db.run(`DELETE FROM rooms WHERE id=?`, [req.params.id], function (err) {
-        if (err) return res.status(500).json({ error: err.message });
-        res.json({ success: true });
+    const roomId = req.params.id;
+    db.serialize(() => {
+        db.run(`DELETE FROM room_units WHERE roomTypeId=?`, [roomId]);
+        db.run(`DELETE FROM rooms WHERE id=?`, [roomId], function (err) {
+            if (err) return res.status(500).json({ error: err.message });
+            res.json({ success: true });
+        });
     });
 });
 
@@ -999,35 +1047,6 @@ app.delete('/api/menus/:id', (req, res) => {
         });
     });
 });
-// ===== ROOM UNITS MANAGEMENT =====
-
-// Get units for a room type
-app.get('/api/rooms/:id/units', (req, res) => {
-    db.all("SELECT * FROM room_units WHERE roomTypeId = ? ORDER BY unitNumber", [req.params.id], (err, rows) => {
-        if (err) return res.status(500).json({ error: err.message });
-        res.json(rows || []);
-    });
-});
-
-// Add a unit to a room type
-app.post('/api/rooms/:id/units', (req, res) => {
-    const { unitNumber } = req.body;
-    if (!unitNumber) return res.status(400).json({ error: 'unitNumber required' });
-    db.run("INSERT OR IGNORE INTO room_units (roomTypeId, unitNumber, isActive) VALUES (?, ?, 1)",
-        [req.params.id, String(unitNumber).trim()], function(err) {
-        if (err) return res.status(500).json({ error: err.message });
-        res.json({ success: true, id: this.lastID });
-    });
-});
-
-// Delete a unit
-app.delete('/api/room-units/:id', (req, res) => {
-    db.run("DELETE FROM room_units WHERE id = ?", [req.params.id], function(err) {
-        if (err) return res.status(500).json({ error: err.message });
-        res.json({ success: true });
-    });
-});
-
 // ===== CHESS GRID (Шахматка) =====
 app.get('/api/admin/chess', (req, res) => {
     const startDate = req.query.startDate || new Date().toISOString().split('T')[0];

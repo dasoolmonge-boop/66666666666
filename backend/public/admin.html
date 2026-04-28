@@ -894,6 +894,11 @@
                     <label>Предоплата (₽)</label>
                     <input type="number" id="r_prepayment" placeholder="6950">
                 </div>
+                <div class="form-group full">
+                    <label>Номера комнат (через запятую)</label>
+                    <input type="text" id="r_units" placeholder="201, 202, 305">
+                    <small style="color:var(--muted); font-size:0.7rem; display:block; margin-top:0.3rem;">Эти номера появятся в шахматке</small>
+                </div>
             </div>
 
             <button type="submit" class="btn-submit" style="margin-top: 1rem;">Сохранить изменения</button>
@@ -1247,6 +1252,9 @@ function renderRoomsPhotoList() {
                             ${r.area ? `<span style="font-size: 0.7rem; color: #ddd; background: rgba(255,255,255,0.05); padding: 2px 6px; border-radius: 4px;">📐 ${r.area}</span>` : ''}
                             ${r.capacity ? `<span style="font-size: 0.7rem; color: #ddd; background: rgba(255,255,255,0.05); padding: 2px 6px; border-radius: 4px;">👤 ${r.capacity}</span>` : ''}
                         </div>
+                        <div id="unit-list-${r.id}" style="margin-top:0.8rem; display:flex; gap:0.4rem; flex-wrap:wrap;">
+                            <!-- Units will be loaded here -->
+                        </div>
                     </div>
                     <div class="room-actions" style="display: flex; flex-direction: column; gap: 0.5rem;">
                         <button class="btn-restore btn-action" onclick="openRoomModal(${r.id})" style="width: 100%; white-space: nowrap;">✎ Изменить данные</button>
@@ -1261,6 +1269,20 @@ function renderRoomsPhotoList() {
             </div>
         `;
     }).join('');
+
+    // Fetch units for each room to display them in the cards
+    globalRooms.forEach(async r => {
+        try {
+            const res = await fetch(`/api/rooms/${r.id}/units`);
+            const units = await res.json();
+            const el = document.getElementById(`unit-list-${r.id}`);
+            if (el && units.length > 0) {
+                el.innerHTML = units.map(u => `<span style="font-size: 0.65rem; padding: 1px 6px; background: var(--gold); color: #000; border-radius: 4px; font-weight: 700;">${u.unitNumber}</span>`).join('');
+            } else if (el) {
+                el.innerHTML = '<span style="font-size: 0.65rem; color: var(--muted);">Нет привязанных номеров</span>';
+            }
+        } catch(e) {}
+    });
 }
 
 // === Room Modal & CRUD ===
@@ -1284,7 +1306,20 @@ function openRoomModal(id = null) {
             document.getElementById('r_capacity').value = r.capacity || '';
             document.getElementById('r_tariff').value = r.tariff || '';
             document.getElementById('r_prepayment').value = r.prepayment || '';
+            
+            // Fetch units
+            document.getElementById('r_units').value = 'Загрузка...';
+            fetch(`/api/rooms/${id}/units`)
+                .then(res => res.json())
+                .then(units => {
+                    document.getElementById('r_units').value = units.map(u => u.unitNumber).join(', ');
+                })
+                .catch(() => {
+                    document.getElementById('r_units').value = '';
+                });
         }
+    } else {
+        document.getElementById('r_units').value = '';
     }
     document.getElementById('roomModalBg').classList.add('open');
 }
@@ -1306,7 +1341,8 @@ async function saveRoom(e) {
         area: document.getElementById('r_area').value || null,
         capacity: document.getElementById('r_capacity').value ? Number(document.getElementById('r_capacity').value) : null,
         tariff: document.getElementById('r_tariff').value || null,
-        prepayment: document.getElementById('r_prepayment').value ? Number(document.getElementById('r_prepayment').value) : null
+        prepayment: document.getElementById('r_prepayment').value ? Number(document.getElementById('r_prepayment').value) : null,
+        units: document.getElementById('r_units').value.split(',').map(s => s.trim()).filter(Boolean)
     };
 
     const method = id ? 'PUT' : 'POST';
