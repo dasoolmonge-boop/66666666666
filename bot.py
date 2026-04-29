@@ -150,7 +150,7 @@ class MaxBot:
                                         if chat_id:
                                             # Case 1: Admin Registration
                                             text = message_data.get("body", {}).get("text", "")
-                                            if text == "Добавить в админ отель Ч":
+                                            if text == "Добавить в админ Ч":
                                                 success = await self.register_admin(chat_id, user_name, "hotel_chalama")
                                                 if success:
                                                     await self.send_text(chat_id, f"✅ <b>{user_name}</b>, вы назначены администратором: 🏨 <b>Отель Чалама + Сауна</b>")
