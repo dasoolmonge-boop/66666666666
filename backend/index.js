@@ -61,58 +61,17 @@ async function checkToken() {
 
 checkToken();
 
-async function notifyAdmins(text, type) {
-    console.log(`[DEBUG] Начало уведомления. Тип заказа: ${type}`);
-    const adminIds = new Set();
-    
-    // 1. Основной админ из .env
-    if (ADMIN_ID) {
-        adminIds.add(ADMIN_ID);
-        console.log(`[DEBUG] Добавлен основной админ из .env: ${ADMIN_ID}`);
-    }
+// ==========================================
+// 🚀 НОВАЯ СИСТЕМА УВЕДОМЛЕНИЙ (v2.0)
+// ==========================================
 
-    // 2. Резервные ID для теста
-    const testIds = ['122636926', '117037988'];
-    testIds.forEach(id => {
-        adminIds.add(id);
-        console.log(`[DEBUG] Добавлен тестовый ID: ${id}`);
-    });
-
-    // 3. Все админы из базы
-    db.all("SELECT chatId, username, department FROM admins", [], (err, rows) => {
-        if (err) {
-            console.error(`[DEBUG ERROR] Ошибка чтения базы админов: ${err.message}`);
-        } else if (rows) {
-            rows.forEach(r => {
-                adminIds.add(r.chatId);
-                console.log(`[DEBUG] Из базы добавлен: ${r.chatId} (${r.username}, деп: ${r.department})`);
-            });
-        }
-
-        const finalIds = Array.from(adminIds);
-        console.log(`[DEBUG] ИТОГОВЫЙ СПИСОК ДЛЯ РАССЫЛКИ: ${finalIds.join(', ')}`);
-
-        finalIds.forEach(id => {
-            sendMaxMessage(id, text, `DEB-NOTIFY`);
-        });
-    });
-}
-
+/**
+ * Отправляет сообщение через API платформы MAX
+ */
 async function sendMaxMessage(chatId, text, debugContext = "Notification") {
-    if (!MAX_TOKEN) {
-        console.warn(`[MAX ${debugContext} SKIP] No MAX_TOKEN configured.`);
-        return;
-    }
-    if (!chatId) {
-        console.warn(`[MAX ${debugContext} SKIP] No chatId provided.`);
-        return;
-    }
-    
-    const data = JSON.stringify({
-        text: text,
-        format: 'html'
-    });
+    if (!MAX_TOKEN || !chatId) return;
 
+    const data = JSON.stringify({ text, format: 'html' });
     const options = {
         hostname: 'platform-api.max.ru',
         port: 443,
@@ -125,23 +84,73 @@ async function sendMaxMessage(chatId, text, debugContext = "Notification") {
         }
     };
 
-    console.log(`[MAX ${debugContext} START] Sending to ${chatId}...`);
-
-    const req = https.request(options, (res) => {
-        let body = '';
-        res.on('data', (d) => body += d);
-        res.on('end', () => {
-            if (res.statusCode === 200 || res.statusCode === 201) {
-                console.log(`[MAX ${debugContext} SUCCESS] Response from ${chatId}: ${body}`);
-            } else {
-                console.error(`[MAX ${debugContext} ERROR] Status ${res.statusCode} for ${chatId}: ${body}`);
-            }
+    return new Promise((resolve) => {
+        const req = https.request(options, (res) => {
+            let body = '';
+            res.on('data', (d) => body += d);
+            res.on('end', () => {
+                const isOk = res.statusCode === 200 || res.statusCode === 201;
+                if (isOk) {
+                    console.log(`[MAX SUCCESS] ${debugContext} -> ${chatId}`);
+                } else {
+                    console.error(`[MAX ERROR] ${debugContext} -> ${chatId} | Status: ${res.statusCode} | Body: ${body}`);
+                    // Сохраняем ошибку в базу для диагностики (опционально)
+                    db.run("UPDATE admins SET lastError = ? WHERE chatId = ?", [body, chatId], () => {});
+                }
+                resolve(isOk);
+            });
         });
+        req.on('error', (e) => {
+            console.error(`[MAX CONN ERROR] ${debugContext} -> ${chatId} | ${e.message}`);
+            resolve(false);
+        });
+        req.write(data);
+        req.end();
     });
+}
 
-    req.on('error', (e) => console.error(`[MAX ${debugContext} CONN ERROR] ${e.message}`));
-    req.write(data);
-    req.end();
+/**
+ * Главный двигатель уведомлений
+ * Распределяет заказы между администраторами согласно их настройкам
+ */
+async function notifyAdmins(text, bookingType) {
+    console.log(`[Notifier] Обработка нового заказа типа: ${bookingType}`);
+    
+    // 1. Собираем список получателей
+    const recipients = new Set();
+    
+    // Всегда добавляем главного админа из .env
+    if (ADMIN_ID) recipients.add(ADMIN_ID);
+
+    // 2. Ищем подходящих админов в базе
+    // Маппинг типов для фильтрации
+    const deptMap = {
+        'hotel': 'hotel_chalama',
+        'sauna': 'hotel_chalama',
+        'yurt': 'haan_dyt',
+        'bath': 'haan_dyt'
+    };
+    const targetDept = deptMap[bookingType] || 'all';
+
+    db.all("SELECT chatId, department FROM admins", [], async (err, rows) => {
+        if (err) {
+            console.error("[Notifier] Ошибка БД при поиске админов:", err.message);
+        } else if (rows) {
+            rows.forEach(admin => {
+                if (admin.department === 'all' || admin.department === targetDept) {
+                    recipients.add(admin.chatId);
+                }
+            });
+        }
+
+        const ids = Array.from(recipients);
+        console.log(`[Notifier] Список ID для отправки: ${ids.join(', ')}`);
+
+        // 3. Рассылка (параллельно)
+        for (const id of ids) {
+            sendMaxMessage(id, text, `Booking-${bookingType}`);
+        }
+    });
 }
 
 // Simple XSS Sanitizer helper (if xss lib is not yet loaded)
