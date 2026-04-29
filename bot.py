@@ -64,11 +64,12 @@ class MaxBot:
                 else:
                     logger.error(f"Error sending message ({resp.status}): {result}")
 
-    async def register_admin(self, chat_id, name):
+    async def register_admin(self, chat_id, name, department="all"):
         """Регистрация нового администратора в бэкенде"""
         payload = {
             "chatId": str(chat_id),
-            "username": name
+            "username": name,
+            "department": department
         }
         async with aiohttp.ClientSession() as session:
             url = "http://localhost:5000/api/internal/admins"
@@ -149,12 +150,19 @@ class MaxBot:
                                         if chat_id:
                                             # Case 1: Admin Registration
                                             text = message_data.get("body", {}).get("text", "")
-                                            if text == "Админ:Доступ":
-                                                success = await self.register_admin(chat_id, user_name)
+                                            if text == "Добавить в админ отель Ч":
+                                                success = await self.register_admin(chat_id, user_name, "hotel_chalama")
                                                 if success:
-                                                    await self.send_text(chat_id, f"✅ <b>{user_name}</b>, вы успешно назначены администратором!")
+                                                    await self.send_text(chat_id, f"✅ <b>{user_name}</b>, вы назначены администратором: 🏨 <b>Отель Чалама + Сауна</b>")
                                                 else:
-                                                    await self.send_text(chat_id, "❌ Ошибка при регистрации администратора.")
+                                                    await self.send_text(chat_id, "❌ Ошибка при регистрации.")
+                                            
+                                            elif text == "Добавить в админ Х":
+                                                success = await self.register_admin(chat_id, user_name, "haan_dyt")
+                                                if success:
+                                                    await self.send_text(chat_id, f"✅ <b>{user_name}</b>, вы назначены администратором: ⛺ <b>Хаан-Дыт + Баня</b>")
+                                                else:
+                                                    await self.send_text(chat_id, "❌ Ошибка при регистрации.")
                                             
                                             elif text == "Админ:Стоп":
                                                 success = await self.unregister_admin(chat_id)
