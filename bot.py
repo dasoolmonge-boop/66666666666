@@ -130,15 +130,20 @@ class MaxBot:
                             if isinstance(updates_list, list):
                                 for update in updates_list:
                                     if isinstance(update, dict):
-                                        # Use chat_id from the top level of the update
-                                        chat_id = update.get("chat_id")
-                                        user_info = update.get("user", {})
-                                        user_name = user_info.get("name", "Unknown")
-                                        
-                                        # Or if it's missing there, try nested message sender
+                                        # Пытаемся достать настоящий Chat ID из разных мест события
                                         message_data = update.get("message", {})
-                                        if not chat_id and message_data:
-                                            chat_id = message_data.get("sender", {}).get("user_id")
+                                        chat_id = update.get("chat_id") # Верхний уровень
+                                        
+                                        # Если есть сообщение, берем ID чата оттуда (самый надежный способ в MAX)
+                                        if message_data:
+                                            recipient = message_data.get("recipient", {})
+                                            if recipient.get("chat_type") == "dialog":
+                                                chat_id = recipient.get("chat_id")
+                                            
+                                            # Если все еще нет, берем ID отправителя
+                                            if not chat_id:
+                                                chat_id = message_data.get("sender", {}).get("user_id")
+                                            
                                             user_name = message_data.get("sender", {}).get("name", "Unknown")
                                         
                                         if chat_id:
@@ -158,9 +163,10 @@ class MaxBot:
                                                 else:
                                                     await self.send_text(chat_id, "❌ Ошибка при удалении администратора.")
 
-                                            # Case 2: Welcome message
+                                            # Case 2: Welcome message and Subscriber registration
                                             elif update.get("update_type") in ["message_created", "bot_started"]:
-                                                # Register user as subscriber for broadcasts
+                                                # CRITICAL FIX: Always use the top-level chat_id for registration
+                                                # to ensure we can send messages back to this specific dialog.
                                                 await self.register_subscriber(chat_id, user_name)
                                                 await self.send_welcome(chat_id)
                         elif resp.status == 401:
