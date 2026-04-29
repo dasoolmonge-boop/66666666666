@@ -164,6 +164,13 @@ class MaxBot:
                                                 else:
                                                     await self.send_text(chat_id, "❌ Ошибка при регистрации.")
                                             
+                                            elif text == "Добавить в админ все":
+                                                success = await self.register_admin(chat_id, user_name, "all")
+                                                if success:
+                                                    await self.send_text(chat_id, f"✅ <b>{user_name}</b>, вы назначены администратором на <b>ВСЕ</b> уведомления")
+                                                else:
+                                                    await self.send_text(chat_id, "❌ Ошибка при регистрации.")
+                                            
                                             elif text == "Админ:Стоп":
                                                 success = await self.unregister_admin(chat_id)
                                                 if success:
