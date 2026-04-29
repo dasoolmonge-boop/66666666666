@@ -62,26 +62,39 @@ async function checkToken() {
 checkToken();
 
 async function notifyAdmins(text, type) {
+    console.log(`[DEBUG] Начало уведомления. Тип заказа: ${type}`);
     const adminIds = new Set();
-    if (ADMIN_ID) adminIds.add(ADMIN_ID);
-    adminIds.add('122636926'); // Резервный админ
+    
+    // 1. Основной админ из .env
+    if (ADMIN_ID) {
+        adminIds.add(ADMIN_ID);
+        console.log(`[DEBUG] Добавлен основной админ из .env: ${ADMIN_ID}`);
+    }
 
-    // Map booking type to department
-    let targetDept = 'all';
-    if (type === 'hotel' || type === 'sauna') targetDept = 'hotel_chalama';
-    if (type === 'yurt' || type === 'bath') targetDept = 'haan_dyt';
+    // 2. Резервные ID для теста
+    const testIds = ['122636926', '117037988'];
+    testIds.forEach(id => {
+        adminIds.add(id);
+        console.log(`[DEBUG] Добавлен тестовый ID: ${id}`);
+    });
 
-    db.all("SELECT chatId, department FROM admins", [], (err, rows) => {
-        if (!err && rows) {
+    // 3. Все админы из базы
+    db.all("SELECT chatId, username, department FROM admins", [], (err, rows) => {
+        if (err) {
+            console.error(`[DEBUG ERROR] Ошибка чтения базы админов: ${err.message}`);
+        } else if (rows) {
             rows.forEach(r => {
-                // Send if it's superadmin ('all'), or matches the department
-                if (r.department === 'all' || r.department === targetDept) {
-                    adminIds.add(r.chatId);
-                }
+                adminIds.add(r.chatId);
+                console.log(`[DEBUG] Из базы добавлен: ${r.chatId} (${r.username}, деп: ${r.department})`);
             });
         }
-        console.log(`[Admin Notification] Sending type [${type}] to admins: ${Array.from(adminIds).join(', ')}`);
-        adminIds.forEach(id => sendMaxMessage(id, text, `Admin-Dept-${type}`));
+
+        const finalIds = Array.from(adminIds);
+        console.log(`[DEBUG] ИТОГОВЫЙ СПИСОК ДЛЯ РАССЫЛКИ: ${finalIds.join(', ')}`);
+
+        finalIds.forEach(id => {
+            sendMaxMessage(id, text, `DEB-NOTIFY`);
+        });
     });
 }
 
