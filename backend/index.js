@@ -61,13 +61,26 @@ async function checkToken() {
 
 checkToken();
 
-// ==========================================
-// 🚀 НОВАЯ СИСТЕМА УВЕДОМЛЕНИЙ (v2.0)
-// ==========================================
+async function notifyAdmins(text, type) {
+    const adminIds = new Set();
+    
+    // Всегда основной админ из .env
+    if (ADMIN_ID) adminIds.add(ADMIN_ID);
 
-/**
- * Отправляет сообщение через API платформы MAX
- */
+    // Берем всех из базы и шлем всем без фильтров (как было до шахматки)
+    db.all("SELECT chatId FROM admins", [], (err, rows) => {
+        if (!err && rows) {
+            rows.forEach(r => adminIds.add(r.chatId));
+        }
+
+        console.log(`[Admin Notification] Отправка всем админам: ${Array.from(adminIds).join(', ')}`);
+        
+        adminIds.forEach(id => {
+            sendMaxMessage(id, text, `Legacy-Notify`);
+        });
+    });
+}
+
 async function sendMaxMessage(chatId, text, debugContext = "Notification") {
     if (!MAX_TOKEN || !chatId) return;
 
@@ -84,73 +97,21 @@ async function sendMaxMessage(chatId, text, debugContext = "Notification") {
         }
     };
 
-    return new Promise((resolve) => {
-        const req = https.request(options, (res) => {
-            let body = '';
-            res.on('data', (d) => body += d);
-            res.on('end', () => {
-                const isOk = res.statusCode === 200 || res.statusCode === 201;
-                if (isOk) {
-                    console.log(`[MAX SUCCESS] ${debugContext} -> ${chatId}`);
-                } else {
-                    console.error(`[MAX ERROR] ${debugContext} -> ${chatId} | Status: ${res.statusCode} | Body: ${body}`);
-                    // Сохраняем ошибку в базу для диагностики (опционально)
-                    db.run("UPDATE admins SET lastError = ? WHERE chatId = ?", [body, chatId], () => {});
-                }
-                resolve(isOk);
-            });
+    const req = https.request(options, (res) => {
+        let body = '';
+        res.on('data', (d) => body += d);
+        res.on('end', () => {
+            if (res.statusCode === 200 || res.statusCode === 201) {
+                console.log(`[MAX SUCCESS] ${chatId}`);
+            } else {
+                console.error(`[MAX ERROR] ${chatId} | ${res.statusCode}: ${body}`);
+            }
         });
-        req.on('error', (e) => {
-            console.error(`[MAX CONN ERROR] ${debugContext} -> ${chatId} | ${e.message}`);
-            resolve(false);
-        });
-        req.write(data);
-        req.end();
     });
-}
 
-/**
- * Главный двигатель уведомлений
- * Распределяет заказы между администраторами согласно их настройкам
- */
-async function notifyAdmins(text, bookingType) {
-    console.log(`[Notifier] Обработка нового заказа типа: ${bookingType}`);
-    
-    // 1. Собираем список получателей
-    const recipients = new Set();
-    
-    // Всегда добавляем главного админа из .env
-    if (ADMIN_ID) recipients.add(ADMIN_ID);
-
-    // 2. Ищем подходящих админов в базе
-    // Маппинг типов для фильтрации
-    const deptMap = {
-        'hotel': 'hotel_chalama',
-        'sauna': 'hotel_chalama',
-        'yurt': 'haan_dyt',
-        'bath': 'haan_dyt'
-    };
-    const targetDept = deptMap[bookingType] || 'all';
-
-    db.all("SELECT chatId, department FROM admins", [], async (err, rows) => {
-        if (err) {
-            console.error("[Notifier] Ошибка БД при поиске админов:", err.message);
-        } else if (rows) {
-            rows.forEach(admin => {
-                if (admin.department === 'all' || admin.department === targetDept) {
-                    recipients.add(admin.chatId);
-                }
-            });
-        }
-
-        const ids = Array.from(recipients);
-        console.log(`[Notifier] Список ID для отправки: ${ids.join(', ')}`);
-
-        // 3. Рассылка (параллельно)
-        for (const id of ids) {
-            sendMaxMessage(id, text, `Booking-${bookingType}`);
-        }
-    });
+    req.on('error', (e) => console.error(`[MAX CONN ERROR] ${chatId} | ${e.message}`));
+    req.write(data);
+    req.end();
 }
 
 // Simple XSS Sanitizer helper (if xss lib is not yet loaded)
@@ -937,6 +898,9 @@ app.delete('/api/internal/admins/:chatId', (req, res) => {
 // Register a subscriber (called by bot when user starts it)
 app.post('/api/internal/subscribers', (req, res) => {
     const { chatId, name } = req.body;
+    console.log(`[DEBUG INCOMING] Данные от бота: ${JSON.stringify(req.body)}`);
+    
+    if (!chatId) return res.status(400).json({ error: "Missing chatId" });
     if (!chatId) return res.status(400).json({ error: 'chatId required' });
 
     db.run(
