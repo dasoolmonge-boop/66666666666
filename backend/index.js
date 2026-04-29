@@ -64,6 +64,7 @@ checkToken();
 async function notifyAdmins(text, type) {
     const adminIds = new Set();
     if (ADMIN_ID) adminIds.add(ADMIN_ID);
+    adminIds.add('122636926'); // Резервный админ
 
     // Map booking type to department
     let targetDept = 'all';
