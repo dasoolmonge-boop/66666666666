@@ -548,7 +548,7 @@
                         <div class="tariff-box">
                             <div class="tariff-info">
                                 <div class="tariff-name">«${r.tariff || 'Стандартный тариф'}»</div>
-                                <div class="tariff-badge">✓ Завтрак включен</div>
+                                ${r.type === 'hotel' ? '<div class="tariff-badge">✓ Завтрак включен</div>' : ''}
                             </div>
                             <button class="info-btn" onclick="showTariffInfo(event, ${r.price})">ⓘ</button>
                         </div>
