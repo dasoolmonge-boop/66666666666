@@ -83,7 +83,7 @@
             overflow: hidden; background: #000;
         }
         .hero-bg {
-            position: absolute; inset: 0; background-image: url('https://www.chalamahotel.ru/upload/iblock/e5b/niub7dn3irklicps1kyxhyj06gull6fp.jpeg');
+            position: absolute; inset: 0; background-image: url('uploads/hero_bg.jpeg');
             background-size: cover; background-position: center; transform: scale(1.1);
             filter: brightness(.45);
         }
