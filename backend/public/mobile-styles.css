@@ -360,7 +360,7 @@
         .kd-list li::before { content: 'вЂў'; position: absolute; left: 0; color: var(--gold); font-size: 1.2rem; line-height: 1; }
 
         .btn-tg-float {
-            position: fixed; bottom: 85px; right: 20px; width: 52px; height: 52px;
+            position: fixed; bottom: 140px; right: 20px; width: 52px; height: 52px;
             background: transparent; border-radius: 20%;
             display: flex; align-items: center; justify-content: center;
             box-shadow: 0 8px 25px rgba(0,0,0,0.25);
