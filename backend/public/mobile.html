@@ -1784,9 +1784,19 @@
             document.getElementById('cookieBanner').style.display = 'none';
         }
     </script>
-    <a href="https://max.ru/id1701062159_bot" target="_blank" class="btn-tg-float" title="Написать в МАКС">
+    <a id="maxFloatBtn" href="https://max.ru/id1701062159_bot" target="_blank" class="btn-tg-float" title="Написать в МАКС">
         <img src="uploads/max-messenger-sign-logo.svg" alt="MAX">
     </a>
+    <script>
+        // Hide the MAX button when opened inside the МАКС mini-app
+        (function() {
+            var params = new URLSearchParams(window.location.search);
+            if (params.get('bot') || params.get('tgWebAppStartParam')) {
+                var btn = document.getElementById('maxFloatBtn');
+                if (btn) btn.style.display = 'none';
+            }
+        })();
+    </script>
 </body>
 
 </html>
