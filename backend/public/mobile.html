@@ -1788,10 +1788,21 @@
         <img src="uploads/max-messenger-sign-logo.svg" alt="MAX">
     </a>
     <script>
-        // Hide the MAX button when opened inside the МАКС mini-app
+        // Hide the MAX button when opened inside any messenger mini-app
         (function() {
+            var hide = false;
             var params = new URLSearchParams(window.location.search);
-            if (params.get('bot') || params.get('tgWebAppStartParam')) {
+            // Check query params
+            if (params.get('bot') || params.get('tgWebAppStartParam')) hide = true;
+            // Check Telegram/MAX WebApp API
+            if (window.Telegram && window.Telegram.WebApp) hide = true;
+            if (window.MaxWebApp) hide = true;
+            // Check if opened inside an iframe (mini-apps are usually iframes)
+            if (window !== window.top) hide = true;
+            // Check referrer
+            if (document.referrer && document.referrer.indexOf('max.ru') !== -1) hide = true;
+            
+            if (hide) {
                 var btn = document.getElementById('maxFloatBtn');
                 if (btn) btn.style.display = 'none';
             }
