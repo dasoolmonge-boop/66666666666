@@ -223,91 +223,170 @@
         .btn-submit:hover { background: var(--gold-l); }
         .room-actions { display: flex; gap: .5rem; }
 
-        /* ===== CHESS GRID (ШАХМАТКА) ===== */
+        /* ===== CHESS GRID (ШАХМАТКА) — PREMIUM ===== */
         .chess-wrapper {
-            position: relative;
-            overflow: auto;
-            max-height: 70vh;
-            border-radius: var(--radius);
-            border: 1px solid var(--border);
-            background: #11141d;
+            position: relative; overflow: auto; max-height: 72vh;
+            border-radius: 16px; border: 1px solid rgba(184,134,11,0.15);
+            background: linear-gradient(180deg, #0d1017 0%, #11141d 100%);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.03);
         }
-        .chess-table {
-            border-collapse: separate;
-            border-spacing: 0;
-            width: 100%;
-        }
+        .chess-table { border-collapse: separate; border-spacing: 0; width: 100%; }
+
         .chess-table thead th {
-            position: sticky;
-            top: 0;
-            z-index: 20;
-            background: #1a1f2e;
-            border-bottom: 2px solid var(--border);
-            padding: 0.5rem;
-            min-width: 50px;
-            text-align: center;
+            position: sticky; top: 0; z-index: 20;
+            background: linear-gradient(180deg, #1e2235 0%, #181c2a 100%);
+            border-bottom: 2px solid rgba(184,134,11,0.25);
+            padding: 0.6rem 0.3rem; min-width: 52px; text-align: center;
+            transition: background 0.3s;
         }
         .chess-table thead th:first-child {
-            left: 0;
-            z-index: 30;
-            background: #1a1f2e;
-            min-width: 190px;
-            text-align: left;
+            left: 0; z-index: 30; background: linear-gradient(180deg, #1e2235 0%, #181c2a 100%);
+            min-width: 190px; text-align: left; padding-left: 1rem;
         }
+        .chess-table thead th.chess-today-col {
+            background: linear-gradient(180deg, rgba(184,134,11,0.35) 0%, rgba(184,134,11,0.15) 100%) !important;
+            border-bottom-color: var(--gold);
+        }
+        .chess-table thead th.chess-weekend-col {
+            background: linear-gradient(180deg, rgba(255,171,0,0.08) 0%, rgba(255,171,0,0.03) 100%);
+        }
+
+        .chess-table tbody tr { transition: background 0.15s; }
+        .chess-table tbody tr:nth-child(even) td { background-color: rgba(255,255,255,0.012); }
+        .chess-table tbody tr:hover td:first-child { color: var(--gold) !important; }
+
         .chess-table tbody td:first-child {
-            position: sticky;
-            left: 0;
-            z-index: 10;
-            background: #1a1f2e;
-            border-right: 1px solid var(--border);
-            font-weight: 700;
-            color: #ccc;
+            position: sticky; left: 0; z-index: 10;
+            background: #14172080; backdrop-filter: blur(8px);
+            border-right: 1px solid rgba(184,134,11,0.12);
+            font-weight: 700; color: #aaa; padding: 0 0.8rem;
+            transition: color 0.2s;
         }
+
         .chess-cell {
-            border: 0.5px solid #2a2d3a;
-            height: 40px;
-            position: relative;
-            padding: 0;
-            min-width: 50px;
-            cursor: crosshair;
-            transition: background 0.2s;
+            border: 0.5px solid rgba(42,45,58,0.6); height: 42px;
+            position: relative; padding: 0; min-width: 52px;
+            cursor: crosshair; transition: background 0.15s, box-shadow 0.15s;
         }
-        .chess-cell:hover { background: rgba(255,255,255,0.05); }
-        .chess-cell.chess-selected { background: rgba(212, 160, 23, 0.4) !important; }
+        .chess-cell:hover { background: rgba(184,134,11,0.08) !important; box-shadow: inset 0 0 0 1px rgba(184,134,11,0.2); }
+        .chess-cell.chess-today-col { background: rgba(184,134,11,0.04); }
+        .chess-cell.chess-weekend-col { background: rgba(255,171,0,0.02); }
+        .chess-cell.chess-selected {
+            background: rgba(212,160,23,0.3) !important;
+            box-shadow: inset 0 0 0 2px var(--gold) !important;
+            animation: chessSelectPulse 1.5s ease infinite;
+        }
+        @keyframes chessSelectPulse {
+            0%,100% { box-shadow: inset 0 0 0 2px var(--gold); }
+            50% { box-shadow: inset 0 0 0 2px var(--gold), inset 0 0 12px rgba(184,134,11,0.3); }
+        }
+
         .chess-booking {
-            height: 100%;
-            width: 100%;
-            display: flex;
-            align-items: center;
-            padding: 0 0.5rem;
-            font-size: 0.65rem;
-            font-weight: 600;
-            color: #fff;
-            overflow: hidden;
-            white-space: nowrap;
-            text-overflow: ellipsis;
-            cursor: pointer;
-            transition: 0.2s;
+            height: 100%; width: 100%; display: flex; align-items: center;
+            padding: 0 0.4rem; font-size: 0.6rem; font-weight: 600;
+            color: rgba(255,255,255,0.9); overflow: hidden; white-space: nowrap;
+            text-overflow: ellipsis; cursor: pointer; transition: 0.2s;
+            border-radius: 3px;
         }
-        .chess-booking:hover { filter: brightness(1.1); z-index: 5; }
-        
-        /* Половинки дней */
-        .chess-split {
-            width: 100%;
-            height: 100%;
-            position: relative;
-            background: transparent;
-        }
+        .chess-booking:hover { filter: brightness(1.2) saturate(1.1); z-index: 5; transform: scaleY(1.1); }
+
+        .chess-split { width: 100%; height: 100%; position: relative; }
         .chess-split-out {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             clip-path: polygon(0 0, 100% 0, 0 100%);
         }
         .chess-split-in {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             clip-path: polygon(100% 0, 100% 100%, 0 100%);
         }
+
+        /* Chess Nav Bar */
+        .chess-nav { display:flex; justify-content:space-between; align-items:center; margin-bottom:1.2rem; flex-wrap:wrap; gap:0.8rem; }
+        .chess-nav h3 { margin:0; font-size:1.15rem; display:flex; align-items:center; gap:0.5rem; }
+        .chess-nav-period { font-size:0.78rem; color:var(--muted); font-weight:500; margin-left:0.5rem; }
+        .chess-nav-btns { display:flex; align-items:center; gap:0.4rem; }
+        .chess-nav-btn {
+            padding:0.45rem 0.85rem; background:var(--surface2); border:1px solid var(--border);
+            border-radius:10px; color:var(--text); cursor:pointer; font-size:0.82rem;
+            font-family:inherit; transition:0.2s; font-weight:600;
+        }
+        .chess-nav-btn:hover { border-color:var(--gold); color:var(--gold); transform:translateY(-1px); }
+        .chess-nav-btn.today-btn {
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-l) 100%);
+            border:none; color:#fff; font-weight:700; font-size:0.78rem; letter-spacing:0.5px;
+            box-shadow: 0 4px 12px rgba(184,134,11,0.3);
+        }
+        .chess-nav-btn.today-btn:hover { transform:translateY(-2px); box-shadow: 0 6px 16px rgba(184,134,11,0.4); }
+
+        /* Chess Type Header Row */
+        .chess-type-row { background: linear-gradient(90deg, #1c2138 0%, #252a3a 100%) !important; cursor:pointer; }
+        .chess-type-row:hover { background: linear-gradient(90deg, #222847 0%, #2a3048 100%) !important; }
+        .chess-type-row td {
+            position:sticky !important; left:0; z-index:15; padding:0.65rem 1rem !important;
+            border:1px solid var(--border); font-weight:700; font-size:0.84rem;
+            background: linear-gradient(90deg, #1c2138 0%, #252a3a 100%) !important;
+        }
+
+        /* Chess Legend */
+        .chess-legend {
+            display:flex; gap:1.2rem; align-items:center; flex-wrap:wrap;
+            margin-top:1rem; padding:0.8rem 1rem;
+            background:var(--surface); border:1px solid var(--border); border-radius:10px;
+        }
+        .chess-legend-item { display:flex; align-items:center; gap:0.4rem; font-size:0.72rem; color:var(--muted); font-weight:500; }
+        .chess-legend-dot { width:14px; height:14px; border-radius:4px; flex-shrink:0; }
+
+        /* Chess Tooltip */
+        .chess-tooltip {
+            position:fixed; z-index:9999; pointer-events:none;
+            background: rgba(20,23,35,0.95); backdrop-filter:blur(12px);
+            border:1px solid rgba(184,134,11,0.3); border-radius:12px;
+            padding:0.8rem 1rem; min-width:180px; max-width:260px;
+            box-shadow: 0 12px 32px rgba(0,0,0,0.6);
+            opacity:0; transition:opacity 0.2s; font-size:0.78rem;
+        }
+        .chess-tooltip.visible { opacity:1; }
+        .chess-tooltip-name { font-weight:700; color:var(--gold-l); margin-bottom:0.3rem; font-size:0.85rem; }
+        .chess-tooltip-dates { color:var(--text); margin-bottom:0.15rem; }
+        .chess-tooltip-status { color:var(--muted); font-size:0.7rem; }
+
+        /* Chess Booking Panel — Glassmorphism */
+        .chess-book-panel {
+            position:fixed; bottom:0; left:50%; transform:translateX(-50%) translateY(100%);
+            background:rgba(26,29,39,0.92); backdrop-filter:blur(20px);
+            border:1px solid rgba(184,134,11,0.3); border-bottom:none;
+            border-radius:20px 20px 0 0; padding:1.8rem 2rem 1.5rem;
+            box-shadow:0 -8px 40px rgba(0,0,0,0.6); z-index:1000;
+            width:94%; max-width:620px; transition:transform 0.4s cubic-bezier(0.19,1,0.22,1);
+        }
+        .chess-book-panel.open { transform:translateX(-50%) translateY(0); }
+        .chess-book-panel h3 { margin:0 0 0.2rem; color:var(--gold-l); font-size:1.05rem; }
+        .chess-book-panel .cbp-subtitle { font-size:0.8rem; color:var(--muted); margin-bottom:1.2rem; }
+        .chess-book-panel .cbp-fields { display:flex; gap:1rem; flex-wrap:wrap; }
+        .chess-book-panel .cbp-field { flex:1; min-width:200px; }
+        .chess-book-panel .cbp-field label { display:block; font-size:0.72rem; color:var(--muted); margin-bottom:0.4rem; text-transform:uppercase; letter-spacing:1px; font-weight:600; }
+        .chess-book-panel .cbp-field input {
+            width:100%; padding:0.75rem 1rem; background:rgba(255,255,255,0.05);
+            border:1px solid var(--border); border-radius:10px; color:var(--text);
+            font-size:0.9rem; font-family:inherit; outline:none; transition:0.3s;
+        }
+        .chess-book-panel .cbp-field input:focus { border-color:var(--gold); box-shadow:0 0 0 3px rgba(184,134,11,0.15); }
+        .chess-book-panel .cbp-footer { display:flex; justify-content:space-between; align-items:center; margin-top:1.5rem; }
+        .chess-book-panel .cbp-dates { font-size:0.88rem; color:var(--muted); font-weight:600; }
+        .chess-book-panel .cbp-submit {
+            padding:0.7rem 1.8rem; background:linear-gradient(135deg, var(--gold), var(--gold-l));
+            border:none; border-radius:12px; color:#fff; font-size:0.88rem; font-weight:700;
+            cursor:pointer; font-family:inherit; letter-spacing:0.5px;
+            box-shadow:0 4px 16px rgba(184,134,11,0.35); transition:0.3s;
+        }
+        .chess-book-panel .cbp-submit:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(184,134,11,0.45); }
+        .chess-book-panel .cbp-close {
+            position:absolute; top:1rem; right:1rem; width:32px; height:32px;
+            border-radius:50%; background:rgba(255,255,255,0.05); border:1px solid var(--border);
+            color:var(--muted); font-size:1.2rem; cursor:pointer; display:flex;
+            align-items:center; justify-content:center; transition:0.2s;
+        }
+        .chess-book-panel .cbp-close:hover { border-color:var(--red); color:var(--red); }
 
         /* Responsive */
         @media (max-width:1024px) {
@@ -663,17 +742,24 @@
 
         <!-- Chess Hotel Section -->
         <div id="chess_hotelSection" style="display:none">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; gap:1rem;">
-                <h3 style="margin:0; font-size:1.1rem;">🏁 Шахматка — Отель</h3>
-                <div style="display:flex; align-items:center; gap:.5rem;">
-                    <button onclick="chessNav(-7, 'hotel')" style="padding:.4rem .8rem; background:var(--surface2); border:1px solid var(--border); border-radius:8px; color:var(--text); cursor:pointer; font-size:.9rem;">◄ 7д</button>
-                    <button onclick="chessNav(-1, 'hotel')" style="padding:.4rem .6rem; background:var(--surface2); border:1px solid var(--border); border-radius:8px; color:var(--text); cursor:pointer; font-size:.9rem;">◄</button>
-                    <button onclick="chessToday('hotel')" style="padding:.4rem .8rem; background:var(--gold); border:none; border-radius:8px; color:#fff; cursor:pointer; font-size:.8rem; font-weight:700;">Сегодня</button>
-                    <button onclick="chessNav(1, 'hotel')" style="padding:.4rem .6rem; background:var(--surface2); border:1px solid var(--border); border-radius:8px; color:var(--text); cursor:pointer; font-size:.9rem;">►</button>
-                    <button onclick="chessNav(7, 'hotel')" style="padding:.4rem .8rem; background:var(--surface2); border:1px solid var(--border); border-radius:8px; color:var(--text); cursor:pointer; font-size:.9rem;">7д ►</button>
+            <div class="chess-nav">
+                <h3>🏁 Шахматка — Отель <span class="chess-nav-period" id="chessPeriod_hotel"></span></h3>
+                <div class="chess-nav-btns">
+                    <button class="chess-nav-btn" onclick="chessNav(-7,'hotel')">◄ 7д</button>
+                    <button class="chess-nav-btn" onclick="chessNav(-1,'hotel')">◄</button>
+                    <button class="chess-nav-btn today-btn" onclick="chessToday('hotel')">Сегодня</button>
+                    <button class="chess-nav-btn" onclick="chessNav(1,'hotel')">►</button>
+                    <button class="chess-nav-btn" onclick="chessNav(7,'hotel')">7д ►</button>
                 </div>
             </div>
             <div id="chessGrid_hotel" class="chess-wrapper"></div>
+            <div class="chess-legend">
+                <div class="chess-legend-item"><div class="chess-legend-dot" style="background:hsl(200,65%,42%)"></div> Занято</div>
+                <div class="chess-legend-item"><div class="chess-legend-dot" style="background:linear-gradient(135deg,hsl(120,65%,42%) 50%,transparent 50%)"></div> Заезд</div>
+                <div class="chess-legend-item"><div class="chess-legend-dot" style="background:linear-gradient(135deg,transparent 50%,hsl(0,65%,42%) 50%)"></div> Выезд</div>
+                <div class="chess-legend-item"><div class="chess-legend-dot" style="background:rgba(212,160,23,0.3);border:2px solid var(--gold)"></div> Выбрано</div>
+                <div class="chess-legend-item"><div class="chess-legend-dot" style="background:rgba(184,134,11,0.04);border:1px solid rgba(184,134,11,0.3)"></div> Сегодня</div>
+            </div>
             
             <div class="stat-card" style="margin-top:2.5rem; border-left: 4px solid var(--gold); padding:1.5rem; background:var(--surface); border-radius:var(--radius);">
                 <h3 style="color:var(--gold-l); margin-top:0; margin-bottom:1.5rem;">🧖‍♂️ Бронирование Сауны</h3>
@@ -684,14 +770,14 @@
 
         <!-- Chess Yurt Section -->
         <div id="chess_yurtSection" style="display:none">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; gap:1rem;">
-                <h3 style="margin:0; font-size:1.1rem;">⛺ Шахматка — Юрты</h3>
-                <div style="display:flex; align-items:center; gap:.5rem;">
-                    <button onclick="chessNav(-7, 'yurt')" style="padding:.4rem .8rem; background:var(--surface2); border:1px solid var(--border); border-radius:8px; color:var(--text); cursor:pointer; font-size:.9rem;">◄ 7д</button>
-                    <button onclick="chessNav(-1, 'yurt')" style="padding:.4rem .6rem; background:var(--surface2); border:1px solid var(--border); border-radius:8px; color:var(--text); cursor:pointer; font-size:.9rem;">◄</button>
-                    <button onclick="chessToday('yurt')" style="padding:.4rem .8rem; background:var(--gold); border:none; border-radius:8px; color:#fff; cursor:pointer; font-size:.8rem; font-weight:700;">Сегодня</button>
-                    <button onclick="chessNav(1, 'yurt')" style="padding:.4rem .6rem; background:var(--surface2); border:1px solid var(--border); border-radius:8px; color:var(--text); cursor:pointer; font-size:.9rem;">►</button>
-                    <button onclick="chessNav(7, 'yurt')" style="padding:.4rem .8rem; background:var(--surface2); border:1px solid var(--border); border-radius:8px; color:var(--text); cursor:pointer; font-size:.9rem;">7д ►</button>
+            <div class="chess-nav">
+                <h3>⛺ Шахматка — Юрты <span class="chess-nav-period" id="chessPeriod_yurt"></span></h3>
+                <div class="chess-nav-btns">
+                    <button class="chess-nav-btn" onclick="chessNav(-7,'yurt')">◄ 7д</button>
+                    <button class="chess-nav-btn" onclick="chessNav(-1,'yurt')">◄</button>
+                    <button class="chess-nav-btn today-btn" onclick="chessToday('yurt')">Сегодня</button>
+                    <button class="chess-nav-btn" onclick="chessNav(1,'yurt')">►</button>
+                    <button class="chess-nav-btn" onclick="chessNav(7,'yurt')">7д ►</button>
                 </div>
             </div>
             <div id="chessGrid_yurt" class="chess-wrapper"></div>
@@ -906,26 +992,32 @@
     </div>
 </div>
 
-<!-- ===== CHESS BOOKING PANEL ===== -->
-<div id="chessBookPanel" style="display:none; position:fixed; bottom:2rem; left:50%; transform:translateX(-50%); background:var(--surface); border:1px solid var(--gold); border-radius:var(--radius); padding:1.5rem; box-shadow:0 10px 30px rgba(0,0,0,0.8); z-index:1000; width:90%; max-width:600px;">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
-        <h3 style="margin:0; color:var(--gold-l);" id="cbTitle">Бронирование</h3>
-        <button onclick="closeChessBooking()" style="background:none; border:none; color:var(--muted); font-size:1.5rem; cursor:pointer;">&times;</button>
-    </div>
-    <div style="display:flex; gap:1rem; flex-wrap:wrap;">
-        <div class="form-group" style="flex:1; min-width:200px; margin-bottom:0;">
+<!-- ===== CHESS BOOKING PANEL (Glassmorphism) ===== -->
+<div id="chessBookPanel" class="chess-book-panel">
+    <button class="cbp-close" onclick="closeChessBooking()">&times;</button>
+    <h3 id="cbTitle">Бронирование</h3>
+    <div class="cbp-subtitle" id="cbDates">...</div>
+    <div class="cbp-fields">
+        <div class="cbp-field">
             <label>Имя гостя</label>
             <input type="text" id="cbGuest" placeholder="Иван Иванов">
         </div>
-        <div class="form-group" style="flex:1; min-width:200px; margin-bottom:0;">
+        <div class="cbp-field">
             <label>Телефон</label>
             <input type="text" id="cbPhone" placeholder="+7...">
         </div>
     </div>
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:1.5rem;">
-        <div style="font-size:0.9rem; color:var(--muted); font-weight:600;" id="cbDates">...</div>
-        <button class="btn-submit" style="width:auto; margin:0;" onclick="submitChessBooking()">Забронировать</button>
+    <div class="cbp-footer">
+        <div class="cbp-dates" id="cbDatesRange"></div>
+        <button class="cbp-submit" onclick="submitChessBooking()">Забронировать</button>
     </div>
+</div>
+
+<!-- Chess Tooltip -->
+<div id="chessTooltip" class="chess-tooltip">
+    <div class="chess-tooltip-name" id="ttName"></div>
+    <div class="chess-tooltip-dates" id="ttDates"></div>
+    <div class="chess-tooltip-status" id="ttStatus"></div>
 </div>
 
 <!-- ===== SAUNA BOOKING PANEL ===== -->
@@ -2051,6 +2143,7 @@ function renderChessGrid(data, type='hotel') {
     const start = new Date(data.startDate);
     const days = data.days;
     const mNames = ['янв','фев','мар','апр','май','июн','июл','авг','сен','окт','ноя','дек'];
+    const mNamesFull = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
     const wDays = ['Вс','Пн','Вт','Ср','Чт','Пт','Сб'];
 
     const dates = [];
@@ -2061,6 +2154,13 @@ function renderChessGrid(data, type='hotel') {
     }
     const todayStr = new Date().toISOString().split('T')[0];
 
+    // Update period display
+    const endDate = new Date(start); endDate.setDate(endDate.getDate() + days - 1);
+    const periodEl = document.getElementById('chessPeriod_' + type);
+    if (periodEl) {
+        periodEl.textContent = `${start.getDate()} ${mNamesFull[start.getMonth()]} — ${endDate.getDate()} ${mNamesFull[endDate.getMonth()]} ${endDate.getFullYear()}`;
+    }
+
     let html = `<table class="chess-table">`;
 
     // Header
@@ -2069,10 +2169,10 @@ function renderChessGrid(data, type='hotel') {
     dates.forEach(d => {
         const ds = d.toISOString().split('T')[0];
         const isT = ds === todayStr, isWE = d.getDay()===0||d.getDay()===6;
-        const color = isT ? '#fff' : isWE ? '#ffab00' : '#888';
-        html += `<th style="background:${isT ? '#d4a017' : '#1a1f2e'}">`
-             + `<div style="font-size:.55rem;color:${isT?'#fff':'#666'}">${wDays[d.getDay()]}</div>`
-             + `<div style="font-size:.85rem;color:${color}">${d.getDate()}</div>`
+        let thClass = isT ? 'chess-today-col' : (isWE ? 'chess-weekend-col' : '');
+        html += `<th class="${thClass}">`
+             + `<div style="font-size:.55rem;color:${isT?'#fff':'#666'};font-weight:600">${wDays[d.getDay()]}</div>`
+             + `<div style="font-size:.9rem;color:${isT?'#fff':isWE?'#ffab00':'#999'};font-weight:${isT?'800':'600'}">${d.getDate()}</div>`
              + `<div style="font-size:.5rem;color:${isT?'#ffd':'#555'}">${mNames[d.getMonth()]}</div></th>`;
     });
     html += '</tr></thead><tbody>';
@@ -2086,45 +2186,49 @@ function renderChessGrid(data, type='hotel') {
         if (!rt.units || !rt.units.length) return;
 
         // Type Group Header
-        html += `<tr style="background:#252a3a;cursor:pointer" data-type-header="1" onclick="let s=this.nextElementSibling; while(s && !s.dataset.typeHeader){ s.style.display=s.style.display==='none'?'':'none'; s=s.nextElementSibling; }">`;
-        html += `<td style="position:sticky;left:0;z-index:15;background:#252a3a;padding:.6rem .8rem;border:1px solid var(--border);font-weight:700;font-size:.82rem;" colspan="${days+1}">`;
-        html += `<span style="margin-right:.4rem">◈</span> ${rt.name} <span style="color:#888;font-weight:400;font-size:.7rem;">(${rt.units.length})</span></td></tr>`;
+        html += `<tr class="chess-type-row" data-type-header="1" onclick="let s=this.nextElementSibling; while(s && !s.classList.contains('chess-type-row')){ s.style.display=s.style.display==='none'?'':'none'; s=s.nextElementSibling; }">`;
+        html += `<td colspan="${days+1}"><span style="margin-right:.4rem;color:var(--gold)">◈</span> ${rt.name} <span style="color:#666;font-weight:400;font-size:.72rem;">(${rt.units.length} номеров)</span></td></tr>`;
 
         // Unit rows
         rt.units.forEach(unitNum => {
             html += '<tr>';
-            html += `<td style="text-align:center;font-size:.85rem;border:1px solid var(--border);background:#1a1f2e;">${unitNum}</td>`;
+            html += `<td style="text-align:center;font-size:.85rem;border:1px solid var(--border);">${unitNum}</td>`;
 
             const unitBookings = rt.bookings.filter(b => b.unitNumber === unitNum);
 
             dates.forEach(d => {
                 const ds = d.toISOString().split('T')[0];
+                const isT = ds === todayStr, isWE = d.getDay()===0||d.getDay()===6;
+                let cellClass = 'chess-cell' + (isT ? ' chess-today-col' : '') + (isWE ? ' chess-weekend-col' : '');
                 
-                // Find check-ins and check-outs on this specific day
                 const checkOutBooking = unitBookings.find(b => b.checkOut.split('T')[0] === ds);
                 const checkInBooking = unitBookings.find(b => b.checkIn.split('T')[0] === ds);
                 const midBooking = unitBookings.find(b => ds > b.checkIn.split('T')[0] && ds < b.checkOut.split('T')[0]);
 
-                html += `<td class="chess-cell" data-unit="${unitNum}" data-date="${ds}" onclick="handleChessCellClick('${unitNum}', '${ds}', ${!!midBooking}, ${!!checkInBooking}, ${!!checkOutBooking}, '${rt.id}', '${rt.name}', '${rt.type || ''}')">`;
+                html += `<td class="${cellClass}" data-unit="${unitNum}" data-date="${ds}" onclick="handleChessCellClick('${unitNum}', '${ds}', ${!!midBooking}, ${!!checkInBooking}, ${!!checkOutBooking}, '${rt.id}', '${rt.name}', '${rt.type || ''}')">`;
                 
                 if (midBooking) {
-                    // Full day occupied
                     const col = getBookingColor(midBooking);
-                    html += `<div class="chess-booking" style="background:${col}" title="${midBooking.guest}"></div>`;
+                    // Show guest name on first visible day of booking
+                    const bookStart = midBooking.checkIn.split('T')[0];
+                    const prevDs = new Date(d); prevDs.setDate(prevDs.getDate()-1);
+                    const prevStr = prevDs.toISOString().split('T')[0];
+                    const isFirstVisibleDay = (prevStr < data.startDate || prevStr === bookStart);
+                    const guestLabel = isFirstVisibleDay ? (midBooking.guest||'').split(' ')[0] : '';
+                    html += `<div class="chess-booking" style="background:${col}" data-guest="${midBooking.guest||''}" data-checkin="${midBooking.checkIn}" data-checkout="${midBooking.checkOut}" data-status="${midBooking.status||'confirmed'}" onmouseenter="showChessTooltip(event,this)" onmouseleave="hideChessTooltip()">${guestLabel}</div>`;
                 } else if (checkOutBooking && checkInBooking) {
-                    // SPLIT DAY: Someone leaves, someone arrives
                     const colOut = getBookingColor(checkOutBooking);
                     const colIn = getBookingColor(checkInBooking);
                     html += `<div class="chess-split">
-                        <div class="chess-split-out" style="background:${colOut}" title="Выезд: ${checkOutBooking.guest}"></div>
-                        <div class="chess-split-in" style="background:${colIn}" title="Заезд: ${checkInBooking.guest}"></div>
+                        <div class="chess-split-out" style="background:${colOut}" data-guest="${checkOutBooking.guest||''}" data-checkin="${checkOutBooking.checkIn}" data-checkout="${checkOutBooking.checkOut}" data-status="Выезд" onmouseenter="showChessTooltip(event,this)" onmouseleave="hideChessTooltip()"></div>
+                        <div class="chess-split-in" style="background:${colIn}" data-guest="${checkInBooking.guest||''}" data-checkin="${checkInBooking.checkIn}" data-checkout="${checkInBooking.checkOut}" data-status="Заезд" onmouseenter="showChessTooltip(event,this)" onmouseleave="hideChessTooltip()"></div>
                     </div>`;
                 } else if (checkOutBooking) {
                     const col = getBookingColor(checkOutBooking);
-                    html += `<div class="chess-split"><div class="chess-split-out" style="background:${col}" title="Выезд: ${checkOutBooking.guest}"></div></div>`;
+                    html += `<div class="chess-split"><div class="chess-split-out" style="background:${col}" data-guest="${checkOutBooking.guest||''}" data-checkin="${checkOutBooking.checkIn}" data-checkout="${checkOutBooking.checkOut}" data-status="Выезд" onmouseenter="showChessTooltip(event,this)" onmouseleave="hideChessTooltip()"></div></div>`;
                 } else if (checkInBooking) {
                     const col = getBookingColor(checkInBooking);
-                    html += `<div class="chess-split"><div class="chess-split-in" style="background:${col}" title="Заезд: ${checkInBooking.guest}"></div></div>`;
+                    html += `<div class="chess-split"><div class="chess-split-in" style="background:${col}" data-guest="${checkInBooking.guest||''}" data-checkin="${checkInBooking.checkIn}" data-checkout="${checkInBooking.checkOut}" data-status="Заезд" onmouseenter="showChessTooltip(event,this)" onmouseleave="hideChessTooltip()"></div></div>`;
                 }
 
                 html += `</td>`;
@@ -2135,6 +2239,27 @@ function renderChessGrid(data, type='hotel') {
 
     html += '</tbody></table>';
     el.innerHTML = html;
+}
+
+// ===== CHESS TOOLTIP =====
+let ttTimeout;
+function showChessTooltip(e, el) {
+    clearTimeout(ttTimeout);
+    ttTimeout = setTimeout(() => {
+        const tt = document.getElementById('chessTooltip');
+        document.getElementById('ttName').textContent = el.dataset.guest || '—';
+        const ci = el.dataset.checkin ? el.dataset.checkin.split('T')[0] : '';
+        const co = el.dataset.checkout ? el.dataset.checkout.split('T')[0] : '';
+        document.getElementById('ttDates').textContent = ci && co ? `${ci} → ${co}` : '';
+        document.getElementById('ttStatus').textContent = el.dataset.status || '';
+        tt.style.left = Math.min(e.clientX + 12, window.innerWidth - 280) + 'px';
+        tt.style.top = (e.clientY - 70) + 'px';
+        tt.classList.add('visible');
+    }, 250);
+}
+function hideChessTooltip() {
+    clearTimeout(ttTimeout);
+    document.getElementById('chessTooltip').classList.remove('visible');
 }
 
 // ===== CHESS BOOKING LOGIC =====
@@ -2195,13 +2320,17 @@ function highlightChessSelection() {
 
 function openChessBookingPanel() {
     if(!cbState.start || !cbState.end) return;
-    document.getElementById('chessBookPanel').style.display = 'block';
+    const panel = document.getElementById('chessBookPanel');
+    panel.classList.add('open');
     document.getElementById('cbTitle').textContent = `Бронь: ${cbState.rtName} (№ ${cbState.unit})`;
     document.getElementById('cbDates').textContent = `${cbState.start}  —  ${cbState.end}`;
+    const d1 = new Date(cbState.start), d2 = new Date(cbState.end);
+    const nights = Math.round((d2-d1)/86400000);
+    document.getElementById('cbDatesRange').textContent = `${nights} ${nights===1?'ночь':nights<5?'ночи':'ночей'}`;
 }
 
 function closeChessBooking() {
-    document.getElementById('chessBookPanel').style.display = 'none';
+    document.getElementById('chessBookPanel').classList.remove('open');
     cbState = { unit: null, rtId: null, rtName: null, rtType: null, start: null, end: null };
     highlightChessSelection();
 }
@@ -2402,7 +2531,7 @@ function autoRefresh() {
     const p1 = document.getElementById('chessBookPanel');
     const p2 = document.getElementById('saunaBookPanel');
     const p3 = document.getElementById('bathBookPanel');
-    if ((p1 && p1.style.display === 'block') || 
+    if ((p1 && p1.classList.contains('open')) || 
         (p2 && p2.style.display === 'block') || 
         (p3 && p3.style.display === 'block')) return;
 
