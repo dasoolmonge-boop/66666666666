@@ -11,6 +11,39 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/all.min.css">
     <link rel="stylesheet" href="mobile-styles.css?v=2.1">
     <link rel="canonical" href="https://chalama-group.ru/">
+
+    <!-- Kontur.Hotel Widget Integration -->
+    <script type="text/javascript">
+        (function(k,o,t,e,l){
+            l = document.createElement("script");
+            l.type = "text/javascript";
+            l.src = "https://bookonline24.ru/widget.js";
+            l.async = !0;
+            l.onload = l.onreadystatechange = function() {
+                e = this.readyState;
+                !o && (!e || e === "complete") && (o = 1) && k();
+            };
+            t = document.getElementsByTagName("script")[0];
+            t.parentNode.insertBefore(l, t);
+        })(function(){
+            HotelWidget.init({
+                hotelId: "4febdc0d-4891-44a3-adfe-cd90370987da",
+                version: "2"
+            }); 
+
+            // Mobile specific: Availability button
+            HotelWidget.add({
+                type: "showCheckAvailabilityButtonForMobileDevices",
+                appearance: { container: "WidgetMobileButtonId" }
+            });
+
+            // Rooms list for mobile
+            HotelWidget.add({
+                type: "roomsList",
+                appearance: { container: "WidgetRoomsListId_Mobile" }
+            });
+        });
+    </script>
 </head>
 <body>
 
@@ -29,50 +62,13 @@
             <p style="color:var(--muted);font-size:.85rem; max-width: 280px; margin: 0 auto;">Комфорт и гостеприимство в самом сердце Кызыла.</p>
         </div>
 
-        <!-- Date Search -->
-        <div id="m-date-search" style="background:var(--surface); border:1px solid var(--border); border-radius:20px; padding:1.2rem; margin-bottom:1.5rem;">
-            <p style="font-weight:700; font-size:.9rem; margin-bottom:1.2rem; color:var(--gold); display:flex; justify-content:space-between; align-items:center;">
-                <span>📅 Выберите даты заезда и выезда</span>
-                <span id="hotel-dates-summary" style="font-size:0.75rem; font-weight:500; color:var(--text); opacity:0.8;"></span>
-            </p>
-            
-            <div id="m-hotel-cal-wrap" style="margin-bottom: 1.2rem;">
-                <div class="cal-header">
-                    <button onclick="mNavSearchCal('hotel', -1)">‹</button>
-                    <div id="m-hotel-cal-month" style="font-weight:700; font-size:0.95rem;"></div>
-                    <button onclick="mNavSearchCal('hotel', 1)">›</button>
-                </div>
-                <div class="cal-grid" id="m-hotel-cal-grid"></div>
-            </div>
-
-            <div class="guest-selector">
-                <label>👥 Количество гостей</label>
-                <select id="m-hotel-guests" onchange="mHotelDates.guests = parseInt(this.value); if(mHotelDates.checkIn && mHotelDates.checkOut) mSearchRooms();">
-                    <option value="1">1 человек</option>
-                    <option value="2" selected>2 человека</option>
-                    <option value="3">3 человека</option>
-                    <option value="4">4 человека</option>
-                    <option value="5">5 человек</option>
-                    <option value="6">6 человек</option>
-                </select>
-            </div>
-            
-            <button onclick="mSearchRooms()" style="width:100%;padding:1rem;background:var(--gold);color:#fff;border:none;border-radius:12px;font-size:1rem;font-weight:800;font-family:inherit;box-shadow:0 10px 20px rgba(184,134,11,0.2);margin-bottom:1.2rem;">Показать наличие</button>
-            <p id="m-search-info" style="display:none;font-size:0.85rem;color:var(--text);background:var(--surface2);padding:0.8rem;border-radius:10px;margin-bottom:1.5rem;text-align:center;border:1px solid var(--border);"></p>
-
-            <div id="m-hotel-busy-hint" class="busy-hint-row" style="display:none;" onclick="openComplexAvailability('hotel')">
-                <div class="bh-icon"><i class="fas fa-calendar-times"></i></div>
-                <div class="bh-content">
-                    <div class="bh-title">Все номера заняты</div>
-                    <div class="bh-subtitle">Нажмите, чтобы открыть календарь свободных дат</div>
-                </div>
-                <div class="bh-arrow"><i class="fas fa-chevron-right"></i></div>
-            </div>
-            <div id="hotel-list">
-                <div class="skeleton" style="height:250px; margin-bottom:1rem"></div>
-                <div class="skeleton" style="height:250px"></div>
-            </div>
+        <!-- Kontur.Hotel Widget Containers -->
+        <div id="WidgetRoomsListId_Mobile" style="margin-top: 1rem;">
+            <!-- Dynamic rooms list from Kontur.Hotel will appear here -->
         </div>
+
+        <!-- Placeholder for mobile check availability button -->
+        <div id="WidgetMobileButtonId"></div>
 
         <div style="margin-top: 3rem; border-top: 1px solid var(--border); padding-top: 2rem;">
             <h2 style="font-size: 1.3rem; margin-bottom: 0.5rem;">Сауна при отеле</h2>

@@ -84,6 +84,40 @@
             }
         })();
     </script>
+
+    <!-- Kontur.Hotel Widget Integration -->
+    <script type="text/javascript">
+        (function(k,o,t,e,l){
+            l = document.createElement("script");
+            l.type = "text/javascript";
+            l.src = "https://bookonline24.ru/widget.js";
+            l.async = !0;
+            l.onload = l.onreadystatechange = function() {
+                e = this.readyState;
+                !o && (!e || e === "complete") && (o = 1) && k();
+            };
+            t = document.getElementsByTagName("script")[0];
+            t.parentNode.insertBefore(l, t);
+        })(function(){
+            HotelWidget.init({
+                hotelId: "4febdc0d-4891-44a3-adfe-cd90370987da",
+                version: "2"
+            }); 
+
+            // Horizontal search form
+            HotelWidget.add({
+                type: "bookingForm",
+                inline: true,
+                appearance: { container: "WidgetHorizontalBlockId" }
+            });
+
+            // Rooms list
+            HotelWidget.add({
+                type: "roomsList",
+                appearance: { container: "WidgetRoomsListId" }
+            });
+        });
+    </script>
 </head>
 <body>
 
@@ -215,49 +249,12 @@
             </p>
         </div>
 
-        <!-- Premium Search Panel -->
-        <div class="hotel-search-panel" id="hotel-date-search" data-r>
-            <div class="hotel-search-inner">
-                <div class="hotel-search-field">
-                    <label class="hotel-search-label">📅 Заезд</label>
-                    <input type="text" id="hotel-search-in" class="hotel-search-input" placeholder="Выберите дату">
-                </div>
-                <div class="hotel-search-divider"></div>
-                <div class="hotel-search-field">
-                    <label class="hotel-search-label">📅 Выезд</label>
-                    <input type="text" id="hotel-search-out" class="hotel-search-input" placeholder="Дата выезда">
-                </div>
-                <div class="hotel-search-divider"></div>
-                <div class="hotel-search-field">
-                    <label class="hotel-search-label">👥 Гости</label>
-                    <select id="hotel-guests" class="hotel-search-input" onchange="const inVal = document.getElementById('hotel-search-in').value; const outVal = document.getElementById('hotel-search-out').value; if(inVal && outVal) searchAvailableRooms();">
-                        <option value="1">1 взрослый</option>
-                        <option value="2" selected>2 взрослых</option>
-                        <option value="3">3 взрослых</option>
-                        <option value="4">4 взрослых</option>
-                    </select>
-                </div>
-                <button class="hotel-search-btn" onclick="searchAvailableRooms()">
-                    <span>🔍</span> Найти номера
-                </button>
-            </div>
+        <!-- Kontur.Hotel Widget Containers -->
+        <div id="WidgetHorizontalBlockId" style="margin-bottom: 2rem;" data-r></div>
+        
+        <div id="WidgetRoomsListId" data-r>
+            <!-- Dynamic rooms list from Kontur.Hotel will appear here -->
         </div>
-
-        <!-- Results Info -->
-        <div id="hotel-results-info" class="hotel-results-info" style="display:none;" data-r></div>
-        <div id="hotel-busy-hint" class="busy-hint">
-            <div style="font-size:1.5rem; margin-bottom:.5rem;">🗓️</div>
-            <div style="font-weight:700; color:var(--dark);">Все номера заняты на эти даты</div>
-            <p style="font-size:.85rem; color:var(--gray); margin:.3rem 0 1rem;">Попробуйте выбрать другие даты или посмотрите календарь загрузки.</p>
-            <button class="btn-show-cal" onclick="openComplexAvailability('hotel')">Посмотреть календарь свободных дат</button>
-        </div>
-
-        <!-- Hotel Room Cards Grid -->
-        <div id="hotel-rooms-grid" class="hotel-rooms-grid">
-            <!-- JS Generated -->
-        </div>
-
-        <!-- Booking handled by #booking-modal -->
     </div>
 </section>
 
