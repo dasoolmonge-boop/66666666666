@@ -131,6 +131,28 @@
             }, 500);
         });
     </script>
+
+    <style>
+        /* Kontur.Hotel Widget Overrides - Making images bigger */
+        #WidgetRoomsListId .bh-room-card {
+            margin-bottom: 30px !important;
+            border-radius: 16px !important;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08) !important;
+        }
+        #WidgetRoomsListId .bh-room-image-container {
+            height: 350px !important; /* Making the image taller */
+        }
+        #WidgetRoomsListId .bh-room-image {
+            object-fit: cover !important;
+        }
+        /* Mobile specific within desktop view if needed */
+        @media (max-width: 768px) {
+            #WidgetRoomsListId .bh-room-image-container {
+                height: 250px !important;
+            }
+        }
+    </style>
 </head>
 <body>
 
