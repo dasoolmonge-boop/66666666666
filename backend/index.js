@@ -597,44 +597,21 @@ function formatDate(isoString) {
 // Webhook for Kontur.Hotel bookings (Notifies Telegram admins)
 app.post('/api/kontur-webhook', express.json(), (req, res) => {
     const v = req.body;
-    console.log("[Kontur Webhook] Received booking data:", JSON.stringify(v, null, 2));
+    console.log("[Kontur Webhook] Full Body:", JSON.stringify(v, null, 2));
 
     try {
-        // More flexible parsing
         const bookingNum = v.bookingNumber || v.number || v.id || "—";
-        const customer = v.customer || v.guest || v.contact || {};
+        const customer = v.customer || v.guest || {};
         const stay = v.stay || v.period || {};
-        const rooms = v.rooms || v.items || [];
-        const total = v.totalAmount || v.price || v.amount || "—";
-        const currency = v.currency || "₽";
-
-        let text = `<b>🏨 НОВОЕ БРОНИРОВАНИЕ (Контур.Отель)</b>\n\n`;
-        text += `<b>Номер брони:</b> <code>#${bookingNum}</code>\n`;
-        text += `<b>Гость:</b> ${customer.name || customer.fullName || "—"}\n`;
-        text += `<b>Телефон:</b> ${customer.phone || customer.phoneNumber || "—"}\n`;
-        if (customer.email) text += `<b>Email:</b> ${customer.email}\n`;
         
-        const checkIn = stay.checkInDate || stay.from || stay.start || "—";
-        const checkOut = stay.checkOutDate || stay.to || stay.end || "—";
-        text += `<b>Период:</b> ${checkIn} — ${checkOut}\n`;
-        text += `<b>Сумма:</b> <b>${total} ${currency}</b>\n\n`;
+        let text = `<b>🏨 БРОНЬ (КОНТУР.ОТЕЛЬ)</b>\n`;
+        text += `Номер: <code>#${bookingNum}</code>\n`;
+        text += `Гость: ${customer.name || customer.fullName || "—"}\n`;
+        text += `Телефон: ${customer.phone || customer.phoneNumber || "—"}\n`;
+        text += `Сумма: ${v.totalAmount || "—"} ₽\n\n`;
 
-        if (Array.isArray(rooms) && rooms.length > 0) {
-            text += `<b>Состав заказа:</b>\n`;
-            rooms.forEach((r, i) => {
-                const name = r.roomTypeName || r.name || r.title || "Объект";
-                text += `${i + 1}. ${name}\n`;
-            });
-        } else if (v.roomTypeName) {
-            text += `<b>Номер:</b> ${v.roomTypeName}\n`;
-        }
-
-        text += `\n<i>Данные уже в Контуре.</i>`;
-        
-        // Debug info if fields were missing
-        if (bookingNum === "—" && !customer.name) {
-            text += `\n\n⚠️ <i>Внимание: структура данных изменилась. Проверьте логи.</i>`;
-        }
+        // Diagnostic: Send everything as text if parsing failed
+        text += `<b>📋 Сырые данные (Debug):</b>\n<pre>${JSON.stringify(v, null, 2).substring(0, 3000)}</pre>`;
 
         notifyAdmins(text, 'kontur');
         res.json({ success: true });

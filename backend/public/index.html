@@ -104,7 +104,9 @@
                 version: "2",
                 hooks: {
                     onBooking: function(v) {
-                        console.log("onBooking", v);
+                        console.log("!!! KONTUR BOOKING EVENT !!!", v);
+                        // Alert guest/debug
+                        // alert("Booking Received: " + (v.bookingNumber || "No Number"));
                         fetch('/api/kontur-webhook', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
