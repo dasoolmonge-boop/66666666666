@@ -368,61 +368,12 @@
             </p>
         </div>
 
-
-
-        <div style="margin-top: 5rem; margin-bottom: 2rem;" data-r>
-            <h3 style="font-size: 1.8rem; font-family: 'Playfair Display', serif; color: #e1d3a5; text-align: left;">Онлайн-бронирование размещения</h3>
-            <p style="color: rgba(255,255,255,0.7); font-size: 0.95rem;">Выберите вариант размещения и удобные даты. Для бронирования Ресторана свяжитесь с нами по телефону.</p>
-        </div>
-
-        <!-- Yurt Search Block -->
-        <div class="hotel-search-panel" id="yurt-date-search" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(225,211,165,0.2);" data-r>
-            <div class="hotel-search-inner">
-                <div class="hotel-search-field">
-                    <label class="hotel-search-label" style="color: rgba(255,255,255,0.7);">📅 Заезд</label>
-                    <input type="text" id="yurt-search-in" class="hotel-search-input" style="color:#fff; background:transparent;" placeholder="Дата заезда">
-                </div>
-                <div class="hotel-search-divider" style="background: rgba(255,255,255,0.1);"></div>
-                <div class="hotel-search-field">
-                    <label class="hotel-search-label" style="color: rgba(255,255,255,0.7);">📅 Выезд</label>
-                    <input type="text" id="yurt-search-out" class="hotel-search-input" style="color:#fff; background:transparent;" placeholder="Дата выезда">
-                </div>
-                <div class="hotel-search-divider" style="background: rgba(255,255,255,0.1);"></div>
-                <div class="hotel-search-field">
-                    <label class="hotel-search-label" style="color: rgba(255,255,255,0.7);">👥 Гости</label>
-                    <select id="yurt-guests" class="hotel-search-input" style="color:#fff; background:transparent;">
-                        <option value="1" style="color:#000;">1 гость</option>
-                        <option value="2" selected style="color:#000;">2 гостя</option>
-                        <option value="3" style="color:#000;">3 гостя</option>
-                        <option value="4" style="color:#000;">4 гостя</option>
-                    </select>
-                </div>
-                <button class="hotel-search-btn" style="background: #e1d3a5; color: #38402f;" onclick="searchAvailableYurts()">
-                    <span>🔍</span> Найти юрты
-                </button>
-            </div>
-        </div>
-
-        <!-- Yurt Results Info -->
-        <div id="yurt-results-info" class="hotel-results-info" style="display:none; color:#e1d3a5; margin-bottom: 2rem;" data-r></div>
-        <div id="yurt-busy-hint" class="busy-hint" style="display:none; background: rgba(0,0,0,0.15); border-color: rgba(225,211,165,0.3);">
-            <div style="font-size:1.5rem; margin-bottom:.5rem;">🗓️</div>
-            <div style="font-weight:700; color:#e1d3a5;">На эти даты свободных юрт нет</div>
-            <p style="font-size:.85rem; color:rgba(255,255,255,0.6); margin:.3rem 0 1rem;">Посмотрите ближайшие свободные окна в календаре.</p>
-            <button class="btn-show-cal" style="background:#e1d3a5; color:#38402f;" onclick="openComplexAvailability('yurt')">Открыть календарь юрт</button>
-        </div>
-
-        <!-- Yurt Room Cards Grid -->
-        <div id="yurt-rooms-grid" class="hotel-rooms-grid" style="margin-top:2rem;"></div>
-
-        <!-- Booking handled by #booking-modal -->
-
-        <!-- CAFE KHAAN-DYT -->
-        <div style="margin-top:5rem; margin-bottom:3rem; text-align:center; padding:3rem 2rem; background:rgba(225,211,165,0.05); border:1px solid rgba(225,211,165,0.15); border-radius:20px;" data-r>
+        <!-- CAFE KHAAN-DYT (TOP PRIORITY) -->
+        <div style="margin-top:2rem; margin-bottom:3rem; text-align:center; padding:3.5rem 2rem; background:rgba(225,211,165,0.05); border:1px solid rgba(225,211,165,0.15); border-radius:24px;" data-r>
             <p style="font-size:.7rem; letter-spacing:4px; color:#e1d3a5; text-transform:uppercase; margin-bottom:.5rem;">Гастрономия</p>
-            <h3 style="font-size:1.6rem; color:#fff; margin-bottom:.5rem; font-family:'Playfair Display',serif;">Кафе «Хаан-Дыт»</h3>
-            <p style="color:rgba(255,255,255,0.6); font-size:.9rem; margin-bottom:1.5rem; max-width:400px; margin-left:auto; margin-right:auto;">Домашняя кухня при юрточном комплексе. Национальные блюда и горячие напитки.</p>
-            <button onclick="openMenuViewer('cafe_kd', 'Кафе «Хаан-Дыт»')" style="padding:.9rem 2.5rem;background:#e1d3a5;color:#38402f;border:none;border-radius:12px;font-size:1rem;font-weight:800;cursor:pointer;font-family:inherit;transition:transform .2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">☕ Смотреть меню</button>
+            <h3 style="font-size:1.8rem; color:#fff; margin-bottom:.5rem; font-family:'Playfair Display',serif;">Кафе «Хаан-Дыт»</h3>
+            <p style="color:rgba(255,255,255,0.6); font-size:.95rem; margin-bottom:1.5rem; max-width:500px; margin-left:auto; margin-right:auto;">Настоящая тувинская кухня на лоне природы. Национальные деликатесы и уютная атмосфера.</p>
+            <button onclick="openMenuViewer('cafe_kd', 'Кафе «Хаан-Дыт»')" style="padding:.9rem 2.5rem;background:#e1d3a5;color:#38402f;border:none;border-radius:12px;font-size:1rem;font-weight:800;cursor:pointer;font-family:inherit;transition:transform .2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">📋 Смотреть меню</button>
         </div>
 
         <!-- PACKAGE OFFERS (KHAAN-DYT) -->
@@ -497,6 +448,55 @@
                 </div>
             </div>
         </div>
+
+        <div style="margin-top: 5rem; margin-bottom: 2rem;" data-r>
+            <h3 style="font-size: 1.8rem; font-family: 'Playfair Display', serif; color: #e1d3a5; text-align: left;">Онлайн-бронирование размещения</h3>
+            <p style="color: rgba(255,255,255,0.7); font-size: 0.95rem;">Выберите вариант размещения и удобные даты. Для бронирования Ресторана свяжитесь с нами по телефону.</p>
+        </div>
+
+        <!-- Yurt Search Block -->
+        <div class="hotel-search-panel" id="yurt-date-search" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(225,211,165,0.2);" data-r>
+            <div class="hotel-search-inner">
+                <div class="hotel-search-field">
+                    <label class="hotel-search-label" style="color: rgba(255,255,255,0.7);">📅 Заезд</label>
+                    <input type="text" id="yurt-search-in" class="hotel-search-input" style="color:#fff; background:transparent;" placeholder="Дата заезда">
+                </div>
+                <div class="hotel-search-divider" style="background: rgba(255,255,255,0.1);"></div>
+                <div class="hotel-search-field">
+                    <label class="hotel-search-label" style="color: rgba(255,255,255,0.7);">📅 Выезд</label>
+                    <input type="text" id="yurt-search-out" class="hotel-search-input" style="color:#fff; background:transparent;" placeholder="Дата выезда">
+                </div>
+                <div class="hotel-search-divider" style="background: rgba(255,255,255,0.1);"></div>
+                <div class="hotel-search-field">
+                    <label class="hotel-search-label" style="color: rgba(255,255,255,0.7);">👥 Гости</label>
+                    <select id="yurt-guests" class="hotel-search-input" style="color:#fff; background:transparent;">
+                        <option value="1" style="color:#000;">1 гость</option>
+                        <option value="2" selected style="color:#000;">2 гостя</option>
+                        <option value="3" style="color:#000;">3 гостя</option>
+                        <option value="4" style="color:#000;">4 гостя</option>
+                    </select>
+                </div>
+                <button class="hotel-search-btn" style="background: #e1d3a5; color: #38402f;" onclick="searchAvailableYurts()">
+                    <span>🔍</span> Найти юрты
+                </button>
+            </div>
+        </div>
+
+        <!-- Yurt Results Info -->
+        <div id="yurt-results-info" class="hotel-results-info" style="display:none; color:#e1d3a5; margin-bottom: 2rem;" data-r></div>
+        <div id="yurt-busy-hint" class="busy-hint" style="display:none; background: rgba(0,0,0,0.15); border-color: rgba(225,211,165,0.3);">
+            <div style="font-size:1.5rem; margin-bottom:.5rem;">🗓️</div>
+            <div style="font-weight:700; color:#e1d3a5;">На эти даты свободных юрт нет</div>
+            <p style="font-size:.85rem; color:rgba(255,255,255,0.6); margin:.3rem 0 1rem;">Посмотрите ближайшие свободные окна в календаре.</p>
+            <button class="btn-show-cal" style="background:#e1d3a5; color:#38402f;" onclick="openComplexAvailability('yurt')">Открыть календарь юрт</button>
+        </div>
+
+        <!-- Yurt Room Cards Grid -->
+        <div id="yurt-rooms-grid" class="hotel-rooms-grid" style="margin-top:2rem;"></div>
+
+        <!-- Booking handled by #booking-modal -->
+
+
 
         <!-- BATH & TUB BOOKING BLOCK -->
         <div style="margin-top:5rem" id="bath-booking-block">
