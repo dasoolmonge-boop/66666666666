@@ -114,18 +114,21 @@
                 }
             }); 
 
-            // Horizontal search form
-            HotelWidget.add({
-                type: "bookingForm",
-                inline: true,
-                appearance: { container: "WidgetHorizontalBlockId" }
-            });
+            // Delay adding elements to ensure containers are ready
+            setTimeout(function() {
+                // Horizontal search form
+                HotelWidget.add({
+                    type: "bookingForm",
+                    inline: true,
+                    appearance: { container: "WidgetHorizontalBlockId" }
+                });
 
-            // Rooms list
-            HotelWidget.add({
-                type: "roomsList",
-                appearance: { container: "WidgetRoomsListId" }
-            });
+                // Rooms list
+                HotelWidget.add({
+                    type: "roomsList",
+                    appearance: { container: "WidgetRoomsListId" }
+                });
+            }, 500);
         });
     </script>
 </head>
@@ -241,6 +244,7 @@
                     <div class="stat" data-r><div class="stat-num">4</div><div class="stat-label">Направления</div></div>
                     <div class="stat" data-r><div class="stat-num">1000+</div><div class="stat-label">Гостей в год</div></div>
                 </div>
+                </div>
             </div>
         </div>
     </div>
@@ -260,9 +264,9 @@
         </div>
 
         <!-- Kontur.Hotel Widget Containers -->
-        <div id="WidgetHorizontalBlockId" style="margin-bottom: 2rem;" data-r></div>
+        <div id="WidgetHorizontalBlockId" style="margin-bottom: 2rem; min-height: 100px;"></div>
         
-        <div id="WidgetRoomsListId" data-r>
+        <div id="WidgetRoomsListId" style="min-height: 500px;">
             <!-- Dynamic rooms list from Kontur.Hotel will appear here -->
         </div>
 

@@ -41,17 +41,19 @@
                 }
             }); 
 
-            // Mobile specific: Availability button
-            HotelWidget.add({
-                type: "showCheckAvailabilityButtonForMobileDevices",
-                appearance: { container: "WidgetMobileButtonId" }
-            });
+            setTimeout(function() {
+                // Mobile specific: Availability button
+                HotelWidget.add({
+                    type: "showCheckAvailabilityButtonForMobileDevices",
+                    appearance: { container: "WidgetMobileButtonId" }
+                });
 
-            // Rooms list for mobile
-            HotelWidget.add({
-                type: "roomsList",
-                appearance: { container: "WidgetRoomsListId_Mobile" }
-            });
+                // Rooms list for mobile
+                HotelWidget.add({
+                    type: "roomsList",
+                    appearance: { container: "WidgetRoomsListId_Mobile" }
+                });
+            }, 500);
         });
     </script>
 </head>
@@ -73,7 +75,7 @@
         </div>
 
         <!-- Kontur.Hotel Widget Containers -->
-        <div id="WidgetRoomsListId_Mobile" style="margin-top: 1rem;">
+        <div id="WidgetRoomsListId_Mobile" style="margin-top: 1rem; min-height: 500px;">
             <!-- Dynamic rooms list from Kontur.Hotel will appear here -->
         </div>
 
