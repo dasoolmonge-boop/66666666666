@@ -596,22 +596,31 @@ function formatDate(isoString) {
 
 // Webhook for Kontur.Hotel bookings (Notifies Telegram admins)
 app.post('/api/kontur-webhook', express.json(), (req, res) => {
-    const v = req.body;
-    console.log("[Kontur Webhook] Full Body:", JSON.stringify(v, null, 2));
+    let v = req.body;
+    console.log("[Kontur Webhook] Processing data:", JSON.stringify(v, null, 2));
 
     try {
-        const bookingNum = v.bookingNumber || v.number || v.id || "—";
-        const customer = v.customer || v.guest || {};
-        const stay = v.stay || v.period || {};
-        
-        let text = `<b>🏨 БРОНЬ (КОНТУР.ОТЕЛЬ)</b>\n`;
-        text += `Номер: <code>#${bookingNum}</code>\n`;
-        text += `Гость: ${customer.name || customer.fullName || "—"}\n`;
-        text += `Телефон: ${customer.phone || customer.phoneNumber || "—"}\n`;
-        text += `Сумма: ${v.totalAmount || "—"} ₽\n\n`;
+        // Kontur sends an array, let's take the first element
+        if (Array.isArray(v)) v = v[0];
+        if (!v) return res.status(400).json({ success: false });
 
-        // Diagnostic: Send everything as text if parsing failed
-        text += `<b>📋 Сырые данные (Debug):</b>\n<pre>${JSON.stringify(v, null, 2).substring(0, 3000)}</pre>`;
+        const customer = v.customer || {};
+        const bookingNum = v.id ? v.id.split('-')[0].toUpperCase() : "—";
+        const total = v.price || "—";
+        
+        let text = `<b>🏨 НОВОЕ БРОНИРОВАНИЕ (КОНТУР)</b>\n\n`;
+        text += `<b>ID:</b> <code>#${bookingNum}</code>\n`;
+        text += `<b>Гость:</b> ${customer.fio || "—"}\n`;
+        text += `<b>Телефон:</b> <code>${customer.phone || "—"}</code>\n`;
+        if (customer.email) text += `<b>Email:</b> ${customer.email}\n`;
+        
+        const checkIn = v.fromDate ? v.fromDate.split('T')[0] : "—";
+        const checkOut = v.toDate ? v.toDate.split('T')[0] : "—";
+        text += `<b>Период:</b> ${checkIn} — ${checkOut}\n`;
+        text += `<b>Номер:</b> ${v.roomCategory || "—"}\n`;
+        text += `<b>Сумма:</b> <b>${total} ₽</b>\n\n`;
+
+        text += `<i>Бронирование уже в шахматке Контур.Отеля.</i>`;
 
         notifyAdmins(text, 'kontur');
         res.json({ success: true });
