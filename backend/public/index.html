@@ -425,72 +425,8 @@
             <button onclick="openMenuViewer('cafe_kd', 'Кафе «Хаан-Дыт»')" style="padding:.9rem 2.5rem;background:#e1d3a5;color:#38402f;border:none;border-radius:12px;font-size:1rem;font-weight:800;cursor:pointer;font-family:inherit;transition:transform .2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">☕ Смотреть меню</button>
         </div>
 
-        <!-- BATH & TUB BOOKING BLOCK -->
-        <div style="margin-top:5rem" id="bath-booking-block">
-            <h3 data-r style="font-size:1.8rem;margin-bottom:1.5rem;font-family: 'Playfair Display', serif; color: #e1d3a5;">Баня и Банный чан</h3>
-            <p style="color: rgba(255,255,255,0.7); font-size: 0.95rem; margin-bottom: 2.5rem;">Забронируйте комфортную Баню на дровах (до 10 человек, мин. 2 часа).</p>
-            
-            <div class="booking-layout">
-                <div id="bath-rooms">
-                    <!-- Bath Card JS Injected -->
-                </div>
-                <div style="position: relative;">
-                    <div class="cal-wrap" id="bath-calendar" style="background:#2a3123; border: 1px solid rgba(255,255,255,0.1); color:#fff;">
-                        <div style="margin-bottom:1rem">
-                            <p style="font-weight:700;font-size:.78rem;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.5)">Выбранный объект</p>
-                            <p id="bath-selected-name" style="font-weight:800;font-size:1.1rem;margin-top:.3rem;color:#e1d3a5">Баня</p>
-                        </div>
-                        <hr style="border:none;border-top:1px solid rgba(255,255,255,0.1);margin:1.5rem 0">
-                        <p style="font-size:.8rem;color:rgba(255,255,255,0.7);margin-bottom:.5rem">1. Выберите дату:</p>
-                        <div class="cal-header">
-                            <button class="cal-btn" onclick="calNav('bath',-1)">‹</button>
-                            <h4 id="bath-cal-title">Апрель 2026</h4>
-                            <button class="cal-btn" onclick="calNav('bath',1)">›</button>
-                        </div>
-                        <div class="cal-days" id="bath-cal-grid"></div>
-                        <div id="bath-time-select" style="display:none; margin-top: 1.5rem;">
-                            <p style="font-size:.8rem;color:rgba(255,255,255,0.7);margin-bottom:.5rem">2. Выберите время (мин. 2 часа):</p>
-                            <div class="time-grid" id="bath-time-grid"></div>
-                            <p id="bath-time-hint" style="font-size:.78rem; color:#e1d3a5; margin-top:.5rem; font-weight:600;">Выберите время начала</p>
-                        </div>
-                        <div id="bath-cart"></div>
-
-                        <!-- ADDONS (TUB) -->
-                        <div class="addon-list">
-                            <div class="addon-item" id="addon-tub" onclick="toggleBathAddon()" style="background:rgba(255,255,255,0.05); border-color:rgba(255,255,255,0.1);">
-                                <div class="addon-check" id="tub-check" style="background:transparent; border-color:rgba(255,255,255,0.3); color:transparent;">✓</div>
-                                <div class="addon-label">
-                                    <strong style="color:#e1d3a5;">♨️ Банный чан</strong>
-                                    <span style="color:rgba(255,255,255,0.5);">Вместе с баней</span>
-                                </div>
-                                <div class="addon-price" style="color:#e1d3a5;">+5 000 ₽</div>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label style="color:rgba(255,255,255,0.7);">Ваше имя</label>
-                            <input type="text" placeholder="Иван Иванов" id="bath-name" style="background:rgba(255,255,255,0.05); color:#fff; border-color:rgba(255,255,255,0.2);">
-                        </div>
-                        <div class="form-group">
-                            <label style="color:rgba(255,255,255,0.7);">Телефон</label>
-                            <input type="tel" placeholder="+7 (___) ___-__-__" id="bath-phone" style="background:rgba(255,255,255,0.05); color:#fff; border-color:rgba(255,255,255,0.2);">
-                        </div>
-                        <div style="margin: 1rem 0; font-size: 0.75rem; color: rgba(255,255,255,0.6); display: flex; gap: 0.8rem; align-items: flex-start;">
-                            <input type="checkbox" id="bath-consent" checked style="margin-top: 0.2rem;">
-                            <label for="bath-consent">Я соглашаюсь с <a href="/privacy-policy" target="_blank" style="color: #e1d3a5; text-decoration: underline;">Политикой конфиденциальности</a> и даю согласие на обработку персональных данных</label>
-                        </div>
-                        <p style="font-size: 0.7rem; color: rgba(255,255,255,0.6); margin-bottom: 1rem; line-height: 1.4;">Пользователь даёт согласие ООО «Чалама» (ИНН 1701062159) на обработку персональных данных (имя, телефон) в целях обработки заявки в соответствии с Федеральным законом №152-ФЗ.</p>
-                        <button class="btn-book" onclick="submitBooking('bath')" style="background:#e1d3a5; color:#38402f;">Забронировать</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-    </div>
-</section>
-
         <!-- PACKAGE OFFERS (KHAAN-DYT) -->
-        <div style="margin-top: 5rem; padding: 4rem 2rem; background: #2a3123; border: 1px solid rgba(225,211,165,0.2); border-radius: 24px; color: #fff; margin-bottom: 5rem;" data-r>
+        <div style="margin-top: 3rem; padding: 4rem 2rem; background: rgba(225,211,165,0.03); border: 1px solid rgba(225,211,165,0.1); border-radius: 24px; color: #fff; margin-bottom: 5rem;" data-r>
             <div style="text-align: center; margin-bottom: 3.5rem;">
                 <p style="font-size: .75rem; letter-spacing: 4px; color: #e1d3a5; text-transform: uppercase; margin-bottom: 1rem;">Эксклюзивно в Хаан-Дыт</p>
                 <h3 style="font-size: 2.2rem; font-family: 'Playfair Display', serif; color: #e1d3a5; text-transform: uppercase; letter-spacing: 2px;">Пакетные предложения</h3>
@@ -561,6 +497,72 @@
                 </div>
             </div>
         </div>
+
+        <!-- BATH & TUB BOOKING BLOCK -->
+        <div style="margin-top:5rem" id="bath-booking-block">
+            <h3 data-r style="font-size:1.8rem;margin-bottom:1.5rem;font-family: 'Playfair Display', serif; color: #e1d3a5;">Баня и Банный чан</h3>
+            <p style="color: rgba(255,255,255,0.7); font-size: 0.95rem; margin-bottom: 2.5rem;">Забронируйте комфортную Баню на дровах (до 10 человек, мин. 2 часа).</p>
+            
+            <div class="booking-layout">
+                <div id="bath-rooms">
+                    <!-- Bath Card JS Injected -->
+                </div>
+                <div style="position: relative;">
+                    <div class="cal-wrap" id="bath-calendar" style="background:#2a3123; border: 1px solid rgba(255,255,255,0.1); color:#fff;">
+                        <div style="margin-bottom:1rem">
+                            <p style="font-weight:700;font-size:.78rem;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.5)">Выбранный объект</p>
+                            <p id="bath-selected-name" style="font-weight:800;font-size:1.1rem;margin-top:.3rem;color:#e1d3a5">Баня</p>
+                        </div>
+                        <hr style="border:none;border-top:1px solid rgba(255,255,255,0.1);margin:1.5rem 0">
+                        <p style="font-size:.8rem;color:rgba(255,255,255,0.7);margin-bottom:.5rem">1. Выберите дату:</p>
+                        <div class="cal-header">
+                            <button class="cal-btn" onclick="calNav('bath',-1)">‹</button>
+                            <h4 id="bath-cal-title">Апрель 2026</h4>
+                            <button class="cal-btn" onclick="calNav('bath',1)">›</button>
+                        </div>
+                        <div class="cal-days" id="bath-cal-grid"></div>
+                        <div id="bath-time-select" style="display:none; margin-top: 1.5rem;">
+                            <p style="font-size:.8rem;color:rgba(255,255,255,0.7);margin-bottom:.5rem">2. Выберите время (мин. 2 часа):</p>
+                            <div class="time-grid" id="bath-time-grid"></div>
+                            <p id="bath-time-hint" style="font-size:.78rem; color:#e1d3a5; margin-top:.5rem; font-weight:600;">Выберите время начала</p>
+                        </div>
+                        <div id="bath-cart"></div>
+
+                        <!-- ADDONS (TUB) -->
+                        <div class="addon-list">
+                            <div class="addon-item" id="addon-tub" onclick="toggleBathAddon()" style="background:rgba(255,255,255,0.05); border-color:rgba(255,255,255,0.1);">
+                                <div class="addon-check" id="tub-check" style="background:transparent; border-color:rgba(255,255,255,0.3); color:transparent;">✓</div>
+                                <div class="addon-label">
+                                    <strong style="color:#e1d3a5;">♨️ Банный чан</strong>
+                                    <span style="color:rgba(255,255,255,0.5);">Вместе с баней</span>
+                                </div>
+                                <div class="addon-price" style="color:#e1d3a5;">+5 000 ₽</div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label style="color:rgba(255,255,255,0.7);">Ваше имя</label>
+                            <input type="text" placeholder="Иван Иванов" id="bath-name" style="background:rgba(255,255,255,0.05); color:#fff; border-color:rgba(255,255,255,0.2);">
+                        </div>
+                        <div class="form-group">
+                            <label style="color:rgba(255,255,255,0.7);">Телефон</label>
+                            <input type="tel" placeholder="+7 (___) ___-__-__" id="bath-phone" style="background:rgba(255,255,255,0.05); color:#fff; border-color:rgba(255,255,255,0.2);">
+                        </div>
+                        <div style="margin: 1rem 0; font-size: 0.75rem; color: rgba(255,255,255,0.6); display: flex; gap: 0.8rem; align-items: flex-start;">
+                            <input type="checkbox" id="bath-consent" checked style="margin-top: 0.2rem;">
+                            <label for="bath-consent">Я соглашаюсь с <a href="/privacy-policy" target="_blank" style="color: #e1d3a5; text-decoration: underline;">Политикой конфиденциальности</a> и даю согласие на обработку персональных данных</label>
+                        </div>
+                        <p style="font-size: 0.7rem; color: rgba(255,255,255,0.6); margin-bottom: 1rem; line-height: 1.4;">Пользователь даёт согласие ООО «Чалама» (ИНН 1701062159) на обработку персональных данных (имя, телефон) в целях обработки заявки в соответствии с Федеральным законом №152-ФЗ.</p>
+                        <button class="btn-book" onclick="submitBooking('bath')" style="background:#e1d3a5; color:#38402f;">Забронировать</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+
 
 <!-- ========== RESTAURANT (PREMIUM REDESIGN) ========== -->
 <section class="rest-section" id="restaurant">
