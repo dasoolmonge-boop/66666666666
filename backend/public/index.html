@@ -133,31 +133,23 @@
     </script>
 
     <style>
-        /* Aggressive Kontur.Hotel Widget Overrides */
-        #WidgetRoomsListId div[class*="room-card"], 
-        #WidgetRoomsListId .bh-room-card {
-            display: flex !important;
-            flex-direction: column !important;
-            width: 100% !important;
-            max-width: 800px !important;
-            margin: 0 auto 40px !important;
+        /* Scaling the entire Kontur Iframe/Widget because it's protected */
+        #WidgetRoomsListId {
+            transform: scale(1.1); /* Zoom in 10% */
+            transform-origin: top center;
+            width: 90% !important; /* Offset width to prevent horizontal scroll after scale */
+            margin: 0 auto !important;
         }
 
-        #WidgetRoomsListId div[class*="image-container"],
-        #WidgetRoomsListId .bh-room-image-container {
-            height: 450px !important; /* Force high height */
-            min-height: 400px !important;
+        #WidgetHorizontalBlockId {
+            transform: scale(1.05);
+            transform-origin: top center;
+            margin-bottom: 3rem !important;
         }
 
-        #WidgetRoomsListId img {
-            height: 100% !important;
-            width: 100% !important;
-            object-fit: cover !important;
-        }
-
-        /* Ensure the content below the image doesn't look broken */
-        #WidgetRoomsListId div[class*="content"] {
-            padding: 20px !important;
+        /* Adjust section height to accommodate scaled content */
+        .hotel-section {
+            padding-bottom: 100px !important;
         }
     </style>
 </head>
