@@ -594,6 +594,43 @@ function formatDate(isoString) {
     }
 }
 
+// Webhook for Kontur.Hotel bookings (Notifies Telegram admins)
+app.post('/api/kontur-webhook', express.json(), (req, res) => {
+    const v = req.body;
+    console.log("[Kontur Webhook] Received booking data:", v);
+
+    try {
+        const bookingNum = v.bookingNumber || "—";
+        const customer = v.customer || {};
+        const stay = v.stay || {};
+        const rooms = v.rooms || [];
+        const total = v.totalAmount ? `${v.totalAmount} ₽` : "—";
+
+        let text = `<b>🏨 НОВОЕ БРОНИРОВАНИЕ (Контур.Отель)</b>\n\n`;
+        text += `<b>Номер брони:</b> <code>#${bookingNum}</code>\n`;
+        text += `<b>Гость:</b> ${customer.name || "—"}\n`;
+        text += `<b>Телефон:</b> ${customer.phone || "—"}\n`;
+        if (customer.email) text += `<b>Email:</b> ${customer.email}\n`;
+        text += `<b>Период:</b> ${stay.checkInDate || "—"} — ${stay.checkOutDate || "—"}\n`;
+        text += `<b>Сумма:</b> <b>${total}</b>\n\n`;
+
+        if (rooms.length > 0) {
+            text += `<b>Номера:</b>\n`;
+            rooms.forEach((r, i) => {
+                text += `${i + 1}. ${r.roomTypeName || "Номер"}\n`;
+            });
+        }
+
+        text += `\n<i>Бронирование уже занесено в Контур.Отель автоматически.</i>`;
+
+        notifyAdmins(text, 'kontur');
+        res.json({ success: true });
+    } catch (err) {
+        console.error("[Kontur Webhook Error]", err);
+        res.status(500).json({ success: false });
+    }
+});
+
 // Create booking
 app.post('/api/bookings', (req, res) => {
     const b = req.body;

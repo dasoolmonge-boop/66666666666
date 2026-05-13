@@ -28,7 +28,17 @@
         })(function(){
             HotelWidget.init({
                 hotelId: "4febdc0d-4891-44a3-adfe-cd90370987da",
-                version: "2"
+                version: "2",
+                hooks: {
+                    onBooking: function(v) {
+                        console.log("onBooking", v);
+                        fetch('/api/kontur-webhook', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(v)
+                        }).catch(e => console.error("Webhook error", e));
+                    }
+                }
             }); 
 
             // Mobile specific: Availability button
