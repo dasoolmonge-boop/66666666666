@@ -133,24 +133,31 @@
     </script>
 
     <style>
-        /* Kontur.Hotel Widget Overrides - Making images bigger */
+        /* Aggressive Kontur.Hotel Widget Overrides */
+        #WidgetRoomsListId div[class*="room-card"], 
         #WidgetRoomsListId .bh-room-card {
-            margin-bottom: 30px !important;
-            border-radius: 16px !important;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08) !important;
+            display: flex !important;
+            flex-direction: column !important;
+            width: 100% !important;
+            max-width: 800px !important;
+            margin: 0 auto 40px !important;
         }
+
+        #WidgetRoomsListId div[class*="image-container"],
         #WidgetRoomsListId .bh-room-image-container {
-            height: 350px !important; /* Making the image taller */
+            height: 450px !important; /* Force high height */
+            min-height: 400px !important;
         }
-        #WidgetRoomsListId .bh-room-image {
+
+        #WidgetRoomsListId img {
+            height: 100% !important;
+            width: 100% !important;
             object-fit: cover !important;
         }
-        /* Mobile specific within desktop view if needed */
-        @media (max-width: 768px) {
-            #WidgetRoomsListId .bh-room-image-container {
-                height: 250px !important;
-            }
+
+        /* Ensure the content below the image doesn't look broken */
+        #WidgetRoomsListId div[class*="content"] {
+            padding: 20px !important;
         }
     </style>
 </head>

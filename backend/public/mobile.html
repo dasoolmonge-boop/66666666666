@@ -52,17 +52,19 @@
     </script>
 
     <style>
-        /* Kontur.Hotel Widget Mobile Overrides */
-        #WidgetRoomsListId_Mobile .bh-room-card {
-            margin-bottom: 25px !important;
+        /* Aggressive Kontur.Hotel Widget Mobile Overrides */
+        #WidgetRoomsListId_Mobile div[class*="room-card"] {
+            margin-bottom: 30px !important;
             border-radius: 12px !important;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1) !important;
         }
-        #WidgetRoomsListId_Mobile .bh-room-image-container {
-            height: 280px !important; /* Larger images for mobile */
+        #WidgetRoomsListId_Mobile div[class*="image-container"] {
+            height: 320px !important; /* Large mobile image */
+            min-height: 300px !important;
         }
-        #WidgetRoomsListId_Mobile .bh-room-image {
-            border-radius: 12px 12px 0 0 !important;
+        #WidgetRoomsListId_Mobile img {
+            width: 100% !important;
+            height: 100% !important;
+            object-fit: cover !important;
         }
     </style>
 </head>
