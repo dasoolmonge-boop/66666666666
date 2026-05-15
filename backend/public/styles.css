@@ -584,6 +584,24 @@
         height: 400px !important;
         pointer-events: none;
     }
+    /* Fix Bar Features Overflow */
+    .bar-features {
+        grid-template-columns: 1fr !important;
+        gap: 1rem !important;
+    }
+    .bar-hero-title {
+        font-size: 3.5rem !important;
+    }
+    .bar-hero {
+        height: 50vh !important;
+    }
+    .bar-info {
+        grid-template-columns: 1fr !important;
+        text-align: center;
+    }
+    .bar-info-img {
+        height: 300px !important;
+    }
 }
 
         @media (max-width: 480px) {
