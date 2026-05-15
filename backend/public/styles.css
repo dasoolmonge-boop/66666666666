@@ -576,8 +576,15 @@
 
         /* End Bar */
 
-        /* End Adative */
-        }
+        
+/* Mobile Layout Fixes for Overlapping Sections */
+@media (max-width: 768px) {
+    .mobile-spacer {
+        display: block !important;
+        height: 400px !important;
+        pointer-events: none;
+    }
+}
 
         @media (max-width: 480px) {
             .hero-title { font-size: 1.8rem !important; }
