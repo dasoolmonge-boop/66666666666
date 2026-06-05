@@ -2100,8 +2100,8 @@ function openBookingModal(type, roomName, summary, totalPrice, nights, pricePerN
     document.getElementById('bm-summary').innerHTML = summary;
     document.getElementById('bm-name').value = '';
     document.getElementById('bm-phone').value = '+7 ';
-    document.getElementById('bm-consent').checked = true;
-    document.getElementById('bm-age').checked = true;
+    document.getElementById('bm-consent').checked = false;
+    document.getElementById('bm-age').checked = false;
     
     const btn = document.getElementById('bm-submit-btn');
     btn.textContent = type === 'hotel' ? 'Забронировать номер' : 'Забронировать юрту';

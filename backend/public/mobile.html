@@ -830,6 +830,9 @@
             
             title.textContent = mSelectedYurt ? 'Бронирование юрты' : 'Бронирование номера';
             
+            document.getElementById('m-modal-consent').checked = false;
+            document.getElementById('m-modal-age').checked = false;
+            
             summary.innerHTML = `
                 <div style="display:flex;justify-content:space-between;align-items:center;">
                     <div>
@@ -1062,6 +1065,8 @@
             document.getElementById('btnSubmit').disabled = false;
             document.getElementById('btnSubmit').textContent = 'Оформить';
             document.getElementById('checkoutArea').style.display = 'none';
+            document.getElementById('mobile-consent').checked = false;
+            document.getElementById('mobile-age').checked = false;
 
             // Reset Addons visual
             state.addons.tub = false;
