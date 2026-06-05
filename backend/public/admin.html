@@ -980,6 +980,10 @@
                     <label>Предоплата (₽)</label>
                     <input type="number" id="r_prepayment" placeholder="6950">
                 </div>
+                <div class="form-group">
+                    <label>ID категории в Контуре</label>
+                    <input type="text" id="r_kontur_category_id" placeholder="4febdc0d-...">
+                </div>
                 <div class="form-group full">
                     <label>Номера комнат (через запятую)</label>
                     <input type="text" id="r_units" placeholder="201, 202, 305">
@@ -1398,6 +1402,7 @@ function openRoomModal(id = null) {
             document.getElementById('r_capacity').value = r.capacity || '';
             document.getElementById('r_tariff').value = r.tariff || '';
             document.getElementById('r_prepayment').value = r.prepayment || '';
+            document.getElementById('r_kontur_category_id').value = r.konturCategoryId || '';
             
             // Fetch units
             document.getElementById('r_units').value = 'Загрузка...';
@@ -1434,7 +1439,8 @@ async function saveRoom(e) {
         capacity: document.getElementById('r_capacity').value ? Number(document.getElementById('r_capacity').value) : null,
         tariff: document.getElementById('r_tariff').value || null,
         prepayment: document.getElementById('r_prepayment').value ? Number(document.getElementById('r_prepayment').value) : null,
-        units: document.getElementById('r_units').value.split(',').map(s => s.trim()).filter(Boolean)
+        units: document.getElementById('r_units').value.split(',').map(s => s.trim()).filter(Boolean),
+        konturCategoryId: document.getElementById('r_kontur_category_id').value || null
     };
 
     const method = id ? 'PUT' : 'POST';

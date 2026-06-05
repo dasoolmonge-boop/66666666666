@@ -165,7 +165,8 @@ db.serialize(() => {
         area TEXT,
         capacity INTEGER,
         tariff TEXT,
-        prepayment INTEGER
+        prepayment INTEGER,
+        konturCategoryId TEXT
     )`);
 
     // Broadcasts table — always ensure it exists (fix for servers with older DB versions)
@@ -207,6 +208,7 @@ db.serialize(() => {
                 db.run("ALTER TABLE rooms ADD COLUMN capacity INTEGER", (err) => {});
                 db.run("ALTER TABLE rooms ADD COLUMN tariff TEXT", (err) => {});
                 db.run("ALTER TABLE rooms ADD COLUMN prepayment INTEGER", (err) => {});
+                db.run("ALTER TABLE rooms ADD COLUMN konturCategoryId TEXT", (err) => {});
 
                 // Indexes for rooms
                 db.run("CREATE INDEX IF NOT EXISTS idx_rooms_type ON rooms(type)");
@@ -367,7 +369,8 @@ app.get('/api/rooms', (req, res) => {
             area: r.area || null,
             capacity: r.capacity || null,
             tariff: r.tariff || null,
-            prepayment: r.prepayment || null
+            prepayment: r.prepayment || null,
+            konturCategoryId: r.konturCategoryId || null
         }));
         res.json(rooms);
     });
@@ -404,6 +407,7 @@ app.get('/api/rooms/available', (req, res) => {
                             amenities: safeJsonParse(r.amenities), imgs: safeJsonParse(r.imgs),
                             area: r.area || null, capacity: r.capacity || null,
                             tariff: r.tariff || null, prepayment: r.prepayment || null,
+                            konturCategoryId: r.konturCategoryId || null
                         };
 
                         // Robust busy check: check by roomTypeId (new) OR room name (old compatibility)
@@ -456,10 +460,10 @@ app.get('/api/rooms/:id/units', (req, res) => {
 
 // Create a new room
 app.post('/api/rooms', (req, res) => {
-    const { type, name, desc, price, priceWeekend, amenities, area, capacity, tariff, prepayment, units } = req.body;
+    const { type, name, desc, price, priceWeekend, amenities, area, capacity, tariff, prepayment, units, konturCategoryId } = req.body;
     db.run(
-        `INSERT INTO rooms (type, name, desc, price, priceWeekend, amenities, imgs, area, capacity, tariff, prepayment) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        [type, name, desc, price, priceWeekend || null, JSON.stringify(amenities || []), '[]', area || null, capacity || null, tariff || null, prepayment || null],
+        `INSERT INTO rooms (type, name, desc, price, priceWeekend, amenities, imgs, area, capacity, tariff, prepayment, konturCategoryId) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [type, name, desc, price, priceWeekend || null, JSON.stringify(amenities || []), '[]', area || null, capacity || null, tariff || null, prepayment || null, konturCategoryId || null],
         function (err) {
             if (err) return res.status(500).json({ error: err.message });
             const roomId = this.lastID;
@@ -484,12 +488,12 @@ app.post('/api/rooms', (req, res) => {
 
 // Update an existing room
 app.put('/api/rooms/:id', (req, res) => {
-    const { type, name, desc, price, priceWeekend, amenities, area, capacity, tariff, prepayment, units } = req.body;
+    const { type, name, desc, price, priceWeekend, amenities, area, capacity, tariff, prepayment, units, konturCategoryId } = req.body;
     const roomId = req.params.id;
 
     db.run(
-        `UPDATE rooms SET type=?, name=?, desc=?, price=?, priceWeekend=?, amenities=?, area=?, capacity=?, tariff=?, prepayment=? WHERE id=?`,
-        [type, name, desc, price, priceWeekend || null, JSON.stringify(amenities || []), area || null, capacity || null, tariff || null, prepayment || null, roomId],
+        `UPDATE rooms SET type=?, name=?, desc=?, price=?, priceWeekend=?, amenities=?, area=?, capacity=?, tariff=?, prepayment=?, konturCategoryId=? WHERE id=?`,
+        [type, name, desc, price, priceWeekend || null, JSON.stringify(amenities || []), area || null, capacity || null, tariff || null, prepayment || null, konturCategoryId || null, roomId],
         function (err) {
             if (err) return res.status(500).json({ error: err.message });
             
