@@ -850,6 +850,21 @@
                 <div id="menu-grid-restaurant" class="photo-grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(150px, 1fr)); gap:1rem;"></div>
             </div>
 
+            <!-- Banquet -->
+            <div style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:1.5rem; margin-bottom:2rem; border-left:4px solid #ef4444;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+                    <div>
+                        <h3 style="font-size:1.1rem; margin-bottom:.3rem;">🍷 Банкетное меню</h3>
+                        <p style="font-size:.78rem; color:var(--muted)">Для мероприятий и банкетов</p>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:.5rem;">
+                        <input type="file" id="menu-file-banquet" accept="image/*" style="display:none" onchange="uploadMenuImg('banquet')">
+                        <button onclick="document.getElementById('menu-file-banquet').click()" style="padding:.5rem 1rem; background:#ef4444; color:#fff; border:none; border-radius:8px; font-size:.8rem; font-weight:700; cursor:pointer; font-family:inherit;">+ Загрузить</button>
+                    </div>
+                </div>
+                <div id="menu-grid-banquet" class="photo-grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(150px, 1fr)); gap:1rem;"></div>
+            </div>
+
             <!-- Bar -->
             <div style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:1.5rem; margin-bottom:2rem; border-left:4px solid #a855f7;">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
@@ -2049,6 +2064,7 @@ async function loadBroadcastHistory() {
 // ===== MENUS MANAGEMENT =====
 async function loadAllMenus() {
     await loadMenuCategory('restaurant');
+    await loadMenuCategory('banquet');
     await loadMenuCategory('bar');
     await loadMenuCategory('cafe_kd');
 }

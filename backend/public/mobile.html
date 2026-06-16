@@ -226,10 +226,13 @@
                     <h3 class="industry-title">Ресторан «Чалама»</h3>
                     <p class="industry-desc">Паназиатская и национальная кухня. Банкетные залы до 150 посадочных мест.</p>
                     <div style="display:flex; gap:.5rem; flex-wrap:wrap;">
-                        <button onclick="openMenuViewer('restaurant', 'Ресторан «Чалама»')" class="industry-btn" style="flex:1;">
+                        <button onclick="openMenuViewer('restaurant', 'Ресторан «Чалама»')" class="industry-btn" style="flex:1; min-width: 45%;">
                             📋 Меню <i class="fas fa-utensils"></i>
                         </button>
-                        <a href="tel:+73942221082" class="industry-btn" style="text-decoration:none; flex:1; text-align:center; background:var(--gold); color:#fff;">
+                        <button onclick="openMenuViewer('banquet', 'Банкетное меню')" class="industry-btn" style="flex:1; min-width: 45%;">
+                            🍷 Банкет <i class="fas fa-glass-cheers"></i>
+                        </button>
+                        <a href="tel:+73942221082" class="industry-btn" style="text-decoration:none; flex-basis:100%; text-align:center; background:var(--gold); color:#fff;">
                             📞 Бронь <i class="fas fa-phone-alt"></i>
                         </a>
                     </div>
